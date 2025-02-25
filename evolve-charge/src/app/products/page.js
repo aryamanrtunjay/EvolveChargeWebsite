@@ -11,7 +11,7 @@ export default function Products() {
           <p className="mb-4 text-gray-700">
             An intelligent charger that adapts to your energy usage and optimizes charging times.
           </p>
-          <button className="bg-secondary text-neutral-white px-4 py-2 rounded hover:bg-primary">
+          <button className="bg-primary text-neutral-white px-4 py-2 rounded hover:bg-secondary">
             Buy Now
           </button>
         </div>
@@ -20,7 +20,7 @@ export default function Products() {
           <p className="mb-4 text-gray-700">
             Monitor your energy consumption and manage charging with ease.
           </p>
-          <button className="bg-secondary text-neutral-white px-4 py-2 rounded hover:bg-primary">
+          <button className="bg-primary text-neutral-white px-4 py-2 rounded hover:bg-secondary">
             Buy Now
           </button>
         </div>

@@ -1,6 +1,6 @@
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center">
+    <div className="bg-neutral-light min-h-screen flex flex-col justify-center items-center">
       <h2 className="text-primary text-4xl font-bold mb-4">
         Welcome to Evolve Charge
       </h2>
@@ -9,7 +9,7 @@ export default function Home() {
       </p>
       <a
         href="/products"
-        className="bg-secondary text-neutral-white px-6 py-3 rounded-full hover:bg-primary"
+        className="bg-primary text-neutral-white px-6 py-3 rounded-full hover:bg-secondary"
       >
         Explore Our Products
       </a>

@@ -6,7 +6,7 @@ export default function RootLayout({ children }) {
       <head>
         <title>Evolve Charge</title>
       </head>
-      <body className="bg-neutral-light text-gray-800">
+      <body className="bg-neutral-light text-gray-800 font-sans">
         <header className="bg-primary p-4">
           <div className="container mx-auto flex justify-between items-center">
             <h1 className="text-2xl font-bold text-neutral-white">Evolve Charge</h1>
