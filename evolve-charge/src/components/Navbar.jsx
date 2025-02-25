@@ -64,13 +64,13 @@ export default function Navbar() {
             </motion.div>
             
             <Link href="/order">
-              <motion.a
+              <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="ml-8 px-6 py-2 rounded-full bg-gradient-to-r from-teal-400 to-cyan-500 text-white font-medium text-sm shadow-md hover:shadow-lg transition-all"
               >
                 Pre-Order Now
-              </motion.a>
+              </motion.button>
             </Link>
           </div>
 
@@ -125,9 +125,11 @@ export default function Navbar() {
               {item.name}
             </Link>
           ))}
-          <button className="mt-2 w-full px-6 py-3 rounded-full bg-gradient-to-r from-teal-400 to-cyan-500 text-white font-medium shadow-md">
-            Pre-Order Now
-          </button>
+          <Link href="/order">
+            <button className="mt-2 w-full px-6 py-3 rounded-full bg-gradient-to-r from-teal-400 to-cyan-500 text-white font-medium shadow-md">
+              Pre-Order Now
+            </button>
+          </Link>
         </div>
       </motion.div>
     </nav>
