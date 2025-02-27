@@ -296,13 +296,13 @@ export default function Home() {
                   variants={fadeIn}
                   className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 pt-4"
                 >
-                  <a href="#features">
+                  <a href="/order">
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       className="px-8 py-3 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium shadow-md hover:shadow-lg transition-all"
                     >
-                      Get Started
+                      Pre-Order Yours
                     </motion.button>
                   </a>
                   
