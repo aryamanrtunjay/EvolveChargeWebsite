@@ -132,7 +132,7 @@ export default function Technology() {
               variants={fadeIn}
               className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-gray-900 mb-6"
             >
-              The <span className="bg-gradient-to-r from-teal-400 to-cyan-500 bg-clip-text text-transparent">Technology</span> Behind EVolve Charge
+              The <span className="bg-gradient-to-r from-teal-500 to-cyan-500 bg-clip-text text-transparent">Technology</span> Behind EVolve Charge
             </motion.h1>
             
             <motion.p 
@@ -224,7 +224,7 @@ export default function Technology() {
                   </div>
                   
                   {/* Decorative elements */}
-                  <div className="absolute -bottom-4 -left-4 w-20 h-20 rounded-full bg-gradient-to-r from-teal-400 to-cyan-300 blur-xl opacity-50" />
+                  <div className="absolute -bottom-4 -left-4 w-20 h-20 rounded-full bg-gradient-to-r from-teal-500 to-cyan-300 blur-xl opacity-50" />
                   <div className="absolute -top-4 -right-4 w-16 h-16 rounded-full bg-gradient-to-r from-cyan-300 to-teal-200 blur-xl opacity-40" />
                 </motion.div>
               </div>
@@ -242,7 +242,7 @@ export default function Technology() {
                       className="flex items-start"
                     >
                       <div className="flex-shrink-0 mr-3">
-                        <div className="w-6 h-6 rounded-full bg-gradient-to-r from-teal-400 to-cyan-400 flex items-center justify-center text-white">
+                        <div className="w-6 h-6 rounded-full bg-gradient-to-r from-teal-500 to-cyan-400 flex items-center justify-center text-white">
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                           </svg>
@@ -426,7 +426,7 @@ export default function Technology() {
                   </div>
                   
                   <div className="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/3">
-                    <div className="w-6 h-6 rounded-full bg-gradient-to-r from-teal-400 to-cyan-400 border-4 border-white"></div>
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-r from-teal-500 to-cyan-400 border-4 border-white"></div>
                   </div>
                   
                   <div className="w-1/2"></div>
@@ -495,7 +495,7 @@ export default function Technology() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-8 py-3 rounded-full bg-white text-teal-600 font-medium shadow-md hover:shadow-lg transition-all"
+              className="px-8 py-3 rounded-full bg-white text-teal-500 font-medium shadow-md hover:shadow-lg transition-all"
             >
               Schedule a Demo
             </motion.button>

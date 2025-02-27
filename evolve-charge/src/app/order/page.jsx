@@ -633,7 +633,7 @@ export default function OrderPage() {
                         checked={formData.agreeTerms}
                         onChange={handleInputChange}
                         required
-                        className="h-4 w-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
+                        className="h-4 w-4 text-teal-500 border-gray-300 rounded focus:ring-teal-500"
                       />
                     </div>
                     <div className="ml-3 text-sm">
@@ -871,7 +871,7 @@ export default function OrderPage() {
                         name="sameAddress"
                         type="checkbox"
                         checked
-                        className="h-4 w-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
+                        className="h-4 w-4 text-teal-500 border-gray-300 rounded focus:ring-teal-500"
                       />
                       <label htmlFor="sameAddress" className="ml-2 block text-sm text-gray-700">
                         Same as installation address

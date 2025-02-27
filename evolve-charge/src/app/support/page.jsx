@@ -179,7 +179,7 @@ export default function Support() {
               Find answers to common questions or contact our support team for assistance.
             </motion.p>
 
-            <motion.form 
+            {/* <motion.form 
               variants={fadeIn}
               onSubmit={handleSearch}
               className="relative max-w-2xl mx-auto"
@@ -205,7 +205,7 @@ export default function Support() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </button>
-            </motion.form>
+            </motion.form> */}
           </motion.div>
         </div>
 
@@ -216,8 +216,8 @@ export default function Support() {
       {/* Quick Help Options */}
       <section className="py-12 md:py-16 -mt-12 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <motion.div
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1, duration: 0.5 }}
@@ -238,11 +238,11 @@ export default function Support() {
               <p className="text-gray-700 mb-6">
                 Connect with a support agent instantly for real-time assistance with any issues or questions.
               </p>
-              <button className="px-6 py-2 rounded-full bg-teal-500 text-white font-medium shadow-md hover:bg-teal-600 transition-colors">
+              <button className="px-6 py-2 rounded-full bg-teal-500 text-white font-medium shadow-md hover:bg-teal-500 transition-colors">
                 Start Chat
               </button>
               <p className="text-sm text-gray-500 mt-4">Available 24/7</p>
-            </motion.div>
+            </motion.div> */}
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -266,9 +266,9 @@ export default function Support() {
                 Call our dedicated support team for personalized assistance with complex issues.
               </p>
               <a href="tel:+18005551234" className="px-6 py-2 rounded-full bg-cyan-500 text-white font-medium shadow-md hover:bg-cyan-600 transition-colors inline-block">
-                1-800-555-1234
+                1-425-324-4529
               </a>
-              <p className="text-sm text-gray-500 mt-4">Mon-Fri: 8AM-8PM EST</p>
+              <p className="text-sm text-gray-500 mt-4">Call back within 24 hours</p>
             </motion.div>
 
             <motion.div
@@ -413,7 +413,7 @@ export default function Support() {
         </div>
       </section>
 
-      {/* Video Tutorials */}
+      {/* Video Tutorials
       <section className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -467,7 +467,6 @@ export default function Support() {
                 className="bg-white rounded-xl overflow-hidden shadow-md border border-gray-100"
               >
                 <div className="relative aspect-video bg-gray-200">
-                  {/* This would be an image in a real implementation */}
                   <div className="absolute inset-0 flex items-center justify-center text-gray-400">
                     <span>Video Thumbnail</span>
                   </div>
@@ -496,9 +495,9 @@ export default function Support() {
             </button>
           </div>
         </div>
-      </section>
+      </section> */}
 
-      {/* Community & Forum */}
+      {/* Community & Forum
       <section className="py-16 md:py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -563,7 +562,7 @@ export default function Support() {
                   </div>
                 ))}
               </div>
-              <button className="px-6 py-2 rounded-full bg-teal-500 text-white font-medium hover:bg-teal-600 transition-colors w-full">
+              <button className="px-6 py-2 rounded-full bg-teal-500 text-white font-medium hover:bg-teal-500 transition-colors w-full">
                 Visit Forum
               </button>
             </motion.div>
@@ -597,13 +596,13 @@ export default function Support() {
                   <div className="text-sm text-gray-700">Updates</div>
                 </div>
               </div>
-              <button className="px-6 py-2 rounded-full bg-teal-500 text-white font-medium hover:bg-teal-600 transition-colors w-full">
+              <button className="px-6 py-2 rounded-full bg-teal-500 text-white font-medium hover:bg-teal-500 transition-colors w-full">
                 Join Community
               </button>
             </motion.div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Contact Form */}
       <section className="py-16 md:py-24">
@@ -623,13 +622,13 @@ export default function Support() {
               <div className="bg-gray-50 p-6 rounded-xl mb-8">
                 <h3 className="text-lg font-bold text-gray-900 mb-4">Support Hours</h3>
                 <div className="space-y-2">
-                  <div className="flex justify-between">
+                  {/* <div className="flex justify-between">
                     <span className="text-gray-700">Chat Support:</span>
                     <span className="font-medium text-gray-900">24/7</span>
-                  </div>
+                  </div> */}
                   <div className="flex justify-between">
                     <span className="text-gray-700">Phone Support:</span>
-                    <span className="font-medium text-gray-900">Mon-Fri, 8AM-8PM EST</span>
+                    <span className="font-medium text-gray-900">Call back in 24 hours</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-700">Email Response:</span>
@@ -647,7 +646,7 @@ export default function Support() {
                   </div>
                   <div>
                     <h4 className="font-medium text-gray-900">Phone</h4>
-                    <p className="text-teal-500">1-800-555-1234</p>
+                    <p className="text-gray-700">1-425-324-4529</p>
                   </div>
                 </div>
                 
@@ -659,7 +658,7 @@ export default function Support() {
                   </div>
                   <div>
                     <h4 className="font-medium text-gray-900">Email</h4>
-                    <p className="text-teal-500">support@evolvecharge.com</p>
+                    <p className="text-gray-700">support@evolvecharge.com</p>
                   </div>
                 </div>
                 
@@ -672,7 +671,7 @@ export default function Support() {
                   </div>
                   <div>
                     <h4 className="font-medium text-gray-900">Headquarters</h4>
-                    <p className="text-gray-700">123 Innovation Way, Palo Alto, CA 94301</p>
+                    <p className="text-gray-700">Sammamish, WA 98074</p>
                   </div>
                 </div>
               </div>
@@ -762,7 +761,7 @@ export default function Support() {
         </div>
       </section>
 
-      {/* Self-Service Tools */}
+      {/* Self-Service Tools
       <section className="py-16 md:py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -841,9 +840,9 @@ export default function Support() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
-      {/* Download Resources */}
+      {/* Download Resources
       <section className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -936,9 +935,9 @@ export default function Support() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
-      {/* CTA Section */}
+      {/* CTA Section
       <section className="py-16 md:py-24 bg-gradient-to-r from-teal-500 to-cyan-600 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -956,7 +955,7 @@ export default function Support() {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-8 py-3 rounded-full bg-white text-teal-600 font-medium shadow-md hover:shadow-lg transition-all"
+                className="px-8 py-3 rounded-full bg-white text-teal-500 font-medium shadow-md hover:shadow-lg transition-all"
               >
                 Schedule a Consultation
               </motion.button>
@@ -970,7 +969,7 @@ export default function Support() {
             </div>
           </motion.div>
         </div>
-      </section>
+      </section> */}
     </div>
   );
 }

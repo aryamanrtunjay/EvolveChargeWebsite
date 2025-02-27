@@ -11,7 +11,7 @@ export default function Navbar() {
 
   const navItems = [
     { name: 'Features', href: '/features' },
-    { name: 'Technology', href: '/technology' },
+    // { name: 'Technology', href: '/technology' },
     { name: 'Pricing', href: '/pricing' },
     { name: 'Support', href: '/support' }
   ];
@@ -33,7 +33,7 @@ export default function Navbar() {
               transition={{ duration: 0.5 }}
               className="flex-shrink-0 flex items-center"
             >
-              <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-teal-400 to-cyan-500 bg-clip-text text-transparent">
+              <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-teal-500 to-cyan-500 bg-clip-text text-transparent">
                 EVolve Charge
               </Link>
             </motion.div>
@@ -67,7 +67,7 @@ export default function Navbar() {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="ml-8 px-6 py-2 rounded-full bg-gradient-to-r from-teal-400 to-cyan-500 text-white font-medium text-sm shadow-md hover:shadow-lg transition-all"
+                className="ml-8 px-6 py-2 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium text-sm shadow-md hover:shadow-lg transition-all"
               >
                 Pre-Order Now
               </motion.button>
@@ -126,7 +126,7 @@ export default function Navbar() {
             </Link>
           ))}
           <Link href="/order">
-            <button className="mt-2 w-full px-6 py-3 rounded-full bg-gradient-to-r from-teal-400 to-cyan-500 text-white font-medium shadow-md">
+            <button className="mt-2 w-full px-6 py-3 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium shadow-md">
               Pre-Order Now
             </button>
           </Link>

@@ -47,7 +47,7 @@ export default function Features() {
         },
         {
           title: "Weatherproof Design",
-          description: "Works flawlessly in rain, snow, and extreme temperatures from -30°F to 120°F."
+          description: "Works flawlessly in any temperature that you can, from -30°F to 120°F."
         },
         {
           title: "Visual Connection Feedback",
@@ -135,7 +135,7 @@ export default function Features() {
       </Head>
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-16 md:pt-40 md:pb-24 overflow-hidden">
+      <section className="relative pt-32 pb-16 md:pt-40 md:pb-24 overflow-hidden bg-gradient-to-r from-teal-500 to-cyan-600 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="hidden"
@@ -145,19 +145,22 @@ export default function Features() {
           >
             <motion.h1 
               variants={fadeIn}
-              className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-gray-900 mb-6"
+              className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6"
             >
-              Advanced Features for the <span className="bg-gradient-to-r from-teal-400 to-cyan-500 bg-clip-text text-transparent">Future of EV Charging</span>
+              Advanced Features for the Future of EV Charging
             </motion.h1>
             
             <motion.p 
               variants={fadeIn}
-              className="text-lg md:text-xl text-gray-700 mb-10"
+              className="text-lg md:text-xl mb-10 opacity-90"
             >
               Discover how EVolve Charge is revolutionizing electric vehicle charging with smart automation, optimization, and health monitoring.
             </motion.p>
           </motion.div>
         </div>
+
+        {/* Background decoration */}
+        <div className="absolute bottom-0 left-0 right-0 h-16 bg-white rounded-t-[50%] scale-x-125"></div>
       </section>
 
       {/* Feature Navigation Tabs */}
@@ -187,7 +190,6 @@ export default function Features() {
           {Object.keys(featureCategories).map((key) => (
             <motion.div
               key={key}
-              initial={{ opacity: 0, y: 20 }}
               animate={{ 
                 opacity: activeTab === key ? 1 : 0,
                 y: activeTab === key ? 0 : 20,
@@ -195,34 +197,14 @@ export default function Features() {
               }}
               transition={{ duration: 0.5 }}
             >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-16">
+              <div className="grid justify-center mb-2">
                 <div className="order-2 md:order-1">
-                  <h2 className="text-3xl font-bold mb-4 text-gray-900">{featureCategories[key].title}</h2>
-                  <p className="text-xl text-gray-700 mb-8">{featureCategories[key].description}</p>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="px-6 py-3 rounded-full bg-gradient-to-r from-teal-400 to-cyan-500 text-white font-medium shadow-md hover:shadow-lg transition-all"
-                  >
-                    Learn More
-                  </motion.button>
-                </div>
-                
-                <div className="order-1 md:order-2 relative">
-                  <div className="aspect-video rounded-2xl overflow-hidden bg-gradient-to-br from-teal-100 to-cyan-100 shadow-xl">
-                    {/* This would be an image in a real implementation */}
-                    <div className="absolute inset-0 flex items-center justify-center text-teal-500 opacity-20">
-                      <span className="text-2xl">{featureCategories[key].title} Image</span>
-                    </div>
-                  </div>
-                  
-                  {/* Decorative elements */}
-                  <div className="absolute -bottom-6 -left-6 w-24 h-24 rounded-full bg-gradient-to-r from-teal-400 to-cyan-300 blur-xl opacity-50" />
-                  <div className="absolute -top-4 -right-4 w-20 h-20 rounded-full bg-gradient-to-r from-cyan-300 to-teal-200 blur-xl opacity-40" />
+                  <h2 className="text-3xl font-bold mb-1 text-gray-900 text-center">{featureCategories[key].title}</h2>
+                  <p className="text-xl text-gray-700 mb-6">{featureCategories[key].description}</p>
                 </div>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-16">
+              <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mt-6">
                 {featureCategories[key].details.map((detail, index) => (
                   <motion.div
                     key={detail.title}
@@ -281,11 +263,11 @@ export default function Features() {
                   <tbody>
                     {[
                       { label: "Charging Power", value: "Up to 19.2kW (80A at 240V)" },
-                      { label: "Connector Type", value: "SAE J1772 (North America) / Type 2 (Europe)" },
-                      { label: "Smart Circuit Sharing", value: "Yes, up to 4 chargers" },
-                      { label: "Vehicle Compatibility", value: "All major EV brands" },
-                      { label: "Charging Arm Reach", value: "Up to 15 feet" },
-                      { label: "Connection Time", value: "Under 10 seconds" }
+                      { label: "Connector Type", value: "North American Charging Standard (NACS)"},
+                      { label: "Number of cars", value: "As many as your garage fits" },
+                      { label: "Vehicle Compatibility", value: "All major EV brands (adapter may be necessary)" },
+                      { label: "Cable Reach", value: "Full length of garage" },
+                      { label: "Connection Time", value: "<5 minutes" }
                     ].map((item) => (
                       <tr key={item.label} className="border-b border-gray-100 last:border-0">
                         <td className="py-3 font-medium text-gray-900">{item.label}</td>
@@ -311,8 +293,8 @@ export default function Features() {
                 <table className="w-full">
                   <tbody>
                     {[
-                      { label: "Wireless Connection", value: "Wi-Fi, Bluetooth, Cellular" },
-                      { label: "Remote Updates", value: "Over-the-air firmware updates" },
+                      { label: "Wireless Connection", value: "Wi-Fi" },
+                      { label: "Remote Updates", value: "Over-the-air software updates" },
                       { label: "Smart Home Integration", value: "HomeKit, Alexa, Google Home" },
                       { label: "Mobile App", value: "iOS, Android" },
                       { label: "Data Security", value: "End-to-end encryption" },
@@ -437,13 +419,15 @@ export default function Features() {
             <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto opacity-90">
               Join our growing community of EV owners who are enjoying the convenience and efficiency of EVolve Charge.
             </p>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-8 py-3 rounded-full bg-white text-teal-600 font-medium shadow-md hover:shadow-lg transition-all"
-            >
-              Pre-Order Now
-            </motion.button>
+            <a href="/order">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-8 py-3 rounded-full bg-white text-teal-500 font-medium shadow-md hover:shadow-lg transition-all"
+              >
+                Pre-Order Now
+              </motion.button>
+            </a>
             <p className="mt-4 text-sm opacity-80">Limited early-bird pricing available. Free installation included.</p>
           </motion.div>
         </div>

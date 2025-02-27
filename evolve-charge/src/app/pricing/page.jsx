@@ -38,10 +38,10 @@ export default function Pricing() {
     {
       name: "Essential",
       description: "Perfect for single-vehicle households",
-      oneTimePrice: 1499,
+      oneTimePrice: 500,
       monthlyPrice: 9.99,
       yearlyPrice: 99.99,
-      kwhRate: "Standard + $0.03/kWh",
+      kwhRate: "$0.01/kWh",
       features: [
         "Automatic charging connection",
         "Basic scheduling",
@@ -61,18 +61,17 @@ export default function Pricing() {
     {
       name: "Pro",
       description: "Ideal for tech-savvy EV enthusiasts",
-      oneTimePrice: 1899,
+      oneTimePrice: 650,
       monthlyPrice: 14.99,
       yearlyPrice: 149.99,
-      kwhRate: "Standard + $0.02/kWh",
+      kwhRate: "$0.02/kWh",
       features: [
         "All Essential features, plus:",
         "Advanced energy optimization",
         "Battery health monitoring",
-        "Smart home integration",
         "Energy usage analytics",
-        "Priority installation scheduling",
-        "5-year hardware warranty"
+        "5-year hardware warranty",
+        "Priority customer support access "
       ],
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -84,16 +83,16 @@ export default function Pricing() {
     {
       name: "Ultimate",
       description: "For multi-vehicle households",
-      oneTimePrice: 2499,
+      oneTimePrice: 800,
       monthlyPrice: 19.99,
       yearlyPrice: 199.99,
-      kwhRate: "Standard + $0.01/kWh",
+      kwhRate: "$0.03/kWh",
       features: [
         "All Pro features, plus:",
-        "Support for up to 3 vehicles",
         "Vehicle-specific charging profiles",
         "Power outage protection",
-        "Solar charging integration",
+        "Battery Optimization",
+        "Smart Home Integration",
         "Advanced energy analytics",
         "Lifetime hardware warranty"
       ],
@@ -110,23 +109,23 @@ export default function Pricing() {
   const faqItems = [
     {
       question: "How does the pricing structure work?",
-      answer: "Our pricing consists of three components: 1) A one-time purchase price for the hardware and installation, 2) A monthly or annual service fee for software updates and cloud features, and 3) A small per kWh premium above your standard electricity rate that helps us optimize charging times and maintain the network."
+      answer: "We have three pricing options. First, a one time charge which covers purchase of equipment and installation if requested. For our software services, such as smart home intergrations, battery monitoring and optimization, and charging at off-peak hours, we charge a small monthly or per kWh fee."
     },
     {
       question: "What does the per kWh rate mean?",
-      answer: "The per kWh rate is a small premium added to your standard electricity rate. For example, if your utility charges $0.12/kWh, with our Essential plan, you'd pay $0.15/kWh ($0.12 + $0.03) for electricity dispensed through the EVolve Charge system. This allows us to offer the hardware at a lower upfront cost while ensuring ongoing service quality."
+      answer: "The per kWh rate is an alternative to our monthly plan. We ask for a 0.1 to 0.3 cents per kWh you charge your car in lieu of a monthly charge, so if you charge less often you pay for how much you charge, while still benefitting from a start charging experience."
     },
     {
       question: "What does installation include?",
-      answer: "Installation includes mounting your EVolve Charge unit, connecting it to your electrical system, configuring the network connection, and testing the system to ensure proper functionality. Our certified technicians will also provide a brief orientation on how to use the system and mobile app."
+      answer: "Installation includes mounting your EVolve Charge unit, connecting it to your electrical system, configuring the network connection, and testing the system to ensure proper functionality."
     },
     {
       question: "Can I upgrade my plan later?",
-      answer: "Yes, you can upgrade your plan at any time. Upgrading may involve a one-time fee to cover hardware differences between models, plus the new monthly/annual service fee and kWh rate. Downgrades are possible after your initial 12-month commitment period."
+      answer: "Yes, you can upgrade your plan at any time. Upgrading may involve a one-time fee to cover hardware differences between models, plus the new monthly/annual service fee or kWh rate. Downgrades are possible after your initial 12-month commitment period."
     },
     {
       question: "Is there a contract or commitment period?",
-      answer: "We require a 12-month initial commitment for the service fee portion, which helps us provide consistent service and updates. After the initial period, you can continue on a month-to-month basis. The one-time hardware purchase is yours to keep regardless."
+      answer: "We require a 12-month initial commitment for the service fee portion, which helps us provide consistent service and updates. After the initial period, you can continue on a month-to-month basis. The one-time hardware purchase is yours to keep regardless. However, you may return the product and receive a full refund if you are not satisfied with your experience anytime before 30 days."
     },
     {
       question: "What happens if my charger needs repair?",
@@ -137,7 +136,7 @@ export default function Pricing() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative pt-32 pb-16 md:pt-40 md:pb-24 overflow-hidden">
+      <section className="relative pt-32 pb-16 md:pt-40 md:pb-24 overflow-hidden bg-gradient-to-r from-teal-500 to-cyan-600 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="hidden"
@@ -147,14 +146,14 @@ export default function Pricing() {
           >
             <motion.h1 
               variants={fadeIn}
-              className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-gray-900 mb-6"
+              className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6"
             >
-              Simple, Transparent <span className="bg-gradient-to-r from-teal-400 to-cyan-500 bg-clip-text text-transparent">Pricing</span>
+              Simple, Transparent Pricing
             </motion.h1>
             
             <motion.p 
               variants={fadeIn}
-              className="text-lg md:text-xl text-gray-700 mb-10"
+              className="text-lg md:text-xl mb-10 opacity-90"
             >
               Invest in smart charging technology with a pricing model that works for you.
             </motion.p>
@@ -162,9 +161,9 @@ export default function Pricing() {
         </div>
 
         {/* Background decoration */}
-        <div className="absolute top-1/2 right-0 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-cyan-200 to-teal-200 rounded-full blur-3xl opacity-20 -z-10"></div>
-        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-gradient-to-r from-teal-200 to-cyan-200 rounded-full blur-3xl opacity-10 -z-10"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-16 bg-white rounded-t-[50%] scale-x-125"></div>
       </section>
+
 
       {/* How Our Pricing Works */}
       <section className="py-12 md:py-16">
@@ -199,7 +198,7 @@ export default function Pricing() {
                   </svg>
                 ),
                 title: "One-Time Purchase",
-                description: "Pay once for premium hardware and professional installation. Our chargers are built to last with high-quality components and durable construction."
+                description: "Pay once for our premium hardware. Our chargers are built to last with high-quality components and durable construction."
               },
               {
                 icon: (
@@ -208,7 +207,7 @@ export default function Pricing() {
                   </svg>
                 ),
                 title: "Monthly/Annual Fee",
-                description: "A small subscription fee covers software updates, cloud connectivity, and ongoing service improvements to keep your charging experience optimal."
+                description: "A subscription fee covering access to the charger, software updates, and cloud connectivity, to keep your charging experience optimal."
               },
               {
                 icon: (
@@ -216,8 +215,8 @@ export default function Pricing() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                 ),
-                title: "Per kWh Premium",
-                description: "A small premium on electricity rates allows us to optimize charging times, maintain the network, and provide continuous service improvements."
+                title: "Per kWh Cost",
+                description: "An alternative to our monthly/annual fee if you charge less often, but still want access to the software side of the next generation of charging."
               }
             ].map((item, index) => (
               <motion.div
@@ -267,7 +266,7 @@ export default function Pricing() {
               </label>
               <span className={`text-sm font-medium flex items-center ${billingCycle === 'yearly' ? 'text-gray-900' : 'text-gray-500'}`}>
                 Annual Service Fee
-                <span className="ml-2 px-2 py-1 text-xs font-medium leading-none bg-gradient-to-r from-teal-400 to-cyan-500 text-white rounded-full">
+                <span className="ml-2 px-2 py-1 text-xs font-medium leading-none bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-full">
                   Save 20%
                 </span>
               </span>
@@ -318,9 +317,11 @@ export default function Pricing() {
                       <div className="flex flex-col items-start">
                         <div className="flex items-baseline">
                           <span className="text-xl font-bold text-gray-900">
-                            ${billingCycle === 'monthly' ? plan.monthlyPrice : (plan.yearlyPrice / 12).toFixed(2)}
+                            ${billingCycle === 'monthly' ? plan.monthlyPrice : (plan.yearlyPrice).toFixed(2)}
                           </span>
-                          <span className="ml-1 text-sm text-gray-700">/mo</span>
+                          <span className="ml-1 text-sm text-gray-700">
+                            {billingCycle === 'monthly' ? `/mo` : `/yr`}
+                          </span>
                         </div>
                         <span className="text-xs text-gray-700">Service fee</span>
                       </div>
@@ -358,15 +359,17 @@ export default function Pricing() {
                       </li>
                     ))}
                   </ul>
-                  <button
-                    className={`w-full py-3 px-6 rounded-full font-medium text-center transition-all transform hover:scale-105 focus:outline-none ${
-                      plan.mostPopular
-                        ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white shadow-md'
-                        : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-                    }`}
-                  >
-                    Get Started
-                  </button>
+                  <a href="/order">
+                    <button
+                      className={`w-full py-3 px-6 rounded-full font-medium text-center transition-all transform hover:scale-105 focus:outline-none ${
+                        plan.mostPopular
+                          ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white shadow-md'
+                          : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+                      }`}
+                    >
+                      Get Started
+                    </button>
+                  </a>
                 </div>
               </motion.div>
             ))}
@@ -409,15 +412,16 @@ export default function Pricing() {
               <div>
                 <h3 className="text-2xl font-bold mb-6 text-gray-900">How Our kWh Premium Works</h3>
                 <p className="text-gray-700 mb-6">
-                  Our per kWh premium is added to your standard electricity rate when charging through your EVolve Charge system. This model allows us to:
+                  Our per kWh cost is added to your standard electricity rate when charging through your EVolve Charge system. This model allows us to:
                 </p>
                 <ul className="space-y-4 mb-8">
                   {[
-                    "Offer lower upfront hardware costs compared to competitors",
-                    "Provide ongoing optimization to maximize charging efficiency",
+                    "Offer lower upfront hardware costs",
+                    "Provide long-term savings by charging at the cheapest times",
+                    "Provide ongoing optimization to maximize your car battery's lifespan",
                     "Deliver continuous software improvements and new features",
                     "Maintain network infrastructure for reliable service",
-                    "Cover warranty service and technical support"
+                    "Cover warranty service and technical support",
                   ].map((item, index) => (
                     <li key={index} className="flex items-start">
                       <svg
@@ -439,9 +443,8 @@ export default function Pricing() {
                 </ul>
                 <div className="p-4 bg-teal-50 rounded-lg border border-teal-100">
                   <p className="text-gray-700 italic">
-                    "While there's a small premium on the kWh rate, the smart charging features saved me over $240 last year by shifting my charging to off-peak hours."
+                    While increasing costs for the month, the smart charging features can save around $240 last year by shifting your charging to off-peak hours. You also gain access to our suite of smart charging features.
                   </p>
-                  <p className="text-gray-900 font-medium mt-2">— Elaine R., Pro Plan Customer</p>
                 </div>
               </div>
               
@@ -454,7 +457,15 @@ export default function Pricing() {
                   <div className="space-y-6">
                     {[
                       { 
-                        label: "Standard Utility Rate", 
+                        label: "Tesla Supercharger", 
+                        baseCost: 75, 
+                        premiumCost: 0, 
+                        totalCost: 75,
+                        color: "bg-gray-200",
+                        tooltip: "12¢/kWh average utility rate"
+                      },
+                      { 
+                        label: "Non-Intelligent Home Charging", 
                         baseCost: 36, 
                         premiumCost: 0, 
                         totalCost: 36,
@@ -464,9 +475,9 @@ export default function Pricing() {
                       { 
                         label: "EVolve Essential Plan", 
                         baseCost: 36, 
-                        premiumCost: 9, 
-                        totalCost: 45,
-                        color: "bg-cyan-400",
+                        premiumCost: 3, 
+                        totalCost: 39,
+                        color: "bg-teal-500",
                         tooltip: "12¢/kWh + 3¢/kWh premium"
                       },
                       { 
@@ -480,9 +491,9 @@ export default function Pricing() {
                       { 
                         label: "EVolve Ultimate Plan", 
                         baseCost: 36, 
-                        premiumCost: 3, 
-                        totalCost: 39,
-                        color: "bg-blue-500",
+                        premiumCost: 9, 
+                        totalCost: 45,
+                        color: "bg-teal-500",
                         tooltip: "12¢/kWh + 1¢/kWh premium"
                       }
                     ].map((item, index) => (
@@ -495,15 +506,14 @@ export default function Pricing() {
                           <div className="h-full flex">
                             <div 
                               className="h-full bg-gray-300" 
-                              style={{ width: `${(item.baseCost / 50) * 100}%` }}
+                              style={{ width: `${(item.baseCost / 80) * 100}%` }}
                             ></div>
                             <div 
                               className={`h-full ${item.color}`}
-                              style={{ width: `${(item.premiumCost / 50) * 100}%` }}
+                              style={{ width: `${(item.premiumCost / 80) * 100}%` }}
                             ></div>
                           </div>
                         </div>
-                        <div className="mt-1 text-xs text-gray-500">{item.tooltip}</div>
                       </div>
                     ))}
                   </div>
@@ -588,22 +598,16 @@ export default function Pricing() {
                     ultimate: "$199.99"
                   },
                   {
-                    feature: "kWh Premium",
-                    essential: "+$0.03/kWh",
-                    pro: "+$0.02/kWh",
-                    ultimate: "+$0.01/kWh"
+                    feature: "kWh Cost",
+                    essential: "$0.03/kWh",
+                    pro: "$0.02/kWh",
+                    ultimate: "$0.01/kWh"
                   },
                   {
                     feature: "Charging Connection",
                     essential: "Automatic",
                     pro: "Automatic",
                     ultimate: "Automatic"
-                  },
-                  {
-                    feature: "Number of Vehicles Supported",
-                    essential: "1",
-                    pro: "1",
-                    ultimate: "Up to 3"
                   },
                   {
                     feature: "Charging Scheduling",
@@ -614,13 +618,19 @@ export default function Pricing() {
                   {
                     feature: "Smart Home Integration",
                     essential: "—",
-                    pro: "✓",
+                    pro: "—",
                     ultimate: "✓"
                   },
                   {
                     feature: "Battery Health Monitoring",
                     essential: "—",
                     pro: "✓",
+                    ultimate: "✓"
+                  },
+                  {
+                    feature: "Battery Health Optimization",
+                    essential: "—",
+                    pro: "—",
                     ultimate: "✓"
                   },
                   {
@@ -673,7 +683,7 @@ export default function Pricing() {
         </div>
       </section>
 
-      {/* Installation Information */}
+      {/* Installation Information
       <section className="py-16 md:py-24 bg-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
@@ -724,7 +734,7 @@ export default function Pricing() {
               className="relative"
             >
               <div className="grid grid-cols-2 gap-4">
-                <div className="aspect-square rounded-lg overflow-hidden bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center p-8">
+                <div className="aspect-square rounded-lg overflow-hidden bg-gradient-to-br from-teal-500 to-teal-500 flex items-center justify-center p-8">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 14v6m-3-3h6M6 10h2a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2zm10 0h2a2 2 0 002-2V6a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2zM6 20h2a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2z" />
                   </svg>
@@ -734,12 +744,12 @@ export default function Pricing() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                 </div>
-                <div className="aspect-square rounded-lg overflow-hidden bg-gradient-to-br from-cyan-400 to-teal-400 flex items-center justify-center p-8">
+                <div className="aspect-square rounded-lg overflow-hidden bg-gradient-to-br from-cyan-400 to-teal-500 flex items-center justify-center p-8">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                   </svg>
                 </div>
-                <div className="aspect-square rounded-lg overflow-hidden bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center p-8">
+                <div className="aspect-square rounded-lg overflow-hidden bg-gradient-to-br from-teal-500 to-cyan-500 flex items-center justify-center p-8">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
                   </svg>
@@ -748,7 +758,7 @@ export default function Pricing() {
             </motion.div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* FAQ Section */}
       <section className="py-16 md:py-24">
@@ -831,49 +841,32 @@ export default function Pricing() {
             transition={{ duration: 0.6 }}
             className="bg-white rounded-2xl shadow-xl overflow-hidden"
           >
-            <div className="grid grid-cols-1 md:grid-cols-2">
-              <div className="p-8 md:p-12 flex items-center">
-                <div>
-                  <div className="inline-block p-3 rounded-full bg-teal-100 text-teal-500 mb-6">
-                    <svg
-                      className="h-6 w-6"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                      />
-                    </svg>
-                  </div>
-                  <h3 className="text-2xl font-bold mb-4 text-gray-900">100% Satisfaction Guarantee</h3>
-                  <p className="text-gray-700 mb-6">
-                    Try EVolve Charge risk-free for 30 days. If you're not completely satisfied with your charging experience, we'll remove the system and refund your hardware purchase — no questions asked.
-                  </p>
+            <div className="p-8 md:p-12 flex items-center text-center">
+              <div>
+                <div className="inline-block p-3 rounded-full bg-teal-100 text-teal-500 mb-6">
+                  <svg
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                    />
+                  </svg>
+                </div>
+                <h3 className="text-2xl font-bold mb-4 text-gray-900">100% Satisfaction Guarantee</h3>
+                <p className="text-gray-700 mb-6">
+                  Try EVolve Charge risk-free for 30 days. If you're not completely satisfied with your charging experience, we'll remove the system, refund your hardware purchase, and ask for nothing from you other than a short survey to know how we can improve the future of charging.
+                </p>
+                <a href="/order">
                   <button className="px-6 py-3 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium shadow-md hover:shadow-lg transition-all transform hover:scale-105">
                     Get Started Today
                   </button>
-                </div>
-              </div>
-              <div className="bg-gradient-to-br from-teal-500 to-cyan-600 p-8 md:p-12 flex items-center text-white">
-                <div>
-                  <h4 className="text-xl font-bold mb-6">What our customers say:</h4>
-                  <blockquote className="text-lg italic mb-6">
-                    "The smart charging features have saved me significantly on my energy bills. The premium I pay per kWh is more than offset by the savings from charging during off-peak hours. Plus, the automatic connection is just magical."
-                  </blockquote>
-                  <div className="flex items-center">
-                    <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white mr-3">
-                      MB
-                    </div>
-                    <div>
-                      <p className="font-medium">Michael B.</p>
-                      <p className="text-sm opacity-80">Pro Plan Member</p>
-                    </div>
-                  </div>
-                </div>
+                </a>
               </div>
             </div>
           </motion.div>
@@ -894,13 +887,15 @@ export default function Pricing() {
             <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto opacity-90">
               Join thousands of satisfied EV owners who have made the switch to smarter, automated charging.
             </p>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-8 py-3 rounded-full bg-white text-teal-600 font-medium shadow-md hover:shadow-lg transition-all"
-            >
-              Choose Your Plan
-            </motion.button>
+            <a href="/order">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-8 py-3 rounded-full bg-white text-teal-500 font-medium shadow-md hover:shadow-lg transition-all"
+              >
+                Choose Your Plan
+              </motion.button>
+              </a>
             <p className="mt-4 text-sm opacity-80">Professional installation throughout the US and Canada.</p>
           </motion.div>
         </div>
