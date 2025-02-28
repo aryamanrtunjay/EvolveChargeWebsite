@@ -4,6 +4,9 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import pricingData from '../data/pricingData.json'; // Import the JSON file
+import { db } from "../firebaseConfig.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 // Animation variants
 const fadeIn = {
@@ -47,7 +50,6 @@ export default function OrderPage() {
   });
   const [orderSummary, setOrderSummary] = useState({
     subtotal: 0,
-    installation: 0,
     tax: 0,
     total: 0,
     monthlyFee: 0
@@ -62,75 +64,11 @@ export default function OrderPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderNumber, setOrderNumber] = useState('');
 
-  // Plans data
-  const plans = {
-    essential: {
-      name: "Essential",
-      description: "Perfect for single-vehicle households",
-      oneTimePrice: 1499,
-      monthlyPrice: 9.99,
-      yearlyPrice: 99.99,
-      kwhRate: "Standard + $0.03/kWh",
-      installationFee: 299,
-      features: [
-        "Automatic charging connection",
-        "Basic scheduling",
-        "Mobile app access",
-        "Energy cost tracking",
-        "3-year hardware warranty",
-        "24/7 customer support"
-      ],
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-        </svg>
-      )
-    },
-    pro: {
-      name: "Pro",
-      description: "Ideal for tech-savvy EV enthusiasts",
-      oneTimePrice: 1899,
-      monthlyPrice: 14.99,
-      yearlyPrice: 149.99,
-      kwhRate: "Standard + $0.02/kWh",
-      installationFee: 249,
-      features: [
-        "All Essential features, plus:",
-        "Advanced energy optimization",
-        "Battery health monitoring",
-        "Smart home integration",
-        "Energy usage analytics",
-        "5-year hardware warranty"
-      ],
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-        </svg>
-      )
-    },
-    ultimate: {
-      name: "Ultimate",
-      description: "For multi-vehicle households",
-      oneTimePrice: 2499,
-      monthlyPrice: 19.99,
-      yearlyPrice: 199.99,
-      kwhRate: "Standard + $0.01/kWh",
-      installationFee: 199,
-      features: [
-        "All Pro features, plus:",
-        "Support for up to 3 vehicles",
-        "Vehicle-specific charging profiles",
-        "Power outage protection",
-        "Solar charging integration",
-        "Lifetime hardware warranty"
-      ],
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-        </svg>
-      )
-    }
-  };
+  // Transform JSON plans array into an object with lowercase keys
+  const plans = pricingData.plans.reduce((acc, plan) => {
+    acc[plan.name.toLowerCase()] = plan;
+    return acc;
+  }, {});
 
   // Vehicle makes for dropdown
   const vehicleMakes = [
@@ -142,15 +80,13 @@ export default function OrderPage() {
   // Update order summary whenever plan or billing cycle changes
   useEffect(() => {
     const plan = plans[selectedPlan];
-    const subtotal = plan.oneTimePrice;
-    const installation = plan.installationFee;
-    const tax = (subtotal + installation) * 0.08; // Assume 8% tax
-    const total = subtotal + installation + tax;
+    const subtotal = plan.oneTimePrice; // Changed from oneTimePrice
+    const tax = (subtotal) * 0.08; // Assume 8% tax
+    const total = subtotal + tax;
     const monthlyFee = billingCycle === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice / 12;
     
     setOrderSummary({
       subtotal,
-      installation,
       tax,
       total,
       monthlyFee
@@ -193,28 +129,63 @@ export default function OrderPage() {
   };
 
   // Submit order
-  const submitOrder = (e) => {
+  const submitOrder = async (e) => {
     e.preventDefault();
     setIsProcessing(true);
-    
-    // Simulate API call with timeout
-    setTimeout(() => {
-      // Generate random order number
-      const randomOrderId = Math.floor(100000000 + Math.random() * 900000000);
-      setOrderNumber(`EV-${randomOrderId}`);
-      
-      // In a real app, this would submit to a backend
-      console.log("Order submitted:", { 
-        selectedPlan, 
-        billingCycle, 
-        formData,
-        paymentMethod,
-        cardInfo: { ...cardInfo, cardNumber: "****" + cardInfo.cardNumber.slice(-4) }
-      });
-      
+  
+    try {
+      // 1. Transform and prepare user data for the "users" collection
+      const userData = {
+        'first-name': formData.firstName,
+        'last-name': formData.lastName,
+        'phone-number': formData.phone,
+        'email-address': formData.email,
+        'vehicle-make': formData.vehicleMake,
+        'vehicle-model': formData.vehicleModel,
+        reference: formData.referralSource,
+        address1: formData.address1,
+        address2: formData.address2 || null,
+        city: formData.city,
+        state: formData.state,
+        zip: parseInt(formData.zipCode, 10), // Convert to number to match Firestore
+      };
+  
+      // 2. Upload user data to Firestore and get the document ID
+      const userRef = await addDoc(collection(db, 'users'), userData);
+      const customerID = userRef.id; // Auto-generated user document ID
+  
+      // 3. Prepare order data for the "orders" collection
+      const orderData = {
+        address: {
+          street: `${formData.address1}${formData.address2 ? ' ' + formData.address2 : ''}`,
+          city: formData.city,
+          state: formData.state,
+          zip: parseInt(formData.zipCode, 10),
+        },
+        billing: billingCycle,
+        plan: selectedPlan,
+        subtotal: orderSummary.subtotal,
+        tax: orderSummary.tax,
+        total: orderSummary.total,
+        status: 'Pending', // Default status as seen in Firestore
+        orderData: serverTimestamp(), // Firestore server-generated timestamp
+        customerID: customerID, // Link to the user document
+      };
+  
+      // 4. Upload order data to Firestore
+      const orderRef = await addDoc(collection(db, 'orders'), orderData);
+  
+      // 5. Set order number using the order document ID
+      setOrderNumber(`EV-${orderRef.id}`);
+  
+      // Proceed to the next step
       setIsProcessing(false);
       nextStep();
-    }, 2000);
+    } catch (error) {
+      console.error('Error uploading to Firestore:', error);
+      setIsProcessing(false);
+      // Optionally, notify the user of the error (e.g., set an error state)
+    }
   };
 
   return (
@@ -269,7 +240,6 @@ export default function OrderPage() {
               <p className="text-lg text-gray-700">Select the plan that best fits your electric vehicle charging needs.</p>
             </motion.div>
 
-            {/* Billing Toggle */}
             <motion.div variants={fadeIn} className="flex justify-center mb-12">
               <div className="flex items-center bg-white p-1 rounded-full shadow-sm border border-gray-200">
                 <button
@@ -296,7 +266,6 @@ export default function OrderPage() {
               </div>
             </motion.div>
 
-            {/* Plan Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
               {Object.keys(plans).map((planKey) => {
                 const plan = plans[planKey];
@@ -316,18 +285,19 @@ export default function OrderPage() {
                         <h3 className="text-xl font-bold text-gray-900">{plan.name}</h3>
                         <p className="text-gray-500 text-sm">{plan.description}</p>
                       </div>
-                      <div className="flex-shrink-0">
-                        {plan.icon}
-                      </div>
+                      <div 
+                        className="flex-shrink-0" 
+                        dangerouslySetInnerHTML={{ __html: plan.icon }} 
+                      />
                     </div>
 
                     <div className="mb-6">
                       <div className="flex items-baseline">
                         <span className="text-3xl font-bold text-gray-900">${plan.oneTimePrice}</span>
-                        <span className="ml-1 text-gray-500">one-time</span>
+                        <span className="ml-1 text-gray-500">hardware</span>
                       </div>
                       <div className="mt-1 text-sm text-gray-700">
-                        +${billingCycle === 'monthly' ? plan.monthlyPrice : (plan.yearlyPrice / 12).toFixed(2)}/month
+                        +${billingCycle === 'monthly' ? plan.monthlyPrice : (plan.yearlyPrice / 12).toFixed(2)}/month service fee
                       </div>
                       <div className="mt-1 text-sm text-gray-700">
                         {plan.kwhRate} for energy usage
@@ -340,7 +310,7 @@ export default function OrderPage() {
                           <svg className="h-5 w-5 text-teal-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                           </svg>
-                          <span className={`${index === 0 && feature.includes("All") ? "font-medium" : ""}`}>
+                          <span className={`${index === 0 && feature.includes("All") ? "font-bold text-gray-900" : "text-gray-700"}`}>
                             {feature}
                           </span>
                         </li>
@@ -383,7 +353,7 @@ export default function OrderPage() {
           >
             <motion.div variants={fadeIn} className="text-center mb-10">
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Your Information</h1>
-              <p className="text-lg text-gray-700">Please provide your details for installation and account setup.</p>
+              <p className="text-lg text-gray-700">Please provide your details for account setup.</p>
             </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -455,7 +425,7 @@ export default function OrderPage() {
                 </div>
 
                 <div className="bg-white rounded-xl shadow-md p-6 mb-8">
-                  <h2 className="text-xl font-bold text-gray-900 mb-6">Installation Address</h2>
+                  <h2 className="text-xl font-bold text-gray-900 mb-6">Delivery Address</h2>
                   
                   <div className="mb-4">
                     <label htmlFor="address1" className="block text-sm font-medium text-gray-700 mb-1">
@@ -583,21 +553,6 @@ export default function OrderPage() {
                       />
                     </div>
                   </div>
-
-                  <div className="mb-4">
-                    <label htmlFor="installNotes" className="block text-sm font-medium text-gray-700 mb-1">
-                      Installation Notes (optional)
-                    </label>
-                    <textarea
-                      id="installNotes"
-                      name="installNotes"
-                      value={formData.installNotes}
-                      onChange={handleInputChange}
-                      rows={3}
-                      className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent resize-none"
-                      placeholder="Any special instructions or information for installation (garage location, existing electrical setup, etc.)"
-                    ></textarea>
-                  </div>
                 </div>
 
                 <div className="bg-white rounded-xl shadow-md p-6 mb-8">
@@ -653,7 +608,10 @@ export default function OrderPage() {
                   <h2 className="text-xl font-bold text-gray-900 mb-6">Order Summary</h2>
                   
                   <div className="flex items-center mb-6">
-                    <div className="mr-3">{plans[selectedPlan].icon}</div>
+                    <div 
+                      className="mr-3" 
+                      dangerouslySetInnerHTML={{ __html: plans[selectedPlan].icon }} 
+                    />
                     <div>
                       <h3 className="font-bold text-gray-900">{plans[selectedPlan].name} Plan</h3>
                       <p className="text-sm text-gray-500">{billingCycle === 'monthly' ? 'Monthly billing' : 'Annual billing'}</p>
@@ -662,8 +620,8 @@ export default function OrderPage() {
                   
                   <div className="border-t border-gray-200 pt-4 mb-4">
                     <div className="flex justify-between mb-2">
-                      <span className="text-gray-600">Installation</span>
-                      <span className="text-gray-900">${orderSummary.installation.toFixed(2)}</span>
+                      <span className="text-gray-600">Hardware</span>
+                      <span className="text-gray-900">${orderSummary.subtotal.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between mb-2">
                       <span className="text-gray-600">Tax</span>
@@ -855,9 +813,6 @@ export default function OrderPage() {
                     {paymentMethod === 'bank' && (
                       <div className="bg-gray-50 rounded-lg p-4">
                         <p className="text-gray-700 mb-4">Our team will reach out with bank transfer instructions after you place your order.</p>
-                        <div className="border-l-4 border-teal-500 pl-4 py-2 bg-teal-50">
-                          <p className="text-sm text-gray-700">Please note that your installation will be scheduled after payment confirmation.</p>
-                        </div>
                       </div>
                     )}
                   </div>
@@ -870,16 +825,16 @@ export default function OrderPage() {
                         id="sameAddress"
                         name="sameAddress"
                         type="checkbox"
-                        checked
+                        defaultChecked
                         className="h-4 w-4 text-teal-500 border-gray-300 rounded focus:ring-teal-500"
                       />
                       <label htmlFor="sameAddress" className="ml-2 block text-sm text-gray-700">
-                        Same as installation address
+                        Same as delivery address
                       </label>
                     </div>
                     
                     <div className="text-gray-500 text-sm italic">
-                      Billing address will be the same as the installation address provided.
+                      Billing address will be the same as the delivery address provided.
                     </div>
                   </div>
 
@@ -926,7 +881,10 @@ export default function OrderPage() {
                   <h2 className="text-xl font-bold text-gray-900 mb-6">Order Summary</h2>
                   
                   <div className="flex items-center mb-6">
-                    <div className="mr-3">{plans[selectedPlan].icon}</div>
+                    <div 
+                      className="mr-3" 
+                      dangerouslySetInnerHTML={{ __html: plans[selectedPlan].icon }} 
+                    />
                     <div>
                       <h3 className="font-bold text-gray-900">{plans[selectedPlan].name} Plan</h3>
                       <p className="text-sm text-gray-500">{billingCycle === 'monthly' ? 'Monthly billing' : 'Annual billing'}</p>
@@ -937,10 +895,6 @@ export default function OrderPage() {
                     <div className="flex justify-between mb-2">
                       <span className="text-gray-600">Hardware</span>
                       <span className="text-gray-900">${orderSummary.subtotal.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between mb-2">
-                      <span className="text-gray-600">Installation</span>
-                      <span className="text-gray-900">${orderSummary.installation.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between mb-2">
                       <span className="text-gray-600">Tax</span>
@@ -968,24 +922,6 @@ export default function OrderPage() {
                         </svg>
                         <span>Order confirmation email</span>
                       </li>
-                      <li className="flex items-start">
-                        <svg className="h-5 w-5 text-teal-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                        <span>Pre-installation site assessment</span>
-                      </li>
-                      <li className="flex items-start">
-                        <svg className="h-5 w-5 text-teal-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                        <span>Installation scheduling</span>
-                      </li>
-                      <li className="flex items-start">
-                        <svg className="h-5 w-5 text-teal-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                        <span>Professional installation</span>
-                      </li>
                     </ul>
                   </div>
                 </div>
@@ -996,147 +932,139 @@ export default function OrderPage() {
 
         {/* Step 4: Confirmation */}
         {step === 4 && (
-            <motion.div
-                initial="hidden"
-                animate="visible"
-                variants={staggerContainer}
-                className="max-w-3xl mx-auto"
-            >
-                <motion.div variants={fadeIn} className="text-center mb-10">
-                <div className="inline-block bg-gradient-to-r from-teal-500 to-cyan-500 p-3 rounded-full mb-6">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                </div>
-                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Thank You for Your Order!</h1>
-                <p className="text-lg text-gray-700 mb-2">Your order has been successfully placed.</p>
-                <p className="text-md text-gray-600">Order #: <span className="font-medium">{orderNumber}</span></p>
-                </motion.div>
-
-                <motion.div variants={fadeIn} className="bg-white rounded-xl shadow-md p-8 mb-8">
-                <h2 className="text-xl font-bold text-gray-900 mb-6">Order Details</h2>
-
-                <div className="flex items-center mb-6 pb-6 border-b border-gray-200">
-                    <div className="mr-4">{plans[selectedPlan].icon}</div>
-                    <div>
-                    <h3 className="font-bold text-gray-900 text-lg">{plans[selectedPlan].name} Plan</h3>
-                    <p className="text-gray-700">{plans[selectedPlan].description}</p>
-                    <p className="text-gray-500 mt-1">{billingCycle === 'monthly' ? 'Monthly billing' : 'Annual billing'}</p>
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div>
-                    <h3 className="font-medium text-gray-900 mb-2">Installation Address</h3>
-                    <div className="text-gray-700">
-                        <p>{formData.firstName} {formData.lastName}</p>
-                        <p>{formData.address1}</p>
-                        {formData.address2 && <p>{formData.address2}</p>}
-                        <p>{formData.city}, {formData.state} {formData.zipCode}</p>
-                        <p>{formData.email}</p>
-                        <p>{formData.phone}</p>
-                    </div>
-                    </div>
-
-                    <div>
-                    <h3 className="font-medium text-gray-900 mb-2">Vehicle Information</h3>
-                    <div className="text-gray-700">
-                        <p><strong>Make:</strong> {formData.vehicleMake}</p>
-                        <p><strong>Model:</strong> {formData.vehicleModel}</p>
-                        {formData.installNotes && (
-                        <>
-                            <p className="mt-2 font-medium">Installation Notes:</p>
-                            <p className="text-sm">{formData.installNotes}</p>
-                        </>
-                        )}
-                    </div>
-                    </div>
-                </div>
-
-                <div className="border-t border-gray-200 pt-6 mb-6">
-                    <h3 className="font-medium text-gray-900 mb-4">Payment Summary</h3>
-                    <div className="flex justify-between mb-2">
-                    <span className="text-gray-600">Hardware</span>
-                    <span className="text-gray-900">${orderSummary.subtotal.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between mb-2">
-                    <span className="text-gray-600">Installation</span>
-                    <span className="text-gray-900">${orderSummary.installation.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between mb-2">
-                    <span className="text-gray-600">Tax</span>
-                    <span className="text-gray-900">${orderSummary.tax.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between font-bold mt-4 pt-4 border-t border-gray-200">
-                    <span className="text-gray-900">Total Paid</span>
-                    <span className="text-gray-900">${orderSummary.total.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between mt-2 text-sm">
-                    <span className="text-gray-600">Monthly Service Fee</span>
-                    <span className="text-gray-900">${orderSummary.monthlyFee.toFixed(2)}/mo</span>
-                    </div>
-                    <div className="flex justify-between mt-2 text-sm">
-                    <span className="text-gray-600">Payment Method</span>
-                    <span className="text-gray-900">
-                        {paymentMethod === 'credit' ? 'Credit Card' : paymentMethod === 'paypal' ? 'PayPal' : 'Bank Transfer'}
-                    </span>
-                    </div>
-                </div>
-
-                <div className="bg-teal-50 p-6 rounded-lg mb-6">
-                    <h3 className="font-medium text-gray-900 flex items-center mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-teal-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    What's Next
-                    </h3>
-                    <ol className="space-y-4">
-                    <li className="flex">
-                        <span className="bg-teal-500 text-white w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">1</span>
-                        <div>
-                        <p className="font-medium text-gray-900">Order Confirmation Email</p>
-                        <p className="text-gray-700 text-sm">You'll receive a detailed confirmation email shortly.</p>
-                        </div>
-                    </li>
-                    <li className="flex">
-                        <span className="bg-teal-500 text-white w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">2</span>
-                        <div>
-                        <p className="font-medium text-gray-900">Site Assessment</p>
-                        <p className="text-gray-700 text-sm">Our team will contact you within 48 hours to schedule a site assessment.</p>
-                        </div>
-                    </li>
-                    <li className="flex">
-                        <span className="bg-teal-500 text-white w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">3</span>
-                        <div>
-                        <p className="font-medium text-gray-900">Installation</p>
-                        <p className="text-gray-700 text-sm">Professional installation will be scheduled based on the assessment findings.</p>
-                        </div>
-                    </li>
-                    <li className="flex">
-                        <span className="bg-teal-500 text-white w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">4</span>
-                        <div>
-                        <p className="font-medium text-gray-900">Setup & Activation</p>
-                        <p className="text-gray-700 text-sm">Your charging system will be configured and your account activated.</p>
-                        </div>
-                    </li>
-                    </ol>
-                </div>
-
-                <div className="flex justify-center">
-                    <Link
-                    href="/dashboard"
-                    className="px-8 py-3 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium shadow-md hover:shadow-lg transition-all flex items-center"
-                    >
-                    Go to My Dashboard
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                    </svg>
-                    </Link>
-                </div>
-                </motion.div>
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={staggerContainer}
+            className="max-w-3xl mx-auto"
+          >
+            <motion.div variants={fadeIn} className="text-center mb-10">
+              <div className="inline-block bg-gradient-to-r from-teal-500 to-cyan-500 p-3 rounded-full mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Thank You for Your Order!</h1>
+              <p className="text-lg text-gray-700 mb-2">Your order has been successfully placed.</p>
+              <p className="text-md text-gray-600">Order #: <span className="font-medium">{orderNumber}</span></p>
             </motion.div>
-            )}
-        </div>
+
+            <motion.div variants={fadeIn} className="bg-white rounded-xl shadow-md p-8 mb-8">
+              <h2 className="text-xl font-bold text-gray-900 mb-6">Order Details</h2>
+
+              <div className="flex items-center mb-6 pb-6 border-b border-gray-200">
+                <div 
+                  className="mr-4" 
+                  dangerouslySetInnerHTML={{ __html: plans[selectedPlan].icon }} 
+                />
+                <div>
+                  <h3 className="font-bold text-gray-900 text-lg">{plans[selectedPlan].name} Plan</h3>
+                  <p className="text-gray-700">{plans[selectedPlan].description}</p>
+                  <p className="text-gray-500 mt-1">{billingCycle === 'monthly' ? 'Monthly billing' : 'Annual billing'}</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                  <h3 className="font-medium text-gray-900 mb-2">Delivery Address</h3>
+                  <div className="text-gray-700">
+                    <p>{formData.firstName} {formData.lastName}</p>
+                    <p>{formData.address1}</p>
+                    {formData.address2 && <p>{formData.address2}</p>}
+                    <p>{formData.city}, {formData.state} {formData.zipCode}</p>
+                    <p>{formData.email}</p>
+                    <p>{formData.phone}</p>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="font-medium text-gray-900 mb-2">Vehicle Information</h3>
+                  <div className="text-gray-700">
+                    <p><strong>Make:</strong> {formData.vehicleMake}</p>
+                    <p><strong>Model:</strong> {formData.vehicleModel}</p>
+                    {formData.installNotes && (
+                      <>
+                        <p className="mt-2 font-medium">Delivery Notes:</p>
+                        <p className="text-sm">{formData.installNotes}</p>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t border-gray-200 pt-6 mb-6">
+                <h3 className="font-medium text-gray-900 mb-4">Payment Summary</h3>
+                <div className="flex justify-between mb-2">
+                  <span className="text-gray-600">Hardware</span>
+                  <span className="text-gray-900">${orderSummary.subtotal.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between mb-2">
+                  <span className="text-gray-600">Tax</span>
+                  <span className="text-gray-900">${orderSummary.tax.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between font-bold mt-4 pt-4 border-t border-gray-200">
+                  <span className="text-gray-900">Total Paid</span>
+                  <span className="text-gray-900">${orderSummary.total.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between mt-2 text-sm">
+                  <span className="text-gray-600">Monthly Service Fee</span>
+                  <span className="text-gray-900">${orderSummary.monthlyFee.toFixed(2)}/mo</span>
+                </div>
+                <div className="flex justify-between mt-2 text-sm">
+                  <span className="text-gray-600">Payment Method</span>
+                  <span className="text-gray-900">
+                    {paymentMethod === 'credit' ? 'Credit Card' : paymentMethod === 'paypal' ? 'PayPal' : 'Bank Transfer'}
+                  </span>
+                </div>
+              </div>
+
+              <div className="bg-teal-50 p-6 rounded-lg mb-6">
+                <h3 className="font-medium text-gray-900 flex items-center mb-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-teal-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  What's Next
+                </h3>
+                <ol className="space-y-4">
+                  <li className="flex">
+                    <span className="bg-teal-500 text-white w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">1</span>
+                    <div>
+                      <p className="font-medium text-gray-900">Order Confirmation Email</p>
+                      <p className="text-gray-700 text-sm">You'll receive a detailed confirmation email shortly.</p>
+                    </div>
+                  </li>
+                  <li className="flex">
+                    <span className="bg-teal-500 text-white w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">3</span>
+                    <div>
+                      <p className="font-medium text-gray-900">Delivery</p>
+                      <p className="text-gray-700 text-sm">Your product will be delivered with easy to follow installation instructions.</p>
+                    </div>
+                  </li>
+                  <li className="flex">
+                    <span className="bg-teal-500 text-white w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">4</span>
+                    <div>
+                      <p className="font-medium text-gray-900">Setup & Activation</p>
+                      <p className="text-gray-700 text-sm">Your charging system will be configured and your account activated.</p>
+                    </div>
+                  </li>
+                </ol>
+              </div>
+
+              <div className="flex justify-center">
+                <Link
+                  href="/dashboard"
+                  className="px-8 py-3 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium shadow-md hover:shadow-lg transition-all flex items-center"
+                >
+                  Go to My Dashboard
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </Link>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </div>
     </div>
   );
 }

@@ -1,8 +1,8 @@
-// app/pricing/page.js
 "use client";
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import pricingData from '../data/pricingData.json'; // Import the JSON file
 
 // Animation variants
 const fadeIn = {
@@ -33,79 +33,10 @@ export default function Pricing() {
     setActiveFAQ(activeFAQ === index ? null : index);
   };
 
-  // Pricing plan data
-  const pricingPlans = [
-    {
-      name: "Essential",
-      description: "Perfect for single-vehicle households",
-      oneTimePrice: 500,
-      monthlyPrice: 9.99,
-      yearlyPrice: 99.99,
-      kwhRate: "$0.01/kWh",
-      features: [
-        "Automatic charging connection",
-        "Basic scheduling",
-        "Mobile app access",
-        "Energy cost tracking",
-        "Standard installation included",
-        "3-year hardware warranty",
-        "24/7 customer support"
-      ],
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-        </svg>
-      ),
-      mostPopular: false
-    },
-    {
-      name: "Pro",
-      description: "Ideal for tech-savvy EV enthusiasts",
-      oneTimePrice: 650,
-      monthlyPrice: 14.99,
-      yearlyPrice: 149.99,
-      kwhRate: "$0.02/kWh",
-      features: [
-        "All Essential features, plus:",
-        "Advanced energy optimization",
-        "Battery health monitoring",
-        "Energy usage analytics",
-        "5-year hardware warranty",
-        "Priority customer support access "
-      ],
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-        </svg>
-      ),
-      mostPopular: true
-    },
-    {
-      name: "Ultimate",
-      description: "For multi-vehicle households",
-      oneTimePrice: 800,
-      monthlyPrice: 19.99,
-      yearlyPrice: 199.99,
-      kwhRate: "$0.03/kWh",
-      features: [
-        "All Pro features, plus:",
-        "Vehicle-specific charging profiles",
-        "Power outage protection",
-        "Battery Optimization",
-        "Smart Home Integration",
-        "Advanced energy analytics",
-        "Lifetime hardware warranty"
-      ],
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-        </svg>
-      ),
-      mostPopular: false
-    }
-  ];
+  // Use the imported pricing plans
+  const pricingPlans = pricingData.plans;
 
-  // FAQ data
+  // FAQ data (unchanged)
   const faqItems = [
     {
       question: "How does the pricing structure work?",
@@ -159,11 +90,8 @@ export default function Pricing() {
             </motion.p>
           </motion.div>
         </div>
-
-        {/* Background decoration */}
         <div className="absolute bottom-0 left-0 right-0 h-16 bg-white rounded-t-[50%] scale-x-125"></div>
       </section>
-
 
       {/* How Our Pricing Works */}
       <section className="py-12 md:py-16">
@@ -296,7 +224,7 @@ export default function Pricing() {
                 )}
                 <div className="p-8">
                   <div className="flex justify-center mb-4">
-                    {plan.icon}
+                    <div dangerouslySetInnerHTML={{ __html: plan.icon }} />
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900 mb-2 text-center">{plan.name}</h3>
                   <p className="text-gray-700 mb-6 text-center">{plan.description}</p>
@@ -309,7 +237,7 @@ export default function Pricing() {
                         </span>
                       </div>
                       <span className="text-sm text-gray-700 mt-1">
-                        One-time purchase & installation
+                        One-time purchase
                       </span>
                     </div>
                     
@@ -449,7 +377,6 @@ export default function Pricing() {
               </div>
               
               <div className="flex items-center justify-center">
-                {/* Energy Cost Comparison Chart */}
                 <div className="w-full max-w-md">
                   <h4 className="text-lg font-bold mb-4 text-gray-900 text-center">Monthly Charging Cost Comparison</h4>
                   <p className="text-sm text-gray-700 mb-6 text-center">Based on 300 kWh/month for EV charging</p>
@@ -683,83 +610,6 @@ export default function Pricing() {
         </div>
       </section>
 
-      {/* Installation Information
-      <section className="py-16 md:py-24 bg-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.6 }}
-            >
-              <h2 className="text-3xl font-bold mb-6 text-gray-900">Professional Installation Included</h2>
-              <p className="text-gray-700 mb-6">
-                The one-time purchase price includes professional installation by our certified technicians. We handle everything from mounting the unit to connecting it to your electrical system and setting up the network connection.
-              </p>
-              <ul className="space-y-4">
-                {[
-                  "Pre-installation site assessment",
-                  "Mounting the EVolve Charge unit in your garage or parking area",
-                  "Connection to your home's electrical system",
-                  "Network setup and configuration",
-                  "Full system testing and demonstration",
-                  "30-minute orientation on using the system and mobile app"
-                ].map((item, index) => (
-                  <li key={index} className="flex items-start">
-                    <svg
-                      className="h-5 w-5 text-teal-500 mr-2 mt-0.5 flex-shrink-0"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                    <span className="text-gray-700">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-            
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative"
-            >
-              <div className="grid grid-cols-2 gap-4">
-                <div className="aspect-square rounded-lg overflow-hidden bg-gradient-to-br from-teal-500 to-teal-500 flex items-center justify-center p-8">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 14v6m-3-3h6M6 10h2a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2zm10 0h2a2 2 0 002-2V6a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2zM6 20h2a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <div className="aspect-square rounded-lg overflow-hidden bg-gradient-to-br from-cyan-500 to-cyan-600 flex items-center justify-center p-8">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                </div>
-                <div className="aspect-square rounded-lg overflow-hidden bg-gradient-to-br from-cyan-400 to-teal-500 flex items-center justify-center p-8">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                  </svg>
-                </div>
-                <div className="aspect-square rounded-lg overflow-hidden bg-gradient-to-br from-teal-500 to-cyan-500 flex items-center justify-center p-8">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                  </svg>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section> */}
-
       {/* FAQ Section */}
       <section className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -895,7 +745,7 @@ export default function Pricing() {
               >
                 Choose Your Plan
               </motion.button>
-              </a>
+            </a>
             <p className="mt-4 text-sm opacity-80">Professional installation throughout the US and Canada.</p>
           </motion.div>
         </div>

@@ -302,7 +302,7 @@ export default function Home() {
                       whileTap={{ scale: 0.95 }}
                       className="px-8 py-3 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium shadow-md hover:shadow-lg transition-all"
                     >
-                      Pre-Order Yours
+                      Pre-Order Now
                     </motion.button>
                   </a>
                   
