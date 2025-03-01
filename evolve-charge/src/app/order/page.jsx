@@ -973,7 +973,7 @@ export default function OrderPage() {
                   </li>
                 </ol>
               </div>
-              <div className="flex justify-center">
+              {/* <div className="flex justify-center">
                 <Link
                   href="/dashboard"
                   className="px-8 py-3 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium shadow-md hover:shadow-lg transition-all flex items-center"
@@ -983,7 +983,7 @@ export default function OrderPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                   </svg>
                 </Link>
-              </div>
+              </div> */}
             </motion.div>
           </motion.div>
         )}
