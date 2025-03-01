@@ -3,13 +3,13 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import pricingData from '../data/pricingData.json';
-import { db } from "../firebaseConfig.js";
-import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import pricingData from '../data/pricingData.json'; // Adjust path if needed
+import { db } from '../firebaseConfig.js'; // Adjust path if needed
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 
-// Initialize Stripe
+// Initialize Stripe with your publishable key
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
 // Animation variants
@@ -32,8 +32,8 @@ const staggerContainer = {
   }
 };
 
-// Create a Checkout Form component that uses Stripe Elements
-function CheckoutForm({ onSuccess, total, clientSecret, isProcessing, setIsProcessing, orderData }) {
+// Checkout Form Component with Stripe Elements
+function CheckoutForm({ onSuccess, total, isProcessing, setIsProcessing }) {
   const stripe = useStripe();
   const elements = useElements();
   const [errorMessage, setErrorMessage] = useState(null);
@@ -44,20 +44,18 @@ function CheckoutForm({ onSuccess, total, clientSecret, isProcessing, setIsProce
 
     setIsProcessing(true);
 
-    // Confirm the payment
     const { error, paymentIntent } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: window.location.origin + '/order/success', // Redirect URL after payment
+        return_url: `${window.location.origin}/order/success`,
       },
-      redirect: 'if_required'
+      redirect: 'if_required', // Handle payment without redirect if possible
     });
 
     if (error) {
       setErrorMessage(error.message);
       setIsProcessing(false);
     } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-      // Payment successful, call the onSuccess callback
       onSuccess(paymentIntent);
     }
   };
@@ -128,15 +126,12 @@ export default function OrderPage() {
     total: 0,
     monthlyFee: 0
   });
-  const [paymentMethod, setPaymentMethod] = useState('credit');
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderNumber, setOrderNumber] = useState('');
   const [clientSecret, setClientSecret] = useState('');
-  const [paymentIntentId, setPaymentIntentId] = useState('');
   const [orderData, setOrderData] = useState(null);
-  const [customerID, setCustomerID] = useState('');
 
-  // Transform JSON plans array into an object with lowercase keys
+  // Transform pricing data into an object with lowercase keys
   const plans = pricingData.plans.reduce((acc, plan) => {
     acc[plan.name.toLowerCase()] = plan;
     return acc;
@@ -149,20 +144,15 @@ export default function OrderPage() {
     "Toyota", "Mercedes-Benz", "Polestar", "Volvo", "Other"
   ];
 
-  // Update order summary whenever plan or billing cycle changes
+  // Update order summary when plan or billing cycle changes
   useEffect(() => {
     const plan = plans[selectedPlan];
     const subtotal = plan.oneTimePrice;
-    const tax = (subtotal) * 0.08; // Assume 8% tax
+    const tax = subtotal * 0.08; // 8% tax
     const total = subtotal + tax;
     const monthlyFee = billingCycle === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice / 12;
     
-    setOrderSummary({
-      subtotal,
-      tax,
-      total,
-      monthlyFee
-    });
+    setOrderSummary({ subtotal, tax, total, monthlyFee });
   }, [selectedPlan, billingCycle]);
 
   // Handle form input changes
@@ -183,8 +173,6 @@ export default function OrderPage() {
   const nextStep = () => {
     window.scrollTo(0, 0);
     setStep(step + 1);
-
-    // If moving to payment step, create a payment intent
     if (step === 2) {
       prepareOrder();
     }
@@ -196,12 +184,11 @@ export default function OrderPage() {
     setStep(step - 1);
   };
 
-  // Prepare order data and create a payment intent
+  // Prepare order data and create payment intent
   const prepareOrder = async () => {
     setIsProcessing(true);
-  
     try {
-      // 1. Transform and prepare user data for the "users" collection
+      // Prepare user data
       const userData = {
         'first-name': formData.firstName,
         'last-name': formData.lastName,
@@ -209,20 +196,19 @@ export default function OrderPage() {
         'email-address': formData.email,
         'vehicle-make': formData.vehicleMake,
         'vehicle-model': formData.vehicleModel,
-        reference: formData.referralSource,
+        reference: formData.referralSource || null,
         address1: formData.address1,
         address2: formData.address2 || null,
         city: formData.city,
         state: formData.state,
         zip: parseInt(formData.zipCode, 10),
       };
-  
-      // 2. Upload user data to Firestore and get the document ID
+
+      // Save user data to Firestore
       const userRef = await addDoc(collection(db, 'users'), userData);
       const customerID = userRef.id;
-      setCustomerID(customerID);
-  
-      // 3. Prepare order data for the "orders" collection
+
+      // Prepare order data
       const orderData = {
         address: {
           street: `${formData.address1}${formData.address2 ? ' ' + formData.address2 : ''}`,
@@ -235,20 +221,19 @@ export default function OrderPage() {
         subtotal: orderSummary.subtotal,
         tax: orderSummary.tax,
         total: orderSummary.total,
-        status: 'Pending', // Will update after payment
+        status: 'Pending',
         orderDate: serverTimestamp(),
-        customerID: customerID,
-        paymentMethod: paymentMethod,
+        customerID,
+        paymentMethod: 'credit',
         paymentStatus: 'Pending',
       };
-  
       setOrderData(orderData);
 
-      // 4. Create a payment intent
+      // Create payment intent
       const response = await fetch('/api/create-payment-intent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           amount: orderSummary.total,
           metadata: {
             customerID,
@@ -258,26 +243,22 @@ export default function OrderPage() {
           }
         }),
       });
-  
+
       const { clientSecret, error } = await response.json();
-      
-      if (error) {
-        throw new Error(error);
-      }
-  
+      if (error) throw new Error(error);
+
       setClientSecret(clientSecret);
       setIsProcessing(false);
     } catch (error) {
       console.error('Error preparing order:', error);
       setIsProcessing(false);
-      // Optionally, notify the user of the error
+      // Add user-facing error notification if desired
     }
   };
 
   // Handle successful payment
   const handlePaymentSuccess = async (paymentIntent) => {
     try {
-      // Update the order data with payment information
       const updatedOrderData = {
         ...orderData,
         status: 'Paid',
@@ -285,38 +266,31 @@ export default function OrderPage() {
         paymentIntentId: paymentIntent.id,
         paymentDate: serverTimestamp(),
       };
-  
-      // Upload order data to Firestore
+
       const orderRef = await addDoc(collection(db, 'orders'), updatedOrderData);
-  
-      // Set order number using the order document ID
       setOrderNumber(`EV-${orderRef.id}`);
-  
-      // Proceed to the confirmation step
       setStep(4);
     } catch (error) {
       console.error('Error finalizing order:', error);
-      // Handle error
+      // Add user-facing error notification if desired
     }
   };
 
-  // Appearance options for Stripe Elements
-  const appearance = {
-    theme: 'stripe',
-    variables: {
-      colorPrimary: '#0d9488', // teal-600
-      colorBackground: '#ffffff',
-      colorText: '#1f2937', // gray-800
-      colorDanger: '#ef4444', // red-500
-      fontFamily: 'system-ui, -apple-system, sans-serif',
-      spacingUnit: '4px',
-      borderRadius: '8px',
-    },
-  };
-
+  // Stripe Elements appearance options
   const options = {
     clientSecret,
-    appearance,
+    appearance: {
+      theme: 'stripe',
+      variables: {
+        colorPrimary: '#0d9488', // teal-600
+        colorBackground: '#ffffff',
+        colorText: '#1f2937', // gray-800
+        colorDanger: '#ef4444', // red-500
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+        spacingUnit: '4px',
+        borderRadius: '8px',
+      },
+    },
   };
 
   return (
@@ -360,144 +334,124 @@ export default function OrderPage() {
 
         {/* Step 1: Plan Selection */}
         {step === 1 && (
-            <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={staggerContainer}
-            className="max-w-6xl mx-auto"
-            >
+          <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-6xl mx-auto">
             <motion.div variants={fadeIn} className="text-center mb-10">
-                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Choose Your EVolve Charge Plan</h1>
-                <p className="text-lg text-gray-700">Select the plan that best fits your electric vehicle charging needs.</p>
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Choose Your EVolve Charge Plan</h1>
+              <p className="text-lg text-gray-700">Select the plan that best fits your electric vehicle charging needs.</p>
             </motion.div>
 
             <motion.div variants={fadeIn} className="flex justify-center mb-12">
-                <div className="flex items-center bg-white p-1 rounded-full shadow-sm border border-gray-200">
+              <div className="flex items-center bg-white p-1 rounded-full shadow-sm border border-gray-200">
                 <button
-                    onClick={() => setBillingCycle('monthly')}
-                    className={`px-6 py-2 rounded-full text-sm font-medium transition-colors ${
+                  onClick={() => setBillingCycle('monthly')}
+                  className={`px-6 py-2 rounded-full text-sm font-medium transition-colors ${
                     billingCycle === 'monthly' 
-                        ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white' 
-                        : 'text-gray-700 hover:bg-gray-100'
-                    }`}
+                      ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white' 
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
                 >
-                    Monthly Billing
+                  Monthly Billing
                 </button>
                 <button
-                    onClick={() => setBillingCycle('yearly')}
-                    className={`px-6 py-2 rounded-full text-sm font-medium transition-colors ${
+                  onClick={() => setBillingCycle('yearly')}
+                  className={`px-6 py-2 rounded-full text-sm font-medium transition-colors ${
                     billingCycle === 'yearly' 
-                        ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white' 
-                        : 'text-gray-700 hover:bg-gray-100'
-                    }`}
+                      ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white' 
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
                 >
-                    Annual Billing
-                    <span className="ml-1 text-xs bg-yellow-500 text-white px-2 py-0.5 rounded-full">Save 20%</span>
+                  Annual Billing
+                  <span className="ml-1 text-xs bg-yellow-500 text-white px-2 py-0.5 rounded-full">Save 20%</span>
                 </button>
-                </div>
+              </div>
             </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-                {Object.keys(plans).map((planKey) => {
+              {Object.keys(plans).map((planKey) => {
                 const plan = plans[planKey];
                 return (
-                    <motion.div
+                  <motion.div
                     key={planKey}
                     variants={fadeIn}
                     onClick={() => handlePlanSelect(planKey)}
                     className={`cursor-pointer transition-all duration-300 transform hover:scale-105 bg-white rounded-xl p-6 shadow-md ${
-                        selectedPlan === planKey 
-                        ? 'ring-2 ring-teal-500' 
-                        : 'hover:shadow-lg'
+                      selectedPlan === planKey ? 'ring-2 ring-teal-500' : 'hover:shadow-lg'
                     }`}
-                    >
+                  >
                     <div className="flex justify-between items-start mb-4">
-                        <div>
+                      <div>
                         <h3 className="text-xl font-bold text-gray-900">{plan.name}</h3>
                         <p className="text-gray-500 text-sm">{plan.description}</p>
-                        </div>
-                        <div 
-                        className="flex-shrink-0" 
-                        dangerouslySetInnerHTML={{ __html: plan.icon }} 
-                        />
+                      </div>
+                      <div className="flex-shrink-0" dangerouslySetInnerHTML={{ __html: plan.icon }} />
                     </div>
 
                     <div className="mb-6">
-                        <div className="flex items-baseline">
+                      <div className="flex items-baseline">
                         <span className="text-3xl font-bold text-gray-900">${plan.oneTimePrice}</span>
                         <span className="ml-1 text-gray-500">hardware</span>
-                        </div>
-                        <div className="mt-1 text-sm text-gray-700">
+                      </div>
+                      <div className="mt-1 text-sm text-gray-700">
                         +${billingCycle === 'monthly' ? plan.monthlyPrice : (plan.yearlyPrice / 12).toFixed(2)}/month service fee
-                        </div>
-                        <div className="mt-1 text-sm text-gray-700">
-                        {plan.kwhRate} for energy usage
-                        </div>
+                      </div>
+                      <div className="mt-1 text-sm text-gray-700">{plan.kwhRate} for energy usage</div>
                     </div>
 
                     <ul className="space-y-2 mb-6">
-                        {plan.features.map((feature, index) => (
+                      {plan.features.map((feature, index) => (
                         <li key={index} className="flex items-start text-sm">
-                            <svg className="h-5 w-5 text-teal-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg className="h-5 w-5 text-teal-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span className={`${index === 0 && feature.includes("All") ? "font-bold text-gray-900" : "text-gray-700"}`}>
+                          </svg>
+                          <span className={`${index === 0 && feature.includes("All") ? "font-bold text-gray-900" : "text-gray-700"}`}>
                             {feature}
-                            </span>
+                          </span>
                         </li>
-                        ))}
+                      ))}
                     </ul>
 
                     <button
-                        onClick={() => handlePlanSelect(planKey)}
-                        className={`w-full py-2 rounded-full text-center font-medium transition-colors ${
+                      onClick={() => handlePlanSelect(planKey)}
+                      className={`w-full py-2 rounded-full text-center font-medium transition-colors ${
                         selectedPlan === planKey 
-                            ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white' 
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                        }`}
+                          ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white' 
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
                     >
-                        {selectedPlan === planKey ? 'Selected' : 'Select Plan'}
+                      {selectedPlan === planKey ? 'Selected' : 'Select Plan'}
                     </button>
-                    </motion.div>
+                  </motion.div>
                 );
-                })}
+              })}
             </div>
 
             <motion.div variants={fadeIn} className="flex justify-end">
-                <button
+              <button
                 onClick={nextStep}
                 className="px-8 py-3 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium shadow-md hover:shadow-lg transition-all"
-                >
+              >
                 Continue to Your Information
-                </button>
+              </button>
             </motion.div>
-            </motion.div>
+          </motion.div>
         )}
 
         {/* Step 2: Customer Information */}
         {step === 2 && (
-            <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={staggerContainer}
-            className="max-w-4xl mx-auto"
-            >
+          <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-4xl mx-auto">
             <motion.div variants={fadeIn} className="text-center mb-10">
-                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Your Information</h1>
-                <p className="text-lg text-gray-700">Please provide your details for account setup.</p>
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Your Information</h1>
+              <p className="text-lg text-gray-700">Please provide your details for account setup.</p>
             </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <motion.div variants={fadeIn} className="md:col-span-2">
+              <motion.div variants={fadeIn} className="md:col-span-2">
                 <div className="bg-white rounded-xl shadow-md p-6 mb-8">
-                    <h2 className="text-xl font-bold text-gray-900 mb-6">Contact Information</h2>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                  <h2 className="text-xl font-bold text-gray-900 mb-6">Contact Information</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                     <div>
-                        <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
-                        First Name*
-                        </label>
-                        <input
+                      <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">First Name*</label>
+                      <input
                         type="text"
                         id="firstName"
                         name="firstName"
@@ -505,13 +459,11 @@ export default function OrderPage() {
                         onChange={handleInputChange}
                         required
                         className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                        />
+                      />
                     </div>
                     <div>
-                        <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
-                        Last Name*
-                        </label>
-                        <input
+                      <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">Last Name*</label>
+                      <input
                         type="text"
                         id="lastName"
                         name="lastName"
@@ -519,16 +471,13 @@ export default function OrderPage() {
                         onChange={handleInputChange}
                         required
                         className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                        />
+                      />
                     </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                     <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                        Email Address*
-                        </label>
-                        <input
+                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email Address*</label>
+                      <input
                         type="email"
                         id="email"
                         name="email"
@@ -536,13 +485,11 @@ export default function OrderPage() {
                         onChange={handleInputChange}
                         required
                         className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                        />
+                      />
                     </div>
                     <div>
-                        <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                        Phone Number*
-                        </label>
-                        <input
+                      <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Phone Number*</label>
+                      <input
                         type="tel"
                         id="phone"
                         name="phone"
@@ -550,49 +497,40 @@ export default function OrderPage() {
                         onChange={handleInputChange}
                         required
                         className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                        />
+                      />
                     </div>
-                    </div>
+                  </div>
                 </div>
 
                 <div className="bg-white rounded-xl shadow-md p-6 mb-8">
-                    <h2 className="text-xl font-bold text-gray-900 mb-6">Delivery Address</h2>
-                    
-                    <div className="mb-4">
-                    <label htmlFor="address1" className="block text-sm font-medium text-gray-700 mb-1">
-                        Address Line 1*
-                    </label>
+                  <h2 className="text-xl font-bold text-gray-900 mb-6">Delivery Address</h2>
+                  <div className="mb-4">
+                    <label htmlFor="address1" className="block text-sm font-medium text-gray-700 mb-1">Address Line 1*</label>
                     <input
-                        type="text"
-                        id="address1"
-                        name="address1"
-                        value={formData.address1}
-                        onChange={handleInputChange}
-                        required
-                        className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      type="text"
+                      id="address1"
+                      name="address1"
+                      value={formData.address1}
+                      onChange={handleInputChange}
+                      required
+                      className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                     />
-                    </div>
-
-                    <div className="mb-4">
-                    <label htmlFor="address2" className="block text-sm font-medium text-gray-700 mb-1">
-                        Address Line 2
-                    </label>
+                  </div>
+                  <div className="mb-4">
+                    <label htmlFor="address2" className="block text-sm font-medium text-gray-700 mb-1">Address Line 2</label>
                     <input
-                        type="text"
-                        id="address2"
-                        name="address2"
-                        value={formData.address2}
-                        onChange={handleInputChange}
-                        className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      type="text"
+                      id="address2"
+                      name="address2"
+                      value={formData.address2}
+                      onChange={handleInputChange}
+                      className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                     />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4 mb-4">
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 mb-4">
                     <div>
-                        <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
-                        City*
-                        </label>
-                        <input
+                      <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">City*</label>
+                      <input
                         type="text"
                         id="city"
                         name="city"
@@ -600,120 +538,109 @@ export default function OrderPage() {
                         onChange={handleInputChange}
                         required
                         className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                        />
+                      />
                     </div>
                     <div>
-                        <label htmlFor="state" className="block text-sm font-medium text-gray-700 mb-1">
-                        State*
-                        </label>
-                        <select
+                      <label htmlFor="state" className="block text-sm font-medium text-gray-700 mb-1">State*</label>
+                      <select
                         id="state"
                         name="state"
                         value={formData.state}
                         onChange={handleInputChange}
                         required
                         className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                        >
+                      >
                         <option value="">Select State</option>
-                            <option value="AL">Alabama</option>
-                            <option value="AK">Alaska</option>
-                            <option value="AZ">Arizona</option>
-                            <option value="AR">Arkansas</option>
-                            <option value="CA">California</option>
-                            <option value="CO">Colorado</option>
-                            <option value="CT">Connecticut</option>
-                            <option value="DE">Delaware</option>
-                            <option value="FL">Florida</option>
-                            <option value="GA">Georgia</option>
-                            <option value="HI">Hawaii</option>
-                            <option value="ID">Idaho</option>
-                            <option value="IL">Illinois</option>
-                            <option value="IN">Indiana</option>
-                            <option value="IA">Iowa</option>
-                            <option value="KS">Kansas</option>
-                            <option value="KY">Kentucky</option>
-                            <option value="LA">Louisiana</option>
-                            <option value="ME">Maine</option>
-                            <option value="MD">Maryland</option>
-                            <option value="MA">Massachusetts</option>
-                            <option value="MI">Michigan</option>
-                            <option value="MN">Minnesota</option>
-                            <option value="MS">Mississippi</option>
-                            <option value="MO">Missouri</option>
-                            <option value="MT">Montana</option>
-                            <option value="NE">Nebraska</option>
-                            <option value="NV">Nevada</option>
-                            <option value="NH">New Hampshire</option>
-                            <option value="NJ">New Jersey</option>
-                            <option value="NM">New Mexico</option>
-                            <option value="NY">New York</option>
-                            <option value="NC">North Carolina</option>
-                            <option value="ND">North Dakota</option>
-                            <option value="OH">Ohio</option>
-                            <option value="OK">Oklahoma</option>
-                            <option value="OR">Oregon</option>
-                            <option value="PA">Pennsylvania</option>
-                            <option value="RI">Rhode Island</option>
-                            <option value="SC">South Carolina</option>
-                            <option value="SD">South Dakota</option>
-                            <option value="TN">Tennessee</option>
-                            <option value="TX">Texas</option>
-                            <option value="UT">Utah</option>
-                            <option value="VT">Vermont</option>
-                            <option value="VA">Virginia</option>
-                            <option value="WA">Washington</option>
-                            <option value="WV">West Virginia</option>
-                            <option value="WI">Wisconsin</option>
-                            <option value="WY">Wyoming</option>
-                        {/* ... */}
-                        </select>
+                        <option value="AL">Alabama</option>
+                        <option value="AK">Alaska</option>
+                        <option value="AZ">Arizona</option>
+                        <option value="AR">Arkansas</option>
+                        <option value="CA">California</option>
+                        <option value="CO">Colorado</option>
+                        <option value="CT">Connecticut</option>
+                        <option value="DE">Delaware</option>
+                        <option value="FL">Florida</option>
+                        <option value="GA">Georgia</option>
+                        <option value="HI">Hawaii</option>
+                        <option value="ID">Idaho</option>
+                        <option value="IL">Illinois</option>
+                        <option value="IN">Indiana</option>
+                        <option value="IA">Iowa</option>
+                        <option value="KS">Kansas</option>
+                        <option value="KY">Kentucky</option>
+                        <option value="LA">Louisiana</option>
+                        <option value="ME">Maine</option>
+                        <option value="MD">Maryland</option>
+                        <option value="MA">Massachusetts</option>
+                        <option value="MI">Michigan</option>
+                        <option value="MN">Minnesota</option>
+                        <option value="MS">Mississippi</option>
+                        <option value="MO">Missouri</option>
+                        <option value="MT">Montana</option>
+                        <option value="NE">Nebraska</option>
+                        <option value="NV">Nevada</option>
+                        <option value="NH">New Hampshire</option>
+                        <option value="NJ">New Jersey</option>
+                        <option value="NM">New Mexico</option>
+                        <option value="NY">New York</option>
+                        <option value="NC">North Carolina</option>
+                        <option value="ND">North Dakota</option>
+                        <option value="OH">Ohio</option>
+                        <option value="OK">Oklahoma</option>
+                        <option value="OR">Oregon</option>
+                        <option value="PA">Pennsylvania</option>
+                        <option value="RI">Rhode Island</option>
+                        <option value="SC">South Carolina</option>
+                        <option value="SD">South Dakota</option>
+                        <option value="TN">Tennessee</option>
+                        <option value="TX">Texas</option>
+                        <option value="UT">Utah</option>
+                        <option value="VT">Vermont</option>
+                        <option value="VA">Virginia</option>
+                        <option value="WA">Washington</option>
+                        <option value="WV">West Virginia</option>
+                        <option value="WI">Wisconsin</option>
+                        <option value="WY">Wyoming</option>
+                      </select>
                     </div>
-                    </div>
-
-                    <div className="mb-4">
-                    <label htmlFor="zipCode" className="block text-sm font-medium text-gray-700 mb-1">
-                        ZIP Code*
-                    </label>
+                  </div>
+                  <div className="mb-4">
+                    <label htmlFor="zipCode" className="block text-sm font-medium text-gray-700 mb-1">ZIP Code*</label>
                     <input
-                        type="text"
-                        id="zipCode"
-                        name="zipCode"
-                        value={formData.zipCode}
-                        onChange={handleInputChange}
-                        required
-                        className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                        maxLength={10}
+                      type="text"
+                      id="zipCode"
+                      name="zipCode"
+                      value={formData.zipCode}
+                      onChange={handleInputChange}
+                      required
+                      className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      maxLength={10}
                     />
-                    </div>
+                  </div>
                 </div>
 
                 <div className="bg-white rounded-xl shadow-md p-6 mb-8">
-                    <h2 className="text-xl font-bold text-gray-900 mb-6">Vehicle Information</h2>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                  <h2 className="text-xl font-bold text-gray-900 mb-6">Vehicle Information</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                     <div>
-                        <label htmlFor="vehicleMake" className="block text-sm font-medium text-gray-700 mb-1">
-                        Vehicle Make*
-                        </label>
-                        <select
+                      <label htmlFor="vehicleMake" className="block text-sm font-medium text-gray-700 mb-1">Vehicle Make*</label>
+                      <select
                         id="vehicleMake"
                         name="vehicleMake"
                         value={formData.vehicleMake}
                         onChange={handleInputChange}
                         required
                         className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                        >
+                      >
                         <option value="">Select Make</option>
                         {vehicleMakes.map((make) => (
-                            <option key={make} value={make}>{make}</option>
+                          <option key={make} value={make}>{make}</option>
                         ))}
-                        </select>
+                      </select>
                     </div>
                     <div>
-                        <label htmlFor="vehicleModel" className="block text-sm font-medium text-gray-700 mb-1">
-                        Vehicle Model*
-                        </label>
-                        <input
+                      <label htmlFor="vehicleModel" className="block text-sm font-medium text-gray-700 mb-1">Vehicle Model*</label>
+                      <input
                         type="text"
                         id="vehicleModel"
                         name="vehicleModel"
@@ -722,38 +649,36 @@ export default function OrderPage() {
                         required
                         className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                         placeholder="e.g., Model 3, Mach-E, ID.4"
-                        />
+                      />
                     </div>
-                    </div>
+                  </div>
                 </div>
 
                 <div className="bg-white rounded-xl shadow-md p-6 mb-8">
-                    <h2 className="text-xl font-bold text-gray-900 mb-6">Additional Information</h2>
-                    
-                    <div className="mb-6">
+                  <h2 className="text-xl font-bold text-gray-900 mb-6">Additional Information</h2>
+                  <div className="mb-6">
                     <label htmlFor="referralSource" className="block text-sm font-medium text-gray-700 mb-1">
-                        How did you hear about us? (optional)
+                      How did you hear about us? (optional)
                     </label>
                     <select
-                        id="referralSource"
-                        name="referralSource"
-                        value={formData.referralSource}
-                        onChange={handleInputChange}
-                        className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      id="referralSource"
+                      name="referralSource"
+                      value={formData.referralSource}
+                      onChange={handleInputChange}
+                      className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                     >
-                        <option value="">Select an option</option>
-                        <option value="Search Engine">Search Engine</option>
-                        <option value="Social Media">Social Media</option>
-                        <option value="Friend or Family">Friend or Family</option>
-                        <option value="EV Forum">EV Forum</option>
-                        <option value="News Article">News Article</option>
-                        <option value="Other">Other</option>
+                      <option value="">Select an option</option>
+                      <option value="Search Engine">Search Engine</option>
+                      <option value="Social Media">Social Media</option>
+                      <option value="Friend or Family">Friend or Family</option>
+                      <option value="EV Forum">EV Forum</option>
+                      <option value="News Article">News Article</option>
+                      <option value="Other">Other</option>
                     </select>
-                    </div>
-
-                    <div className="flex items-start mb-4">
+                  </div>
+                  <div className="flex items-start mb-4">
                     <div className="flex items-center h-5">
-                        <input
+                      <input
                         id="agreeTerms"
                         name="agreeTerms"
                         type="checkbox"
@@ -761,90 +686,80 @@ export default function OrderPage() {
                         onChange={handleInputChange}
                         required
                         className="h-4 w-4 text-teal-500 border-gray-300 rounded focus:ring-teal-500"
-                        />
+                      />
                     </div>
                     <div className="ml-3 text-sm">
-                        <label htmlFor="agreeTerms" className="font-medium text-gray-700">
+                      <label htmlFor="agreeTerms" className="font-medium text-gray-700">
                         I agree to the Terms of Service and Privacy Policy
-                        </label>
-                        <p className="text-gray-500">
-                        By checking this box, you consent to our <a href="#" className="text-teal-500 hover:underline">Terms of Service</a> and <a href="#" className="text-teal-500 hover:underline">Privacy Policy</a>.
-                        </p>
+                      </label>
+                      <p className="text-gray-500">
+                        By checking this box, you consent to our{' '}
+                        <a href="#" className="text-teal-500 hover:underline">Terms of Service</a> and{' '}
+                        <a href="#" className="text-teal-500 hover:underline">Privacy Policy</a>.
+                      </p>
                     </div>
-                    </div>
+                  </div>
                 </div>
-                </motion.div>
+              </motion.div>
 
-                <motion.div variants={fadeIn} className="md:col-span-1">
+              <motion.div variants={fadeIn} className="md:col-span-1">
                 <div className="bg-white rounded-xl shadow-md p-6 sticky top-28">
-                    <h2 className="text-xl font-bold text-gray-900 mb-6">Order Summary</h2>
-                    
-                    <div className="flex items-center mb-6">
-                    <div 
-                        className="mr-3" 
-                        dangerouslySetInnerHTML={{ __html: plans[selectedPlan].icon }} 
-                    />
+                  <h2 className="text-xl font-bold text-gray-900 mb-6">Order Summary</h2>
+                  <div className="flex items-center mb-6">
+                    <div className="mr-3" dangerouslySetInnerHTML={{ __html: plans[selectedPlan].icon }} />
                     <div>
-                        <h3 className="font-bold text-gray-900">{plans[selectedPlan].name} Plan</h3>
-                        <p className="text-sm text-gray-500">{billingCycle === 'monthly' ? 'Monthly billing' : 'Annual billing'}</p>
+                      <h3 className="font-bold text-gray-900">{plans[selectedPlan].name} Plan</h3>
+                      <p className="text-sm text-gray-500">{billingCycle === 'monthly' ? 'Monthly billing' : 'Annual billing'}</p>
                     </div>
-                    </div>
-                    
-                    <div className="border-t border-gray-200 pt-4 mb-4">
+                  </div>
+                  <div className="border-t border-gray-200 pt-4 mb-4">
                     <div className="flex justify-between mb-2">
-                        <span className="text-gray-600">Hardware</span>
-                        <span className="text-gray-900">${orderSummary.subtotal.toFixed(2)}</span>
+                      <span className="text-gray-600">Hardware</span>
+                      <span className="text-gray-900">${orderSummary.subtotal.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between mb-2">
-                        <span className="text-gray-600">Tax</span>
-                        <span className="text-gray-900">${orderSummary.tax.toFixed(2)}</span>
+                      <span className="text-gray-600">Tax</span>
+                      <span className="text-gray-900">${orderSummary.tax.toFixed(2)}</span>
                     </div>
-                    </div>
-                    
-                    <div className="border-t border-gray-200 pt-4 mb-6">
+                  </div>
+                  <div className="border-t border-gray-200 pt-4 mb-6">
                     <div className="flex justify-between font-bold">
-                        <span className="text-gray-900">Total Due Today</span>
-                        <span className="text-gray-900">${orderSummary.total.toFixed(2)}</span>
+                      <span className="text-gray-900">Total Due Today</span>
+                      <span className="text-gray-900">${orderSummary.total.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between mt-2 text-sm">
-                        <span className="text-gray-600">Monthly Service Fee</span>
-                        <span className="text-gray-900">${orderSummary.monthlyFee.toFixed(2)}/mo</span>
+                      <span className="text-gray-600">Monthly Service Fee</span>
+                      <span className="text-gray-900">${orderSummary.monthlyFee.toFixed(2)}/mo</span>
                     </div>
-                    </div>
-                    
-                    <div className="flex space-x-4 mb-4">
+                  </div>
+                  <div className="flex space-x-4 mb-4">
                     <button
-                        onClick={prevStep}
-                        className="w-1/2 py-2 rounded-full border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+                      onClick={prevStep}
+                      className="w-1/2 py-2 rounded-full border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors"
                     >
-                        Back
+                      Back
                     </button>
                     <button
-                        onClick={nextStep}
-                        disabled={!formData.agreeTerms}
-                        className={`w-1/2 py-2 rounded-full font-medium ${
+                      onClick={nextStep}
+                      disabled={!formData.agreeTerms}
+                      className={`w-1/2 py-2 rounded-full font-medium ${
                         formData.agreeTerms
-                            ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white hover:shadow-md'
-                            : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                        }`}
+                          ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white hover:shadow-md'
+                          : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                      }`}
                     >
-                        Continue
+                      Continue
                     </button>
-                    </div>
+                  </div>
                 </div>
-                </motion.div>
+              </motion.div>
             </div>
-            </motion.div>
+          </motion.div>
         )}
 
         {/* Step 3: Payment */}
         {step === 3 && (
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={staggerContainer}
-            className="max-w-4xl mx-auto"
-          >
+          <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-4xl mx-auto">
             <motion.div variants={fadeIn} className="text-center mb-10">
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Payment Information</h1>
               <p className="text-lg text-gray-700">Please provide your payment details to complete your order.</p>
@@ -854,62 +769,20 @@ export default function OrderPage() {
               <motion.div variants={fadeIn} className="md:col-span-2">
                 <div className="bg-white rounded-xl shadow-md p-6 mb-8">
                   <h2 className="text-xl font-bold text-gray-900 mb-6">Payment Method</h2>
-                  
-                  <div className="grid grid-cols-3 gap-4 mb-6">
-                    <div 
-                      onClick={() => setPaymentMethod('credit')}
-                      className={`cursor-pointer border rounded-lg p-4 flex flex-col items-center transition-colors ${
-                        paymentMethod === 'credit' 
-                          ? 'border-teal-500 bg-teal-50' 
-                          : 'border-gray-200 hover:bg-gray-50'
-                      }`}
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-gray-700 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                      </svg>
-                      <span className="text-sm font-medium text-gray-900">Credit Card</span>
-                    </div>
-                  </div>
-
-                  {clientSecret && (
+                  {clientSecret ? (
                     <Elements options={options} stripe={stripePromise}>
                       <CheckoutForm
                         onSuccess={handlePaymentSuccess}
                         total={orderSummary.total}
-                        clientSecret={clientSecret}
                         isProcessing={isProcessing}
                         setIsProcessing={setIsProcessing}
-                        orderData={orderData}
                       />
                     </Elements>
-                  )}
-
-                  {!clientSecret && (
+                  ) : (
                     <div className="flex justify-center">
                       <div className="animate-spin h-8 w-8 border-4 border-teal-500 rounded-full border-t-transparent"></div>
                     </div>
                   )}
-                </div>
-
-                <div className="bg-white rounded-xl shadow-md p-6 mb-8">
-                  <h2 className="text-xl font-bold text-gray-900 mb-6">Billing Address</h2>
-                  
-                  <div className="flex items-center mb-6">
-                    <input
-                      id="sameAddress"
-                      name="sameAddress"
-                      type="checkbox"
-                      defaultChecked
-                      className="h-4 w-4 text-teal-500 border-gray-300 rounded focus:ring-teal-500"
-                    />
-                    <label htmlFor="sameAddress" className="ml-2 block text-sm text-gray-700">
-                      Same as delivery address
-                    </label>
-                  </div>
-                  
-                  <div className="text-gray-500 text-sm italic">
-                    Billing address will be the same as the delivery address provided.
-                  </div>
                 </div>
 
                 <div className="flex items-center bg-gray-100 p-4 rounded-lg mb-8">
@@ -925,18 +798,13 @@ export default function OrderPage() {
               <motion.div variants={fadeIn} className="md:col-span-1">
                 <div className="bg-white rounded-xl shadow-md p-6 sticky top-28">
                   <h2 className="text-xl font-bold text-gray-900 mb-6">Order Summary</h2>
-                  
                   <div className="flex items-center mb-6">
-                    <div 
-                      className="mr-3" 
-                      dangerouslySetInnerHTML={{ __html: plans[selectedPlan].icon }} 
-                    />
+                    <div className="mr-3" dangerouslySetInnerHTML={{ __html: plans[selectedPlan].icon }} />
                     <div>
                       <h3 className="font-bold text-gray-900">{plans[selectedPlan].name} Plan</h3>
                       <p className="text-sm text-gray-500">{billingCycle === 'monthly' ? 'Monthly billing' : 'Annual billing'}</p>
                     </div>
                   </div>
-                  
                   <div className="border-t border-gray-200 pt-4 mb-4">
                     <div className="flex justify-between mb-2">
                       <span className="text-gray-600">Hardware</span>
@@ -947,7 +815,6 @@ export default function OrderPage() {
                       <span className="text-gray-900">${orderSummary.tax.toFixed(2)}</span>
                     </div>
                   </div>
-                  
                   <div className="border-t border-gray-200 pt-4 mb-6">
                     <div className="flex justify-between font-bold">
                       <span className="text-gray-900">Total Due Today</span>
@@ -958,7 +825,6 @@ export default function OrderPage() {
                       <span className="text-gray-900">${orderSummary.monthlyFee.toFixed(2)}/mo</span>
                     </div>
                   </div>
-                  
                   <div className="bg-gray-50 p-4 rounded-lg">
                     <h3 className="font-medium text-gray-900 mb-2">What's Next?</h3>
                     <ul className="text-sm text-gray-700 space-y-2">
@@ -978,12 +844,7 @@ export default function OrderPage() {
 
         {/* Step 4: Confirmation */}
         {step === 4 && (
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={staggerContainer}
-            className="max-w-3xl mx-auto"
-          >
+          <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-3xl mx-auto">
             <motion.div variants={fadeIn} className="text-center mb-10">
               <div className="inline-block bg-gradient-to-r from-teal-500 to-cyan-500 p-3 rounded-full mb-6">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -997,19 +858,14 @@ export default function OrderPage() {
 
             <motion.div variants={fadeIn} className="bg-white rounded-xl shadow-md p-8 mb-8">
               <h2 className="text-xl font-bold text-gray-900 mb-6">Order Details</h2>
-
               <div className="flex items-center mb-6 pb-6 border-b border-gray-200">
-                <div 
-                  className="mr-4" 
-                  dangerouslySetInnerHTML={{ __html: plans[selectedPlan].icon }} 
-                />
+                <div className="mr-4" dangerouslySetInnerHTML={{ __html: plans[selectedPlan].icon }} />
                 <div>
                   <h3 className="font-bold text-gray-900 text-lg">{plans[selectedPlan].name} Plan</h3>
                   <p className="text-gray-700">{plans[selectedPlan].description}</p>
                   <p className="text-gray-500 mt-1">{billingCycle === 'monthly' ? 'Monthly billing' : 'Annual billing'}</p>
                 </div>
               </div>
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
                   <h3 className="font-medium text-gray-900 mb-2">Delivery Address</h3>
@@ -1022,7 +878,6 @@ export default function OrderPage() {
                     <p>{formData.phone}</p>
                   </div>
                 </div>
-
                 <div>
                   <h3 className="font-medium text-gray-900 mb-2">Vehicle Information</h3>
                   <div className="text-gray-700">
@@ -1037,7 +892,6 @@ export default function OrderPage() {
                   </div>
                 </div>
               </div>
-
               <div className="border-t border-gray-200 pt-6 mb-6">
                 <h3 className="font-medium text-gray-900 mb-4">Payment Summary</h3>
                 <div className="flex justify-between mb-2">
@@ -1058,12 +912,9 @@ export default function OrderPage() {
                 </div>
                 <div className="flex justify-between mt-2 text-sm">
                   <span className="text-gray-600">Payment Method</span>
-                  <span className="text-gray-900">
-                    {paymentMethod === 'credit' ? 'Credit Card' : paymentMethod === 'paypal' ? 'PayPal' : 'Bank Transfer'}
-                  </span>
+                  <span className="text-gray-900">Credit Card</span>
                 </div>
               </div>
-
               <div className="bg-teal-50 p-6 rounded-lg mb-6">
                 <h3 className="font-medium text-gray-900 flex items-center mb-4">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-teal-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1080,14 +931,14 @@ export default function OrderPage() {
                     </div>
                   </li>
                   <li className="flex">
-                    <span className="bg-teal-500 text-white w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">3</span>
+                    <span className="bg-teal-500 text-white w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">2</span>
                     <div>
                       <p className="font-medium text-gray-900">Delivery</p>
-                      <p className="text-gray-700 text-sm">Your product will be delivered with easy to follow installation instructions.</p>
+                      <p className="text-gray-700 text-sm">Your product will be delivered with easy-to-follow installation instructions.</p>
                     </div>
                   </li>
                   <li className="flex">
-                    <span className="bg-teal-500 text-white w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">4</span>
+                    <span className="bg-teal-500 text-white w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">3</span>
                     <div>
                       <p className="font-medium text-gray-900">Setup & Activation</p>
                       <p className="text-gray-700 text-sm">Your charging system will be configured and your account activated.</p>
@@ -1095,7 +946,6 @@ export default function OrderPage() {
                   </li>
                 </ol>
               </div>
-
               <div className="flex justify-center">
                 <Link
                   href="/dashboard"
