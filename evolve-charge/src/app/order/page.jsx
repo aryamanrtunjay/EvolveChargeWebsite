@@ -120,12 +120,48 @@ export default function OrderPage() {
   const handleCheckout = async () => {
     setIsProcessing(true);
     try {
-      // Save order to Firestore (example logic)
-      const orderData = { /* your order data */ };
+      // Save order to Firestore with 'pending' status
+      const orderData = {
+        address: {
+          street: `${formData.address1}${formData.address2 ? ' ' + formData.address2 : ''}`,
+          city: formData.city,
+          state: formData.state,
+          zip: parseInt(formData.zipCode, 10),
+        },
+        billing: billingCycle,
+        plan: selectedPlan,
+        subtotal: orderSummary.subtotal,
+        tax: orderSummary.tax,
+        total: orderSummary.total,
+        status: 'pending',
+        orderDate: serverTimestamp(),
+        customerID: '',
+      };
       const orderRef = await addDoc(collection(db, 'orders'), orderData);
       const orderId = orderRef.id;
-  
-      // Make the API request
+
+      // Save user data
+      const userData = {
+        'first-name': formData.firstName,
+        'last-name': formData.lastName,
+        'phone-number': formData.phone,
+        'email-address': formData.email,
+        'vehicle-make': formData.vehicleMake,
+        'vehicle-model': formData.vehicleModel,
+        reference: formData.referralSource,
+        address1: formData.address1,
+        address2: formData.address2 || null,
+        city: formData.city,
+        state: formData.state,
+        zip: parseInt(formData.zipCode, 10),
+      };
+      const userRef = await addDoc(collection(db, 'users'), userData);
+      const customerID = userRef.id;
+
+      // Update order with customerID
+      await updateDoc(doc(db, 'orders', orderId), { customerID });
+
+      // Request checkout session from API
       const response = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -136,30 +172,19 @@ export default function OrderPage() {
           billingCycle,
         }),
       });
-  
-      // Check if the response is successful
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Checkout failed with status ${response.status}: ${errorText}`);
-      }
-  
-      // Parse JSON response
       const data = await response.json();
-  
-      if (!data.sessionId) {
-        throw new Error('No sessionId returned from /api/checkout');
-      }
-  
+
+      if (!response.ok) throw new Error(data.error || 'Failed to create checkout session');
+
       // Redirect to Stripe Checkout
       const stripe = await stripePromise;
       const { error } = await stripe.redirectToCheckout({ sessionId: data.sessionId });
-      if (error) {
-        throw new Error(error.message);
-      }
+      if (error) throw error;
+
     } catch (error) {
-      console.error('Checkout error:', error.message);
+      console.error('Checkout error:', error);
       setIsProcessing(false);
-      alert(`Checkout failed: ${error.message}`);
+      // Optionally, set an error state to display to the user
     }
   };
 
