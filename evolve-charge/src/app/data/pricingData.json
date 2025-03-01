@@ -6,6 +6,7 @@
         "oneTimePrice": 200,
         "monthlyPrice": 9.99,
         "yearlyPrice": 99.99,
+        "preOrderPrice": 24.99,
         "kwhRate": "$0.01/kWh",
         "features": [
             "Automatic charging connection",
@@ -24,6 +25,7 @@
         "oneTimePrice": 350,
         "monthlyPrice": 14.99,
         "yearlyPrice": 149.99,
+        "preOrderPrice": 49.99,
         "kwhRate": "$0.02/kWh",
         "features": [
             "All Essential features, plus:",
@@ -42,6 +44,7 @@
         "oneTimePrice": 500,
         "monthlyPrice": 19.99,
         "yearlyPrice": 199.99,
+        "preOrderPrice": 74.99,
         "kwhRate": "$0.03/kWh",
         "features": [
             "All Pro features, plus:",

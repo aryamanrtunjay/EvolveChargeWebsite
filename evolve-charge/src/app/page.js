@@ -337,7 +337,7 @@ export default function Home() {
             >
               <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Evolve Your EV Charging?</h2>
               <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto opacity-90">
-                Join our community of EV owners who are experiencing the future of charging today.
+                Pre-order an EVolve Charger and receive a discounted offer on all of our plans. Reserve your spot to experience the future of charging.
               </p>
               <motion.button
                 whileHover={{ scale: 1.05 }}
