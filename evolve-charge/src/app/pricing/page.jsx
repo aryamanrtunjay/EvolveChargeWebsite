@@ -232,17 +232,12 @@ export default function Pricing() {
                   <div className="mb-6 border-t border-b border-gray-100 py-6">
                     <div className="flex flex-col items-center">
                       <div className="flex items-end">
-                        {plan.preOrderPrice !== undefined && (
-                          <span className="text-2xl text-gray-500 line-through mr-2">
-                            ${plan.oneTimePrice}
-                          </span>
-                        )}
                         <span className="text-4xl font-extrabold text-gray-900">
-                          ${plan.preOrderPrice !== undefined ? plan.preOrderPrice : plan.oneTimePrice}
+                          ${plan.oneTimePrice}
                         </span>
                       </div>
                       <span className="text-sm text-gray-700 mt-1">
-                        One-time purchase {plan.preOrderPrice !== undefined && "(Pre-order)"}
+                        One-time purchase
                       </span>
                     </div>
                     
