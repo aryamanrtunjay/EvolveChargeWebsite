@@ -101,7 +101,7 @@ function CheckoutForm({ onSuccess, total, isProcessing, setIsProcessing }) {
 }
 
 export default function OrderPage() {
-  const [selectedPlan, setSelectedPlan] = useState('pro');
+  const [selectedPlan, setSelectedPlan] = useState('base');
   const [billingCycle, setBillingCycle] = useState('monthly');
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
@@ -150,7 +150,9 @@ export default function OrderPage() {
     const subtotal = plan.oneTimePrice;
     const tax = subtotal * 0.08; // 8% tax
     const total = subtotal + tax;
-    const monthlyFee = billingCycle === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice / 12;
+    const monthlyFee = plan.monthlyPrice 
+      ? (billingCycle === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice / 12)
+      : 0;
     
     setOrderSummary({ subtotal, tax, total, monthlyFee });
   }, [selectedPlan, billingCycle]);
@@ -266,13 +268,36 @@ export default function OrderPage() {
         paymentIntentId: paymentIntent.id,
         paymentDate: serverTimestamp(),
       };
-
+  
       const orderRef = await addDoc(collection(db, 'orders'), updatedOrderData);
-      setOrderNumber(`EV-${orderRef.id}`);
+      const orderId = orderRef.id;
+      setOrderNumber(`EV-${orderId}`);
+  
+      // Send confirmation email in the background
+      fetch('/api/send-confirmation-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: formData.email,
+          orderNumber: `EV-${orderId}`,
+          planName: plans[selectedPlan].name,
+          total: orderSummary.total,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          address: `${formData.address1}${formData.address2 ? ', ' + formData.address2 : ''}, ${formData.city}, ${formData.state} ${formData.zipCode}`,
+        }),
+      })
+        .then(() => {
+          console.log('Confirmation email sent successfully');
+        })
+        .catch((error) => {
+          console.error('Error sending confirmation email:', error);
+        });
+  
       setStep(4);
     } catch (error) {
       console.error('Error finalizing order:', error);
-      // Add user-facing error notification if desired
+      // Consider adding user-facing error notification here if desired
     }
   };
 
@@ -334,107 +359,97 @@ export default function OrderPage() {
 
         {/* Step 1: Plan Selection */}
         {step === 1 && (
-          <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-6xl mx-auto">
-            <motion.div variants={fadeIn} className="text-center mb-10">
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Choose Your EVolve Charge Plan</h1>
-              <p className="text-lg text-gray-700">Select the plan that best fits your electric vehicle charging needs.</p>
-            </motion.div>
-
-            <motion.div variants={fadeIn} className="flex justify-center mb-12">
-              <div className="flex items-center bg-white p-1 rounded-full shadow-sm border border-gray-200">
-                <button
-                  onClick={() => setBillingCycle('monthly')}
-                  className={`px-6 py-2 rounded-full text-sm font-medium transition-colors ${
-                    billingCycle === 'monthly' 
-                      ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white' 
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  Monthly Billing
-                </button>
-                <button
-                  onClick={() => setBillingCycle('yearly')}
-                  className={`px-6 py-2 rounded-full text-sm font-medium transition-colors ${
-                    billingCycle === 'yearly' 
-                      ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white' 
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  Annual Billing
-                  <span className="ml-1 text-xs bg-yellow-500 text-white px-2 py-0.5 rounded-full">Save 20%</span>
-                </button>
-              </div>
-            </motion.div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-              {Object.keys(plans).map((planKey) => {
-                const plan = plans[planKey];
-                return (
-                  <motion.div
-                    key={planKey}
-                    variants={fadeIn}
-                    onClick={() => handlePlanSelect(planKey)}
-                    className={`cursor-pointer transition-all duration-300 transform hover:scale-105 bg-white rounded-xl p-6 shadow-md ${
-                      selectedPlan === planKey ? 'ring-2 ring-teal-500' : 'hover:shadow-lg'
-                    }`}
-                  >
-                    <div className="flex justify-between items-start mb-4">
-                      <div>
-                        <h3 className="text-xl font-bold text-gray-900">{plan.name}</h3>
-                        <p className="text-gray-500 text-sm">{plan.description}</p>
-                      </div>
-                      <div className="flex-shrink-0" dangerouslySetInnerHTML={{ __html: plan.icon }} />
-                    </div>
-
-                    <div className="mb-6">
-                      <div className="flex items-baseline">
-                        <span className="text-3xl font-bold text-gray-900">${plan.oneTimePrice}</span>
-                        <span className="ml-1 text-gray-500">hardware</span>
-                      </div>
-                      <div className="mt-1 text-sm text-gray-700">
-                        +${billingCycle === 'monthly' ? plan.monthlyPrice : (plan.yearlyPrice / 12).toFixed(2)}/month service fee
-                      </div>
-                      <div className="mt-1 text-sm text-gray-700">{plan.kwhRate} for energy usage</div>
-                    </div>
-
-                    <ul className="space-y-2 mb-6">
-                      {plan.features.map((feature, index) => (
-                        <li key={index} className="flex items-start text-sm">
-                          <svg className="h-5 w-5 text-teal-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                          <span className={`${index === 0 && feature.includes("All") ? "font-bold text-gray-900" : "text-gray-700"}`}>
-                            {feature}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    <button
-                      onClick={() => handlePlanSelect(planKey)}
-                      className={`w-full py-2 rounded-full text-center font-medium transition-colors ${
-                        selectedPlan === planKey 
-                          ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white' 
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
-                    >
-                      {selectedPlan === planKey ? 'Selected' : 'Select Plan'}
-                    </button>
-                  </motion.div>
-                );
-              })}
-            </div>
-
-            <motion.div variants={fadeIn} className="flex justify-end">
-              <button
-                onClick={nextStep}
-                className="px-8 py-3 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium shadow-md hover:shadow-lg transition-all"
-              >
-                Continue to Your Information
-              </button>
-            </motion.div>
+        <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-6xl mx-auto">
+          <motion.div variants={fadeIn} className="text-center mb-10">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Choose Your EVolve Charge Plan</h1>
+            <p className="text-lg text-gray-700">Select the plan that best fits your electric vehicle charging needs.</p>
           </motion.div>
-        )}
+
+          {/* <motion.div variants={fadeIn} className="flex justify-center mb-12">
+            <div className="flex items-center bg-white p-1 rounded-full shadow-sm border border-gray-200">
+              <button
+                onClick={() => setBillingCycle('monthly')}
+                className={`px-6 py-2 rounded-full text-sm font-medium transition-colors ${
+                  billingCycle === 'monthly' 
+                    ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white' 
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                Monthly Billing
+              </button>
+              <button
+                onClick={() => setBillingCycle('yearly')}
+                className={`px-6 py-2 rounded-full text-sm font-medium transition-colors ${
+                  billingCycle === 'yearly' 
+                    ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white' 
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                Annual Billing
+                <span className="ml-1 text-xs bg-yellow-500 text-white px-2 py-0.5 rounded-full">Save 20%</span>
+              </button>
+            </div>
+          </motion.div> */}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            {pricingData.plans.map((plan) => (
+              <motion.div
+                key={plan.name}
+                variants={fadeIn}
+                onClick={() => handlePlanSelect(plan.name.toLowerCase())}
+                className={`cursor-pointer transition-all duration-300 transform hover:scale-105 bg-white rounded-xl p-6 shadow-md ${
+                  selectedPlan === plan.name.toLowerCase() ? 'ring-2 ring-teal-500' : 'hover:shadow-lg'
+                }`}
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900">{plan.name}</h3>
+                    <p className="text-gray-500 text-sm">{plan.description}</p>
+                  </div>
+                  <div className="flex-shrink-0" dangerouslySetInnerHTML={{ __html: plan.icon }} />
+                </div>
+
+                {/* <div className="mb-6">
+                  <div className="flex items-baseline">
+                    <span className="text-3xl font-bold text-gray-900">${plan.oneTimePrice}</span>
+                    <span className="ml-1 text-gray-500">deposit</span>
+                  </div>
+                  {plan.monthlyPrice && plan.yearlyPrice && (
+                    <div className="mt-1 text-sm text-gray-700">
+                      +${billingCycle === 'monthly' ? plan.monthlyPrice.toFixed(2) : (plan.yearlyPrice / 12).toFixed(2)}/month service fee (after delivery)
+                    </div>
+                  )}
+                  {plan.kwhRate && (
+                    <div className="mt-1 text-sm text-gray-700">{plan.kwhRate} energy rate (after delivery)</div>
+                  )}
+                </div> */}
+
+                <p className="text-gray-700 mb-6">{plan.details}</p>
+
+                <button
+                  onClick={() => handlePlanSelect(plan.name.toLowerCase())}
+                  className={`w-full py-2 rounded-full text-center font-medium transition-colors ${
+                    selectedPlan === plan.name.toLowerCase() 
+                      ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white' 
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {selectedPlan === plan.name.toLowerCase() ? 'Selected' : 'Select Plan'}
+                </button>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div variants={fadeIn} className="flex justify-end">
+            <button
+              onClick={nextStep}
+              className="px-8 py-3 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium shadow-md hover:shadow-lg transition-all"
+            >
+              Continue to Your Information
+            </button>
+          </motion.div>
+        </motion.div>
+      )}
 
         {/* Step 2: Customer Information */}
         {step === 2 && (
@@ -727,10 +742,10 @@ export default function OrderPage() {
                       <span className="text-gray-900">Total Due Today</span>
                       <span className="text-gray-900">${orderSummary.total.toFixed(2)}</span>
                     </div>
-                    <div className="flex justify-between mt-2 text-sm">
+                    {/* <div className="flex justify-between mt-2 text-sm">
                       <span className="text-gray-600">Monthly Service Fee</span>
                       <span className="text-gray-900">${orderSummary.monthlyFee.toFixed(2)}/mo</span>
-                    </div>
+                    </div> */}
                   </div>
                   <div className="flex space-x-4 mb-4">
                     <button
@@ -820,19 +835,31 @@ export default function OrderPage() {
                       <span className="text-gray-900">Total Due Today</span>
                       <span className="text-gray-900">${orderSummary.total.toFixed(2)}</span>
                     </div>
-                    <div className="flex justify-between mt-2 text-sm">
+                    {/* <div className="flex justify-between mt-2 text-sm">
                       <span className="text-gray-600">Monthly Service Fee</span>
                       <span className="text-gray-900">${orderSummary.monthlyFee.toFixed(2)}/mo</span>
-                    </div>
+                    </div> */}
                   </div>
                   <div className="bg-gray-50 p-4 rounded-lg">
                     <h3 className="font-medium text-gray-900 mb-2">What's Next?</h3>
                     <ul className="text-sm text-gray-700 space-y-2">
-                      <li className="flex items-start">
+                    <li className="flex items-start">
                         <svg className="h-5 w-5 text-teal-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                         <span>Order confirmation email</span>
+                      </li>
+                      <li className="flex items-start">
+                        <svg className="h-5 w-5 text-teal-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>Development News & Updates</span>
+                      </li>
+                      <li className="flex items-start">
+                        <svg className="h-5 w-5 text-teal-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>Receiving your EVolve Charger</span>
                       </li>
                     </ul>
                   </div>
@@ -906,10 +933,10 @@ export default function OrderPage() {
                   <span className="text-gray-900">Total Paid</span>
                   <span className="text-gray-900">${orderSummary.total.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between mt-2 text-sm">
+                {/* <div className="flex justify-between mt-2 text-sm">
                   <span className="text-gray-600">Monthly Service Fee</span>
                   <span className="text-gray-900">${orderSummary.monthlyFee.toFixed(2)}/mo</span>
-                </div>
+                </div> */}
                 <div className="flex justify-between mt-2 text-sm">
                   <span className="text-gray-600">Payment Method</span>
                   <span className="text-gray-900">Credit Card</span>
@@ -934,14 +961,14 @@ export default function OrderPage() {
                     <span className="bg-teal-500 text-white w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">2</span>
                     <div>
                       <p className="font-medium text-gray-900">Delivery</p>
-                      <p className="text-gray-700 text-sm">Your product will be delivered with easy-to-follow installation instructions.</p>
+                      <p className="text-gray-700 text-sm">We will keep you updated with development news.</p>
                     </div>
                   </li>
                   <li className="flex">
                     <span className="bg-teal-500 text-white w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">3</span>
                     <div>
                       <p className="font-medium text-gray-900">Setup & Activation</p>
-                      <p className="text-gray-700 text-sm">Your charging system will be configured and your account activated.</p>
+                      <p className="text-gray-700 text-sm">Your delivery will be scheduled and your product delivered.</p>
                     </div>
                   </li>
                 </ol>

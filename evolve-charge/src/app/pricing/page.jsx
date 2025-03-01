@@ -93,7 +93,7 @@ export default function Pricing() {
         <div className="absolute bottom-0 left-0 right-0 h-16 bg-white rounded-t-[50%] scale-x-125"></div>
       </section>
 
-      {/* How Our Pricing Works */}
+      {/* How Our Pricing Works
       <section className="py-12 md:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -164,9 +164,9 @@ export default function Pricing() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
-      {/* Billing Toggle */}
+      {/* Billing Toggle
       <section className="py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -201,12 +201,12 @@ export default function Pricing() {
             </div>
           </motion.div>
         </div>
-      </section>
+      </section> */}
 
       {/* Pricing Cards */}
       <section className="py-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-32">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {pricingPlans.map((plan, index) => (
               <motion.div
                 key={plan.name}
@@ -228,7 +228,7 @@ export default function Pricing() {
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900 mb-2 text-center">{plan.name}</h3>
                   <p className="text-gray-700 mb-6 text-center">{plan.description}</p>
-                  
+
                   <div className="mb-6 border-t border-b border-gray-100 py-6">
                     <div className="flex flex-col items-center">
                       <div className="flex items-end">
@@ -236,57 +236,43 @@ export default function Pricing() {
                           ${plan.oneTimePrice}
                         </span>
                       </div>
-                      <span className="text-sm text-gray-700 mt-1">
-                        One-time purchase
-                      </span>
+                      <span className="text-sm text-gray-700 mt-1">Deposit</span>
                     </div>
-                    
-                    <div className="flex justify-between items-center mt-6">
-                      <div className="flex flex-col items-start">
-                        <div className="flex items-baseline">
-                          <span className="text-xl font-bold text-gray-900">
-                            ${billingCycle === 'monthly' ? plan.monthlyPrice : (plan.yearlyPrice).toFixed(2)}
-                          </span>
-                          <span className="ml-1 text-sm text-gray-700">
-                            {billingCycle === 'monthly' ? `/mo` : `/yr`}
-                          </span>
-                        </div>
-                        <span className="text-xs text-gray-700">Service fee</span>
+
+                    {(plan.monthlyPrice || plan.yearlyPrice || plan.kwhRate) && (
+                      <div className="flex justify-between items-center mt-6">
+                        {plan.monthlyPrice && plan.yearlyPrice && (
+                          <div className="flex flex-col items-start">
+                            <div className="flex items-baseline">
+                              <span className="text-xl font-bold text-gray-900">
+                                ${billingCycle === 'monthly' ? plan.monthlyPrice.toFixed(2) : plan.yearlyPrice.toFixed(2)}
+                              </span>
+                              <span className="ml-1 text-sm text-gray-700">
+                                {billingCycle === 'monthly' ? '/mo' : '/yr'}
+                              </span>
+                            </div>
+                            <span className="text-xs text-gray-700">Service fee (after delivery)</span>
+                          </div>
+                        )}
+                        {plan.kwhRate && (
+                          <>
+                            {(plan.monthlyPrice || plan.yearlyPrice) && (
+                              <div className="w-px h-10 bg-gray-200 mx-2"></div>
+                            )}
+                            <div className="flex flex-col items-end">
+                              <div className="text-xl font-bold text-gray-900">
+                                {plan.kwhRate}
+                              </div>
+                              <span className="text-xs text-gray-700">Energy rate (after delivery)</span>
+                            </div>
+                          </>
+                        )}
                       </div>
-                      
-                      <div className="w-px h-10 bg-gray-200 mx-2"></div>
-                      
-                      <div className="flex flex-col items-end">
-                        <div className="text-xl font-bold text-gray-900">
-                          {plan.kwhRate}
-                        </div>
-                        <span className="text-xs text-gray-700">Energy rate</span>
-                      </div>
-                    </div>
+                    )}
                   </div>
-                  
-                  <ul className="space-y-3 mb-8">
-                    {plan.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-start">
-                        <svg
-                          className="h-5 w-5 text-teal-500 mr-2 mt-0.5 flex-shrink-0"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                        <span className={featureIndex === 0 && feature.includes("All") ? "font-semibold text-gray-900" : "text-gray-700"}>
-                          {feature}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
+
+                  <p className="text-gray-700 mb-8">{plan.details}</p>
+
                   <a href="/order">
                     <button
                       className={`w-full py-3 px-6 rounded-full font-medium text-center transition-all transform hover:scale-105 focus:outline-none ${
@@ -295,7 +281,7 @@ export default function Pricing() {
                           : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
                       }`}
                     >
-                      Get Started
+                      Reserve Now
                     </button>
                   </a>
                 </div>
@@ -305,7 +291,7 @@ export default function Pricing() {
         </div>
       </section>
 
-      {/* Energy Cost Visualization */}
+      {/* Energy Cost Visualization
       <section className="py-16 md:py-24 bg-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -460,9 +446,9 @@ export default function Pricing() {
             </div>
           </motion.div>
         </div>
-      </section>
+      </section> */}
 
-      {/* Compare Plans Detailed Table */}
+      {/* Compare Plans Detailed Table
       <section className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -608,9 +594,9 @@ export default function Pricing() {
             </table>
           </motion.div>
         </div>
-      </section>
+      </section> */}
 
-      {/* FAQ Section */}
+      {/* FAQ Section
       <section className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -679,7 +665,7 @@ export default function Pricing() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Money Back Guarantee */}
       <section className="py-12 md:py-16 bg-gray-100">
