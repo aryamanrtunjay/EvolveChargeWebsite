@@ -960,14 +960,14 @@ export default function OrderPage() {
                   <li className="flex">
                     <span className="bg-teal-500 text-white w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">2</span>
                     <div>
-                      <p className="font-medium text-gray-900">Delivery</p>
+                      <p className="font-medium text-gray-900">Development News & Updates</p>
                       <p className="text-gray-700 text-sm">We will keep you updated with development news.</p>
                     </div>
                   </li>
                   <li className="flex">
                     <span className="bg-teal-500 text-white w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">3</span>
                     <div>
-                      <p className="font-medium text-gray-900">Setup & Activation</p>
+                      <p className="font-medium text-gray-900">Delivery</p>
                       <p className="text-gray-700 text-sm">Your delivery will be scheduled and your product delivered.</p>
                     </div>
                   </li>
