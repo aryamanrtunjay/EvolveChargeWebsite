@@ -101,7 +101,7 @@ function CheckoutForm({ onSuccess, total, isProcessing, setIsProcessing }) {
 }
 
 export default function OrderPage() {
-  const [selectedPlan, setSelectedPlan] = useState('base');
+  const [selectedPlan, setSelectedPlan] = useState('deluxe');
   const [billingCycle, setBillingCycle] = useState('monthly');
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
@@ -409,7 +409,7 @@ export default function OrderPage() {
                   <div className="flex-shrink-0" dangerouslySetInnerHTML={{ __html: plan.icon }} />
                 </div>
 
-                {/* <div className="mb-6">
+                 <div className="mb-6">
                   <div className="flex items-baseline">
                     <span className="text-3xl font-bold text-gray-900">${plan.oneTimePrice}</span>
                     <span className="ml-1 text-gray-500">deposit</span>
@@ -422,7 +422,7 @@ export default function OrderPage() {
                   {plan.kwhRate && (
                     <div className="mt-1 text-sm text-gray-700">{plan.kwhRate} energy rate (after delivery)</div>
                   )}
-                </div> */}
+                </div> 
 
                 <p className="text-gray-700 mb-6">{plan.details}</p>
 
@@ -683,7 +683,7 @@ export default function OrderPage() {
                       className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                     >
                       <option value="">Select an option</option>
-                      <option value="Search Engine">Search Engine</option>
+                      <option value="Google">Google</option>
                       <option value="Social Media">Social Media</option>
                       <option value="Friend or Family">Friend or Family</option>
                       <option value="EV Forum">EV Forum</option>

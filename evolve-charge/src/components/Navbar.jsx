@@ -7,11 +7,23 @@ import { usePathname } from 'next/navigation';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAtTop, setIsAtTop] = useState(true);
   const pathname = usePathname();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsAtTop(window.scrollY === 0);
+    };
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   const navItems = [
     { name: 'Features', href: '/features' },
-    // { name: 'Technology', href: '/technology' },
     { name: 'Pricing', href: '/pricing' },
     { name: 'Support', href: '/support' }
   ];
@@ -23,7 +35,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="fixed w-full z-50 bg-white/90 backdrop-blur-sm shadow-md">
+    <nav className={`fixed w-full z-50 bg-white/90 backdrop-blur-sm transition-shadow ${isAtTop ? '' : 'shadow-md'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20">
           <div className="flex items-center">

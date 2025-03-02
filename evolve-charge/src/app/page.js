@@ -339,15 +339,17 @@ export default function Home() {
               <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto opacity-90">
                 Join our community of EV owners who are experiencing the future of charging today.
               </p>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-8 py-3 rounded-full bg-white text-teal-500 font-medium shadow-md hover:shadow-lg transition-all"
-              >
-                Pre-Order Now
-              </motion.button>
-              <p className="mt-4 text-sm opacity-80">Limited early-bird pricing available.</p>
-            </motion.div>
+              <a href="/order">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-8 py-3 rounded-full bg-white text-teal-500 font-medium shadow-md hover:shadow-lg transition-all"
+                >
+                  Pre-Order Now
+                </motion.button>
+              </a>
+                <p className="mt-4 text-sm opacity-80">Limited early-bird pricing available.</p>
+              </motion.div>
           </div>
         </section>
 
