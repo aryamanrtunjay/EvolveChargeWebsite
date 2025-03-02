@@ -274,7 +274,7 @@ export default function OrderPage() {
       setOrderNumber(`EV-${orderId}`);
   
       // Send confirmation email in the background
-      fetch('/api/send-confirmation-email', {
+      fetch('/api/send-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
