@@ -48,7 +48,7 @@ export default function Navbar() {
               className="flex-shrink-0 flex items-center"
             >
               <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-teal-500 to-cyan-500 bg-clip-text text-transparent">
-              <Image src={Logo} alt="logo" height={35}/>
+              <Image src={Logo} alt="logo" height={35} className="hover:scale-110 ease-in duration-100"/>
               </Link>
             </motion.div>
           </div>
