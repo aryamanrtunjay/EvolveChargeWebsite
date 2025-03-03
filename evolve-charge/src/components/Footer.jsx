@@ -2,6 +2,8 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
+import Image from 'next/image'
+import Logo from "@/images/Logo.svg"
 
 // Modal animation variants
 const modalVariants = {
@@ -213,9 +215,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
           <div>
-            <h3 className="text-xl font-bold mb-4 bg-gradient-to-r from-teal-500 to-cyan-400 bg-clip-text text-transparent">
-              EVolve Charge
-            </h3>
+            <Image src={Logo} alt="logo" height={25} className="mb-4"/>
             <p className="text-gray-300 mb-4">Revolutionizing EV charging with smart, automated technology that makes charging easier and more efficient.</p>
             <div className="flex space-x-4">
               {['facebook', 'twitter', 'instagram', 'linkedin'].map((social) => (

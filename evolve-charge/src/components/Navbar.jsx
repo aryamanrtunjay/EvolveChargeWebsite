@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { usePathname } from 'next/navigation';
+import Image from 'next/image'
+import Logo from "@/images/Logo.svg"
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -46,7 +48,7 @@ export default function Navbar() {
               className="flex-shrink-0 flex items-center"
             >
               <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-teal-500 to-cyan-500 bg-clip-text text-transparent">
-                EVolve Charge
+              <Image src={Logo} alt="logo" height={35}/>
               </Link>
             </motion.div>
           </div>

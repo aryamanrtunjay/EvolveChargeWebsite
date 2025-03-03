@@ -23,7 +23,7 @@ const chakraPetch = Chakra_Petch({
 })
 
 export const metadata = {
-  title: "EVolve Charge",
+  title: "The Future of EV Charging",
   description: "Revolutionizing EV Charging",
 };
 
