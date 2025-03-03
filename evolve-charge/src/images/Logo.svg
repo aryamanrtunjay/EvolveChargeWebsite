@@ -35,6 +35,6 @@
     <polygon class="cls-2" points="275.21 224.66 405.73 0 349.14 224.66 275.21 224.66"/>
     <polygon class="cls-2" points="423.15 224.66 292.62 449.32 349.22 224.66 423.15 224.66"/>
   </g>
-  <polyline class="cls-2" points="291.48 375.64 303.64 375.64 320.15 313.41"/>
   <text class="cls-1" transform="translate(405.24 376.07)"><tspan x="0" y="0">ol</tspan><tspan class="cls-5" x="259.61" y="0">v</tspan><tspan class="cls-4" x="411.61" y="0">e Cha</tspan><tspan class="cls-3" x="1226.02" y="0">r</tspan><tspan class="cls-6" x="1342.76" y="0">ge</tspan></text>
+  <polygon class="cls-2" points="328.4 313.41 320.15 313.41 291.48 375.64 311.9 375.64 328.4 313.41"/>
 </svg>
