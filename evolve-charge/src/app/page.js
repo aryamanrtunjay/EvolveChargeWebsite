@@ -4,6 +4,8 @@
 import Head from 'next/head';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
+import Render from '@/images/Render.png'
 
 // Animation variants
 const fadeIn = {
@@ -125,10 +127,13 @@ export default function Home() {
                 className="relative"
               >
                 <div className="relative w-full h-80 md:h-96 lg:h-[500px] rounded-2xl overflow-hidden bg-gradient-to-br from-teal-100 to-cyan-100 shadow-xl">
-                  {/* This would be an image in a real implementation */}
-                  <div className="absolute inset-0 flex items-center justify-center text-teal-500 opacity-20">
-                    <span className="text-2xl">EV Charger Image</span>
-                  </div>
+                  <Image
+                    src={Render}
+                    alt="Smart EV Charger"
+                    layout="fill"
+                    objectFit="cover"
+                    priority
+                  />
                 </div>
                 
                 {/* Decorative elements */}
@@ -261,12 +266,16 @@ export default function Home() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true, amount: 0.3 }}
                 transition={{ duration: 0.8 }}
-                className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-teal-100 to-cyan-100 shadow-xl aspect-video"
+                className="relative rounded-2xl overflow-hidden shadow-xl aspect-video"
               >
-                {/* This would be an image or video in a real implementation */}
-                <div className="absolute inset-0 flex items-center justify-center text-teal-500 opacity-20">
-                  <span className="text-2xl">How It Works Video</span>
-                </div>
+                <iframe
+                  className="w-full h-full"
+                  src="https://www.youtube.com/embed/dQw4w9WgXcQ" // Replace with actual video ID
+                  title="How EVolve Charge Works"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
               </motion.div>
 
               <motion.div
