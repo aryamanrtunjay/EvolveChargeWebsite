@@ -270,7 +270,7 @@ export default function Home() {
               >
                 <iframe
                   className="w-full h-full"
-                  src="https://youtu.be/tZw8rgNUAWQ"
+                  src="https://www.youtube.com/embed/tZw8rgNUAWQ"
                   title="How EVolve Charge Works"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
