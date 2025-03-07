@@ -250,7 +250,7 @@ export default function Home() {
                 variants={fadeIn}
                 className="text-3xl text-gray-700 md:text-4xl font-bold mb-4"
               >
-                How EVolve Charge Works
+                Meet the EVolve Charger
               </motion.h2>
               <motion.p 
                 variants={fadeIn}
