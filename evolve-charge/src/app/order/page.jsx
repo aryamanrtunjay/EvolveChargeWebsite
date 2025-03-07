@@ -665,6 +665,14 @@ export default function OrderPage() {
             </motion.div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <motion.div variants={fadeIn} className="md:col-span-2">
+              <div className="flex items-center bg-gray-100 p-4 rounded-lg mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-teal-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p className="text-sm text-gray-700">
+                  EVolve Charge contributes 1% of your payment to removing carbon from the atmosphere to fight climate change.
+                </p>
+              </div>
                 <div className="bg-white rounded-xl shadow-md p-6 mb-8">
                   <h2 className="text-xl font-bold text-gray-900 mb-6">Payment Method</h2>
                   {clientSecret ? (
@@ -682,7 +690,7 @@ export default function OrderPage() {
                     </div>
                   )}
                 </div>
-                <div className="flex items-center bg-gray-100 p-4 rounded-lg mb-8">
+                <div className="flex items-center bg-gray-100 p-4 rounded-lg mb-2">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-teal-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
