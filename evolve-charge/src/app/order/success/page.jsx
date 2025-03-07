@@ -42,7 +42,7 @@ const plans = {
 };
 
 export default function OrderSuccessPage() {
-  const searchParams = useSearchParams();
+  <Suspense>const searchParams = useSearchParams();</Suspense>
   const [loading, setLoading] = useState(true);
   const [order, setOrder] = useState(null);
   const [customerData, setCustomerData] = useState(null);
