@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -41,8 +41,9 @@ const plans = {
   }
 };
 
-export default function OrderSuccessPage() {
-  <Suspense>const searchParams = useSearchParams();</Suspense>
+// Child component that uses useSearchParams
+function OrderSuccessContent() {
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [order, setOrder] = useState(null);
   const [customerData, setCustomerData] = useState(null);
@@ -227,15 +228,6 @@ export default function OrderSuccessPage() {
             </div>
 
             <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-              {/* <Link
-                href="/dashboard"
-                className="px-8 py-3 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium shadow-md hover:shadow-lg transition-all flex items-center justify-center"
-              >
-                Go to My Dashboard
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-              </Link> */}
               <Link
                 href="/"
                 className="px-8 py-3 rounded-full border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors flex items-center justify-center"
@@ -272,5 +264,20 @@ export default function OrderSuccessPage() {
         </motion.div>
       </div>
     </div>
+  );
+}
+
+// Main page component with Suspense boundary
+export default function OrderSuccessPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gray-50 pt-32 pb-20 flex justify-center items-center">
+          <div className="animate-spin h-12 w-12 border-4 border-teal-500 rounded-full border-t-transparent"></div>
+        </div>
+      }
+    >
+      <OrderSuccessContent />
+    </Suspense>
   );
 }
