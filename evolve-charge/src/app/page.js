@@ -43,8 +43,12 @@ export default function Home() {
       answer: "Yes, our charger is designed to work with all major EV models using standard charging ports including Tesla, Ford, Hyundai, Kia, Chevrolet, Nissan, BMW, and more."
     },
     {
+      question: "How does it plug into my car?",
+      answer: "Our charger navigates above your vehicle where it is securely attached to high-strength steel wire, ensuring absolutely no risk to your vehicles while being out of the way of items stored in your garage. A charge plug is lowered and magnetically snaps to your EV's charge port, beginning the charging process."
+    },
+    {
       question: "How long does installation take?",
-      answer: "Typical installation takes 2-3 hours depending on your electrical setup. Our certified technicians handle everything from mounting the unit to connecting it to your home's electrical system."
+      answer: "Typical installation takes 25 to 30 minutes by following our simple instructions, or you may choose to have professional installation requested at an additional cost. Installation time may be longer if a wall outlet needs to be installed."
     },
     {
       question: "Can I control when my vehicle charges?",
@@ -52,7 +56,7 @@ export default function Home() {
     },
     {
       question: "What happens if there's a power outage?",
-      answer: "The EVolve Charge system will automatically resume its optimized charging schedule once power is restored. All your settings are   ely stored in the cloud."
+      answer: "The EVolve Charge system will automatically resume its optimized charging schedule once power is restored. All your settings are securely stored in the cloud."
     },
     {
       question: "Is there a warranty?",

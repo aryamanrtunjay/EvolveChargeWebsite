@@ -336,6 +336,7 @@ export default function OrderPage() {
             <motion.div variants={fadeIn} className="text-center mb-10">
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Choose Your EVolve Charge Plan</h1>
               <p className="text-lg text-gray-700">Select the plan that best fits your electric vehicle charging needs.</p>
+              <p className="text-lg text-gray-700">We offer a full refund on your deposit should you choose to remove your reservation.</p>
             </motion.div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
               {pricingData.plans.map((plan) => (

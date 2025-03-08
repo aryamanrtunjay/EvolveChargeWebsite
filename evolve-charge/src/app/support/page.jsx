@@ -28,6 +28,9 @@ export default function Support() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('getting-started');
   const [activeAccordion, setActiveAccordion] = useState(null);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState('');
   
   // Search handler
   const handleSearch = (e) => {
@@ -151,6 +154,43 @@ export default function Support() {
           content: 'Learn how to add additional EVolve Charge stations to your account, manage billing for multiple units, and set up different configurations for each location.'
         }
       ]
+    }
+  };
+
+  // Form submission handler
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitMessage('');
+
+    const formData = new FormData(e.target);
+    const data = {
+      name: formData.get('name'),
+      email: formData.get('email'),
+      subject: formData.get('subject'),
+      message: formData.get('message'),
+    };
+
+    try {
+      const response = await fetch('/api/sendEmail', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        setSubmitMessage('Message sent successfully!');
+        e.target.reset(); // Clear the form
+      } else {
+        setSubmitMessage('Failed to send message. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      setSubmitMessage('An error occurred. Please try again later.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -302,7 +342,7 @@ export default function Support() {
       </section>
 
       {/* Support Categories */}
-      <section className="py-12 md:py-16 bg-gray-50">
+      {/* <section className="py-12 md:py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="hidden"
@@ -411,7 +451,7 @@ export default function Support() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Video Tutorials
       <section className="py-16 md:py-24">
@@ -604,11 +644,11 @@ export default function Support() {
         </div>
       </section> */}
 
-      {/* Contact Form */}
+      {/* Contact Form
       <section className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <motion.div
+          <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
@@ -622,10 +662,10 @@ export default function Support() {
               <div className="bg-gray-50 p-6 rounded-xl mb-8">
                 <h3 className="text-lg font-bold text-gray-900 mb-4">Support Hours</h3>
                 <div className="space-y-2">
-                  {/* <div className="flex justify-between">
+                   <div className="flex justify-between">
                     <span className="text-gray-700">Chat Support:</span>
                     <span className="font-medium text-gray-900">24/7</span>
-                  </div> */}
+                  </div> 
                   <div className="flex justify-between">
                     <span className="text-gray-700">Phone Support:</span>
                     <span className="font-medium text-gray-900">Call back in 24 hours</span>
@@ -683,7 +723,7 @@ export default function Support() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <form className="bg-white rounded-xl p-8 shadow-lg border border-gray-100">
+              <form onSubmit={handleSubmit} className="bg-white rounded-xl p-8 shadow-lg border border-gray-100">
                 <div className="mb-6">
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
                     Your Name
@@ -691,8 +731,10 @@ export default function Support() {
                   <input
                     type="text"
                     id="name"
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-colors"
+                    name="name"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-colors text-gray-700"
                     placeholder="John Doe"
+                    required
                   />
                 </div>
                 
@@ -703,8 +745,10 @@ export default function Support() {
                   <input
                     type="email"
                     id="email"
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-colors"
+                    name="email"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-colors text-gray-700"
                     placeholder="john@example.com"
+                    required
                   />
                 </div>
                 
@@ -714,9 +758,11 @@ export default function Support() {
                   </label>
                   <select
                     id="subject"
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-colors"
+                    name="subject"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-colors text-gray-700"
+                    required
                   >
-                    <option>Select a topic</option>
+                    <option value="">Select a topic</option>
                     <option>Technical Support</option>
                     <option>Billing Question</option>
                     <option>Product Information</option>
@@ -731,9 +777,11 @@ export default function Support() {
                   </label>
                   <textarea
                     id="message"
+                    name="message"
                     rows={5}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-colors resize-none"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-colors resize-none text-gray-700"
                     placeholder="Describe your issue or question in detail..."
+                    required
                   ></textarea>
                 </div>
                 
@@ -742,6 +790,7 @@ export default function Support() {
                     <input
                       type="checkbox"
                       className="h-4 w-4 text-teal-500 focus:ring-teal-500 border-gray-300 rounded"
+                      required
                     />
                     <span className="ml-2 text-sm text-gray-700">
                       I agree to the <a href="#" className="text-teal-500 hover:underline">Privacy Policy</a>
@@ -751,15 +800,24 @@ export default function Support() {
                 
                 <button
                   type="submit"
-                  className="w-full px-6 py-3 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium shadow-md hover:shadow-lg transition-all transform hover:scale-105"
+                  disabled={isSubmitting}
+                  className={`w-full px-6 py-3 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium shadow-md hover:shadow-lg transition-all transform hover:scale-105 ${
+                    isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
                 >
-                  Send Message
+                  {isSubmitting ? 'Sending...' : 'Send Message'}
                 </button>
+                
+                {submitMessage && (
+                  <p className={`mt-4 text-center ${submitMessage.includes('successfully') ? 'text-green-600' : 'text-red-600'}`}>
+                    {submitMessage}
+                  </p>
+                )}
               </form>
             </motion.div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Self-Service Tools
       <section className="py-16 md:py-24 bg-gray-50">

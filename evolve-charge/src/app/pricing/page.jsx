@@ -696,7 +696,7 @@ export default function Pricing() {
                 </div>
                 <h3 className="text-2xl font-bold mb-4 text-gray-900">100% Satisfaction Guarantee</h3>
                 <p className="text-gray-700 mb-6">
-                  Try EVolve Charge risk-free for 30 days. If you're not completely satisfied with your charging experience, we'll remove the system, refund your hardware purchase, and ask for nothing from you other than a short survey to know how we can improve the future of charging.
+                  Your deposit is 100% refundable, no questions asked. Upon receiving, try the EVolve Charger risk-free for 30 days. If you're not completely satisfied with your charging experience, we'll remove the system, refund your hardware purchase, and ask for nothing from you other than a short survey to know how we can improve the future of charging.
                 </p>
                 <a href="/order">
                   <button className="px-6 py-3 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium shadow-md hover:shadow-lg transition-all transform hover:scale-105">
