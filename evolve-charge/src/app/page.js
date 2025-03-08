@@ -158,88 +158,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Features Section */}
-        <section id="features" className="py-16 md:py-24 bg-gray-100">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.3 }}
-              variants={staggerContainer}
-              className="text-center mb-16"
-            >
-              <motion.h2 
-                variants={fadeIn}
-                className="text-3xl text-gray-700 md:text-4xl font-bold mb-4"
-              >
-                Intelligent Charging Features
-              </motion.h2>
-              <motion.p 
-                variants={fadeIn}
-                className="text-lg text-gray-700 max-w-2xl mx-auto"
-              >
-                Our smart charging technology adapts to your vehicle needs and energy patterns to provide the best charging experience possible.
-              </motion.p>
-            </motion.div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {[
-                {
-                  title: "Automatic Connection",
-                  description: "Charging arm automatically connects and disconnects from your vehicle, no manual plugging required.",
-                  icon: (
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                  )
-                },
-                {
-                  title: "Off-Peak Charging",
-                  description: "Intelligently charges your vehicle during non-peak hours to save energy costs and reduce grid load.",
-                  icon: (
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  )
-                },
-                {
-                  title: "Battery Health Monitoring",
-                  description: "Tracks and reports your EV's battery health, providing insights to maximize battery lifespan.",
-                  icon: (
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                  )
-                }
-              ].map((feature, index) => (
-                <motion.div
-                  key={feature.title}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, amount: 0.3 }}
-                  variants={{
-                    hidden: { opacity: 0, y: 20 },
-                    visible: { 
-                      opacity: 1, 
-                      y: 0,
-                      transition: { delay: index * 0.2, duration: 0.6 }
-                    }
-                  }}
-                  className="bg-white rounded-xl p-8 shadow-md hover:shadow-lg transition-shadow"
-                >
-                  <div className="flex flex-col items-center text-center">
-                    <div className="mb-4">
-                      {feature.icon}
-                    </div>
-                    <h3 className="text-xl text-gray-900 font-bold mb-3">{feature.title}</h3>
-                    <p className="text-gray-700">{feature.description}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* How It Works */}
         <section id="how-it-works" className="py-16 md:py-24">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -334,6 +252,88 @@ export default function Home() {
                   </motion.div>
                 ))}
               </motion.div>
+            </div>
+          </div>
+        </section>
+
+        {/* Features Section */}
+        <section id="features" className="py-16 md:py-24 bg-gray-100">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
+              variants={staggerContainer}
+              className="text-center mb-16"
+            >
+              <motion.h2 
+                variants={fadeIn}
+                className="text-3xl text-gray-700 md:text-4xl font-bold mb-4"
+              >
+                Intelligent Charging Features
+              </motion.h2>
+              <motion.p 
+                variants={fadeIn}
+                className="text-lg text-gray-700 max-w-2xl mx-auto"
+              >
+                Our smart charging technology adapts to your vehicle needs and energy patterns to provide the best charging experience possible.
+              </motion.p>
+            </motion.div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[
+                {
+                  title: "Automatic Connection",
+                  description: "Charging arm automatically connects and disconnects from your vehicle, no manual plugging required.",
+                  icon: (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  )
+                },
+                {
+                  title: "Off-Peak Charging",
+                  description: "Intelligently charges your vehicle during non-peak hours to save energy costs and reduce grid load.",
+                  icon: (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  )
+                },
+                {
+                  title: "Battery Health Monitoring",
+                  description: "Tracks and reports your EV's battery health, providing insights to maximize battery lifespan.",
+                  icon: (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  )
+                }
+              ].map((feature, index) => (
+                <motion.div
+                  key={feature.title}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.3 }}
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: { 
+                      opacity: 1, 
+                      y: 0,
+                      transition: { delay: index * 0.2, duration: 0.6 }
+                    }
+                  }}
+                  className="bg-white rounded-xl p-8 shadow-md hover:shadow-lg transition-shadow"
+                >
+                  <div className="flex flex-col items-center text-center">
+                    <div className="mb-4">
+                      {feature.icon}
+                    </div>
+                    <h3 className="text-xl text-gray-900 font-bold mb-3">{feature.title}</h3>
+                    <p className="text-gray-700">{feature.description}</p>
+                  </div>
+                </motion.div>
+              ))}
             </div>
           </div>
         </section>
