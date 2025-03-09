@@ -81,26 +81,44 @@ export default function Home() {
                 initial="hidden"
                 animate="visible"
                 variants={staggerContainer}
-                className="flex flex-col space-y-6"
+                className="flex flex-col"
               >
                 <motion.h1 
                   variants={fadeIn}
-                  className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight"
+                  className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6"
                 >
-                  <span className="block text-gray-700">Smart Charging for</span>
-                  <span className="bg-gradient-to-r from-teal-500 to-cyan-500 bg-clip-text text-transparent">Electric Vehicles</span>
+                  <span className="block text-gray-700">The World's First</span>
+                  <span className="bg-gradient-to-r from-teal-500 to-cyan-500 bg-clip-text text-transparent">Smart EV Charger</span>
                 </motion.h1>
                 
                 <motion.p 
                   variants={fadeIn}
                   className="text-lg md:text-xl text-gray-700 max-w-md"
                 >
-                  Evolving the scope of electric vehicle charging to automate and optimize your charging experience and simplify your EV ownership.
+                  Automating plugging in your vehicle.
                 </motion.p>
-                
+                <motion.p 
+                  variants={fadeIn}
+                  className="text-lg md:text-xl text-gray-700 max-w-md"
+                >
+                  Saving money on every charge.
+                </motion.p>
+                <motion.p 
+                  variants={fadeIn}
+                  className="text-lg md:text-xl text-gray-700 max-w-md"
+                >
+                  Keeping your car healthy for years to come.
+                </motion.p>
+                <motion.p 
+                  variants={fadeIn}
+                  className="font-bold text-lg md:text-xl text-gray-700 max-w-md "
+                >
+                  The future bundled into one charger.
+                </motion.p>
+
                 <motion.div 
                   variants={fadeIn}
-                  className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 pt-4"
+                  className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 pt-4 mt-6"
                 >
                   <a href="/order">
                     <motion.button
@@ -108,7 +126,7 @@ export default function Home() {
                       whileTap={{ scale: 0.95 }}
                       className="px-8 py-3 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium shadow-md hover:shadow-lg transition-all"
                     >
-                      Pre-Order Now
+                      Pre-Order – Limited Spots
                     </motion.button>
                   </a>
                   
@@ -130,7 +148,7 @@ export default function Home() {
                 transition={{ duration: 0.8, delay: 0.4 }}
                 className="relative"
               >
-                <div className="relative w-full h-80 md:h-96 lg:h-[500px] rounded-2xl overflow-hidden bg-gradient-to-br from-teal-100 to-cyan-100 shadow-xl">
+                <div className="relative w-full h-80 md:h-96 lg:h-[500px] rounded-2xl">
                   <Image
                     src={Render}
                     alt="Smart EV Charger"
@@ -140,7 +158,7 @@ export default function Home() {
                   />
                 </div>
                 
-                {/* Decorative elements */}
+                {/* Decorative elements
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -152,7 +170,7 @@ export default function Home() {
                   animate={{ opacity: 1 }}
                   transition={{ delay: 1, duration: 0.6 }}
                   className="absolute -top-4 -right-4 w-20 h-20 rounded-full bg-gradient-to-r from-cyan-300 to-teal-200 blur-xl opacity-40"
-                />
+                /> */}
               </motion.div>
             </div>
           </div>
@@ -178,27 +196,28 @@ export default function Home() {
                 variants={fadeIn}
                 className="text-lg text-gray-700 max-w-2xl mx-auto"
               >
-                A seamless charging experience from installation to everyday use.
+                Charge Smarter, Live Easier
               </motion.p>
             </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.8 }}
-                className="relative rounded-2xl overflow-hidden shadow-xl aspect-video"
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.8 }}
+              className="relative rounded-2xl overflow-hidden shadow-xl aspect-video"
+            >
+              <video
+                className="w-full h-full"
+                controls
+                preload="metadata"
+                title="How EVolve Charge Works"
               >
-                <iframe
-                  className="w-full h-full"
-                  src="https://www.youtube.com/embed/tZw8rgNUAWQ"
-                  title="How EVolve Charge Works"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
-              </motion.div>
+                <source src="/demo.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </motion.div>
 
               <motion.div
                 initial="hidden"
