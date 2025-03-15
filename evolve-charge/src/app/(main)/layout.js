@@ -4,7 +4,7 @@ import { Analytics } from "@vercel/analytics/react"
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-import "./globals.css";
+import "../globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,7 +34,9 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       > */}
       <body className={chakraPetch.className}>
+        <Navbar/>
         {children}
+        <Footer/>
         <Analytics/>
       </body>
     </html>
