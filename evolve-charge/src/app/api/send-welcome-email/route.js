@@ -179,7 +179,7 @@ export async function POST(request) {
                 <div class="social-links" style="text-align: center;">
                     <a href="https://x.com/evolvecharge"><img src="https://evolve-charge.com/images/x-logo.png" alt="X" style="width: 30px; margin: 5px;"></a>
                     <a href="https://facebook.com/evolvecharge"><img src="https://evolve-charge.com/images/fb-logo.png" alt="Facebook" style="width: 30px; margin: 5px;"></a>
-                    <a href="https://instagram.com/evolve.charge"><img src="https://evolve-charge.com/images/instagram-logo.png" alt="Instagram" style="width: 30px; margin: 5px;"></a>
+                    <a href="https://instagram.com/evolve.charge"><img src="https://evolve-charge.com/images/instagram_logo.png" alt="Instagram" style="width: 30px; margin: 5px;"></a>
                     <a href="https://linkedin.com/company/evolvecharge"><img src="https://evolve-charge.com/images/linkedin-logo.png" alt="LinkedIn" style="width: 30px; margin: 5px;"></a>
                 </div>
             </div>
