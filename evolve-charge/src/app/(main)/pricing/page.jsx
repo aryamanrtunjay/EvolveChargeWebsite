@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import pricingData from '../data/pricingData.json'; // Import the JSON file
+import pricingData from '../../data/pricingData.json'; // Import the JSON file
 
 // Animation variants
 const fadeIn = {

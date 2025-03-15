@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { db } from '../firebaseConfig.js';
+import { db } from '../../firebaseConfig.js';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 // Animation variants
