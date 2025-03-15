@@ -61,7 +61,7 @@ export default function Navbar() {
               transition={{ duration: 0.5, staggerChildren: 0.1, delayChildren: 0.3 }}
               className="flex space-x-8"
             >
-              {navItems.map((item) => (
+              {/* {navItems.map((item) => (
                 <motion.div key={item.name} whileHover={{ y: -2 }}>
                   <Link 
                     href={item.href}
@@ -74,16 +74,25 @@ export default function Navbar() {
                     {item.name}
                   </Link>
                 </motion.div>
-              ))}
+              ))} */}
             </motion.div>
             
-            <Link href="/order">
+            <Link href="reserve">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="ml-8 px-6 py-2 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium text-sm shadow-md hover:shadow-lg transition-all"
               >
-                Pre-Order Now
+                Reserve Yours Now
+              </motion.button>
+            </Link>
+            <Link href="/#how-it-works">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-6 py-2 rounded-full border border-gray-300 text-gray-700 font-medium text-sm hover:bg-gray-50 transition-all"
+              >
+                Watch Demo
               </motion.button>
             </Link>
           </div>
@@ -125,7 +134,7 @@ export default function Navbar() {
         className="md:hidden overflow-hidden"
       >
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white">
-          {navItems.map((item) => (
+          {/* {navItems.map((item) => (
             <Link
               key={item.name}
               href={item.href}
@@ -138,11 +147,20 @@ export default function Navbar() {
             >
               {item.name}
             </Link>
-          ))}
-          <Link href="/order">
+          ))} */}
+          <Link href="reserve">
             <button className="mt-2 w-full px-6 py-3 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium shadow-md">
-              Pre-Order Now
+              Reserve Yours Now
             </button>
+          </Link>
+          <Link href="/#how-it-works">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="mt-2 w-full px-6 py-3  rounded-full border border-gray-300 text-gray-700 font-medium text-sm hover:bg-gray-50 transition-all"
+            >
+              Watch Demo
+            </motion.button>
           </Link>
         </div>
       </motion.div>

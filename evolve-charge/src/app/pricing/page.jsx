@@ -273,7 +273,7 @@ export default function Pricing() {
 
                   <p className="text-gray-700 mb-8">{plan.details}</p>
 
-                  <a href="/order">
+                  <a href="reserve">
                     <button
                       className={`w-full py-3 px-6 rounded-full font-medium text-center transition-all transform hover:scale-105 focus:outline-none ${
                         plan.mostPopular
@@ -698,7 +698,7 @@ export default function Pricing() {
                 <p className="text-gray-700 mb-6">
                   Your deposit is 100% refundable, no questions asked. Upon receiving, try the EVolve Charger risk-free for 30 days. If you're not completely satisfied with your charging experience, we'll remove the system, refund your hardware purchase, and ask for nothing from you other than a short survey to know how we can improve the future of charging.
                 </p>
-                <a href="/order">
+                <a href="reserve">
                   <button className="px-6 py-3 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium shadow-md hover:shadow-lg transition-all transform hover:scale-105">
                     Get Started Today
                   </button>
@@ -723,7 +723,7 @@ export default function Pricing() {
             <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto opacity-90">
               Join thousands of satisfied EV owners who have made the switch to smarter, automated charging.
             </p>
-            <a href="/order">
+            <a href="reserve">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}

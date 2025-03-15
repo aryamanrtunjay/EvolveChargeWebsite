@@ -38,7 +38,7 @@ function CheckoutForm({ onSuccess, total, isProcessing, setIsProcessing }) {
     const { error, paymentIntent } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: `${window.location.origin}/order/success`,
+        return_url: `${window.location.origin}reserve/success`,
       },
       redirect: 'if_required',
     });
@@ -269,7 +269,7 @@ export default function OrderPage() {
         .then(() => console.log('Confirmation email sent successfully'))
         .catch((error) => console.error('Error sending confirmation email:', error));
 
-      router.push(`/order/success?orderId=${orderId}`);
+      router.push(`reserve/success?orderId=${orderId}`);
     } catch (error) {
       console.error('Error finalizing order:', error);
     }

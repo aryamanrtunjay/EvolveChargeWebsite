@@ -120,13 +120,13 @@ export default function Home() {
                   variants={fadeIn}
                   className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 pt-4 mt-6"
                 >
-                  <a href="/order">
+                  <a href="reserve">
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       className="px-8 py-3 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium shadow-md hover:shadow-lg transition-all"
                     >
-                      Pre-Order – Limited Spots
+                      Reserve Yours
                     </motion.button>
                   </a>
                   
@@ -371,13 +371,13 @@ export default function Home() {
               <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto opacity-90">
                 Join our community of EV owners who are experiencing the future of charging today.
               </p>
-              <a href="/order">
+              <a href="reserve">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="px-8 py-3 rounded-full bg-white text-teal-500 font-medium shadow-md hover:shadow-lg transition-all"
                 >
-                  Pre-Order Now
+                  Reserve Yours Now
                 </motion.button>
               </a>
                 <p className="mt-4 text-sm opacity-80">Limited early-bird pricing available.</p>
