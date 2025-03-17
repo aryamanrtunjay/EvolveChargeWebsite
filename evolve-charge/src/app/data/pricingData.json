@@ -4,7 +4,7 @@
         "name": "Base",
         "description": "Reserve a spot for our first ever product",
         "oneTimePrice": 25,
-        "details": "Reserve your EVolve Charger with a 25 dollar deposit. When we are ready to deliver your charger, we will take off the deposit from the final price.",
+        "details": "Reserve NeoGen with a 25 dollar deposit. When we are ready to deliver, we will take off the deposit from the final price.",
         "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-12 w-12 text-teal-500\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M13 10V3L4 14h7v7l9-11h-7z\" /></svg>",
         "mostPopular": false
         },

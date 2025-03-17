@@ -39,12 +39,12 @@ export default function Home() {
   // FAQ data
   const faqItems = [
     {
-      question: "Is EVolve Charge compatible with all electric vehicles?",
-      answer: "Yes, our charger is designed to work with all major EV models using standard charging ports including Tesla, Ford, Hyundai, Kia, Chevrolet, Nissan, BMW, and more."
+      question: "Is NeoGen compatible with all electric vehicles?",
+      answer: "Yes, NeoGen is designed to work with all major EV models using standard charging ports including Tesla, Ford, Hyundai, Kia, Chevrolet, Nissan, BMW, and more."
     },
     {
       question: "How does it plug into my car?",
-      answer: "Our charger navigates above your vehicle where it is securely attached to high-strength steel wire, ensuring absolutely no risk to your vehicles while being out of the way of items stored in your garage. A charge plug is lowered and magnetically snaps to your EV's charge port, beginning the charging process."
+      answer: "NeoGen navigates above your vehicle where it is securely attached to high-strength steel wire, ensuring absolutely no risk to your vehicles while being out of the way of items stored in your garage. A charge plug is lowered and magnetically snaps to your EV's charge port, beginning the charging process."
     },
     {
       question: "How long does installation take?",
@@ -151,7 +151,7 @@ export default function Home() {
                 <div className="relative w-full h-80 md:h-96 lg:h-[500px] rounded-2xl">
                   <Image
                     src={Render}
-                    alt="Smart EV Charger"
+                    alt="NeoGen"
                     layout="fill"
                     objectFit="cover"
                     priority
@@ -190,7 +190,7 @@ export default function Home() {
                 variants={fadeIn}
                 className="text-3xl text-gray-700 md:text-4xl font-bold mb-4"
               >
-                Meet the EVolve Charger
+                Meet NeoGen
               </motion.h2>
               <motion.p 
                 variants={fadeIn}
@@ -229,17 +229,17 @@ export default function Home() {
                   {
                     number: "01",
                     title: "Easy Installation",
-                    description: "We make our charger a simple process so anyone can set it up with just a ladder, drill, and screwdriver."
+                    description: "We make installing NeoGen a simple process so anyone can set it up with just a ladder, drill, and screwdriver."
                   },
                   {
                     number: "02",
                     title: "Connect to App",
-                    description: "Download our app and connect your charger to set preferences and monitor charging."
+                    description: "Download our app and connect NeoGen to set preferences and monitor charging."
                   },
                   {
                     number: "03",
                     title: "Automated Charging",
-                    description: "Park your vehicle, and the charger automatically connects when needed based on your setting and then unplugs whenever you want to leave."
+                    description: "Park your vehicle, and NeoGen automatically connects when needed based on your setting and then unplugs whenever you want to leave."
                   },
                   {
                     number: "04",
@@ -496,7 +496,7 @@ export default function Home() {
           {
             name: "Michael T.",
             title: "Hyundai Ioniq 5 Owner",
-            quote: "I've saved roughly 30% on my charging costs since the EVolve charger optimizes for off-peak rates in my area."
+            quote: "I've saved roughly 30% on my charging costs since the NeoGen optimizes for off-peak rates in my area."
           },
           {
             name: "Elena R.",

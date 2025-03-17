@@ -207,7 +207,7 @@ function OrderSuccessContent() {
                   <span className="bg-teal-500 text-white w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">1</span>
                   <div>
                     <p className="font-medium text-gray-900">Production & Preparation</p>
-                    <p className="text-gray-700 text-sm">Your EVolve Charger will now enter production. We'll keep you updated on its progress.</p>
+                    <p className="text-gray-700 text-sm">Your NeoGen will now enter production. We'll keep you updated on its progress.</p>
                   </div>
                 </li>
                 <li className="flex">
@@ -221,7 +221,7 @@ function OrderSuccessContent() {
                   <span className="bg-teal-500 text-white w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">3</span>
                   <div>
                     <p className="font-medium text-gray-900">Delivery Coordination</p>
-                    <p className="text-gray-700 text-sm">We'll reach out to schedule your delivery and installation when your charger is ready.</p>
+                    <p className="text-gray-700 text-sm">We'll reach out to schedule your delivery and installation when your NeoGen is ready.</p>
                   </div>
                 </li>
               </ol>

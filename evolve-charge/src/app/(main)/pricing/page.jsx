@@ -59,8 +59,8 @@ export default function Pricing() {
       answer: "We require a 12-month initial commitment for the service fee portion, which helps us provide consistent service and updates. After the initial period, you can continue on a month-to-month basis. The one-time hardware purchase is yours to keep regardless. However, you may return the product and receive a full refund if you are not satisfied with your experience anytime before 30 days."
     },
     {
-      question: "What happens if my charger needs repair?",
-      answer: "If your EVolve Charge unit needs repair, our support team will first attempt remote diagnostics. If the issue can't be resolved remotely, we'll send a technician to repair or replace your unit at no additional cost, provided the issue is covered under warranty and not caused by misuse or damage."
+      question: "What happens if NeoGen needs repair?",
+      answer: "If your NeoGen needs repair, our support team will first attempt remote diagnostics. If the issue can't be resolved remotely, we'll send a technician to repair or replace your unit at no additional cost, provided the issue is covered under warranty and not caused by misuse or damage."
     }
   ];
 
@@ -696,7 +696,7 @@ export default function Pricing() {
                 </div>
                 <h3 className="text-2xl font-bold mb-4 text-gray-900">100% Satisfaction Guarantee</h3>
                 <p className="text-gray-700 mb-6">
-                  Your deposit is 100% refundable, no questions asked. Upon receiving, try the EVolve Charger risk-free for 30 days. If you're not completely satisfied with your charging experience, we'll remove the system, refund your hardware purchase, and ask for nothing from you other than a short survey to know how we can improve the future of charging.
+                  Your deposit is 100% refundable, no questions asked. Upon receiving, try NeoGen risk-free for 30 days. If you're not completely satisfied with your charging experience, we'll remove the system, refund your hardware purchase, and ask for nothing from you other than a short survey to know how we can improve the future of charging.
                 </p>
                 <a href="reserve">
                   <button className="px-6 py-3 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium shadow-md hover:shadow-lg transition-all transform hover:scale-105">

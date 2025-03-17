@@ -112,13 +112,13 @@ export default function AdminHome() {
       const usersSnapshot = await getDocs(usersCollection);
       const usersTotal = usersSnapshot.size;
       
-      // Filter users by createdAt field
+      // Filter users by registerDate field
       let usersNew = 0;
       usersSnapshot.forEach(doc => {
         const data = doc.data();
-        if (data.createdAt && 
-            ((data.createdAt instanceof Timestamp && data.createdAt.toDate() >= startDate) || 
-             (typeof data.createdAt === 'number' && data.createdAt >= startDate.getTime()))) {
+        if (data.registerDate && 
+            ((data.registerDate instanceof Timestamp && data.registerDate.toDate() >= startDate) || 
+             (typeof data.registerDate === 'number' && data.registerDate >= startDate.getTime()))) {
           usersNew++;
         }
       });
@@ -144,13 +144,13 @@ export default function AdminHome() {
       const mailingListSnapshot = await getDocs(mailingListCollection);
       const mailingListTotal = mailingListSnapshot.size;
       
-      // Filter mailing list by signupDate field
+      // Filter mailing list by subscriptionDate field
       let mailingListNew = 0;
       mailingListSnapshot.forEach(doc => {
         const data = doc.data();
-        if (data.signupDate && 
-            ((data.signupDate instanceof Timestamp && data.signupDate.toDate() >= startDate) || 
-             (typeof data.signupDate === 'number' && data.signupDate >= startDate.getTime()))) {
+        if (data.subscriptionDate && 
+            ((data.subscriptionDate instanceof Timestamp && data.subscriptionDate.toDate() >= startDate) || 
+             (typeof data.subscriptionDate === 'number' && data.subscriptionDate >= startDate.getTime()))) {
           mailingListNew++;
         }
       });
@@ -162,9 +162,9 @@ export default function AdminHome() {
       });
 
       // Fetch recent activity (combines users, orders, and mailing list sign ups)
-      const recentUsers = await getDocs(query(usersCollection, orderBy("createdAt", "desc"), limit(5)));
+      const recentUsers = await getDocs(query(usersCollection, orderBy("registerDate", "desc"), limit(5)));
       const recentOrders = await getDocs(query(ordersCollection, orderBy("orderDate", "desc"), limit(5)));
-      const recentSignups = await getDocs(query(mailingListCollection, orderBy("signupDate", "desc"), limit(5)));
+      const recentSubscriptions = await getDocs(query(mailingListCollection, orderBy("signupDate", "desc"), limit(5)));
 
       const activity = [
         ...recentUsers.docs.map(doc => {
@@ -172,9 +172,9 @@ export default function AdminHome() {
           return {
             type: 'New user',
             email: data.email,
-            time: data.createdAt instanceof Timestamp ? 
-              data.createdAt.toDate().getTime() : 
-              data.createdAt,
+            time: data.registerDate instanceof Timestamp ? 
+              data.registerDate.toDate().getTime() : 
+              data.registerDate,
             details: `${data.firstName || ''} ${data.lastName || ''}`.trim()
           };
         }),
@@ -189,14 +189,14 @@ export default function AdminHome() {
             details: `Order #${doc.id.substring(0, 8)} - $${data.total?.toFixed(2) || '0.00'}`
           };
         }),
-        ...recentSignups.docs.map(doc => {
+        ...recentSubscriptions.docs.map(doc => {
           const data = doc.data();
           return {
             type: 'Newsletter sign-up',
             email: data.email,
-            time: data.signupDate instanceof Timestamp ? 
-              data.signupDate.toDate().getTime() : 
-              data.signupDate,
+            time: data.subscriptionDate instanceof Timestamp ? 
+              data.subscriptionDate.toDate().getTime() : 
+              data.subscriptionDate,
             details: ''
           };
         })
