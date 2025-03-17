@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../firebaseConfig.js'; // Adjust path if needed
+import { db } from '../../../firebaseConfig.js'; // Adjust path if needed
 
 // Animation variants
 const fadeIn = {

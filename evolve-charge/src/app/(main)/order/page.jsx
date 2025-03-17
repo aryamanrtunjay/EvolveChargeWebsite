@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation'; // Add this import
-import pricingData from '../data/pricingData.json';
-import { db } from '../firebaseConfig.js';
+import pricingData from '../../data/pricingData.json';
+import { db } from '../../firebaseConfig.js';
 import { collection, addDoc, updateDoc, doc, serverTimestamp } from 'firebase/firestore';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
