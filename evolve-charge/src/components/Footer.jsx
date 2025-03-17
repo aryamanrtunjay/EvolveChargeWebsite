@@ -38,11 +38,10 @@ export default function Footer() {
   };
   
   const socialUrls = {
-    'X': 'https://x.com',
-    'youtube': 'https://youtube.com',
-    'instagram': 'https://instagram.com',
-    'facebook': 'https://facebook.com',
-    'linkedin': 'https://linkedin.com',
+    'X': 'https://x.com/evolvecharge',
+    'youtube': 'https://youtube.com/@EVolveCharge',
+    'instagram': 'https://instagram.com/evolve.charge',
+    'linkedin': 'https://linkedin.com/in/evolve-charge-a374b7355/',
   };
 
   useEffect(() => {
@@ -245,7 +244,7 @@ export default function Footer() {
             <Image src={Logo} alt="logo" height={25} className="mb-4"/>
             <p className="text-gray-300 mb-4">Revolutionizing EV charging with smart, automated technology that makes charging easier and more efficient.</p>
             <div className="flex space-x-4">
-              {['X', 'youtube', 'instagram', 'facebook', 'linkedin'].map((social) => {
+              {['X', 'youtube', 'instagram', 'linkedin'].map((social) => {
                 const Icon = socialIcons[social];
                 return (
                   <a
