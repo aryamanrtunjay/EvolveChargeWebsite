@@ -477,7 +477,6 @@ export default function Home() {
                   className="w-full h-full object-cover"
                   controls
                   preload="metadata"
-                  poster="/video-poster.jpg" // Adding a poster for better UX
                   title="How NeoGen Works"
                 >
                   <source src="/demo.mp4" type="video/mp4" />
