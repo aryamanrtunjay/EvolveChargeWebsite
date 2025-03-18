@@ -238,7 +238,7 @@ export default function Footer() {
       </AnimatePresence>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-16 mb-12 ">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 mb-12 ">
           {/* First column (unchanged) */}
           <div>
             <Image src={Logo} alt="logo" height={25} className="mb-4"/>
@@ -261,7 +261,7 @@ export default function Footer() {
           </div>
           
           {/* Second column (unchanged) */}
-          <div>
+          {/* <div>
             <h4 className="text-lg font-bold mb-4 text-white">Product</h4>
             <ul className="space-y-2">
               {['Features', 'Pricing', 'Support'].map((item) => (
@@ -272,7 +272,7 @@ export default function Footer() {
                 </li>
               ))}
             </ul>
-          </div>
+          </div> */}
           
           {/* Third column - Updated mailing list form */}
           <div>

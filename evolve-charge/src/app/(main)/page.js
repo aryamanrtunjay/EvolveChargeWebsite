@@ -2,7 +2,7 @@
 
 // pages/index.js
 import Head from 'next/head';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Render from '@/images/Render.png'
@@ -26,6 +26,46 @@ const staggerContainer = {
     }
   }
 };
+
+function ScrollIndicator() {
+  const { scrollY } = useScroll();
+  const opacity = useTransform(scrollY, [0, 100], [1, 0]);
+
+  const arrowVariants = {
+    initial: { y: 0 },
+    animate: {
+      y: [0, 10, 0],
+      transition: {
+        duration: 1.5,
+        repeat: Infinity,
+        ease: "easeInOut",
+      },
+    },
+  };
+
+  return (
+    <motion.div
+      style={{ opacity }}
+      className="flex justify-center items-center text-gray-700"
+      variants={arrowVariants}
+      initial="initial"
+      animate="animate"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="w-8 h-8 md:w-12 md:h-12"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <polyline points="6 9 12 15 18 9" />
+      </svg>
+    </motion.div>
+  );
+}
 
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -157,23 +197,18 @@ export default function Home() {
                     priority
                   />
                 </div>
-                
-                {/* Decorative elements
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.8, duration: 0.6 }}
-                  className="absolute -bottom-6 -left-6 w-24 h-24 rounded-full bg-gradient-to-r from-teal-500 to-cyan-300 blur-xl opacity-50"
-                />
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 1, duration: 0.6 }}
-                  className="absolute -top-4 -right-4 w-20 h-20 rounded-full bg-gradient-to-r from-cyan-300 to-teal-200 blur-xl opacity-40"
-                /> */}
               </motion.div>
             </div>
           </div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.2, duration: 0.8 }}
+            className="absolute bottom-8 left-0 right-0 flex justify-center"
+          >
+            <ScrollIndicator />
+          </motion.div>
         </section>
 
         {/* How It Works */}
