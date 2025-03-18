@@ -271,8 +271,8 @@ export default function AdminDatabase() {
                       <h3 className="text-md font-medium text-gray-900 mb-2">Mailing List</h3>
                       <div className="bg-gray-50 rounded-lg p-3">
                         <div className="flex justify-between py-1">
-                          <span className="text-gray-600 text-gray-700">Total Subscribers:</span>
-                          <span className="font-medium">{analytics.mailingList.total}</span>
+                          <span className="text-gray-600">Total Subscribers:</span>
+                          <span className="font-medium text-gray-700">{analytics.mailingList.total}</span>
                         </div>
                         <div className="mt-2">
                           <h4 className="text-sm font-medium text-gray-900 mb-1">By Referral Source</h4>

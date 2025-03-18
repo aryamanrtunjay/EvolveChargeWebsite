@@ -115,37 +115,37 @@ export default function Footer() {
               <h2 className="text-lg text-center text-gray-900">Last Updated: February 26, 2025</h2>
               <hr className="my-4 border-black mx-16"/>
               <div className="prose prose-teal prose-sm max-w-none text-gray-700">
-                 <h3>1. Information We Collect</h3>
+                 <h3 className="font-bold">1. Information We Collect</h3>
                  <p>
                    We collect information about your EV charging habits, vehicle information, and app usage to provide you with the best charging experience. This includes charging times, energy usage, and preferences you set within the app.
                  </p>
                  
-                 <h3>2. How We Use Your Information</h3>
+                 <h3 className="font-bold">2. How We Use Your Information</h3>
                  <p>
                    We use your information to optimize your charging experience, provide insights about your energy usage, and improve our products and services. We may also use anonymized data for research and development purposes.
                  </p>
                  
-                 <h3>3. Information Sharing</h3>
+                 <h3 className="font-bold">3. Information Sharing</h3>
                  <p>
                    We do not sell your personal information to third parties. We may share anonymized, aggregated data with partners for research purposes. We may share your information with service providers who help us deliver our services.
                  </p>
                  
-                 <h3>4. Data Security</h3>
+                 <h3 className="font-bold">4. Data Security</h3>
                  <p>
                    We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.
                  </p>
                  
-                 <h3>5. Your Rights</h3>
+                 <h3 className="font-bold">5. Your Rights</h3>
                  <p>
                    You have the right to access, correct, or delete your personal information. You can manage your privacy settings in the EVolve Charge app or contact our support team for assistance.
                  </p>
                  
-                 <h3>6. Changes to This Policy</h3>
+                 <h3 className="font-bold">6. Changes to This Policy</h3>
                  <p>
                    We may update this privacy policy from time to time. We will notify you of any changes by posting the new privacy policy on this page and updating the effective date.
                  </p>
                  
-                 <h3>7. Contact Us</h3>
+                 <h3 className="font-bold">7. Contact Us</h3>
                  <p>
                    If you have any questions about this privacy policy, please contact us at privacy@evolvecharge.com.
                  </p>
@@ -297,14 +297,18 @@ export default function Footer() {
           </div>
         </div>
         
-        {/* Footer bottom (unchanged) */}
-        <div className="pt-8 border-t border-gray-700 text-center text-gray-300 text-sm">
-          <p>© {new Date().getFullYear()} EVolve Charge Inc. All rights reserved.</p>
-          <div className="mt-2 flex justify-center space-x-6">
-            <a href="#privacypolicy" className="hover:text-teal-500 transition-colors">Privacy Policy</a>
-            <a href="#tos" className="hover:text-teal-500 transition-colors">Terms of Service</a>
+
+        <div className="border-t border-gray-700 mt-10 pt-8 flex flex-col md:flex-row justify-between items-center">
+            <p className="text-gray-500 text-sm">© 2025 EVolve Charge Inc. All rights reserved.</p>
+            <div className="mt-4 md:mt-0 flex space-x-4">
+              <a href="#privacypolicy" className="text-gray-500 hover:text-teal-300 transition-colors text-sm">
+                Privacy Policy
+              </a>
+              <a href="#tos" className="text-gray-500 hover:text-teal-300 transition-colors text-sm">
+                Terms of Service
+              </a>
+            </div>
           </div>
-        </div>
       </div>
     </footer>
   );

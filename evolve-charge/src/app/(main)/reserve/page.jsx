@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { db } from '../../firebaseConfig.js';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, query, where, getDocs, updateDoc, doc } from 'firebase/firestore';
 
 // Animation variants
 const fadeIn = {
@@ -16,19 +17,38 @@ const staggerContainer = {
   visible: { opacity: 1, transition: { staggerChildren: 0.2 } }
 };
 
-export default function MailingListPage() {
+export default function ReservePage() {
+  const searchParams = useSearchParams();
+  
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
+    phone: '',
+    address: '',
+    city: '',
+    state: '',
+    zipCode: '',
     vehicleMake: '',
     vehicleModel: '',
-    interests: [],
-    referralSource: '',
+    installationType: 'residential',
+    installationNotes: '',
     agreeTerms: false
   });
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
+
+  // Get email from URL parameters on component mount
+  useEffect(() => {
+    const emailParam = searchParams.get('email');
+    if (emailParam) {
+      setFormData(prev => ({
+        ...prev,
+        email: emailParam
+      }));
+    }
+  }, [searchParams]);
 
   const vehicleMakes = [
     "Tesla", "Ford", "Chevrolet", "Nissan", "BMW", "Audi",
@@ -36,40 +56,28 @@ export default function MailingListPage() {
     "Toyota", "Mercedes-Benz", "Polestar", "Volvo", "Other"
   ];
 
-  const interestOptions = [
-    { id: "home-charging", label: "Home Charging Solutions" },
-    { id: "solar-integration", label: "Solar Integration" },
-    { id: "energy-management", label: "Energy Management" },
-    { id: "new-products", label: "New Product Announcements" },
-    { id: "industry-news", label: "EV Industry News" }
+  const stateOptions = [
+    "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", 
+    "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", 
+    "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", 
+    "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", 
+    "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"
+  ];
+
+  const installationTypes = [
+    { id: "residential", label: "Residential" },
+    { id: "commercial", label: "Commercial" },
+    { id: "multi-family", label: "Multi-Family Dwelling" }
   ];
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     
     if (type === 'checkbox') {
-      if (name === 'agreeTerms') {
-        setFormData({
-          ...formData,
-          [name]: checked
-        });
-      } else {
-        // Handle interests checkboxes
-        const updatedInterests = [...formData.interests];
-        if (checked) {
-          updatedInterests.push(value);
-        } else {
-          const index = updatedInterests.indexOf(value);
-          if (index > -1) {
-            updatedInterests.splice(index, 1);
-          }
-        }
-        
-        setFormData({
-          ...formData,
-          interests: updatedInterests
-        });
-      }
+      setFormData({
+        ...formData,
+        [name]: checked
+      });
     } else {
       setFormData({
         ...formData,
@@ -83,19 +91,33 @@ export default function MailingListPage() {
     setIsSubmitting(true);
     
     try {
-      const subscriberData = {
+      const reservationData = {
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
+        phone: formData.phone || null,
         vehicleMake: formData.vehicleMake || null,
         vehicleModel: formData.vehicleModel || null,
-        interests: formData.interests,
-        referralSource: formData.referralSource || null,
-        subscriptionDate: serverTimestamp(),
-        active: true
+        lastUpdated: serverTimestamp()
       };
 
-      await addDoc(collection(db, 'mailing-list'), subscriberData);
+      // Check if the email already exists in the database
+      const mailingListRef = collection(db, 'mailing-list');
+      const emailQuery = query(mailingListRef, where("email", "==", formData.email));
+      const querySnapshot = await getDocs(emailQuery);
+      
+      let actionTaken = "added";
+      
+      if (querySnapshot.empty) {
+        // Email doesn't exist, create a new document
+        reservationData.reservationDate = serverTimestamp(); // Add creation timestamp
+        await addDoc(mailingListRef, reservationData);
+      } else {
+        // Email exists, update the existing document
+        const docRef = doc(db, 'mailing-list', querySnapshot.docs[0].id);
+        await updateDoc(docRef, reservationData);
+        actionTaken = "updated";
+      }
       
       // Optional: Send confirmation email via API
       fetch('/api/send-welcome-email', {
@@ -103,25 +125,27 @@ export default function MailingListPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email: formData.email,
-          firstName: formData.firstName
+          firstName: formData.firstName,
+          reservationId: new Date().getTime().toString(),
+          isNewUser: actionTaken === "added"
         }),
-      }).catch(error => console.error('Error sending welcome email:', error));
+      }).catch(error => console.error('Error sending confirmation email:', error));
 
-      setSubmitStatus('success');
-      // Reset form after successful submission
-      setFormData({
-        firstName: '',
-        lastName: '',
-        email: '',
-        vehicleMake: '',
-        vehicleModel: '',
-        interests: [],
-        referralSource: '',
+      setSubmitStatus({ status: 'success', action: actionTaken });
+      
+      // Reset only certain fields after successful submission
+      setFormData(prev => ({
+        ...prev,
+        address: '',
+        city: '',
+        state: '',
+        zipCode: '',
+        installationNotes: '',
         agreeTerms: false
-      });
+      }));
     } catch (error) {
-      console.error('Error submitting form:', error);
-      setSubmitStatus('error');
+      console.error('Error submitting reservation:', error);
+      setSubmitStatus({ status: 'error' });
     } finally {
       setIsSubmitting(false);
       
@@ -141,8 +165,10 @@ export default function MailingListPage() {
         <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-3xl mx-auto">
           {/* Header Section */}
           <motion.div variants={fadeIn} className="text-center mb-10">
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Join the EVolve Charge Community</h1>
-            <p className="text-lg text-gray-700">Stay updated on our latest products, get early access to new features, and receive exclusive offers.</p>
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Reserve Your EVolve Charger</h1>
+            <p className="text-lg text-gray-700">
+              You're one step closer to transforming your EV charging experience.
+            </p>
           </motion.div>
 
           {/* Success/Error Message */}
@@ -150,24 +176,28 @@ export default function MailingListPage() {
             <motion.div 
               variants={fadeIn}
               className={`mb-8 p-4 rounded-lg ${
-                submitStatus === 'success' 
+                submitStatus.status === 'success' 
                   ? 'bg-green-50 text-green-800 border border-green-200' 
                   : 'bg-red-50 text-red-800 border border-red-200'
               }`}
             >
-              {submitStatus === 'success' ? (
+              {submitStatus.status === 'success' ? (
                 <div className="flex items-center">
                   <svg className="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <p>Thank you for subscribing! Check your inbox for a confirmation email.</p>
+                  <p>
+                    {submitStatus.action === "added" 
+                      ? "Your reservation has been confirmed! Check your inbox for reservation details."
+                      : "Your information has been updated successfully! Check your inbox for the latest details."}
+                  </p>
                 </div>
               ) : (
                 <div className="flex items-center">
                   <svg className="h-5 w-5 text-red-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>
-                  <p>There was an error submitting your information. Please try again.</p>
+                  <p>There was an error submitting your reservation. Please try again.</p>
                 </div>
               )}
             </motion.div>
@@ -217,45 +247,33 @@ export default function MailingListPage() {
                   className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                 />
               </div>
-            </div>
-            
-            {/* <div className="bg-white rounded-xl shadow-md p-6 mb-8">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">Your Interests</h2>
               
               <div className="mb-6">
-                <p className="block text-sm font-medium text-gray-700 mb-3">What topics are you interested in? (Select all that apply)</p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {interestOptions.map(option => (
-                    <div key={option.id} className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id={option.id}
-                        name="interests"
-                        value={option.id}
-                        checked={formData.interests.includes(option.id)}
-                        onChange={handleInputChange}
-                        className="h-4 w-4 text-teal-500 border-gray-300 rounded focus:ring-teal-500"
-                      />
-                      <label htmlFor={option.id} className="ml-2 text-gray-700">
-                        {option.label}
-                      </label>
-                    </div>
-                  ))}
-                </div>
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                  placeholder="(555) 555-5555"
+                />
               </div>
-            </div> */}
+            </div>
             
             <div className="bg-white rounded-xl shadow-md p-6 mb-8">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">Your EV (Optional)</h2>
+              <h2 className="text-xl font-bold text-gray-900 mb-6">Your EV</h2>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div>
-                  <label htmlFor="vehicleMake" className="block text-sm font-medium text-gray-700 mb-1">Vehicle Make</label>
+                  <label htmlFor="vehicleMake" className="block text-sm font-medium text-gray-700 mb-1">Vehicle Make*</label>
                   <select
                     id="vehicleMake"
                     name="vehicleMake"
                     value={formData.vehicleMake}
                     onChange={handleInputChange}
+                    required
                     className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                   >
                     <option value="">Select Make</option>
@@ -265,13 +283,14 @@ export default function MailingListPage() {
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="vehicleModel" className="block text-sm font-medium text-gray-700 mb-1">Vehicle Model</label>
+                  <label htmlFor="vehicleModel" className="block text-sm font-medium text-gray-700 mb-1">Vehicle Model*</label>
                   <input
                     type="text"
                     id="vehicleModel"
                     name="vehicleModel"
                     value={formData.vehicleModel}
                     onChange={handleInputChange}
+                    required
                     className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                     placeholder="e.g., Model 3, Mach-E, ID.4"
                   />
@@ -279,28 +298,7 @@ export default function MailingListPage() {
               </div>
             </div>
             
-            <div className="bg-white rounded-xl shadow-md p-6 mb-8">
-              <div className="mb-6">
-                <label htmlFor="referralSource" className="block text-sm font-medium text-gray-700 mb-1">
-                  How did you hear about us? (Optional)
-                </label>
-                <select
-                  id="referralSource"
-                  name="referralSource"
-                  value={formData.referralSource}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                >
-                  <option value="">Select an option</option>
-                  <option value="Google">Google</option>
-                  <option value="Social Media">Social Media</option>
-                  <option value="Friend or Family">Friend or Family</option>
-                  <option value="EV Forum">EV Forum</option>
-                  <option value="News Article">News Article</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-              
+            <div className="bg-white rounded-xl shadow-md p-6 mb-8">             
               <div className="flex items-start mb-4">
                 <div className="flex items-center h-5">
                   <input
@@ -315,13 +313,13 @@ export default function MailingListPage() {
                 </div>
                 <div className="ml-3 text-sm">
                   <label htmlFor="agreeTerms" className="font-medium text-gray-700">
-                    I agree to receive emails from EVolve Charge
+                    I agree to the terms and conditions
                   </label>
                   <p className="text-gray-500">
-                    By checking this box, you consent to our{' '}
-                    <a href="#" className="text-teal-500 hover:underline">Terms of Service</a> and{' '}
-                    <a href="#" className="text-teal-500 hover:underline">Privacy Policy</a>.
-                    You can unsubscribe at any time.
+                    By checking this box, you agree to our{' '}
+                    <a href="#" className="text-teal-500 hover:underline">Terms of Service</a>,{' '}
+                    <a href="#" className="text-teal-500 hover:underline">Privacy Policy</a>, and{' '}
+                    <a href="#" className="text-teal-500 hover:underline">Installation Terms</a>.
                   </p>
                 </div>
               </div>
@@ -343,51 +341,14 @@ export default function MailingListPage() {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    Subscribing...
+                    Processing...
                   </div>
                 ) : (
-                  'Subscribe to Updates'
+                  'Complete Reservation'
                 )}
               </button>
             </div>
           </motion.form>
-        </motion.div>
-        
-        {/* Benefits Section */}
-        <motion.div variants={fadeIn} className="max-w-4xl mx-auto mt-16">
-          <h2 className="text-2xl font-bold text-center text-gray-900 mb-10">Why Subscribe to EVolve Charge Updates?</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white p-6 rounded-xl shadow-md">
-              <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Exclusive Offers</h3>
-              <p className="text-gray-600">Be the first to know about promotions and receive exclusive subscriber-only discounts.</p>
-            </div>
-            
-            <div className="bg-white p-6 rounded-xl shadow-md">
-              <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Early Access</h3>
-              <p className="text-gray-600">Get early access to new product releases and development updates before general availability.</p>
-            </div>
-            
-            <div className="bg-white p-6 rounded-xl shadow-md">
-              <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">EV Insights</h3>
-              <p className="text-gray-600">Receive the latest news and expert insights about the electric vehicle charging.</p>
-            </div>
-          </div>
         </motion.div>
       </div>
     </div>
