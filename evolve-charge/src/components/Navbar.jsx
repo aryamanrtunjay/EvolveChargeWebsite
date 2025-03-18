@@ -95,19 +95,9 @@ export default function Navigation() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-white shadow-lg"
+            className="md:hidden shadow-lg"
           >
             <div className="px-4 py-2">
-              {['Features', 'How It Works', 'Pricing', 'FAQ'].map((item) => (
-                <a 
-                  key={item} 
-                  href={`#${item.toLowerCase().replace(/\s+/g, '-')}`}
-                  className="block py-3 text-gray-700 font-medium border-b border-gray-100"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {item}
-                </a>
-              ))}
               <div className="py-4">
                 <a href="reserve" className="block">
                   <button className="w-full px-5 py-2 rounded-full font-medium bg-gradient-to-r from-teal-500 to-cyan-500 text-white">
