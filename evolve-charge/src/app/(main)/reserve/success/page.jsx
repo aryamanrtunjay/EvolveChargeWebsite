@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -28,7 +28,7 @@ const pulseAnimation = {
   }
 };
 
-export default function ReservationSuccessPage() {
+function ReserveSuccessContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [reservationDetails, setReservationDetails] = useState({
@@ -158,5 +158,20 @@ export default function ReservationSuccessPage() {
         </motion.div>
       </div>
     </div>
+  );
+}
+
+// Main page component with Suspense boundary
+export default function ReserveSuccessPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gray-50 pt-32 pb-20 flex justify-center items-center">
+          <div className="animate-spin h-12 w-12 border-4 border-teal-500 rounded-full border-t-transparent"></div>
+        </div>
+      }
+    >
+      <ReserveSuccessContent />
+    </Suspense>
   );
 }
