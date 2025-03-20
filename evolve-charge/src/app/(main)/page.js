@@ -6,6 +6,7 @@ import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
+import Link from 'next/link'
 import { db } from '../firebaseConfig.js';
 import { collection, addDoc, serverTimestamp, query, where, getDocs, updateDoc, doc, getCountFromServer } from 'firebase/firestore';
 import Render from '@/images/Render.png';
@@ -389,7 +390,7 @@ export default function Home() {
                 variants={fadeIn}
                 className="flex flex-wrap gap-4 mt-2"
               >
-                <a href="reserve">
+                <Link href="reserve">
                   <motion.button
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
@@ -397,9 +398,9 @@ export default function Home() {
                   >
                     Reserve Your NeoGen
                   </motion.button>
-                </a>
+                </Link>
 {/*                 
-                <a href="#how-it-works">
+                <Link href="#how-it-works">
                   <motion.button
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
@@ -407,7 +408,7 @@ export default function Home() {
                   >
                     Watch Demo
                   </motion.button>
-                </a> */}
+                </Link> */}
               </motion.div>
             </motion.div>
 
@@ -830,9 +831,6 @@ export default function Home() {
                 transition={{ repeat: Infinity, repeatType: "reverse", duration: 1.5 }}
                 className="bg-white/20 rounded-lg p-4 mt-8 max-w-lg mx-auto border-1 border-white/20"
               >
-                <p className="text-white font-medium">
-                Lock in Exclusive Discount Pricing for the First 150 Spots!
-                </p>
                 <p className="text-white text-xl font-medium mt-1">
                   Only {spotsLeft} {spotsLeft === 1 ? 'spot' : 'spots'} left!
                 </p>
@@ -851,12 +849,15 @@ export default function Home() {
               </div>
             )}
             <div className="max-w-md mx-auto mt-8">
-              <button
-                type="submit"
-                className="px-6 py-3 rounded-full bg-white text-teal-600 font-medium shadow-md hover:shadow-xl transition-all disabled:opacity-70"
-              >
-                Reserve NeoGen
-              </button>
+                <Link href="reserve">
+                  <motion.button
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    className="px-8 py-3 rounded-full bg-white hover:bg-gradient-to-r from-teal-400 to-cyan-400 hover:text-gray-50 text-teal-700 font-medium shadow-lg hover:shadow-xl transition-all"
+                  >
+                    Reserve Your NeoGen
+                  </motion.button>
+                </Link>
               {submitError && (
                 <p className="mt-2 text-red-300 text-sm">{submitError}</p>
               )}

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { db } from '../../firebaseConfig.js';
 import { collection, addDoc, serverTimestamp, query, where, getDocs, updateDoc, doc } from 'firebase/firestore';
@@ -32,6 +33,7 @@ function EmailFromSearchParams({ setEmail }) {
 }
 
 export default function ReservePage() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -101,6 +103,7 @@ export default function ReservePage() {
     e.preventDefault();
     setIsSubmitting(true);
     
+    
     try {
       const reservationData = {
         firstName: formData.firstName,
@@ -146,7 +149,11 @@ export default function ReservePage() {
       
       // Reset only certain fields after successful submission
       setFormData(prev => ({
-        ...prev,
+        firstName: '',
+        lastName: '',
+        email: '',
+        vehicleMake: '',
+        vehicleModel: '',
         address: '',
         city: '',
         state: '',
@@ -154,6 +161,7 @@ export default function ReservePage() {
         installationNotes: '',
         agreeTerms: false
       }));
+      router.push(`/reserve/success?firstName=${encodeURIComponent(formData.firstName)}&email=${encodeURIComponent(formData.email)}}`)
     } catch (error) {
       console.error('Error submitting reservation:', error);
       setSubmitStatus({ status: 'error' });

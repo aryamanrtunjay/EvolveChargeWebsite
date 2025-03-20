@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useRouter } from 'next/navigation'; // Add this import
+import { useRouter } from 'next/navigation';
 import pricingData from '../../data/pricingData.json';
 import { db } from '../../firebaseConfig.js';
 import { collection, addDoc, updateDoc, doc, serverTimestamp } from 'firebase/firestore';
