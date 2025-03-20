@@ -247,6 +247,8 @@ export default function Home() {
   const textY = useTransform(scrollYProgress, [0, 3], [0, -600]);
   const imageY = useTransform(scrollYProgress, [0, 5], [0, -600])
 
+  const opacity = useTransform(scrollYProgress, [0, 2], [1, 0]);
+
   
   const TOTAL_DISCOUNT_SPOTS = 150;
 
@@ -348,14 +350,28 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="relative h-screen pt-40 pb-24 md:pt-48 md:pb-32 overflow-hidden bg-gradient-to-br from-teal-600 via-teal-600 to-cyan-600">
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
+      <motion.video
+        className="fixed w-full h-full object-cover"
+        muted
+        autoPlay
+        loop
+        preload="metadata"
+        title="How NeoGen Works"
+        style={{
+          opacity
+        }}
+      >
+        <source src="/productDemo.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </motion.video>
+      <section className="relative h-screen pt-48 pb-24 md:pb-32 overflow-hidden items-center justify-center bg-black/20">
+        <div className="relative max-w-7xl ml-24 sm:px-6 lg:px-8">
+          <div>
             <motion.div
               initial="hidden"
               animate="visible"
               variants={staggerContainer}
-              className="md:col-span-6 flex flex-col"
+              className="px-20 py-10 flex flex-col"
               style={{
                 y: textY
               }}
@@ -379,12 +395,12 @@ export default function Home() {
                 <span className="bg-gradient-to-r from-teal-300 to-cyan-300 bg-clip-text text-transparent">Automatic EV Charger</span>
               </motion.h1>
               
-              <motion.p 
+              {/* <motion.p 
                 variants={fadeIn}
-                className="text-lg md:text-xl text-white mb-6 leading-relaxed max-w-md"
+                className="text-lg md:text-xl text-white mb-6 leading-relaxed max-w-xl"
               >
-                Experience the future of EV charging with NeoGen's revolutionary automatic plug-in system. No more manual connections, just effortless charging.
-              </motion.p>
+                The Next Generation of EV Charging. Automatic connection, optimized charging times, built to save you time, money, and keep your car healthy.
+              </motion.p> */}
               
               <motion.div 
                 variants={fadeIn}
@@ -394,12 +410,12 @@ export default function Home() {
                   <motion.button
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
-                    className="px-8 py-3 rounded-full bg-white hover:bg-gradient-to-r from-teal-400 to-cyan-400 hover:text-gray-50 text-teal-700 font-medium shadow-lg hover:shadow-xl transition-all"
+                    className="px-8 py-3 rounded-full bg-gradient-to-r from-teal-400 to-cyan-400 text-gray-50 font-medium shadow-lg hover:shadow-xl transition-all"
                   >
                     Reserve Your NeoGen
                   </motion.button>
                 </Link>
-{/*                 
+                {/*                 
                 <Link href="#how-it-works">
                   <motion.button
                     whileHover={{ scale: 1.03 }}
@@ -410,31 +426,6 @@ export default function Home() {
                   </motion.button>
                 </Link> */}
               </motion.div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="md:col-span-6 relative"
-              style={{
-                y: imageY
-              }}
-            >
-              <div className="relative w-full h-80 md:h-[500px] rounded-3xl overflow-hidden shadow-2xl transform">
-                <div className="absolute inset-0 bg-gradient-to-br from-teal-500/20 to-cyan-500/20 z-10 mix-blend-overlay"></div>
-                  <video
-                    className="w-full h-full object-cover z-100"
-                    muted
-                    autoPlay
-                    loop
-                    preload="metadata"
-                    title="How NeoGen Works"
-                  >
-                    <source src="/productDemo.mp4" type="video/mp4" />
-                    Your browser does not support the video tag.
-                  </video>
-              </div>
             </motion.div>
           </div>
         </div>
@@ -794,9 +785,9 @@ export default function Home() {
             transition={{ duration: 0.8 }}
             className="bg-white/10 rounded-3xl p-10 md:p-16 text-center shadow-xl border border-white/20"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">Ready to Transform Your EV Charging?</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">Join the EVolution</h2>
             <p className="text-lg md:text-xl mb-4 max-w-2xl mx-auto text-teal-50">
-              Join our community of EV owners who are experiencing the future of charging today.
+              Enter the community that is ready to become a part of the next generation of EV users.
             </p>
             
             <div className="flex flex-col md:flex-row justify-center items-center space-y-2 md:space-y-0 md:space-x-8 mt-8 text-teal-50 font-medium">
