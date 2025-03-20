@@ -364,32 +364,32 @@ export default function Home() {
         <source src="/productDemo.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </motion.video>
-      <section className="relative h-screen pt-48 pb-24 md:pb-32 overflow-hidden items-center justify-center bg-black/20">
-        <div className="relative max-w-7xl ml-24 sm:px-6 lg:px-8">
+      <section className="relative h-screen pt-32 pb-24 md:pt-48 md:pb-32 overflow-hidden items-center justify-center bg-black/20">
+        <div className="relative max-w-7xl mx-auto md:ml-24 sm:px-6 lg:px-8 ">
           <div>
             <motion.div
               initial="hidden"
               animate="visible"
               variants={staggerContainer}
-              className="px-20 py-10 flex flex-col"
+              className="mx-auto px-6 md:px-20 py-10 flex flex-col items-center md:items-start"
               style={{
                 y: textY
               }}
             >
               <motion.div 
                 variants={fadeIn}
-                className="inline-flex items-center px-4 py-2 rounded-full bg-teal-800 bg-opacity-30 backdrop-blur-2xl border border-teal-500 text-teal-200 text-sm font-medium mb-6 self-start"
+                className="mx-auto md:mx-0 inline-flex items-center px-4 py-2 rounded-full bg-teal-800 bg-opacity-30 backdrop-blur-2xl border border-teal-500 text-teal-200 text-sm font-medium mb-6 self-start"
               >
                 <span className="flex h-2 w-2 mr-2">
                   <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-teal-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-300"></span>
                 </span>
-                Now Available for Reservations - Limited Spots
+                Reservations Open Now! - Limited Spots
               </motion.div>
               
               <motion.h1 
                 variants={fadeIn}
-                className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-white"
+                className="text-4xl text-center md:text-left md:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-white"
               >
                 <span className="block">The World's First</span>
                 <span className="bg-gradient-to-r from-teal-300 to-cyan-300 bg-clip-text text-transparent">Automatic EV Charger</span>
