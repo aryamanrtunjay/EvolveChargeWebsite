@@ -85,7 +85,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-gray-800 text-white pt-16 pb-8">
+    <footer className="relative bg-gray-800 text-white pt-16 pb-8 z-20">
       {/* Privacy Policy Modal (unchanged) */}
       <AnimatePresence>
         {showPrivacyPolicy && (

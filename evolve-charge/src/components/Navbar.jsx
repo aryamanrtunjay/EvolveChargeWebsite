@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image'
 import Logo from "@/images/Logo.svg"
+import LogoWhite from "@/images/LogoWhite.svg"
 
 export default function Navigation() {
   const [scrolled, setScrolled] = useState(false);
@@ -32,7 +33,7 @@ export default function Navigation() {
         <div className="flex justify-between items-center">
           <div className="flex items-center">
             <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-teal-500 to-cyan-500 bg-clip-text text-transparent">
-              <Image src={Logo} alt="logo" height={35}/>
+              <Image src={scrolled ? Logo : LogoWhite} alt="logo" className={scrolled ? "fill-white" : "fill-white"} height={35}/>
             </Link>
           </div>
           
@@ -55,20 +56,20 @@ export default function Navigation() {
               <button className={`px-5 py-2 rounded-full font-medium transition-all ${
                 scrolled 
                   ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white hover:shadow-lg' 
-                  : 'bg-white text-teal-500 hover:bg-teal-50'
+                  : 'bg-white text-teal-600 hover:bg-gradient-to-r from-teal-400 to-cyan-400 hover:text-white hover:shadow-lg transition-all duration-600'
               }`}>
                 Reserve Now
               </button>
             </a>
-            <a href="reserve">
+            {/* <a href="#how-it-works">
               <button className={`px-5 py-2 ml-12 rounded-full font-medium transition-all ${
                 scrolled 
                   ? 'border border-teal-400  text-black hover:shadow-lg' 
-                  : 'bg-white text-teal-500 hover:bg-teal-50'
+                  : 'border bord-erwhite text-white hover:bg-white hover:text-teal-600 hover:shadow-md'
               }`}>
                 Watch Demo  
               </button>
-            </a>
+            </a> */}
           </div>
           
           <button 
