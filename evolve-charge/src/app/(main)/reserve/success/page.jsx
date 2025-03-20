@@ -110,7 +110,7 @@ function ReserveSuccessContent() {
                 <div className="ml-4">
                   <h3 className="text-lg font-medium text-gray-900">Check Your Email</h3>
                   <p className="mt-1 text-gray-600">
-                    We've sent a welcome email to {reservationDetails.email || 'your email'} with all the benefits you get by placing this reservation.
+                    We've sent a welcome email to {reservationDetails.email.substring(0, reservationDetails.email.length - 1)} with all the benefits you get by placing this reservation.
                   </p>
                 </div>
               </div>
