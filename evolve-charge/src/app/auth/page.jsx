@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation'; // Updated import
 import { motion } from 'framer-motion';
 
 // Animation variants consistent with landing page
@@ -15,13 +15,13 @@ const fadeIn = {
 };
 
 export default function Auth() {
-  const router = useRouter();
-  const { state } = router.query;
+  const searchParams = useSearchParams(); // Use useSearchParams to get query parameters
+  const state = searchParams.get('state'); // Extract the 'state' parameter
 
   useEffect(() => {
     if (state) {
       const clientId = process.env.NEXT_PUBLIC_TESLA_CLIENT_ID; // Store in .env.local
-      const redirectUri = 'evolvecharge://auth/callback'; // Updated redirect URI
+      const redirectUri = 'evolvecharge://auth/callback';
       const scope = 'offline_access vehicle_device_data user_data';
       const teslaAuthUrl = `https://auth.tesla.com/oauth2/v3/authorize?client_id=${clientId}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}&state=${state}`;
       window.location.href = teslaAuthUrl;
