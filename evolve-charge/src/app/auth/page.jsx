@@ -29,19 +29,21 @@ export default function Auth() {
   }, [state]);
 
   return (
-    <motion.div
-      className="flex items-center justify-center min-h-screen bg-gray-50"
-      initial="hidden"
-      animate="visible"
-      variants={fadeIn}
-    >
-      <div className="text-center p-8 bg-white rounded-2xl shadow-lg border border-gray-100">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Redirecting to Tesla</h2>
-        <p className="text-gray-600">Please wait while we connect you for authentication...</p>
-        {!state && (
-          <p className="mt-2 text-red-600">Error: No state parameter provided.</p>
-        )}
-      </div>
-    </motion.div>
+    <Suspense>
+      <motion.div
+        className="flex items-center justify-center min-h-screen bg-gray-50"
+        initial="hidden"
+        animate="visible"
+        variants={fadeIn}
+      >
+        <div className="text-center p-8 bg-white rounded-2xl shadow-lg border border-gray-100">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Redirecting to Tesla</h2>
+          <p className="text-gray-600">Please wait while we connect you for authentication...</p>
+          {!state && (
+            <p className="mt-2 text-red-600">Error: No state parameter provided.</p>
+          )}
+        </div>
+      </motion.div>
+    </Suspense>
   );
 }
