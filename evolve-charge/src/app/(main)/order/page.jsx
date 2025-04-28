@@ -23,6 +23,42 @@ const staggerContainer = {
   visible: { opacity: 1, transition: { staggerChildren: 0.2 } }
 };
 
+// Modal Component for Charging Cable Info
+function ChargingCableModal({ isOpen, onClose }) {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-xl font-bold text-gray-900">Tesla Wall Connector Plug</h3>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div className="mb-4">
+          <img
+            src="https://example.com/tesla-wall-connector-plug.jpg" // Replace with actual image URL
+            alt="Tesla Wall Connector Plug"
+            className="w-full h-48 object-contain rounded-lg"
+          />
+        </div>
+        <p className="text-gray-700 text-sm">
+          The Tesla Wall Connector plug is a high-power charging solution designed for Tesla vehicles. It features a sleek design and delivers up to 44 miles of range per hour of charge. Many Tesla vehicles come with this so you may not need to purchase this add-on.
+        </p>
+        <button
+          onClick={onClose}
+          className="mt-4 w-full py-2 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium hover:shadow-md transition-all"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // Checkout Form Component
 function CheckoutForm({ onSuccess, total, isProcessing, setIsProcessing }) {
   const stripe = useStripe();
@@ -38,7 +74,7 @@ function CheckoutForm({ onSuccess, total, isProcessing, setIsProcessing }) {
     const { error, paymentIntent } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: `${window.location.origin}reserve/success`,
+        return_url: `${window.location.origin}/reserve/success`,
       },
       redirect: 'if_required',
     });
@@ -92,7 +128,7 @@ function CheckoutForm({ onSuccess, total, isProcessing, setIsProcessing }) {
 }
 
 export default function OrderPage() {
-  const [selectedPlan, setSelectedPlan] = useState('deluxe');
+  const [selectedPlan, setSelectedPlan] = useState('basic');
   const [billingCycle, setBillingCycle] = useState('monthly');
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
@@ -111,22 +147,49 @@ export default function OrderPage() {
     referralSource: '',
     agreeTerms: false
   });
+  const [addOns, setAddOns] = useState({
+    professionalInstallation: false,
+    chargingCable: false,
+    extendedWarranty: false
+  });
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [orderSummary, setOrderSummary] = useState({
     subtotal: 0,
     tax: 0,
     total: 0,
-    monthlyFee: 0
+    monthlyFee: 0,
+    oneTimeFee: 0,
+    addOnCost: 0
   });
   const [isProcessing, setIsProcessing] = useState(false);
   const [clientSecret, setClientSecret] = useState('');
   const [orderData, setOrderData] = useState(null);
-  const [orderId, setOrderId] = useState(''); // Add orderId state
-  const router = useRouter(); // Add router
+  const [orderId, setOrderId] = useState('');
+  const router = useRouter();
 
   const plans = pricingData.plans.reduce((acc, plan) => {
     acc[plan.name.toLowerCase()] = plan;
     return acc;
   }, {});
+
+  const addOnsList = [
+    { name: 'professionalInstallation', label: 'Professional Installation', price: 40, description: 'Expert installation at your location.' },
+    { 
+      name: 'chargingCable', 
+      label: 'Charging Cable', 
+      price: 300, 
+      description: 'High-quality, durable charging cable.',
+      additionalDescription: (
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="text-teal-500 hover:underline text-sm"
+        >
+          You may already have this
+        </button>
+      )
+    },
+    { name: 'extendedWarranty', label: 'Extended Warranty', price: 50, description: 'Additional 2 years of coverage for your charger.' }
+  ];
 
   const vehicleMakes = [
     "Tesla", "Ford", "Chevrolet", "Nissan", "BMW", "Audi",
@@ -136,15 +199,23 @@ export default function OrderPage() {
 
   useEffect(() => {
     const plan = plans[selectedPlan];
-    const subtotal = plan.oneTimePrice;
+    if (!plan) {
+      console.error(`Plan "${selectedPlan}" not found in pricingData.plans`);
+      setOrderSummary({ subtotal: 0, tax: 0, total: 0, monthlyFee: 0, oneTimeFee: 0, addOnCost: 0 });
+      return;
+    }
+    const oneTimeFee = plan.oneTimePrice || 0;
+    const monthlyFee = billingCycle === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice / 12;
+    const subscriptionFee = billingCycle === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice;
+    const addOnCost = addOnsList.reduce((total, addOn) => {
+      return total + (addOns[addOn.name] ? addOn.price : 0);
+    }, 0);
+    const subtotal = oneTimeFee + subscriptionFee + addOnCost;
     const tax = subtotal * 0.08;
     const total = subtotal + tax;
-    const monthlyFee = plan.monthlyPrice
-      ? (billingCycle === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice / 12)
-      : 0;
     
-    setOrderSummary({ subtotal, tax, total, monthlyFee });
-  }, [selectedPlan, billingCycle]);
+    setOrderSummary({ subtotal, tax, total, monthlyFee, oneTimeFee, addOnCost });
+  }, [selectedPlan, billingCycle, addOns]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -154,14 +225,26 @@ export default function OrderPage() {
     });
   };
 
+  const handleAddOnChange = (e) => {
+    const { name, checked } = e.target;
+    setAddOns({
+      ...addOns,
+      [name]: checked
+    });
+  };
+
   const handlePlanSelect = (plan) => {
     setSelectedPlan(plan);
+  };
+
+  const handleBillingCycleChange = (cycle) => {
+    setBillingCycle(cycle);
   };
 
   const nextStep = () => {
     window.scrollTo(0, 0);
     setStep(step + 1);
-    if (step === 2) {
+    if (step === 3) {
       prepareOrder();
     }
   };
@@ -201,6 +284,7 @@ export default function OrderPage() {
         },
         billing: billingCycle,
         plan: selectedPlan,
+        addOns: addOns,
         subtotal: orderSummary.subtotal,
         tax: orderSummary.tax,
         total: orderSummary.total,
@@ -221,6 +305,7 @@ export default function OrderPage() {
             plan: selectedPlan,
             billingCycle,
             email: formData.email,
+            addOns: JSON.stringify(addOns),
           }
         }),
       });
@@ -269,7 +354,7 @@ export default function OrderPage() {
         .then(() => console.log('Confirmation email sent successfully'))
         .catch((error) => console.error('Error sending confirmation email:', error));
 
-      router.push(`reserve/success?orderId=${orderId}`);
+      router.push(`/reserve/success?orderId=${orderId}`);
     } catch (error) {
       console.error('Error finalizing order:', error);
     }
@@ -297,7 +382,7 @@ export default function OrderPage() {
         {/* Order Progress */}
         <div className="max-w-3xl mx-auto mb-10">
           <div className="flex items-center justify-between mb-4">
-            {['Select Plan', 'Your Information', 'Payment'].map((label, index) => (
+            {['Select Plan', 'Add-Ons', 'Your Information', 'Payment'].map((label, index) => (
               <div key={index} className="flex flex-col items-center">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
                   step > index + 1 
@@ -325,7 +410,7 @@ export default function OrderPage() {
           <div className="relative h-1 bg-gray-200 rounded-full">
             <div 
               className="absolute h-1 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full transition-all duration-500"
-              style={{ width: `${(step - 1) * 50}%` }}
+              style={{ width: `${(step - 1) * 33.33}%` }}
             ></div>
           </div>
         </div>
@@ -335,8 +420,31 @@ export default function OrderPage() {
           <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-6xl mx-auto">
             <motion.div variants={fadeIn} className="text-center mb-10">
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Choose Your EVolve Charge Plan</h1>
-              <p className="text-lg text-gray-700">Select the plan that best fits your electric vehicle charging needs.</p>
-              <p className="text-lg text-gray-700">We offer a full refund on your deposit should you choose to remove your reservation.</p>
+              <p className="text-lg text-gray-700">Don't worry! Your purchase comes with a 30 day moneyback guarantee.</p>
+            </motion.div>
+            <motion.div variants={fadeIn} className="flex justify-center mb-8">
+              <div className="inline-flex rounded-full bg-gray-200 p-1">
+                <button
+                  onClick={() => handleBillingCycleChange('monthly')}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                    billingCycle === 'monthly'
+                      ? 'bg-teal-500 text-white'
+                      : 'bg-transparent text-gray-700 hover:bg-gray-300'
+                  }`}
+                >
+                  Monthly
+                </button>
+                <button
+                  onClick={() => handleBillingCycleChange('yearly')}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                    billingCycle === 'yearly'
+                      ? 'bg-teal-500 text-white'
+                      : 'bg-transparent text-gray-700 hover:bg-gray-300'
+                  }`}
+                >
+                  Yearly {billingCycle === 'yearly' && <span className="ml-1 text-xs">(Save {selectedPlan === 'basic' ? '17%' : '44%'})</span>}
+                </button>
+              </div>
             </motion.div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
               {pricingData.plans.map((plan) => (
@@ -357,17 +465,32 @@ export default function OrderPage() {
                   </div>
                   <div className="mb-6">
                     <div className="flex items-baseline">
-                      <span className="text-3xl font-bold text-gray-900">${plan.oneTimePrice}</span>
-                      <span className="ml-1 text-gray-500">deposit</span>
+                      <span className="text-3xl font-bold text-gray-900">
+                        ${billingCycle === 'monthly' ? plan.monthlyPrice : (plan.yearlyPrice / 12).toFixed(2)}
+                      </span>
+                      <span className="ml-1 text-gray-500">/{billingCycle === 'monthly' ? 'month' : 'month'}</span>
                     </div>
-                    {plan.monthlyPrice && plan.yearlyPrice && (
+                    {plan.oneTimePrice && (
                       <div className="mt-1 text-sm text-gray-700">
-                        +${billingCycle === 'monthly' ? plan.monthlyPrice.toFixed(2) : (plan.yearlyPrice / 12).toFixed(2)}/month service fee (after delivery)
+                        +${plan.oneTimePrice} one-time fee for charger
                       </div>
                     )}
-                    {plan.kwhRate && (
-                      <div className="mt-1 text-sm text-gray-700">{plan.kwhRate} energy rate (after delivery)</div>
-                    )}
+                    <div className="mt-1 text-sm text-gray-500">
+                      Billed {billingCycle === 'monthly' ? 'monthly' : 'annually'} at ${billingCycle === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice}
+                    </div>
+                  </div>
+                  <div className="mb-6">
+                    <h4 className="text-sm font-semibold text-gray-900 mb-2">Features:</h4>
+                    <ul className="text-gray-700 text-sm space-y-1">
+                      {plan.features.map((feature, index) => (
+                        <li key={index} className="flex items-start">
+                          <svg className="h-5 w-5 text-teal-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                   <p className="text-gray-700 mb-6">{plan.details}</p>
                   <button
@@ -388,18 +511,120 @@ export default function OrderPage() {
                 onClick={nextStep}
                 className="px-8 py-3 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium shadow-md hover:shadow-lg transition-all"
               >
-                Continue to Your Information
+                Continue to Add-Ons
               </button>
             </motion.div>
           </motion.div>
         )}
 
-        {/* Step 2: Customer Information */}
+        {/* Step 2: Add-Ons */}
         {step === 2 && (
           <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-4xl mx-auto">
             <motion.div variants={fadeIn} className="text-center mb-10">
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Customize Your Order with Add-Ons</h1>
+              <p className="text-lg text-gray-700">Enhance your EVolve Charge experience with these optional add-ons.</p>
+            </motion.div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <motion.div variants={fadeIn} className="md:col-span-2">
+                <div className="bg-white rounded-xl shadow-md p-6 mb-8">
+                  <h2 className="text-xl font-bold text-gray-900 mb-6">Available Add-Ons</h2>
+                  {addOnsList.map((addOn) => (
+                    <div key={addOn.name} className="flex items-start mb-4">
+                      <div className="flex items-center h-5">
+                        <input
+                          id={addOn.name}
+                          name={addOn.name}
+                          type="checkbox"
+                          checked={addOns[addOn.name]}
+                          onChange={handleAddOnChange}
+                          className="h-4 w-4 text-teal-500 border-gray-300 rounded focus:ring-teal-500"
+                          disabled={addOn.name === 'professionalInstallation' && selectedPlan === 'basic'}
+                        />
+                      </div>
+                      <div className="ml-3">
+                        <label htmlFor={addOn.name} className="font-medium text-gray-900">
+                          {addOn.label} - ${addOn.price}
+                        </label>
+                        <p className="text-sm text-gray-500">{addOn.description}</p>
+                        {addOn.additionalDescription && (
+                          <div className="mt-1">{addOn.additionalDescription}</div>
+                        )}
+                        {addOn.name === 'professionalInstallation' && selectedPlan === 'basic' && (
+                          <p className="text-sm text-gray-400">Not available for basic Plan</p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+              <motion.div variants={fadeIn} className="md:col-span-1">
+                <div className="bg-white rounded-xl shadow-md p-6 sticky top-28">
+                  <h2 className="text-xl font-bold text-gray-900 mb-6">Order Summary</h2>
+                  <div className="flex items-center mb-6">
+                    <div className="mr-3" dangerouslySetInnerHTML={{ __html: plans[selectedPlan].icon }} />
+                    <div>
+                      <h3 className="font-bold text-gray-900">{plans[selectedPlan].name} Plan</h3>
+                      <p className="text-sm text-gray-500">{billingCycle === 'monthly' ? 'Monthly billing' : 'Annual billing'}</p>
+                    </div>
+                  </div>
+                  <div className="border-t border-gray-200 pt-4 mb-4">
+                    {orderSummary.oneTimeFee > 0 && (
+                      <div className="flex justify-between mb-2">
+                        <span className="text-gray-600">Hardware</span>
+                        <span className="text-gray-900">${orderSummary.oneTimeFee.toFixed(2)}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between mb-2">
+                      <span className="text-gray-600">Subscription ({billingCycle})</span>
+                      <span className="text-gray-900">${(billingCycle === 'monthly' ? plans[selectedPlan].monthlyPrice : plans[selectedPlan].yearlyPrice).toFixed(2)}</span>
+                    </div>
+                    {orderSummary.addOnCost > 0 && (
+                      <div className="flex justify-between mb-2">
+                        <span className="text-gray-600">Add-Ons</span>
+                        <span className="text-gray-900">${orderSummary.addOnCost.toFixed(2)}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between mb-2">
+                      <span className="text-gray-600">Tax</span>
+                      <span className="text-gray-900">${orderSummary.tax.toFixed(2)}</span>
+                    </div>
+                  </div>
+                  <div className="border-t border-gray-200 pt-4 mb-6">
+                    <div className="flex justify-between font-bold">
+                      <span className="text-gray-900">Total Due Today</span>
+                      <span className="text-gray-900">${orderSummary.total.toFixed(2)}</span>
+                    </div>
+                  </div>
+                  <div className="flex space-x-4 mb-4">
+                    <button
+                      onClick={prevStep}
+                      className="w-1/2 py-2 rounded-full border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+                    >
+                      Back
+                    </button>
+                    <button
+                      onClick={nextStep}
+                      className="w-1/2 py-2 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium hover:shadow-md transition-all"
+                    >
+                      Continue
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+            <ChargingCableModal
+              isOpen={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+            />
+          </motion.div>
+        )}
+
+        {/* Step 3: Customer Information */}
+        {step === 3 && (
+          <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-4xl mx-auto">
+            <motion.div variants={fadeIn} className="text-center mb-10">
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Your Information</h1>
-              <p className="text-lg text-gray-700">Please provide your details for account setup.</p>
+              <p className="text-lg text-gray-700">Please provide your details to complete your order.</p>
             </motion.div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <motion.div variants={fadeIn} className="md:col-span-2">
@@ -458,107 +683,77 @@ export default function OrderPage() {
                     </div>
                   </div>
                 </div>
-                <div className="bg-white rounded-xl shadow-md p-6 mb-8">
-                  <h2 className="text-xl font-bold text-gray-900 mb-6">Delivery Address</h2>
-                  <div className="mb-4">
-                    <label htmlFor="address1" className="block text-sm font-medium text-gray-700 mb-1">Address Line 1*</label>
-                    <input
-                      type="text"
-                      id="address1"
-                      name="address1"
-                      value={formData.address1}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                    />
-                  </div>
-                  <div className="mb-4">
-                    <label htmlFor="address2" className="block text-sm font-medium text-gray-700 mb-1">Address Line 2</label>
-                    <input
-                      type="text"
-                      id="address2"
-                      name="address2"
-                      value={formData.address2}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div>
-                      <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">City*</label>
-                      <input
-                        type="text"
-                        id="city"
-                        name="city"
-                        value={formData.city}
-                        onChange={handleInputChange}
-                        required
-                        className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                      />
+                {selectedPlan !== 'basic' && (
+                  <>
+                    <div className="bg-white rounded-xl shadow-md p-6 mb-8">
+                      <h2 className="text-xl font-bold text-gray-900 mb-6">Delivery Address</h2>
+                      <div className="mb-4">
+                        <label htmlFor="address1" className="block text-sm font-medium text-gray-700 mb-1">Address Line 1*</label>
+                        <input
+                          type="text"
+                          id="address1"
+                          name="address1"
+                          value={formData.address1}
+                          onChange={handleInputChange}
+                          required
+                          className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                        />
+                      </div>
+                      <div className="mb-4">
+                        <label htmlFor="address2" className="block text-sm font-medium text-gray-700 mb-1">Address Line 2</label>
+                        <input
+                          type="text"
+                          id="address2"
+                          name="address2"
+                          value={formData.address2}
+                          onChange={handleInputChange}
+                          className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                          <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">City*</label>
+                          <input
+                            type="text"
+                            id="city"
+                            name="city"
+                            value={formData.city}
+                            onChange={handleInputChange}
+                            required
+                            className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="state" className="block text-sm font-medium text-gray-700 mb-1">State*</label>
+                          <select
+                            id="state"
+                            name="state"
+                            value={formData.state}
+                            onChange={handleInputChange}
+                            required
+                            className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                          >
+                            <option value="">Select State</option>
+                            {/* State options remain unchanged */}
+                          </select>
+                        </div>
+                      </div>
+                      <div className="mb-4">
+                        <label htmlFor="zipCode" className="block text-sm font-medium text-gray-700 mb-1">ZIP Code*</label>
+                        <input
+                          type="text"
+                          id="zipCode"
+                          name="zipCode"
+                          value={formData.zipCode}
+                          onChange={handleInputChange}
+                          required
+                          className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                          maxLength={10}
+                        />
+                      </div>
                     </div>
-                    <div>
-                      <label htmlFor="state" className="block text-sm font-medium text-gray-700 mb-1">State*</label>
-                      <select
-                        id="state"
-                        name="state"
-                        value={formData.state}
-                        onChange={handleInputChange}
-                        required
-                        className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                      >
-                        <option value="">Select State</option>
-                        {/* State options remain unchanged */}
-                      </select>
-                    </div>
-                  </div>
-                  <div className="mb-4">
-                    <label htmlFor="zipCode" className="block text-sm font-medium text-gray-700 mb-1">ZIP Code*</label>
-                    <input
-                      type="text"
-                      id="zipCode"
-                      name="zipCode"
-                      value={formData.zipCode}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                      maxLength={10}
-                    />
-                  </div>
-                </div>
-                <div className="bg-white rounded-xl shadow-md p-6 mb-8">
-                  <h2 className="text-xl font-bold text-gray-900 mb-6">Vehicle Information</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <div>
-                      <label htmlFor="vehicleMake" className="block text-sm font-medium text-gray-700 mb-1">Vehicle Make*</label>
-                      <select
-                        id="vehicleMake"
-                        name="vehicleMake"
-                        value={formData.vehicleMake}
-                        onChange={handleInputChange}
-                        required
-                        className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                      >
-                        <option value="">Select Make</option>
-                        {vehicleMakes.map((make) => (
-                          <option key={make} value={make}>{make}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div>
-                      <label htmlFor="vehicleModel" className="block text-sm font-medium text-gray-700 mb-1">Vehicle Model*</label>
-                      <input
-                        type="text"
-                        id="vehicleModel"
-                        name="vehicleModel"
-                        value={formData.vehicleModel}
-                        onChange={handleInputChange}
-                        required
-                        className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                        placeholder="e.g., Model 3, Mach-E, ID.4"
-                      />
-                    </div>
-                  </div>
-                </div>
+                  </>
+                )}
                 <div className="bg-white rounded-xl shadow-md p-6 mb-8">
                   <h2 className="text-xl font-bold text-gray-900 mb-6">Additional Information</h2>
                   <div className="mb-6">
@@ -617,10 +812,22 @@ export default function OrderPage() {
                     </div>
                   </div>
                   <div className="border-t border-gray-200 pt-4 mb-4">
+                    {orderSummary.oneTimeFee > 0 && (
+                      <div className="flex justify-between mb-2">
+                        <span className="text-gray-600">Hardware</span>
+                        <span className="text-gray-900">${orderSummary.oneTimeFee.toFixed(2)}</span>
+                      </div>
+                    )}
                     <div className="flex justify-between mb-2">
-                      <span className="text-gray-600">Hardware</span>
-                      <span className="text-gray-900">${orderSummary.subtotal.toFixed(2)}</span>
+                      <span className="text-gray-600">Subscription ({billingCycle})</span>
+                      <span className="text-gray-900">${(billingCycle === 'monthly' ? plans[selectedPlan].monthlyPrice : plans[selectedPlan].yearlyPrice).toFixed(2)}</span>
                     </div>
+                    {orderSummary.addOnCost > 0 && (
+                      <div className="flex justify-between mb-2">
+                        <span className="text-gray-600">Add-Ons</span>
+                        <span className="text-gray-900">${orderSummary.addOnCost.toFixed(2)}</span>
+                      </div>
+                    )}
                     <div className="flex justify-between mb-2">
                       <span className="text-gray-600">Tax</span>
                       <span className="text-gray-900">${orderSummary.tax.toFixed(2)}</span>
@@ -657,8 +864,8 @@ export default function OrderPage() {
           </motion.div>
         )}
 
-        {/* Step 3: Payment */}
-        {step === 3 && (
+        {/* Step 4: Payment */}
+        {step === 4 && (
           <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-4xl mx-auto">
             <motion.div variants={fadeIn} className="text-center mb-10">
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Payment Information</h1>
@@ -666,14 +873,14 @@ export default function OrderPage() {
             </motion.div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <motion.div variants={fadeIn} className="md:col-span-2">
-              <div className="flex items-center bg-gray-100 p-4 rounded-lg mb-2">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-teal-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <p className="text-sm text-gray-700">
-                  EVolve Charge contributes 1% of your payment to removing carbon from the atmosphere to fight climate change.
-                </p>
-              </div>
+                <div className="flex items-center bg-gray-100 p-4 rounded-lg mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-teal-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <p className="text-sm text-gray-700">
+                    EVolve Charge contributes 1% of your payment to removing carbon from the atmosphere to fight climate change.
+                  </p>
+                </div>
                 <div className="bg-white rounded-xl shadow-md p-6 mb-8">
                   <h2 className="text-xl font-bold text-gray-900 mb-6">Payment Method</h2>
                   {clientSecret ? (
@@ -711,10 +918,22 @@ export default function OrderPage() {
                     </div>
                   </div>
                   <div className="border-t border-gray-200 pt-4 mb-4">
+                    {orderSummary.oneTimeFee > 0 && (
+                      <div className="flex justify-between mb-2">
+                        <span className="text-gray-600">Hardware</span>
+                        <span className="text-gray-900">${orderSummary.oneTimeFee.toFixed(2)}</span>
+                      </div>
+                    )}
                     <div className="flex justify-between mb-2">
-                      <span className="text-gray-600">Hardware</span>
-                      <span className="text-gray-900">${orderSummary.subtotal.toFixed(2)}</span>
+                      <span className="text-gray-600">Subscription ({billingCycle})</span>
+                      <span className="text-gray-900">${(billingCycle === 'monthly' ? plans[selectedPlan].monthlyPrice : plans[selectedPlan].yearlyPrice).toFixed(2)}</span>
                     </div>
+                    {orderSummary.addOnCost > 0 && (
+                      <div className="flex justify-between mb-2">
+                        <span className="text-gray-600">Add-Ons</span>
+                        <span className="text-gray-900">${orderSummary.addOnCost.toFixed(2)}</span>
+                      </div>
+                    )}
                     <div className="flex justify-between mb-2">
                       <span className="text-gray-600">Tax</span>
                       <span className="text-gray-900">${orderSummary.tax.toFixed(2)}</span>
@@ -739,13 +958,13 @@ export default function OrderPage() {
                         <svg className="h-5 w-5 text-teal-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
-                        <span>Development News & Updates</span>
+                        <span>Access to app</span>
                       </li>
                       <li className="flex items-start">
                         <svg className="h-5 w-5 text-teal-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
-                        <span>Receiving your NeoGen</span>
+                        <span>{selectedPlan === 'basic' ? 'Priority updates on new features' : 'Receiving your smart charger'}</span>
                       </li>
                     </ul>
                   </div>

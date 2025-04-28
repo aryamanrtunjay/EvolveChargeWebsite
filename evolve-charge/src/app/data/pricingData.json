@@ -1,20 +1,39 @@
 {
-"plans": [
-        {
-        "name": "Base",
-        "description": "Reserve a spot for our first ever product",
-        "oneTimePrice": 25,
-        "details": "Reserve NeoGen with a 25 dollar deposit. When we are ready to deliver, we will take off the deposit from the final price.",
-        "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-12 w-12 text-teal-500\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M13 10V3L4 14h7v7l9-11h-7z\" /></svg>",
+    "plans": [
+      {
+        "name": "Basic",
+        "description": "Get notifications on the best times to charge your car to save money and finish charging when you need to leave.",
+        "monthlyPrice": 6,
+        "yearlyPrice": 60,
+        "details": "Get smart notifications everyday to optimize your charging schedule.",
+        "features": [
+          "Smart notifications for optimal charging times",
+          "Save $10-$15 in charging cost every month",
+          "Know when to charge your car every day",
+          "Access to charging schedule insights",
+          "Email and app-based alerts"
+        ],
+        "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-12 w-12 text-teal-500\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9\"></path></svg>",
         "mostPopular": false
-        },
-        {
-        "name": "Deluxe",
-        "description": "Help EVolve the future of charging",
-        "oneTimePrice": 100,
-        "details": "Be a part of the future of charging. Pay a $100 deposit now, and receive the deposit plus an additional $50 discount off the final price and permanant status as a VIP customer of EVolve Charge.",
+      },
+      {
+        "name": "Advanced",
+        "description": "An automatic charger that saves you money, keeps your EV healthy, and makes sure your car is charged and ready for you everyday.",
+        "oneTimePrice": 120,
+        "monthlyPrice": 3,
+        "yearlyPrice": 20,
+        "details": "Receive a smart charger with the ability to customize it's behavior to fit your lifestyle.",
+        "features": [
+          "Includes all Notification Plan features",
+          "Never plug in manually again",
+          "Save ~$25 in charging cost every month",
+          "Create custom charging schedules",
+          "Have a charged car every single day",
+          "Add years to your EV battery's lifespan over time",
+          "Priority support and updates"
+        ],
         "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-12 w-12 text-teal-500\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z\" /></svg>",
         "mostPopular": true
-        }
+      }
     ]
-}
+  }

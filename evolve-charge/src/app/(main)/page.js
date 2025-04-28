@@ -406,13 +406,13 @@ export default function Home() {
                 variants={fadeIn}
                 className="flex flex-wrap gap-4 mt-2"
               >
-                <Link href="reserve">
+                <Link href="order">
                   <motion.button
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
                     className="px-8 py-3 rounded-full bg-gradient-to-r from-teal-400 to-cyan-400 text-gray-50 font-medium shadow-lg hover:shadow-xl transition-all"
                   >
-                    Reserve Your NeoGen
+                    Order Yours Today
                   </motion.button>
                 </Link>
                 {/*                 
@@ -840,13 +840,13 @@ export default function Home() {
               </div>
             )}
             <div className="max-w-md mx-auto mt-8">
-                <Link href="reserve">
+                <Link href="order">
                   <motion.button
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
                     className="px-8 py-3 rounded-full bg-white hover:bg-gradient-to-r from-teal-400 to-cyan-400 hover:text-gray-50 text-teal-700 font-medium shadow-lg hover:shadow-xl transition-all"
                   >
-                    Reserve Your NeoGen
+                    Order Yours
                   </motion.button>
                 </Link>
               {submitError && (
