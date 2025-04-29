@@ -85,7 +85,7 @@ function ReserveSuccessContent() {
             </p>
             
             <p className="text-lg text-gray-50">
-              Your NeoGen reservation has been successfully processed.
+              Your EVolve Charger reservation has been successfully processed.
             </p>
           </motion.div>
 
@@ -126,7 +126,7 @@ function ReserveSuccessContent() {
                 <div className="ml-4">
                   <h3 className="text-lg font-medium text-gray-900">Stay Tuned</h3>
                   <p className="mt-1 text-gray-600">
-                    We'll be in touch with updates about your NeoGen availability and installation details.
+                    We'll be in touch with updates about your EVolve Charger availability and installation details.
                   </p>
                 </div>
               </div>

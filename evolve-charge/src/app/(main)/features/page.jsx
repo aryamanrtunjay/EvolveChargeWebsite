@@ -425,7 +425,7 @@ export default function Features() {
                 whileTap={{ scale: 0.95 }}
                 className="px-8 py-3 rounded-full bg-white text-teal-500 font-medium shadow-md hover:shadow-lg transition-all"
               >
-                Reserve Your NeoGen
+                Reserve Your EVolve Charger
               </motion.button>
             </a>
             <p className="mt-4 text-sm opacity-80">Limited early-bird pricing available. Free installation included.</p>

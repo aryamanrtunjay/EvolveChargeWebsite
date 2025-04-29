@@ -56,7 +56,7 @@ export default function Support() {
       articles: [
         {
           title: 'Setting up your EVolve Charge for the first time',
-          content: "This guide will walk you through the initial setup process after your NeoGen has been professionally installed. You'll learn how to connect NeoGen to WiFi, set up your account, and configure basic charging preferences.",
+          content: "This guide will walk you through the initial setup process after your EVolve Charger has been professionally installed. You'll learn how to connect the EVolve Charger to WiFi, set up your account, and configure basic charging preferences.",
           popular: true
         },
         {

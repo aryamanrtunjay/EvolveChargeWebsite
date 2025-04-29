@@ -157,7 +157,7 @@ export async function POST(request) {
                 
                 <p>We're committed to sending you only the most relevant and valuable content, typically once or twice a week.</p>
                 
-                <h2 style="color: #333;">Introducing NeoGen</h2>
+                <h2 style="color: #333;">Introducing The EVolve Charger</h2>
                 <p>Our flagship product offers a seamless charging experience with cutting-edge features:</p>
                 <ul>
                     <li><strong>Automatic Connection:</strong> The charging arm automatically connects and disconnects from your vehicle, eliminating manual plugging.</li>
@@ -168,7 +168,7 @@ export async function POST(request) {
                 </ul>
                 
                 <div style="text-align: center; margin-top: 20px;">
-                    <a href="https://evolve-charge.com/#how-it-works" style="display: inline-block; background-color: #007bff; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">View NeoGen</a>
+                    <a href="https://evolve-charge.com/#how-it-works" style="display: inline-block; background-color: #007bff; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">View The EVolve Charger</a>
                 </div>
                 
                 <p>If you have any questions or need assistance, our support team is always ready to help at <a href="mailto:support@evolve-charge.com">support@evolve-charge.com</a>.</p>

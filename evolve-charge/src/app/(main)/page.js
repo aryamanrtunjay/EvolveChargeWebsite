@@ -10,6 +10,7 @@ import Link from 'next/link'
 import { db } from '../firebaseConfig.js';
 import { collection, addDoc, serverTimestamp, query, where, getDocs, updateDoc, doc, getCountFromServer } from 'firebase/firestore';
 import Render from '@/images/Render.png';
+import Testimonials from '@/components/Testimonials.jsx';
 
 // Animation variants
 const fadeIn = {
@@ -260,12 +261,12 @@ export default function Home() {
   // FAQ data
   const faqItems = [
     {
-      question: "Is NeoGen compatible with all electric vehicles?",
-      answer: "Yes, NeoGen is designed to work with all major EV models using standard charging ports including Tesla, Ford, Hyundai, Kia, Chevrolet, Nissan, BMW, and more."
+      question: "Is the EVolve Charger compatible with all electric vehicles?",
+      answer: "Yes, the EVolve Charger is designed to work with all major EV models using standard charging ports including Tesla, Ford, Hyundai, Kia, Chevrolet, Nissan, BMW, and more."
     },
     {
       question: "How does it plug into my car?",
-      answer: "NeoGen navigates above your vehicle where it is securely attached to high-strength steel wire, ensuring absolutely no risk to your vehicles while being out of the way of items stored in your garage. A charge plug is lowered and magnetically snaps to your EV's charge port, beginning the charging process."
+      answer: "The EVolve Charger navigates above your vehicle where it is securely attached to high-strength steel wire, ensuring absolutely no risk to your vehicles while being out of the way of items stored in your garage. A charge plug is lowered and magnetically snaps to your EV's charge port, beginning the charging process."
     },
     {
       question: "How long does installation take?",
@@ -277,7 +278,7 @@ export default function Home() {
     },
     {
       question: "What happens if there's a power outage?",
-      answer: "The NeoGen system will automatically resume its optimized charging schedule once power is restored. All your settings are securely stored in the cloud."
+      answer: "The EVolve Charger system will automatically resume its optimized charging schedule once power is restored. All your settings are securely stored in the cloud."
     },
     {
       question: "Is there a warranty?",
@@ -351,12 +352,12 @@ export default function Home() {
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
       <motion.video
-        className="fixed w-full h-full object-cover"
+        className="fixed w-full h-full object-cover bg-black/20"
         muted
         autoPlay
         loop
         preload="metadata"
-        title="How NeoGen Works"
+        title="How the EVolve Charger Works"
         style={{
           opacity
         }}
@@ -364,14 +365,14 @@ export default function Home() {
         <source src="/productDemo.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </motion.video>
-      <section className="relative h-screen pt-32 pb-24 md:pt-48 md:pb-32 overflow-hidden items-center justify-center bg-black/20">
+      <section className="relative h-screen pt-32 pb-24 md:pt-48 md:pb-32 overflow-hidden items-center justify-center">
         <div className="relative max-w-7xl mx-auto md:ml-24 sm:px-6 lg:px-8 ">
           <div>
             <motion.div
               initial="hidden"
               animate="visible"
               variants={staggerContainer}
-              className="mx-auto px-6 md:px-20 py-10 flex flex-col items-center md:items-start"
+              className="mx-auto px-6 md:px-0 md:py-0 py-10 flex flex-col items-center md:items-start"
               style={{
                 y: textY
               }}
@@ -436,12 +437,117 @@ export default function Home() {
           transition={{ delay: 1.2, duration: 0.8 }}
           className="absolute bottom-8 left-0 right-0 flex justify-center"
           style={{ opacity: useTransform(scrollYProgress, [0, 0.1], [1, 0]) }}
-        >
-          <ScrollIndicator className="z-0"/>
-        </motion.div>
+      >
+        <ScrollIndicator className="z-0"/>
+      </motion.div>
+
+      {/* Features Section */}
+      <section id="features" className="py-10 md:py-16 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-20 bg-gradient-to-b from-white to-transparent"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-teal-50 rounded-full opacity-70"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-cyan-50 rounded-full opacity-70"></div>
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={staggerContainer}
+            className="text-center mb-20"
+          >
+            <motion.h2 
+              variants={fadeIn}
+              className="text-3xl text-gray-900 md:text-4xl font-bold mt-4 mb-4"
+            >
+              Intelligent Charging Features
+            </motion.h2>
+            <motion.p 
+              variants={fadeIn}
+              className="text-lg text-gray-600 max-w-2xl mx-auto"
+            >
+              Our smart charging technology adapts to your vehicle needs and energy patterns to provide the best charging experience possible.
+            </motion.p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <FeatureCard
+              index={0}
+              icon={
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              }
+              title="Automatic Connection"
+              description="No more manual plugging. Get back hours of your life every month."
+            />
+            
+            <FeatureCard
+              index={1}
+              icon={
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              }
+              title="Off-Peak Charging"
+              description="Intelligently charges your vehicle during non-peak hours to save you around ~$20 every single month."
+            />
+            
+            <FeatureCard
+              index={2}
+              icon={
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              }
+              title="Battery Health Monitoring"
+              description="Intelligent charging patterns help preserve your EV's battery health."
+            />
+          </div>
+          
+          {/* <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.8 }}
+            className="mt-20 bg-white rounded-3xl shadow-xl overflow-hidden"
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2">
+              <div className="p-10 md:p-12 flex flex-col justify-center">
+                <div className="inline-block mb-4">
+                  <span className="bg-teal-50 text-teal-600 text-xs font-medium px-3 py-1 rounded-full">Coming Soon</span>
+                </div>
+                <h3 className="text-2xl md:text-3xl font-bold mb-4 text-gray-900">Smart Home Integration</h3>
+                <p className="text-gray-600 mb-6 leading-relaxed">
+                  Connect The EVolve Charger with your smart home system to optimize energy usage across your entire home. Integrate with solar panels, home batteries, and other smart devices.
+                </p>
+                <ul className="space-y-3">
+                  {['Works with Alexa, Google Home, and HomeKit', 'Optimize charging with solar production', 'Voice command support', 'Energy usage dashboard'].map((item, i) => (
+                    <li key={i} className="flex items-center">
+                      <svg className="h-5 w-5 text-teal-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      <span className="text-gray-700">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="bg-gradient-to-br from-teal-500 to-cyan-600 p-10 flex items-center justify-center">
+                <div className="relative w-full h-64 md:h-full">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-32 w-32 text-white opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                  </div>
+                  <div className="absolute inset-0 bg-dots-pattern opacity-10"></div>
+                </div>
+              </div>
+            </div>
+          </motion.div> */}
+        </div>
+      </section>
 
       {/* How It Works */}
-      <section id="how-it-works" className="relative py-16 md:py-24 bg-gray-50">
+      <section id="how-it-works" className="relative bg-gray-50">
         <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-gradient-to-bl from-teal-50 to-transparent rounded-bl-full opacity-70"></div>
         <div className="absolute bottom-0 left-0 w-1/4 h-1/4 bg-gradient-to-tr from-cyan-50 to-transparent rounded-tr-full opacity-70"></div>
         
@@ -457,7 +563,7 @@ export default function Home() {
               variants={fadeIn}
               className="text-3xl text-gray-900 md:text-4xl font-bold mt-4 mb-4"
             >
-              Meet <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-cyan-500">NeoGen</span>
+              Meet The <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-cyan-500">EVolve Charger</span>
             </motion.h2>
             <motion.p 
               variants={fadeIn}
@@ -478,7 +584,7 @@ export default function Home() {
               <div className="aspect-video">
                 <Image
                   src={Render}
-                  alt="NeoGen Smart EV Charger"
+                  alt="The EVolve Charger Smart EV Charger"
                   layout="fill"
                   objectFit="cover"
                   className="z-0"
@@ -499,17 +605,17 @@ export default function Home() {
                 {
                   number: "01",
                   title: "Easy Installation",
-                  description: "We make installing NeoGen a simple process so anyone can set it up with just a ladder, drill, and screwdriver."
+                  description: "We make installing your EVolve Charger a simple process so anyone can set it up with just a ladder, drill, and screwdriver."
                 },
                 {
                   number: "02",
                   title: "Connect to App",
-                  description: "Download our app and connect NeoGen to set preferences and monitor charging."
+                  description: "Download our app and connect your EVolve Charger to set preferences and monitor charging."
                 },
                 {
                   number: "03",
                   title: "Automated Charging",
-                  description: "Park your vehicle, and NeoGen automatically connects when needed based on your setting and then unplugs whenever you want to leave."
+                  description: "Park your vehicle, and the EVolve Charger automatically connects when needed based on your setting and then unplugs whenever you want to leave."
                 },
                 {
                   number: "04",
@@ -575,108 +681,32 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="py-20 md:py-32 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-20 bg-gradient-to-b from-white to-transparent"></div>
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-teal-50 rounded-full opacity-70"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-cyan-50 rounded-full opacity-70"></div>
+      <Testimonials />
+
+      {/* Key Statistics Section */}
+      <section id="statistics" className="relative py-16 md:py-24 bg-white">
+        <div className="absolute bottom-0 right-0 w-1/4 h-1/4 bg-gradient-to-tl from-cyan-50 to-transparent rounded-tl-full opacity-70"></div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={staggerContainer}
-            className="text-center mb-20"
-          >
-            <motion.h2 
-              variants={fadeIn}
-              className="text-3xl text-gray-900 md:text-4xl font-bold mt-4 mb-4"
-            >
-              Intelligent Charging Features
-            </motion.h2>
-            <motion.p 
-              variants={fadeIn}
-              className="text-lg text-gray-600 max-w-2xl mx-auto"
-            >
-              Our smart charging technology adapts to your vehicle needs and energy patterns to provide the best charging experience possible.
-            </motion.p>
-          </motion.div>
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">EVolve Charger by the Numbers</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">Discover the impact of our smart charging solution</p>
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <FeatureCard
-              index={0}
-              icon={
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              }
-              title="Automatic Connection"
-              description="No more manual plugging. Get back hours of your life every month."
-            />
-            
-            <FeatureCard
-              index={1}
-              icon={
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              }
-              title="Off-Peak Charging"
-              description="Intelligently charges your vehicle during non-peak hours to save energy costs and reduce grid load."
-            />
-            
-            <FeatureCard
-              index={2}
-              icon={
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              }
-              title="Battery Health Monitoring"
-              description="Intelligent charging patterns help preserve your EV's battery health."
-            />
-          </div>
-          
-          {/* <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.8 }}
-            className="mt-20 bg-white rounded-3xl shadow-xl overflow-hidden"
-          >
-            <div className="grid grid-cols-1 md:grid-cols-2">
-              <div className="p-10 md:p-12 flex flex-col justify-center">
-                <div className="inline-block mb-4">
-                  <span className="bg-teal-50 text-teal-600 text-xs font-medium px-3 py-1 rounded-full">Coming Soon</span>
-                </div>
-                <h3 className="text-2xl md:text-3xl font-bold mb-4 text-gray-900">Smart Home Integration</h3>
-                <p className="text-gray-600 mb-6 leading-relaxed">
-                  Connect NeoGen with your smart home system to optimize energy usage across your entire home. Integrate with solar panels, home batteries, and other smart devices.
-                </p>
-                <ul className="space-y-3">
-                  {['Works with Alexa, Google Home, and HomeKit', 'Optimize charging with solar production', 'Voice command support', 'Energy usage dashboard'].map((item, i) => (
-                    <li key={i} className="flex items-center">
-                      <svg className="h-5 w-5 text-teal-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      <span className="text-gray-700">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="bg-gradient-to-br from-teal-500 to-cyan-600 p-10 flex items-center justify-center">
-                <div className="relative w-full h-64 md:h-full">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-32 w-32 text-white opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                    </svg>
-                  </div>
-                  <div className="absolute inset-0 bg-dots-pattern opacity-10"></div>
-                </div>
-              </div>
+            <div className="text-center">
+              <p className="text-5xl font-bold text-teal-500">$4000</p>
+              <p className="mt-2 text-gray-600">saved during your car's lifespan </p>
             </div>
-          </motion.div> */}
+            <div className="text-center">
+              <p className="text-5xl font-bold text-teal-500">18 yrs</p>
+              <p className="mt-2 text-gray-600">Added to your car's battery life</p>
+            </div>
+            <div className="text-center">
+              <p className="text-5xl font-bold text-teal-500">9 hours</p>
+              <p className="mt-2 text-gray-600">saved for you every year</p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -703,7 +733,7 @@ export default function Home() {
               variants={fadeIn}
               className="text-lg text-gray-600 max-w-2xl mx-auto"
             >
-              Be the first to experience NeoGen when we launch. Sign up for our mailing list to receive exclusive updates and early-bird offers.
+              Be the first to experience The EVolve Charger when we launch. Sign up for our mailing list to receive exclusive updates and early-bird offers.
             </motion.p>
           </motion.div>
 
@@ -746,7 +776,7 @@ export default function Home() {
             </button>
             
             <p className="mt-4 text-xs text-gray-500 text-center">
-              By signing up, you agree to receive updates about NeoGen. We'll never share your information with third parties.
+              By signing up, you agree to receive updates about The EVolve Charger. We'll never share your information with third parties.
             </p>
             
             <div className="mt-6 pt-6 border-t border-gray-100">
@@ -878,7 +908,7 @@ export default function Home() {
               variants={fadeIn}
               className="text-lg text-gray-600 max-w-2xl mx-auto"
             >
-              Get answers to common questions about NeoGen.
+              Get answers to common questions about The EVolve Charger.
             </motion.p>
           </motion.div>
   
