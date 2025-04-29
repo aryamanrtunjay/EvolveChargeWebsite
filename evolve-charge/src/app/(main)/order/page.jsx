@@ -128,7 +128,7 @@ function CheckoutForm({ onSuccess, total, isProcessing, setIsProcessing }) {
 }
 
 export default function OrderPage() {
-  const [selectedPlan, setSelectedPlan] = useState('basic');
+  const [selectedPlan, setSelectedPlan] = useState('advanced');
   const [billingCycle, setBillingCycle] = useState('monthly');
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
@@ -461,7 +461,6 @@ export default function OrderPage() {
                       <h3 className="text-xl font-bold text-gray-900">{plan.name}</h3>
                       <p className="text-gray-500 text-sm">{plan.description}</p>
                     </div>
-                    <div className="flex-shrink-0" dangerouslySetInnerHTML={{ __html: plan.icon }} />
                   </div>
                   <div className="mb-6">
                     <div className="flex items-baseline">
@@ -475,9 +474,9 @@ export default function OrderPage() {
                         +${plan.oneTimePrice} one-time fee for charger
                       </div>
                     )}
-                    <div className="mt-1 text-sm text-gray-500">
+                    {billingCycle !== 'monthly' ? <div className="mt-1 text-sm text-gray-500">
                       Billed {billingCycle === 'monthly' ? 'monthly' : 'annually'} at ${billingCycle === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice}
-                    </div>
+                    </div> : <div/>}
                   </div>
                   <div className="mb-6">
                     <h4 className="text-sm font-semibold text-gray-900 mb-2">Features:</h4>
