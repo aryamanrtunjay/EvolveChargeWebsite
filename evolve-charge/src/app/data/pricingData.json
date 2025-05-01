@@ -3,12 +3,12 @@
       {
         "name": "Basic",
         "description": "Get notifications on the best times to charge your car to save money and finish charging when you need to leave.",
-        "monthlyPrice": 6,
-        "yearlyPrice": 60,
+        "monthlyPrice": 2,
+        "yearlyPrice": 15,
         "details": "Get smart notifications everyday to optimize your charging schedule.",
         "features": [
           "Smart notifications for optimal charging times",
-          "Save $10-$15 in charging cost every month",
+          "Save ~$5 in charging cost every month",
           "Know when to charge your car every day",
           "Access to charging schedule insights",
           "Email and app-based alerts"
@@ -20,13 +20,13 @@
         "name": "Advanced",
         "description": "An automatic charger that saves you money, keeps your EV healthy, and makes sure your car is charged and ready for you everyday.",
         "oneTimePrice": 120,
-        "monthlyPrice": 3,
-        "yearlyPrice": 20,
+        "monthlyPrice": 5,
+        "yearlyPrice": 48,
         "details": "Receive a smart charger with the ability to customize it's behavior to fit your lifestyle.",
         "features": [
           "Includes all Notification Plan features",
           "Never plug in manually again",
-          "Save ~$25 in charging cost every month",
+          "Save ~$15 in charging cost every month",
           "Create custom charging schedules",
           "Have a charged car every single day",
           "Add years to your EV battery's lifespan over time",

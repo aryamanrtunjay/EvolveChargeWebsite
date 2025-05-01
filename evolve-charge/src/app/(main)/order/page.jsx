@@ -74,7 +74,7 @@ function CheckoutForm({ onSuccess, total, isProcessing, setIsProcessing }) {
     const { error, paymentIntent } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: `${window.location.origin}/reserve/success`,
+        return_url: `${window.location.origin}/order/success`,
       },
       redirect: 'if_required',
     });
@@ -354,7 +354,7 @@ export default function OrderPage() {
         .then(() => console.log('Confirmation email sent successfully'))
         .catch((error) => console.error('Error sending confirmation email:', error));
 
-      router.push(`/reserve/success?orderId=${orderId}`);
+      router.push(`/order/success?orderId=${orderId}`);
     } catch (error) {
       console.error('Error finalizing order:', error);
     }
@@ -452,31 +452,44 @@ export default function OrderPage() {
                   key={plan.name}
                   variants={fadeIn}
                   onClick={() => handlePlanSelect(plan.name.toLowerCase())}
-                  className={`cursor-pointer transition-all duration-300 transform hover:scale-105 bg-white rounded-xl p-6 shadow-md ${
+                  className={`cursor-pointer transition-all duration-300 transform hover:scale-105 bg-white rounded-xl p-6 shadow-md relative ${
                     selectedPlan === plan.name.toLowerCase() ? 'ring-2 ring-teal-500' : 'hover:shadow-lg'
-                  }`}
+                  } ${plan.name.toLowerCase() === 'advanced' ? 'border-2 border-teal-500 shadow-lg' : ''}`}
                 >
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-900">{plan.name}</h3>
-                      <p className="text-gray-500 text-sm">{plan.description}</p>
+                  {plan.name.toLowerCase() === 'advanced' && (
+                    <div className="absolute top-0 right-0 bg-teal-500 text-white text-xs font-semibold px-3 py-1 rounded-bl-lg rounded-tr-lg">
+                      Most Popular
                     </div>
+                  )}
+                  <div className="flex items-center mb-2">
+                    <h3 className="text-xl font-bold text-gray-900">{plan.name}</h3>
+                    {plan.oneTimePrice ? (
+                      <span className="ml-2 px-2 py-1 text-xs font-medium text-white bg-teal-500 rounded-full">Automatic Charging</span>
+                    ) : (
+                      <span className="ml-2 px-2 py-1 text-xs font-medium text-gray-700 bg-gray-200 rounded-full">Notifications Only</span>
+                    )}
                   </div>
+                  <p className="text-gray-500 text-sm mb-6">{plan.description}</p>
                   <div className="mb-6">
-                    <div className="flex items-baseline">
-                      <span className="text-3xl font-bold text-gray-900">
-                        ${billingCycle === 'monthly' ? plan.monthlyPrice : (plan.yearlyPrice / 12).toFixed(2)}
-                      </span>
-                      <span className="ml-1 text-gray-500">/{billingCycle === 'monthly' ? 'month' : 'month'}</span>
+                    <div className="text-3xl font-bold text-gray-900">
+                      {plan.name.toLowerCase() === 'advanced' ? (
+                        <>
+                          <div>$120 <span className="text-base font-normal text-gray-500">Hardware Cost</span></div>
+                          <div className="mt-1">$5 <span className="text-base font-normal text-gray-500">/mo Subscription</span></div>
+                        </>
+                      ) : (
+                        <>
+                          {plan.oneTimePrice && <span>${plan.oneTimePrice} + </span>}
+                          ${billingCycle === 'monthly' ? plan.monthlyPrice : (plan.yearlyPrice / 12).toFixed(2)}
+                          <span className="text-base font-normal text-gray-500">/mo</span>
+                        </>
+                      )}
                     </div>
-                    {plan.oneTimePrice && (
-                      <div className="mt-1 text-sm text-gray-700">
-                        +${plan.oneTimePrice} one-time fee for charger
+                    {billingCycle !== 'monthly' && plan.name.toLowerCase() !== 'advanced' && (
+                      <div className="mt-1 text-sm text-gray-500">
+                        Billed annually at ${plan.yearlyPrice}
                       </div>
                     )}
-                    {billingCycle !== 'monthly' ? <div className="mt-1 text-sm text-gray-500">
-                      Billed {billingCycle === 'monthly' ? 'monthly' : 'annually'} at ${billingCycle === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice}
-                    </div> : <div/>}
                   </div>
                   <div className="mb-6">
                     <h4 className="text-sm font-semibold text-gray-900 mb-2">Features:</h4>
