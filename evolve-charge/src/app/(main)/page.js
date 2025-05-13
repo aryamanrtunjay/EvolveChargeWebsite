@@ -356,7 +356,7 @@ export default function Home() {
       <motion.video
         className="z-0 fixed w-full h-full object-cover bg-black/20"
         muted
-        poster="/images/poster.jpg"
+        poster="/images/poster.png"
         autoPlay
         loop
         preload="auto"
