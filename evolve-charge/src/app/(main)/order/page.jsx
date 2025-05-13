@@ -40,13 +40,13 @@ function ChargingCableModal({ isOpen, onClose }) {
         </div>
         <div className="mb-4">
           <img
-            src="https://example.com/tesla-wall-connector-plug.jpg" // Replace with actual image URL
+            src="/images/tesla-wall-connector.png" // Replace with actual image URL
             alt="Tesla Wall Connector Plug"
             className="w-full h-48 object-contain rounded-lg"
           />
         </div>
         <p className="text-gray-700 text-sm">
-          The Tesla Wall Connector plug is a high-power charging solution designed for Tesla vehicles. It features a sleek design and delivers up to 44 miles of range per hour of charge. Many Tesla vehicles come with this so you may not need to purchase this add-on.
+          The Tesla Wall Connector plug is a high-power charging solution designed for Tesla vehicles. The standard mobile connector is included with almost all Tesla vehicles, if you have this (or the Tesla Wall Connector) then do not purchase this add-on.
         </p>
         <button
           onClick={onClose}
@@ -177,7 +177,7 @@ export default function OrderPage() {
     { 
       name: 'chargingCable', 
       label: 'Charging Cable', 
-      price: 300, 
+      price: 320, 
       description: 'High-quality, durable charging cable.',
       additionalDescription: (
         <button
@@ -210,8 +210,8 @@ export default function OrderPage() {
     const addOnCost = addOnsList.reduce((total, addOn) => {
       return total + (addOns[addOn.name] ? addOn.price : 0);
     }, 0);
-    const subtotal = oneTimeFee + subscriptionFee + addOnCost;
-    const tax = subtotal * 0.08;
+    const subtotal = oneTimeFee + addOnCost;
+    const tax = subtotal * 0.1;
     const total = subtotal + tax;
     
     setOrderSummary({ subtotal, tax, total, monthlyFee, oneTimeFee, addOnCost });
@@ -282,9 +282,6 @@ export default function OrderPage() {
           state: formData.state,
           zip: parseInt(formData.zipCode, 10),
         },
-        billing: billingCycle,
-        plan: selectedPlan,
-        addOns: addOns,
         subtotal: orderSummary.subtotal,
         tax: orderSummary.tax,
         total: orderSummary.total,
@@ -293,24 +290,31 @@ export default function OrderPage() {
         customerID,
         paymentMethod: 'credit',
         paymentStatus: 'Pending',
+        addOns: addOns,
       };
 
       const response = await fetch('/api/create-payment-intent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          amount: orderSummary.total,
+          amount: Math.round(orderSummary.total * 100), // Convert to cents
           metadata: {
             customerID,
-            plan: selectedPlan,
-            billingCycle,
             email: formData.email,
             addOns: JSON.stringify(addOns),
           }
         }),
       });
 
+      if (!response.ok) {
+        throw new Error(`Failed to fetch clientSecret: ${response.statusText}`);
+      }
+
       const { clientSecret } = await response.json();
+      if (!clientSecret) {
+        throw new Error('Client secret not returned from API');
+      }
+
       const paymentIntentId = clientSecret.split('_secret')[0];
 
       const fullOrderData = {
@@ -379,10 +383,10 @@ export default function OrderPage() {
   return (
     <div className="min-h-screen bg-gray-50 pt-32 pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Order Progress */}
+        {/* Pre-order Progress */}
         <div className="max-w-3xl mx-auto mb-10">
           <div className="flex items-center justify-between mb-4">
-            {['Select Plan', 'Add-Ons', 'Your Information', 'Payment'].map((label, index) => (
+            {['Add-Ons', 'Your Information', 'Payment'].map((label, index) => (
               <div key={index} className="flex flex-col items-center">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
                   step > index + 1 
@@ -416,7 +420,7 @@ export default function OrderPage() {
         </div>
 
         {/* Step 1: Plan Selection */}
-        {step === 1 && (
+        {/* {step === 1 && (
           <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-6xl mx-auto">
             <motion.div variants={fadeIn} className="text-center mb-10">
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Choose Your EVolve Charge Plan</h1>
@@ -527,13 +531,13 @@ export default function OrderPage() {
               </button>
             </motion.div>
           </motion.div>
-        )}
+        )} */}
 
-        {/* Step 2: Add-Ons */}
-        {step === 2 && (
+        {/* Step 1: Add-Ons */}
+        {step === 1 && (
           <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-4xl mx-auto">
             <motion.div variants={fadeIn} className="text-center mb-10">
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Customize Your Order with Add-Ons</h1>
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Customize Your Pre-order with Add-Ons</h1>
               <p className="text-lg text-gray-700">Enhance your EVolve Charge experience with these optional add-ons.</p>
             </motion.div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -559,7 +563,7 @@ export default function OrderPage() {
                         </label>
                         <p className="text-sm text-gray-500">{addOn.description}</p>
                         {addOn.additionalDescription && (
-                          <div className="mt-1">{addOn.additionalDescription}</div>
+                          <div>{addOn.additionalDescription}</div>
                         )}
                         {addOn.name === 'professionalInstallation' && selectedPlan === 'basic' && (
                           <p className="text-sm text-gray-400">Not available for basic Plan</p>
@@ -571,14 +575,14 @@ export default function OrderPage() {
               </motion.div>
               <motion.div variants={fadeIn} className="md:col-span-1">
                 <div className="bg-white rounded-xl shadow-md p-6 sticky top-28">
-                  <h2 className="text-xl font-bold text-gray-900 mb-6">Order Summary</h2>
-                  <div className="flex items-center mb-6">
+                  <h2 className="text-xl font-bold text-gray-900 mb-6">Pre-order Summary</h2>
+                  {/* <div className="flex items-center mb-6">
                     <div className="mr-3" dangerouslySetInnerHTML={{ __html: plans[selectedPlan].icon }} />
                     <div>
                       <h3 className="font-bold text-gray-900">{plans[selectedPlan].name} Plan</h3>
                       <p className="text-sm text-gray-500">{billingCycle === 'monthly' ? 'Monthly billing' : 'Annual billing'}</p>
                     </div>
-                  </div>
+                  </div> */}
                   <div className="border-t border-gray-200 pt-4 mb-4">
                     {orderSummary.oneTimeFee > 0 && (
                       <div className="flex justify-between mb-2">
@@ -586,10 +590,10 @@ export default function OrderPage() {
                         <span className="text-gray-900">${orderSummary.oneTimeFee.toFixed(2)}</span>
                       </div>
                     )}
-                    <div className="flex justify-between mb-2">
+                    {/* <div className="flex justify-between mb-2">
                       <span className="text-gray-600">Subscription ({billingCycle})</span>
                       <span className="text-gray-900">${(billingCycle === 'monthly' ? plans[selectedPlan].monthlyPrice : plans[selectedPlan].yearlyPrice).toFixed(2)}</span>
-                    </div>
+                    </div> */}
                     {orderSummary.addOnCost > 0 && (
                       <div className="flex justify-between mb-2">
                         <span className="text-gray-600">Add-Ons</span>
@@ -631,8 +635,8 @@ export default function OrderPage() {
           </motion.div>
         )}
 
-        {/* Step 3: Customer Information */}
-        {step === 3 && (
+        {/* Step 2: Customer Information */}
+        {step === 2 && (
           <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-4xl mx-auto">
             <motion.div variants={fadeIn} className="text-center mb-10">
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Your Information</h1>
@@ -644,7 +648,7 @@ export default function OrderPage() {
                   <h2 className="text-xl font-bold text-gray-900 mb-6">Contact Information</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                     <div>
-                      <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">First Name*</label>
+                      <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
                       <input
                         type="text"
                         id="firstName"
@@ -656,7 +660,7 @@ export default function OrderPage() {
                       />
                     </div>
                     <div>
-                      <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">Last Name*</label>
+                      <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
                       <input
                         type="text"
                         id="lastName"
@@ -670,7 +674,7 @@ export default function OrderPage() {
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                     <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email Address*</label>
+                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
                       <input
                         type="email"
                         id="email"
@@ -682,7 +686,7 @@ export default function OrderPage() {
                       />
                     </div>
                     <div>
-                      <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Phone Number*</label>
+                      <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
                       <input
                         type="tel"
                         id="phone"
@@ -700,7 +704,7 @@ export default function OrderPage() {
                     <div className="bg-white rounded-xl shadow-md p-6 mb-8">
                       <h2 className="text-xl font-bold text-gray-900 mb-6">Delivery Address</h2>
                       <div className="mb-4">
-                        <label htmlFor="address1" className="block text-sm font-medium text-gray-700 mb-1">Address Line 1*</label>
+                        <label htmlFor="address1" className="block text-sm font-medium text-gray-700 mb-1">Address Line 1</label>
                         <input
                           type="text"
                           id="address1"
@@ -712,7 +716,7 @@ export default function OrderPage() {
                         />
                       </div>
                       <div className="mb-4">
-                        <label htmlFor="address2" className="block text-sm font-medium text-gray-700 mb-1">Address Line 2</label>
+                        <label htmlFor="address2" className="block text-sm font-medium text-gray-700 mb-1">Address Line 2 (Optional)</label>
                         <input
                           type="text"
                           id="address2"
@@ -724,7 +728,7 @@ export default function OrderPage() {
                       </div>
                       <div className="grid grid-cols-2 gap-4 mb-4">
                         <div>
-                          <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">City*</label>
+                          <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">City</label>
                           <input
                             type="text"
                             id="city"
@@ -736,7 +740,7 @@ export default function OrderPage() {
                           />
                         </div>
                         <div>
-                          <label htmlFor="state" className="block text-sm font-medium text-gray-700 mb-1">State*</label>
+                          <label htmlFor="state" className="block text-sm font-medium text-gray-700 mb-1">State</label>
                           <select
                             id="state"
                             name="state"
@@ -746,12 +750,67 @@ export default function OrderPage() {
                             className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                           >
                             <option value="">Select State</option>
-                            {/* State options remain unchanged */}
+                            <option value="AL">Alabama</option>
+                            <option value="AK">Alaska</option>
+                            <option value="AZ">Arizona</option>
+                            <option value="AR">Arkansas</option>
+                            <option value="CA">California</option>
+                            <option value="CO">Colorado</option>
+                            <option value="CT">Connecticut</option>
+                            <option value="DE">Delaware</option>
+                            <option value="DC">District of Columbia</option>
+                            <option value="FL">Florida</option>
+                            <option value="GA">Georgia</option>
+                            <option value="HI">Hawaii</option>
+                            <option value="ID">Idaho</option>
+                            <option value="IL">Illinois</option>
+                            <option value="IN">Indiana</option>
+                            <option value="IA">Iowa</option>
+                            <option value="KS">Kansas</option>
+                            <option value="KY">Kentucky</option>
+                            <option value="LA">Louisiana</option>
+                            <option value="ME">Maine</option>
+                            <option value="MD">Maryland</option>
+                            <option value="MA">Massachusetts</option>
+                            <option value="MI">Michigan</option>
+                            <option value="MN">Minnesota</option>
+                            <option value="MS">Mississippi</option>
+                            <option value="MO">Missouri</option>
+                            <option value="MT">Montana</option>
+                            <option value="NE">Nebraska</option>
+                            <option value="NV">Nevada</option>
+                            <option value="NH">New Hampshire</option>
+                            <option value="NJ">New Jersey</option>
+                            <option value="NM">New Mexico</option>
+                            <option value="NY">New York</option>
+                            <option value="NC">North Carolina</option>
+                            <option value="ND">North Dakota</option>
+                            <option value="OH">Ohio</option>
+                            <option value="OK">Oklahoma</option>
+                            <option value="OR">Oregon</option>
+                            <option value="PA">Pennsylvania</option>
+                            <option value="RI">Rhode Island</option>
+                            <option value="SC">South Carolina</option>
+                            <option value="SD">South Dakota</option>
+                            <option value="TN">Tennessee</option>
+                            <option value="TX">Texas</option>
+                            <option value="UT">Utah</option>
+                            <option value="VT">Vermont</option>
+                            <option value="VA">Virginia</option>
+                            <option value="WA">Washington</option>
+                            <option value="WV">West Virginia</option>
+                            <option value="WI">Wisconsin</option>
+                            <option value="WY">Wyoming</option>
+                            <option value="AS">American Samoa</option>
+                            <option value="GU">Guam</option>
+                            <option value="MP">Northern Mariana Islands</option>
+                            <option value="PR">Puerto Rico</option>
+                            <option value="VI">U.S. Virgin Islands</option>
                           </select>
                         </div>
                       </div>
                       <div className="mb-4">
-                        <label htmlFor="zipCode" className="block text-sm font-medium text-gray-700 mb-1">ZIP Code*</label>
+                        <label htmlFor="zipCode" className="block text-sm font-medium text-gray-700 mb-1">ZIP Code</label>
                         <input
                           type="text"
                           id="zipCode"
@@ -806,8 +865,8 @@ export default function OrderPage() {
                       </label>
                       <p className="text-gray-500">
                         By checking this box, you consent to our{' '}
-                        <a href="#" className="text-teal-500 hover:underline">Terms of Service</a> and{' '}
-                        <a href="#" className="text-teal-500 hover:underline">Privacy Policy</a>.
+                        <a href="#tos" className="text-teal-500 hover:underline">Terms of Service</a> and{' '}
+                        <a href="#privacypolicy" className="text-teal-500 hover:underline">Privacy Policy</a>.
                       </p>
                     </div>
                   </div>
@@ -815,7 +874,7 @@ export default function OrderPage() {
               </motion.div>
               <motion.div variants={fadeIn} className="md:col-span-1">
                 <div className="bg-white rounded-xl shadow-md p-6 sticky top-28">
-                  <h2 className="text-xl font-bold text-gray-900 mb-6">Order Summary</h2>
+                  <h2 className="text-xl font-bold text-gray-900 mb-6">Pre-order Summary</h2>
                   <div className="flex items-center mb-6">
                     <div className="mr-3" dangerouslySetInnerHTML={{ __html: plans[selectedPlan].icon }} />
                     <div>
@@ -876,8 +935,8 @@ export default function OrderPage() {
           </motion.div>
         )}
 
-        {/* Step 4: Payment */}
-        {step === 4 && (
+        {/* Step 3: Payment */}
+        {step === 3 && (
           <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-4xl mx-auto">
             <motion.div variants={fadeIn} className="text-center mb-10">
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Payment Information</h1>
@@ -890,7 +949,7 @@ export default function OrderPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   <p className="text-sm text-gray-700">
-                    EVolve Charge contributes 1% of your payment to removing carbon from the atmosphere to fight climate change.
+                    EVolve Charge contributes part of your payment to removing carbon from the atmosphere to help the fight against climate change.
                   </p>
                 </div>
                 <div className="bg-white rounded-xl shadow-md p-6 mb-8">
@@ -915,13 +974,13 @@ export default function OrderPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   <p className="text-sm text-gray-700">
-                    Your payment information is securely processed by Stripe. We never store your full credit card details.
+                    Your payment information is securely processed by Stripe. We never store any of your credit card details.
                   </p>
                 </div>
               </motion.div>
               <motion.div variants={fadeIn} className="md:col-span-1">
                 <div className="bg-white rounded-xl shadow-md p-6 sticky top-28">
-                  <h2 className="text-xl font-bold text-gray-900 mb-6">Order Summary</h2>
+                  <h2 className="text-xl font-bold text-gray-900 mb-6">Pre-order Summary</h2>
                   <div className="flex items-center mb-6">
                     <div className="mr-3" dangerouslySetInnerHTML={{ __html: plans[selectedPlan].icon }} />
                     <div>
@@ -964,7 +1023,7 @@ export default function OrderPage() {
                         <svg className="h-5 w-5 text-teal-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
-                        <span>Order confirmation email</span>
+                        <span>Pre-order confirmation email</span>
                       </li>
                       <li className="flex items-start">
                         <svg className="h-5 w-5 text-teal-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -58,7 +58,7 @@ export default function Navigation() {
                   ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white hover:shadow-lg' 
                   : 'bg-white text-teal-600 hover:bg-gradient-to-r from-teal-400 to-cyan-400 hover:text-white hover:shadow-lg transition-all duration-600'
               }`}>
-                Order Now
+                Pre-order Now
               </button>
             </a>
             {/* <a href="#how-it-works">

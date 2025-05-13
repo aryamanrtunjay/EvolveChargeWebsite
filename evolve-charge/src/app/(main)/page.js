@@ -128,8 +128,8 @@ function FeatureCard({ icon, title, description, index }) {
 function FAQItem({ question, answer, isActive, onClick, index }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ y: 10 }}
+      whileInView={{ y: 0 }}
       viewport={{ once: true, amount: 0.8 }}
       transition={{ delay: index * 0.1, duration: 0.4 }}
       className="mb-5 bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100"
@@ -159,7 +159,6 @@ function FAQItem({ question, answer, isActive, onClick, index }) {
         initial={false}
         animate={{
           height: isActive ? 'auto' : 0,
-          opacity: isActive ? 1 : 0,
         }}
         transition={{ duration: 0.3 }}
         className="overflow-hidden"
@@ -173,7 +172,7 @@ function FAQItem({ question, answer, isActive, onClick, index }) {
 }
 
 // Numbers/stats component with counting animation
-function StatCard({ value, label, index }) {
+function StatCard({ value, units, label, index }) {
   const [count, setCount] = useState(0);
   const ref = useRef(null);
   const isInView = useRef(false);
@@ -184,7 +183,7 @@ function StatCard({ value, label, index }) {
         if (entry.isIntersecting && !isInView.current) {
           isInView.current = true;
           let start = 0;
-          const duration = 1500;
+          const duration = 600;
           const startTime = Date.now();
           
           const timer = setInterval(() => {
@@ -217,8 +216,10 @@ function StatCard({ value, label, index }) {
       transition={{ delay: index * 0.2, duration: 0.4 }}
       className="flex flex-col items-center"
     >
-      <div className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">
-        {count}+
+      <div className="text-4xl md:text-5xl font-bold text-teal-500 mb-2">
+        {units === "$" ? <span className="text-teal-500">{units}</span> : null}
+        {count}
+        {units !== "$" ? <span className="text-teal-500"> {units}</span> : null}
       </div>
       <div className="text-gray-600">{label}</div>
     </motion.div>
@@ -246,9 +247,9 @@ export default function Home() {
   });
   
   const textY = useTransform(scrollYProgress, [0, 3], [0, -600]);
-  const imageY = useTransform(scrollYProgress, [0, 5], [0, -600])
+  const imageY = useTransform(scrollYProgress, [0, 5], [0, -600]);
 
-  const opacity = useTransform(scrollYProgress, [0, 2], [1, 0]);
+  const opacity = useTransform(scrollYProgress, [0, 1], [1, 0]); // Adjusted to fade out faster
 
   
   const TOTAL_DISCOUNT_SPOTS = 150;
@@ -260,10 +261,10 @@ export default function Home() {
 
   // FAQ data
   const faqItems = [
-    {
-      question: "Is the EVolve Charger compatible with all electric vehicles?",
-      answer: "Yes, the EVolve Charger is designed to work with all major EV models using standard charging ports including Tesla, Ford, Hyundai, Kia, Chevrolet, Nissan, BMW, and more."
-    },
+    // {
+    //   question: "Is the EVolve Charger compatible with all electric vehicles?",
+    //   answer: "Yes, the EVolve Charger is designed to work with all major EV models using standard charging ports including Tesla, Ford, Hyundai, Kia, Chevrolet, Nissan, BMW, and more."
+    // },
     {
       question: "How does it plug into my car?",
       answer: "The EVolve Charger navigates above your vehicle where it is securely attached to high-strength steel wire, ensuring absolutely no risk to your vehicles while being out of the way of items stored in your garage. A charge plug is lowered and magnetically snaps to your EV's charge port, beginning the charging process."
@@ -274,16 +275,16 @@ export default function Home() {
     },
     {
       question: "Can I control when my vehicle charges?",
-      answer: "Absolutely. Through our mobile app, you can set specific charging times, energy price thresholds, or let our smart system automatically optimize based on your local utility's rates."
+      answer: "Absolutely. Through our mobile app, you can set specific charging times, energy price thresholds, or let our smart system automatically optimize based on your electricity rates."
     },
     {
       question: "What happens if there's a power outage?",
       answer: "The EVolve Charger system will automatically resume its optimized charging schedule once power is restored. All your settings are securely stored in the cloud."
     },
-    {
-      question: "Is there a warranty?",
-      answer: "Yes, our standard warranty covers all hardware for 3 years. We also offer extended warranty options that provide coverage for up to 5 years."
-    }
+    // {
+    //   question: "Is there a warranty?",
+    //   answer: "Yes, our standard warranty covers all hardware for 3 years. We also offer extended warranty options that provide coverage for up to 5 years."
+    // }
   ];
 
   const handleWaitlistSubmit = async (e) => {
@@ -349,24 +350,28 @@ export default function Home() {
   }, []);
 
   return (
+    
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
       <motion.video
-        className="fixed w-full h-full object-cover bg-black/20"
+        className="z-0 fixed w-full h-full object-cover bg-black/20"
         muted
+        poster="/images/poster.jpg"
         autoPlay
         loop
-        preload="metadata"
+        preload="auto"
         title="How the EVolve Charger Works"
+        controls={false}
         style={{
-          opacity
+          opacity,
+          zIndex: 0 // Ensure the video stays below other content
         }}
       >
         <source src="/productDemo.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </motion.video>
       <section className="relative h-screen pt-32 pb-24 md:pt-48 md:pb-32 overflow-hidden items-center justify-center">
-        <div className="relative max-w-7xl mx-auto md:ml-24 sm:px-6 lg:px-8 ">
+        <div className="relative max-w-7xl mx-auto md:ml-24 sm:px-6 lg:px-8">
           <div>
             <motion.div
               initial="hidden"
@@ -396,13 +401,6 @@ export default function Home() {
                 <span className="bg-gradient-to-r from-teal-300 to-cyan-300 bg-clip-text text-transparent">Automatic EV Charger</span>
               </motion.h1>
               
-              {/* <motion.p 
-                variants={fadeIn}
-                className="text-lg md:text-xl text-white mb-6 leading-relaxed max-w-xl"
-              >
-                The Next Generation of EV Charging. Automatic connection, optimized charging times, built to save you time, money, and keep your car healthy.
-              </motion.p> */}
-              
               <motion.div 
                 variants={fadeIn}
                 className="flex flex-wrap gap-4 mt-2"
@@ -413,19 +411,9 @@ export default function Home() {
                     whileTap={{ scale: 0.97 }}
                     className="px-8 py-3 rounded-full bg-gradient-to-r from-teal-400 to-cyan-400 text-gray-50 font-medium shadow-lg hover:shadow-xl transition-all"
                   >
-                    Order Yours Today
+                    Pre-order Yours Today
                   </motion.button>
                 </Link>
-                {/*                 
-                <Link href="#how-it-works">
-                  <motion.button
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    className="px-8 py-3 rounded-full border border-teal-400 text-white font-medium hover:bg-teal-800 hover:bg-opacity-50 transition-all"
-                  >
-                    Watch Demo
-                  </motion.button>
-                </Link> */}
               </motion.div>
             </motion.div>
           </div>
@@ -503,46 +491,6 @@ export default function Home() {
               description="Intelligent charging patterns help preserve your EV's battery health."
             />
           </div>
-          
-          {/* <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.8 }}
-            className="mt-20 bg-white rounded-3xl shadow-xl overflow-hidden"
-          >
-            <div className="grid grid-cols-1 md:grid-cols-2">
-              <div className="p-10 md:p-12 flex flex-col justify-center">
-                <div className="inline-block mb-4">
-                  <span className="bg-teal-50 text-teal-600 text-xs font-medium px-3 py-1 rounded-full">Coming Soon</span>
-                </div>
-                <h3 className="text-2xl md:text-3xl font-bold mb-4 text-gray-900">Smart Home Integration</h3>
-                <p className="text-gray-600 mb-6 leading-relaxed">
-                  Connect The EVolve Charger with your smart home system to optimize energy usage across your entire home. Integrate with solar panels, home batteries, and other smart devices.
-                </p>
-                <ul className="space-y-3">
-                  {['Works with Alexa, Google Home, and HomeKit', 'Optimize charging with solar production', 'Voice command support', 'Energy usage dashboard'].map((item, i) => (
-                    <li key={i} className="flex items-center">
-                      <svg className="h-5 w-5 text-teal-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      <span className="text-gray-700">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="bg-gradient-to-br from-teal-500 to-cyan-600 p-10 flex items-center justify-center">
-                <div className="relative w-full h-64 md:h-full">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-32 w-32 text-white opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                    </svg>
-                  </div>
-                  <div className="absolute inset-0 bg-dots-pattern opacity-10"></div>
-                </div>
-              </div>
-            </div>
-          </motion.div> */}
         </div>
       </section>
 
@@ -551,7 +499,7 @@ export default function Home() {
         <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-gradient-to-bl from-teal-50 to-transparent rounded-bl-full opacity-70"></div>
         <div className="absolute bottom-0 left-0 w-1/4 h-1/4 bg-gradient-to-tr from-cyan-50 to-transparent rounded-tr-full opacity-70"></div>
         
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -681,8 +629,6 @@ export default function Home() {
         </div>
       </section>
 
-      <Testimonials />
-
       {/* Key Statistics Section */}
       <section id="statistics" className="relative py-16 md:py-24 bg-white">
         <div className="absolute bottom-0 right-0 w-1/4 h-1/4 bg-gradient-to-tl from-cyan-50 to-transparent rounded-tl-full opacity-70"></div>
@@ -694,110 +640,12 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <p className="text-5xl font-bold text-teal-500">$4000</p>
-              <p className="mt-2 text-gray-600">saved during your car's lifespan </p>
-            </div>
-            <div className="text-center">
-              <p className="text-5xl font-bold text-teal-500">18 yrs</p>
-              <p className="mt-2 text-gray-600">Added to your car's battery life</p>
-            </div>
-            <div className="text-center">
-              <p className="text-5xl font-bold text-teal-500">9 hours</p>
-              <p className="mt-2 text-gray-600">saved for you every year</p>
-            </div>
+            <StatCard value={250} units="$" label="dollars saved every year" index={0} />
+            <StatCard value={15} units="years" label="added to your car's battery lifespan" index={1} />
+            <StatCard value={9} units="hours" label=" saved plugging in every year" index={2} />
           </div>
         </div>
       </section>
-
-      {/* Join Waitlist Section
-      <section className="py-20 md:py-28 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={staggerContainer}
-            className="text-center mb-16"
-          >
-            <motion.div variants={fadeIn} className="inline-block">
-              <span className="bg-teal-50 text-teal-600 text-sm font-medium px-4 py-1 rounded-full">Early Access</span>
-            </motion.div>
-            <motion.h2 
-              variants={fadeIn}
-              className="text-3xl text-gray-900 md:text-4xl font-bold mt-4 mb-4"
-            >
-              Join Our Waitlist
-            </motion.h2>
-            <motion.p 
-              variants={fadeIn}
-              className="text-lg text-gray-600 max-w-2xl mx-auto"
-            >
-              Be the first to experience The EVolve Charger when we launch. Sign up for our mailing list to receive exclusive updates and early-bird offers.
-            </motion.p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.6 }}
-            className="max-w-md mx-auto bg-white rounded-xl p-8 shadow-lg border border-gray-100"
-          >
-            <div className="mb-6">
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email address</label>
-              <input
-                type="email"
-                id="email"
-                placeholder="you@example.com"
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all"
-              />
-            </div>
-            
-            <div className="mb-6 text-gray-700">
-              <label htmlFor="ev-model" className="block text-sm font-medium text-gray-700 mb-1">EV Model (Optional)</label>
-              <select
-                id="ev-model"
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all"
-              >
-                <option value="">Select your EV model</option>
-                <option value="tesla">Tesla</option>
-                <option value="ford">Ford</option>
-                <option value="hyundai">Hyundai</option>
-                <option value="kia">Kia</option>
-                <option value="other">Other</option>
-              </select>
-            </div>
-            
-            <button 
-              className="w-full py-3 px-4 rounded-lg bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium shadow-md hover:shadow-lg transition-all"
-            >
-              Join the Waitlist
-            </button>
-            
-            <p className="mt-4 text-xs text-gray-500 text-center">
-              By signing up, you agree to receive updates about The EVolve Charger. We'll never share your information with third parties.
-            </p>
-            
-            <div className="mt-6 pt-6 border-t border-gray-100">
-              <div className="flex flex-col items-center space-y-2">
-                <div className="flex items-center space-x-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                  </svg>
-                  <span className="text-sm text-gray-600">Secure</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                  </svg>
-                  <span className="text-sm text-gray-600">No spam, unsubscribe anytime</span>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section> */}
 
       {/* CTA Section */}
       <section className="py-20 md:py-28 bg-gradient-to-r from-teal-600 to-cyan-600 relative overflow-hidden">
@@ -876,7 +724,7 @@ export default function Home() {
                     whileTap={{ scale: 0.97 }}
                     className="px-8 py-3 rounded-full bg-white hover:bg-gradient-to-r from-teal-400 to-cyan-400 hover:text-gray-50 text-teal-700 font-medium shadow-lg hover:shadow-xl transition-all"
                   >
-                    Order Yours
+                    Pre-order Yours
                   </motion.button>
                 </Link>
               {submitError && (
@@ -888,9 +736,9 @@ export default function Home() {
         
       </section>
 
-      {/* FAQ Section
-      <section id="faq" className="py-20 md:py-28 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* FAQ Section */}
+      <section id="faq" className="relative py-16 md:py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-white">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -900,7 +748,7 @@ export default function Home() {
           >
             <motion.h2
               variants={fadeIn}
-              className="text-3xl md:text-4xl font-bold mt-4 mb-4 text-gray-900"
+              className="text-3xl md:text-4xl font-bold mb-4 text-gray-900"
             >
               Frequently Asked Questions
             </motion.h2>
@@ -925,7 +773,7 @@ export default function Home() {
             ))}
           </div>
         </div>
-      </section> */}
+      </section>
     </div>
   );
 }

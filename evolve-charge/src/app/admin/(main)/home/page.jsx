@@ -186,7 +186,7 @@ export default function AdminHome() {
             time: data.orderDate instanceof Timestamp ? 
               data.orderDate.toDate().getTime() : 
               data.orderDate,
-            details: `Order #${doc.id.substring(0, 8)} - $${data.total?.toFixed(2) || '0.00'}`
+            details: `Pre-order #${doc.id.substring(0, 8)} - $${data.total?.toFixed(2) || '0.00'}`
           };
         }),
         ...recentSubscriptions.docs.map(doc => {

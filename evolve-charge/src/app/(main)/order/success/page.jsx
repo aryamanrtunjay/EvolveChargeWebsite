@@ -131,16 +131,16 @@ function OrderSuccessContent() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Your Order is Confirmed!</h1>
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Your Pre-order is Confirmed!</h1>
             <p className="text-lg text-gray-700 mb-2">Thank you for your purchase. We're excited to welcome you to EVolve Charge!</p>
-            <p className="text-md text-gray-600">Order #: <span className="font-medium">{orderNumber}</span></p>
+            <p className="text-md text-gray-600">Pre-order #: <span className="font-medium">{orderNumber}</span></p>
             <div className="mt-4 inline-block text-sm bg-teal-100 text-teal-800 px-4 py-2 rounded-full">
               <span>An email confirmation has been sent to {customer['email-address']}</span>
             </div>
           </motion.div>
 
           <motion.div variants={fadeIn} className="bg-white rounded-xl shadow-md p-8 mb-8">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">Order Details</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-6">Pre-order Details</h2>
             <div className="flex items-center mb-6 pb-6 border-b border-gray-200">
               <div className="mr-4" dangerouslySetInnerHTML={{ __html: plans[orderData.plan].icon }} />
               <div>
