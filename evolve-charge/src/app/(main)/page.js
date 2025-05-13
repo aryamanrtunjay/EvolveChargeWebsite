@@ -252,7 +252,7 @@ export default function Home() {
   const opacity = useTransform(scrollYProgress, [0, 1], [1, 0]); // Adjusted to fade out faster
 
   
-  const TOTAL_DISCOUNT_SPOTS = 150;
+  const TOTAL_DISCOUNT_SPOTS = 20;
 
   // Toggle FAQ accordion
   const toggleFAQ = (index) => {
@@ -673,7 +673,7 @@ export default function Home() {
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                Early access to pre-orders
+                Priority-Shipping
               </div>
               <div className="flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -685,7 +685,7 @@ export default function Home() {
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                {spotsLeft > 0 ? 'Special launch pricing' : 'Future promotions'}
+                {spotsLeft > 0 ? 'Free Professional Installation' : 'Future promotions'}
               </div>
             </div>
             {/* Discount Countdown Banner */}

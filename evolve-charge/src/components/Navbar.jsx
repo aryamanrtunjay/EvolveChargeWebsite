@@ -4,13 +4,17 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePathname } from 'next/navigation';
-import Image from 'next/image'
-import Logo from "@/images/Logo.svg"
-import LogoWhite from "@/images/LogoWhite.svg"
+import Image from 'next/image';
+import Logo from "@/images/Logo.svg";
+import LogoWhite from "@/images/LogoWhite.svg";
 
 export default function Navigation() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+
+  // Check if the current page is the order page
+  const isOrderPage = pathname === '/order';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,6 +23,20 @@ export default function Navigation() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // If on the order page, render an empty header with the same styling
+  if (isOrderPage) {
+    return (
+      <motion.header 
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.5 }}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          scrolled ? 'py-3 shadow-md bg-white/90 backdrop-blur-sm' : 'py-5 bg-transparent'
+        }`}
+      />
+    );
+  }
 
   return (
     <motion.header 
@@ -37,20 +55,6 @@ export default function Navigation() {
             </Link>
           </div>
           
-          {/* <nav className="hidden md:flex space-x-8">
-            {['Features', 'How It Works', 'Pricing', 'FAQ'].map((item) => (
-              <a 
-                key={item} 
-                href={`#${item.toLowerCase().replace(/\s+/g, '-')}`}
-                className={`font-medium transition-colors ${
-                  scrolled ? 'text-gray-700 hover:text-teal-500' : 'text-white hover:text-teal-200'
-                }`}
-              >
-                {item}
-              </a>
-            ))}
-          </nav> */}
-          
           <div className="hidden md:block">
             <a href="order">
               <button className={`px-5 py-2 rounded-full font-medium transition-all ${
@@ -61,15 +65,6 @@ export default function Navigation() {
                 Pre-order Now
               </button>
             </a>
-            {/* <a href="#how-it-works">
-              <button className={`px-5 py-2 ml-12 rounded-full font-medium transition-all ${
-                scrolled 
-                  ? 'border border-teal-400  text-black hover:shadow-lg' 
-                  : 'border bord-erwhite text-white hover:bg-white hover:text-teal-600 hover:shadow-md'
-              }`}>
-                Watch Demo  
-              </button>
-            </a> */}
           </div>
           
           <button 
