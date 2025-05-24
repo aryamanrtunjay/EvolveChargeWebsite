@@ -332,7 +332,7 @@ export default function Support() {
               <p className="text-gray-700 mb-6">
                 Send us a detailed message and we'll respond to your inquiry within 24 hours.
               </p>
-              <a href="mailto:support@evolvecharge.com" className="px-6 py-2 rounded-full bg-blue-500 text-white font-medium shadow-md hover:bg-blue-600 transition-colors inline-block">
+              <a href="mailto:support@evolve-charge.com" className="px-6 py-2 rounded-full bg-blue-500 text-white font-medium shadow-md hover:bg-blue-600 transition-colors inline-block">
                 Send Email
               </a>
               <p className="text-sm text-gray-500 mt-4">Response within 24 hours</p>
@@ -698,7 +698,7 @@ export default function Support() {
                   </div>
                   <div>
                     <h4 className="font-medium text-gray-900">Email</h4>
-                    <p className="text-gray-700">support@evolvecharge.com</p>
+                    <p className="text-gray-700">support@evolve-charge.com</p>
                   </div>
                 </div>
                 

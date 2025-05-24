@@ -252,7 +252,7 @@ export default function Home() {
   const opacity = useTransform(scrollYProgress, [0, 1], [1, 0]); // Adjusted to fade out faster
 
   
-  const TOTAL_DISCOUNT_SPOTS = 20;
+  const TOTAL_DISCOUNT_SPOTS = 50;
 
   // Toggle FAQ accordion
   const toggleFAQ = (index) => {
@@ -331,8 +331,8 @@ export default function Home() {
     const fetchReservationCount = async () => {
       try {
         setIsLoading(true);
-        const mailingListRef = collection(db, 'mailing-list');
-        const snapshot = await getCountFromServer(mailingListRef);
+        const ordersRef = collection(db, 'orders');
+        const snapshot = await getCountFromServer(ordersRef);
         const count = snapshot.data().count;
         
         const remainingSpots = Math.max(0, TOTAL_DISCOUNT_SPOTS - count);
@@ -499,7 +499,7 @@ export default function Home() {
         <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-gradient-to-bl from-teal-50 to-transparent rounded-bl-full opacity-70"></div>
         <div className="absolute bottom-0 left-0 w-1/4 h-1/4 bg-gradient-to-tr from-cyan-50 to-transparent rounded-tr-full opacity-70"></div>
         
-        <div className="relative max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+        <div className="relative max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -663,9 +663,9 @@ export default function Home() {
             transition={{ duration: 0.8 }}
             className="bg-white/10 rounded-3xl p-10 md:p-16 text-center shadow-xl border border-white/20"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">Join the EVolution</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">Join the EVolution</h2>
             <p className="text-lg md:text-xl mb-4 max-w-2xl mx-auto text-teal-50">
-              Enter the community that is ready to become a part of the next generation of EV users.
+              20% discount for the first 100 pre-orders alongside VIP treatment!
             </p>
             
             <div className="flex flex-col md:flex-row justify-center items-center space-y-2 md:space-y-0 md:space-x-8 mt-8 text-teal-50 font-medium">
@@ -685,7 +685,7 @@ export default function Home() {
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                {spotsLeft > 0 ? 'Free Professional Installation' : 'Future promotions'}
+                {spotsLeft > 0 ? '20% discount' : 'Future promotions'}
               </div>
             </div>
             {/* Discount Countdown Banner */}

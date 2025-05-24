@@ -215,7 +215,7 @@ export async function POST(request) {
       
       We're committed to sending you only the most relevant and valuable content, typically once or twice a month.
       
-      If you have any questions or need assistance, our support team is always ready to help at support@evolvecharge.com.
+      If you have any questions or need assistance, our support team is always ready to help at support@evolve-charge.com.
       
       Charged up and ready to go,
       The EVolve Charge Team
@@ -230,7 +230,7 @@ export async function POST(request) {
 
     // Email options
     const mailOptions = {
-      from: `"EVolve Charge" <notifications@evolvecharge.com>`,
+      from: `"EVolve Charge" <notifications@evolve-charge.com>`,
       to: email,
       subject: `Welcome to EVolve Charge, ${firstName || 'EV Enthusiast'}!`,
       text: textContent,
@@ -244,7 +244,7 @@ export async function POST(request) {
     // Alternative: Using SendGrid
     const msg = {
       to: email,
-      from: 'notifications@evolvecharge.com',
+      from: 'notifications@evolve-charge.com',
       subject: `Welcome to EVolve Charge, ${firstName || 'EV Enthusiast'}!`,
       text: textContent,
       html: htmlContent,

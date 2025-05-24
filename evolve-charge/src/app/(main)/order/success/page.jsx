@@ -27,20 +27,6 @@ const staggerContainer = {
   }
 };
 
-// Sample plans data (replace with actual data source)
-const plans = {
-  basic: {
-    name: "Basic",
-    description: "Essential charging for everyday use",
-    icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>'
-  },
-  deluxe: {
-    name: "Deluxe",
-    description: "Advanced charging with smart features",
-    icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2" /></svg>'
-  }
-};
-
 // Child component that uses useSearchParams
 function OrderSuccessContent() {
   const searchParams = useSearchParams();
@@ -91,12 +77,9 @@ function OrderSuccessContent() {
 
   // Fallback data for demo purposes if no real data is available
   const orderData = order || {
-    plan: 'deluxe',
-    billing: 'monthly',
     subtotal: 499,
     tax: 39.92,
-    total: 538.92,
-    monthlyFee: 24.99
+    total: 538.92
   };
 
   const customer = customerData || {
@@ -142,11 +125,14 @@ function OrderSuccessContent() {
           <motion.div variants={fadeIn} className="bg-white rounded-xl shadow-md p-8 mb-8">
             <h2 className="text-xl font-bold text-gray-900 mb-6">Pre-order Details</h2>
             <div className="flex items-center mb-6 pb-6 border-b border-gray-200">
-              <div className="mr-4" dangerouslySetInnerHTML={{ __html: plans[orderData.plan].icon }} />
+              <div className="mr-4">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7" />
+                </svg>
+              </div>
               <div>
-                <h3 className="font-bold text-gray-900 text-lg">{plans[orderData.plan].name} Plan</h3>
-                <p className="text-gray-700">{plans[orderData.plan].description}</p>
-                <p className="text-gray-500 mt-1">{orderData.billing === 'monthly' ? 'Monthly billing' : 'Annual billing'}</p>
+                <h3 className="font-bold text-gray-900 text-lg">EVolve Charge Smart Charger</h3>
+                <p className="text-gray-700">Advanced EV charging solution for your home</p>
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -183,12 +169,6 @@ function OrderSuccessContent() {
                 <span className="text-gray-900">Total Paid</span>
                 <span className="text-gray-900">${orderData.total.toFixed(2)}</span>
               </div>
-              {orderData.monthlyFee > 0 && (
-                <div className="flex justify-between mt-2 text-sm">
-                  <span className="text-gray-600">Monthly Service Fee</span>
-                  <span className="text-gray-900">${orderData.monthlyFee.toFixed(2)}/mo</span>
-                </div>
-              )}
               <div className="flex justify-between mt-2 text-sm">
                 <span className="text-gray-600">Payment Method</span>
                 <span className="text-gray-900">Credit Card</span>
@@ -242,7 +222,7 @@ function OrderSuccessContent() {
             <p className="text-gray-700 mb-4">If you have any questions about your order, please contact our customer support.</p>
             <div className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4">
               <a
-                href="mailto:support@evolvecharge.com"
+                href="mailto:support@evolve-charge.com"
                 className="flex items-center justify-center text-teal-600 hover:text-teal-700"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">

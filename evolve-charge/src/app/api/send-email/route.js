@@ -39,7 +39,7 @@ export async function POST(request) {
             </ul>
             <p style="font-size: 16px; color: #333333; line-height: 1.5; margin-top: 20px;">
               We’ll keep you updated on the status of your order. If you have any questions, feel free to contact us at 
-              <a href="mailto:support@evolvecharge.com" style="color: #0066cc; text-decoration: none;">support@evolvecharge.com</a>.
+              <a href="mailto:support@evolve-charge.com" style="color: #0066cc; text-decoration: none;">support@evolve-charge.com</a>.
             </p>
             <p style="font-size: 16px; color: #333333; margin-top: 20px;">Best regards,<br>The EVolve Charge Team</p>
           </div>

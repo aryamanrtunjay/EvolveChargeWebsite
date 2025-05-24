@@ -147,7 +147,7 @@ export default function Footer() {
                  
                  <h3 className="font-bold">7. Contact Us</h3>
                  <p>
-                   If you have any questions about this privacy policy, please contact us at privacy@evolvecharge.com.
+                   If you have any questions about this privacy policy, please contact us at privacy@evolve-charge.com.
                  </p>
                </div>
               <div className="mt-6 flex justify-end">
