@@ -346,19 +346,6 @@ export default function DonationsPage() {
         throw new Error('Donor ID is missing. Please try again.');
       }
 
-      const donationData = {
-        amount: getCurrentAmount(),
-        donationType: 'one-time',
-        status: 'Pending',
-        donationDate: serverTimestamp(),
-        donorId: donorId,
-        paymentMethod: 'credit',
-        paymentStatus: 'Pending',
-      };
-
-      const donationRef = await addDoc(collection(db, 'donations'), donationData);
-      const donationId = donationRef.id;
-
       const response = await fetch('/api/create-payment-intent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -368,7 +355,6 @@ export default function DonationsPage() {
             donorId: donorId,
             email: formData.email,
             donationType: 'one-time',
-            donationId: `DON-${donationId}`,
             firstName: formData.firstName,
             lastName: formData.lastName,
             dedicateTo: formData.dedicateGift ? formData.dedicateTo : null,
@@ -389,19 +375,12 @@ export default function DonationsPage() {
         throw new Error('No clientSecret returned from API');
       }
 
-      const paymentIntentId = clientSecret.split('_secret')[0];
-
-      await updateDoc(doc(db, 'donations', donationId), {
-        paymentIntentId,
-      });
-
-      setDonationId(donationId);
       setClientSecret(clientSecret);
       setDonationDetails({
         donorId: donorId,
         firstName: formData.firstName,
         lastName: formData.lastName,
-        donationId: metadata.donationId,
+        donationId: metadata.donationId || '',
         dedicateTo: metadata.dedicateTo,
       });
       setIsProcessing(false);
@@ -413,10 +392,25 @@ export default function DonationsPage() {
 
   const handlePaymentSuccess = async (paymentIntent) => {
     try {
-      await updateDoc(doc(db, 'donations', donationId), {
+      const donationData = {
+        amount: getCurrentAmount(),
+        donationType: 'one-time',
         status: 'Completed',
+        donationDate: serverTimestamp(),
+        donorId: donationDetails.donorId,
+        paymentMethod: 'credit',
         paymentStatus: 'Succeeded',
+        paymentIntentId: paymentIntent.id,
         paymentDate: serverTimestamp(),
+      };
+
+      const donationRef = await addDoc(collection(db, 'donations'), donationData);
+      const donationId = donationRef.id;
+
+      setDonationId(donationId);
+      setDonationDetails({
+        ...donationDetails,
+        donationId: `DON-${donationId}`,
       });
 
       const emailResponse = await fetch('/api/send-donation-email', {
