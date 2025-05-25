@@ -16,7 +16,7 @@ export async function POST(req) {
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amount,
       currency: 'usd',
-      payment_method_types: ['card', 'google_pay', 'apple_pay', 'klarna'],
+      payment_method_types: ['card', 'apple_pay', 'klarna'],
       metadata: {
         donorId: metadata.donorId,
         email: metadata.email,
