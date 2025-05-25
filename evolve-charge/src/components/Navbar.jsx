@@ -14,7 +14,7 @@ export default function Navigation() {
   const pathname = usePathname();
 
   // Check if the current page is the order page
-  const isOrderPage = pathname === '/order' || pathname === '/order/success';
+  const isOrderPage = pathname === '/order' || pathname === '/order/success' || pathname === '/donate';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -55,12 +55,21 @@ export default function Navigation() {
           
           <div className="hidden md:block">
             <a href="order">
-              <button className={`px-5 py-2 rounded-full font-medium transition-all ${
+              <button className={`px-5 mx-5 py-2 rounded-full font-medium transition-all ${
                 scrolled 
                   ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white hover:shadow-lg' 
                   : 'bg-white text-teal-600 hover:bg-gradient-to-r from-teal-400 to-cyan-400 hover:text-white hover:shadow-lg transition-all duration-600'
               }`}>
                 Pre-order Now
+              </button>
+            </a>
+            <a href="donate">
+              <button className={`px-5 py-2 rounded-full font-medium transition-all ${
+                scrolled 
+                  ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white hover:shadow-lg' 
+                  : 'bg-white text-teal-600 hover:bg-gradient-to-r from-teal-400 to-cyan-400 hover:text-white hover:shadow-lg transition-all duration-600'
+              }`}>
+                Support The Mission
               </button>
             </a>
           </div>
