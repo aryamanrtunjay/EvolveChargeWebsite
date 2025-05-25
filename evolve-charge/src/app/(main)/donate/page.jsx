@@ -509,12 +509,6 @@ export default function DonationsPage() {
         borderRadius: '8px',
       },
     },
-    // Add payment method options
-    paymentMethodOptions: {
-      card: {
-        layout: 'tabs', // Display payment methods as tabs
-      },
-    },
   };
 
   return (
