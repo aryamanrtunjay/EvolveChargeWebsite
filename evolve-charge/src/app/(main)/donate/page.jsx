@@ -32,7 +32,7 @@ const slideInRight = {
 };
 
 // Checkout Form Component
-function CheckoutForm({ onSuccess, amount, donationType, isProcessing, setIsProcessing, setError }) {
+function CheckoutForm({ onSuccess, amount, isProcessing, setIsProcessing, setError }) {
   const stripe = useStripe();
   const elements = useElements();
   const [errorMessage, setErrorMessage] = useState(null);
@@ -132,12 +132,20 @@ function SuccessModal({ isOpen, onClose, donationAmount }) {
               You'll receive a receipt via email shortly. Your contribution supports the development of innovative charging solutions and global EV adoption.
             </p>
           </div>
-          <button
-            onClick={onClose}
-            className="w-full py-2 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium hover:shadow-md transition-all"
-          >
-            Close
-          </button>
+          <div className="flex space-x-4">
+            <button
+              onClick={() => window.location.href = '/'}
+              className="w-1/2 py-2 rounded-full bg-gray-200 text-gray-700 font-medium hover:bg-gray-300 transition-all"
+            >
+              Back to Home
+            </button>
+            <button
+              onClick={onClose}
+              className="w-1/2 py-2 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium hover:shadow-md transition-all"
+            >
+              Close
+            </button>
+          </div>
         </div>
       </motion.div>
     </div>
@@ -147,7 +155,6 @@ function SuccessModal({ isOpen, onClose, donationAmount }) {
 export default function DonationsPage() {
   const [selectedAmount, setSelectedAmount] = useState(50);
   const [customAmount, setCustomAmount] = useState('');
-  const [donationType, setDonationType] = useState('one-time');
   const [step, setStep] = useState(1);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -269,6 +276,12 @@ export default function DonationsPage() {
     }
   };
 
+  const handleSliderChange = (e) => {
+    const value = e.target.value;
+    setCustomAmount(value);
+    setSelectedAmount(0);
+  };
+
   const prepareDonation = async () => {
     setIsProcessing(true);
     setError(null);
@@ -299,7 +312,7 @@ export default function DonationsPage() {
 
       const donationData = {
         amount: getCurrentAmount(),
-        donationType,
+        donationType: 'one-time',
         status: 'Pending',
         donationDate: serverTimestamp(),
         donorId,
@@ -315,7 +328,7 @@ export default function DonationsPage() {
           metadata: {
             donorId,
             email: formData.email,
-            donationType,
+            donationType: 'one-time',
           },
         }),
       });
@@ -368,7 +381,7 @@ export default function DonationsPage() {
           amount: getCurrentAmount(),
           firstName: formData.firstName,
           lastName: formData.lastName,
-          donationType,
+          donationType: 'one-time',
         }),
       });
 
@@ -504,32 +517,6 @@ export default function DonationsPage() {
                 <div className="bg-white rounded-xl shadow-lg p-8">
                   <h2 className="text-2xl font-bold text-gray-900 mb-6">Choose Your Impact</h2>
                   
-                  {/* Donation Type */}
-                  <div className="mb-8">
-                    <div className="flex rounded-lg border border-gray-200 p-1">
-                      <button
-                        onClick={() => setDonationType('one-time')}
-                        className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${
-                          donationType === 'one-time'
-                            ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white shadow-sm'
-                            : 'text-gray-700 hover:bg-gray-50'
-                        }`}
-                      >
-                        One-time
-                      </button>
-                      <button
-                        onClick={() => setDonationType('monthly')}
-                        className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${
-                          donationType === 'monthly'
-                            ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white shadow-sm'
-                            : 'text-gray-700 hover:bg-gray-50'
-                        }`}
-                      >
-                        Monthly
-                      </button>
-                    </div>
-                  </div>
-
                   {/* Predefined Amounts */}
                   <div className="mb-6">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">Suggested Amounts</h3>
@@ -545,17 +532,32 @@ export default function DonationsPage() {
                           }`}
                         >
                           <div className="text-2xl font-bold">${amount}</div>
-                          <div className="text-sm text-gray-600 mt-1">
-                            {donationType === 'monthly' && '/month'}
-                          </div>
                         </button>
                       ))}
                     </div>
                   </div>
 
-                  {/* Custom Amount */}
+                  {/* Custom Amount with Slider */}
                   <div className="mb-8">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">Custom Amount</h3>
+                    <div className="mb-4">
+                      <input
+                        type="range"
+                        min="0"
+                        max="1000"
+                        step="1"
+                        value={customAmount || 0}
+                        onChange={handleSliderChange}
+                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                        style={{
+                          background: `linear-gradient(to right, #0d9488 0%, #0d9488 ${(customAmount || 0) / 1000 * 100}%, #e5e7eb ${(customAmount || 0) / 1000 * 100}%, #e5e7eb 100%)`
+                        }}
+                      />
+                      <div className="flex justify-between text-sm text-gray-600 mt-2">
+                        <span>$0</span>
+                        <span>$1,000</span>
+                      </div>
+                    </div>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <span className="text-gray-500 text-lg">$</span>
@@ -687,7 +689,7 @@ export default function DonationsPage() {
                     />
                     {validationErrors.email && (
                       <p className="mt-1 text-sm text-red-600">{validationErrors.email}</p>
-                    )}
+                      )}
                   </div>
 
                   <div className="mb-6">
@@ -848,9 +850,6 @@ export default function DonationsPage() {
                         ${getCurrentAmount().toFixed(2)}
                       </span>
                     </div>
-                    {donationType === 'monthly' && (
-                      <p className="text-sm text-gray-500">Recurring monthly donation</p>
-                    )}
                   </div>
 
                   <div className="border-t border-gray-200 pt-4 mb-6">
@@ -921,7 +920,6 @@ export default function DonationsPage() {
                       <CheckoutForm
                         onSuccess={handlePaymentSuccess}
                         amount={getCurrentAmount()}
-                        donationType={donationType}
                         isProcessing={isProcessing}
                         setIsProcessing={setIsProcessing}
                         setError={setError}
@@ -958,9 +956,6 @@ export default function DonationsPage() {
                         ${getCurrentAmount().toFixed(2)}
                       </span>
                     </div>
-                    {donationType === 'monthly' && (
-                      <p className="text-sm text-gray-500">Recurring monthly donation</p>
-                    )}
                   </div>
 
                   <div className="border-t border-gray-200 pt-4 mb-6">
