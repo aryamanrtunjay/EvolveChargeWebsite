@@ -238,7 +238,7 @@ export default function DonationsPage() {
   const impactData = [
     {
       amount: 25,
-      impact: "Supports research into wireless charging efficiency",
+      impact: "Supports EVolve Charge's research and development to build innovative charging solutions",
       icon: "🔬"
     },
     {
@@ -671,19 +671,19 @@ export default function DonationsPage() {
                   <div className="space-y-4 text-sm text-gray-700">
                     <div className="flex items-start">
                       <div className="w-2 h-2 bg-teal-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                      <p>Pioneering wireless EV charging technology</p>
+                      <p>Develop innovative smart EV charging solutions</p>
                     </div>
                     <div className="flex items-start">
                       <div className="w-2 h-2 bg-teal-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                      <p>Simplifying EV charging for universal adoption</p>
+                      <p>Make electric vehicle ownership more accessible</p>
                     </div>
                     <div className="flex items-start">
                       <div className="w-2 h-2 bg-teal-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                      <p>Promoting sustainable transportation globally</p>
+                      <p>Reduce carbon emissions through sustainable technology</p>
                     </div>
                     <div className="flex items-start">
                       <div className="w-2 h-2 bg-teal-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                      <p>Reducing carbon emissions through innovation</p>
+                      <p>Making sure you never run out of charge again</p>
                     </div>
                   </div>
                 </div>
@@ -950,7 +950,7 @@ export default function DonationsPage() {
                         <span>70%</span>
                       </div>
                       <div className="flex justify-between">
-                        <span>Pilot Deployments</span>
+                        <span>Manufacturing</span>
                         <span>20%</span>
                       </div>
                       <div className="flex justify-between">
@@ -985,7 +985,7 @@ export default function DonationsPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     <p className="text-sm text-blue-700">
-                      <strong>Impact:</strong> Your donation accelerates the development and deployment of wireless charging technology.
+                      <strong>Impact:</strong> 1% of your donat ion goes to removing carbon from our atmosphere.
                     </p>
                   </div>
 

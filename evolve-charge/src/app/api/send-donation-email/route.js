@@ -335,10 +335,10 @@ ${anonymous ? '- This donation was made anonymously.' : ''}
 Your tax-deductible receipt is attached to this email for your records.
 
 Your support helps us:
-- Develop innovative wireless EV charging solutions
+- Develop innovative smart EV charging solutions
 - Make electric vehicle ownership more accessible
 - Reduce carbon emissions through sustainable technology
-- Build partnerships for global EV infrastructure
+- Making sure you never run out of charge again
 
 If you have any questions or need assistance, please contact our support team at support@evolve-charge.com.
 
