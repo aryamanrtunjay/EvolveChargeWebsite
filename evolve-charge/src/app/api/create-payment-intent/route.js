@@ -14,16 +14,36 @@ export async function POST(req) {
 
     console.log('API: Creating payment intent with Stripe');
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: amount, // Already in cents from client
+      amount: amount,
       currency: 'usd',
-      metadata: metadata,
+      metadata: {
+        donorId: metadata.donorId,
+        email: metadata.email,
+        donationType: metadata.donationType,
+        donationId: metadata.donationId || '',
+        firstName: metadata.firstName || '',
+        lastName: metadata.lastName || '',
+        dedicateTo: metadata.dedicateTo || null,
+        anonymous: metadata.anonymous || false,
+      },
     });
     console.log('API: Payment intent created, ID:', paymentIntent.id);
 
-    return new Response(JSON.stringify({ clientSecret: paymentIntent.client_secret }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return new Response(
+      JSON.stringify({
+        clientSecret: paymentIntent.client_secret,
+        metadata: {
+          donationId: metadata.donationId,
+          firstName: metadata.firstName,
+          lastName: metadata.lastName,
+          dedicateTo: metadata.dedicateTo,
+        },
+      }),
+      {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
   } catch (err) {
     console.error('API Error:', err.message);
     return new Response(JSON.stringify({ error: err.message }), {

@@ -3,12 +3,12 @@
 // pages/index.js
 import Head from 'next/head';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import Link from 'next/link'
+import Link from 'next/link';
 import { db } from '../firebaseConfig.js';
-import { collection, addDoc, serverTimestamp, query, where, getDocs, updateDoc, doc, getCountFromServer } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, query, where, getDocs, updateDoc, doc, getCountFromServer, orderBy, limit } from 'firebase/firestore';
 import Render from '@/images/Render.png';
 import Testimonials from '@/components/Testimonials.jsx';
 
@@ -226,6 +226,171 @@ function StatCard({ value, units, label, index }) {
   );
 }
 
+// Donor Carousel Component
+function DonorCarousel() {
+  const [donorsWithAmounts, setDonorsWithAmounts] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch donors and their donation amounts from Firebase
+  useEffect(() => {
+    const fetchDonorsAndAmounts = async () => {
+      try {
+        // Step 1: Fetch donors
+        const donorsRef = collection(db, 'donors');
+        const q = query(donorsRef, orderBy('createdAt', 'desc'), limit(10));
+        const querySnapshot = await getDocs(q);
+        const donorList = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        // Step 2: For each donor, fetch their donation amount using donorId
+        const donorsWithDonations = await Promise.all(
+          donorList.map(async (donor) => {
+            const donationsRef = collection(db, 'donations');
+            const donationQuery = query(donationsRef, where('donorId', '==', donor.id));
+            const donationSnapshot = await getDocs(donationQuery);
+            
+            let amount = 'N/A'; // Fallback if no donation found
+            if (!donationSnapshot.empty) {
+              const donationDoc = donationSnapshot.docs[0];
+              amount = donationDoc.data().amount.toFixed(2); // Assuming amount is a number
+            }
+
+            return {
+              ...donor,
+              amount: amount,
+            };
+          })
+        );
+
+        setDonorsWithAmounts(donorsWithDonations);
+        setIsLoading(false);
+      } catch (err) {
+        console.error('Error fetching donors and amounts:', err);
+        setError('Failed to load donors. Please try again later.');
+        setIsLoading(false);
+      }
+    };
+
+    fetchDonorsAndAmounts();
+  }, []);
+
+  // Auto-cycle the carousel every 5 seconds
+  useEffect(() => {
+    if (donorsWithAmounts.length === 0) return;
+
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % donorsWithAmounts.length);
+    }, 5000); // 5 seconds
+
+    return () => clearInterval(interval);
+  }, [donorsWithAmounts]);
+
+  // Handle manual navigation via dots
+  const handleDotClick = (index) => {
+    setCurrentIndex(index);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-gray-600">Loading donors...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-red-600">{error}</p>
+      </div>
+    );
+  }
+
+  if (donorsWithAmounts.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-gray-600">No donors yet. Be the first to support the mission!</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative max-w-3xl mx-auto py-8">
+      {/* Carousel Container */}
+      <div className="overflow-hidden">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentIndex}
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -50 }}
+            transition={{ duration: 0.5 }}
+            className="bg-white rounded-xl shadow-md p-6 text-center border border-gray-100"
+          >
+            <div className="flex items-center justify-center mb-4">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-8 w-8 text-teal-500 mr-3"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                />
+              </svg>
+              <h3 className="text-xl font-semibold text-gray-900">
+                {donorsWithAmounts[currentIndex].anonymous
+                  ? 'Anonymous Donor'
+                  : `${donorsWithAmounts[currentIndex].firstName} ${donorsWithAmounts[currentIndex].lastName}`}
+              </h3>
+            </div>
+            <p className="text-teal-600 font-medium mb-2">
+              Donated ${donorsWithAmounts[currentIndex].amount}
+            </p>
+            {donorsWithAmounts[currentIndex].dedicateTo && (
+              <p className="text-gray-600 italic mb-2">
+                Dedicated to: {donorsWithAmounts[currentIndex].dedicateTo}
+              </p>
+            )}
+            <p className="text-gray-500">
+              Joined on{' '}
+              {donorsWithAmounts[currentIndex].createdAt?.toDate().toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              }) || 'Unknown Date'}
+            </p>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Navigation Dots */}
+      <div className="flex justify-center mt-4 space-x-2">
+        {donorsWithAmounts.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => handleDotClick(index)}
+            className={`w-3 h-3 rounded-full transition-all ${
+              currentIndex === index
+                ? 'bg-teal-500 scale-125'
+                : 'bg-gray-300 hover:bg-teal-300'
+            }`}
+            aria-label={`Go to donor ${index + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   const router = useRouter();
   const [activeFAQ, setActiveFAQ] = useState(null);
@@ -249,9 +414,8 @@ export default function Home() {
   const textY = useTransform(scrollYProgress, [0, 3], [0, -600]);
   const imageY = useTransform(scrollYProgress, [0, 5], [0, -600]);
 
-  const opacity = useTransform(scrollYProgress, [0, 1], [1, 0]); // Adjusted to fade out faster
+  const opacity = useTransform(scrollYProgress, [0, 1], [1, 0]);
 
-  
   const TOTAL_DISCOUNT_SPOTS = 50;
 
   // Toggle FAQ accordion
@@ -261,10 +425,6 @@ export default function Home() {
 
   // FAQ data
   const faqItems = [
-    // {
-    //   question: "Is the EVolve Charger compatible with all electric vehicles?",
-    //   answer: "Yes, the EVolve Charger is designed to work with all major EV models using standard charging ports including Tesla, Ford, Hyundai, Kia, Chevrolet, Nissan, BMW, and more."
-    // },
     {
       question: "How does it plug into my car?",
       answer: "The EVolve Charger navigates above your vehicle where it is securely attached to high-strength steel wire, ensuring absolutely no risk to your vehicles while being out of the way of items stored in your garage. A charge plug is lowered and magnetically snaps to your EV's charge port, beginning the charging process."
@@ -281,10 +441,6 @@ export default function Home() {
       question: "What happens if there's a power outage?",
       answer: "The EVolve Charger system will automatically resume its optimized charging schedule once power is restored. All your settings are securely stored in the cloud."
     },
-    // {
-    //   question: "Is there a warranty?",
-    //   answer: "Yes, our standard warranty covers all hardware for 3 years. We also offer extended warranty options that provide coverage for up to 5 years."
-    // }
   ];
 
   const handleWaitlistSubmit = async (e) => {
@@ -293,29 +449,24 @@ export default function Home() {
     setSubmitError(null);
     
     try {
-      // Check if email already exists
       const mailingListRef = collection(db, 'mailing-list');
       const emailQuery = query(mailingListRef, where("email", "==", email));
       const querySnapshot = await getDocs(emailQuery);
       
       if (querySnapshot.empty) {
-        // Email doesn't exist, create a new document
         const userData = {
           email: email,
           joinDate: serverTimestamp(),
-          isEligibleForDiscount: spotsLeft > 0 // Track discount eligibility
+          isEligibleForDiscount: spotsLeft > 0
         };
         
         await addDoc(mailingListRef, userData);
         
-        // Redirect to the reservation page with the email as a parameter
         window.location.href = `/reserve?email=${encodeURIComponent(email)}`;
       } else {
-        // Email already exists, redirect to reservation page
         window.location.href = `/reserve?email=${encodeURIComponent(email)}`;
       }
       
-      // Update the count after successful submission
       if (spotsLeft > 0) {
         setSpotsLeft(prevSpotsLeft => prevSpotsLeft - 1);
       }
@@ -339,8 +490,7 @@ export default function Home() {
         setSpotsLeft(remainingSpots);
       } catch (error) {
         console.error('Error fetching reservation count:', error);
-        // Set a fallback number to avoid showing null
-        setSpotsLeft(25); // Fallback to create urgency if count fails
+        setSpotsLeft(25);
       } finally {
         setIsLoading(false);
       }
@@ -350,7 +500,6 @@ export default function Home() {
   }, []);
 
   return (
-    
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
       <motion.video
@@ -364,7 +513,7 @@ export default function Home() {
         controls={false}
         style={{
           opacity,
-          zIndex: 0 // Ensure the video stays below other content
+          zIndex: 0
         }}
       >
         <source src="/productDemo.mp4" type="video/mp4" />
@@ -571,7 +720,6 @@ export default function Home() {
                   description: "Receive updates on charging status, battery health, and energy usage through the app and integrate it into the smart home system."
                 }
               ].map((step, index) => {
-                // Create a state variable name based on the step number
                 const stateVarName = `isOpen${index + 1}`;
                 
                 return (
@@ -589,7 +737,6 @@ export default function Home() {
                   >
                     <button 
                       onClick={() => {
-                        // Toggle the corresponding state variable
                         eval(`set${stateVarName}(!${stateVarName})`);
                         eval(whichOpen[index] = !whichOpen[index]);
                       }}
@@ -642,8 +789,35 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <StatCard value={250} units="$" label="dollars saved every year" index={0} />
             <StatCard value={15} units="years" label="added to your car's battery lifespan" index={1} />
-            <StatCard value={9} units="hours" label=" saved plugging in every year" index={2} />
+            <StatCard value={9} units="hours" label="saved plugging in every year" index={2} />
           </div>
+        </div>
+      </section>
+
+      {/* Donors Section */}
+      <section id="donors" className="relative py-8 md:py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={staggerContainer}
+            className="text-center mb-6"
+          >
+            <motion.h2
+              variants={fadeIn}
+              className="text-3xl md:text-4xl font-bold text-gray-900"
+            >
+              Our Supporters
+            </motion.h2>
+            <motion.p
+              variants={fadeIn}
+              className="text-lg text-gray-600 max-w-2xl mx-auto"
+            >
+              Thank you to our amazing donors who are helping us drive the future of EV charging.
+            </motion.p>
+          </motion.div>
+          <DonorCarousel />
         </div>
       </section>
 
@@ -688,7 +862,6 @@ export default function Home() {
                 {spotsLeft > 0 ? '20% discount' : 'Future promotions'}
               </div>
             </div>
-            {/* Discount Countdown Banner */}
             {isLoading ? (
               <div className="bg-white/20 rounded-lg p-4 mt-8 max-w-lg mx-auto">
                 <p className="text-white animate-pulse">Loading special offer details...</p>
@@ -733,7 +906,6 @@ export default function Home() {
             </div>
           </motion.div>
         </div>
-        
       </section>
 
       {/* FAQ Section */}

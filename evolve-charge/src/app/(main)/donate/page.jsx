@@ -107,8 +107,48 @@ function CheckoutForm({ onSuccess, amount, isProcessing, setIsProcessing, setErr
 }
 
 // Success Modal Component
-function SuccessModal({ isOpen, onClose, donationAmount }) {
+function SuccessModal({ isOpen, onClose, donationAmount, donationDetails }) {
   if (!isOpen) return null;
+
+  const generatePDF = async () => {
+    try {
+      // Ensure all required fields are present
+      const pdfData = {
+        firstName: donationDetails.firstName || 'Donor',
+        lastName: donationDetails.lastName || '',
+        amount: donationAmount ? donationAmount.toFixed(2) : '0.00',
+        donationId: donationDetails.donationId || 'UNKNOWN',
+        donationDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+        dedicateTo: donationDetails.dedicateTo || null,
+      };
+
+      console.log('Generating PDF with data:', pdfData);
+
+      const response = await fetch('/api/generate-receipt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(pdfData),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to generate PDF: ${response.status} - ${errorText}`);
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `EvolveCharge_Receipt_${donationDetails.donationId || 'UNKNOWN'}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('PDF Generation Error:', err);
+      alert(`Error generating PDF: ${err.message}`);
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -125,26 +165,34 @@ function SuccessModal({ isOpen, onClose, donationAmount }) {
           </div>
           <h3 className="text-2xl font-bold text-gray-900 mb-2">Thank You!</h3>
           <p className="text-gray-600 mb-6">
-            Your donation of ${donationAmount.toFixed(2)} will help advance wireless EV charging and sustainable transportation.
+            Your tax-deductible donation of ${donationAmount ? donationAmount.toFixed(2) : '0.00'} will help advance wireless EV charging and sustainable transportation.
           </p>
           <div className="bg-gray-50 p-4 rounded-lg mb-6">
             <p className="text-sm text-gray-700">
-              You'll receive a receipt via email shortly. Your contribution supports the development of innovative charging solutions and global EV adoption.
+              You'll receive a receipt via email shortly. Download your tax-deductible receipt below for your records.
             </p>
           </div>
-          <div className="flex space-x-4">
+          <div className="flex flex-col space-y-4">
             <button
-              onClick={() => window.location.href = '/'}
-              className="w-1/2 py-2 rounded-full bg-gray-200 text-gray-700 font-medium hover:bg-gray-300 transition-all"
+              onClick={generatePDF}
+              className="w-full py-2 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium hover:shadow-md transition-all"
             >
-              Back to Home
+              Download Receipt
             </button>
-            <button
-              onClick={onClose}
-              className="w-1/2 py-2 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium hover:shadow-md transition-all"
-            >
-              Close
-            </button>
+            <div className="flex space-x-4">
+              <button
+                onClick={() => window.location.href = '/'}
+                className="w-1/2 py-2 rounded-full bg-gray-200 text-gray-700 font-medium hover:bg-gray-300 transition-all"
+              >
+                Back to Home
+              </button>
+              <button
+                onClick={onClose}
+                className="w-1/2 py-2 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium hover:shadow-md transition-all"
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       </motion.div>
@@ -177,6 +225,13 @@ export default function DonationsPage() {
   const [clientSecret, setClientSecret] = useState('');
   const [donationId, setDonationId] = useState('');
   const [error, setError] = useState(null);
+  const [donationDetails, setDonationDetails] = useState({
+    donorId: '',
+    firstName: '',
+    lastName: '',
+    donationId: '',
+    dedicateTo: null,
+  });
 
   const predefinedAmounts = [25, 50, 100, 250, 500, 1000];
 
@@ -282,43 +337,27 @@ export default function DonationsPage() {
     setSelectedAmount(0);
   };
 
-  const prepareDonation = async () => {
+  const prepareDonation = async (donorId) => {
     setIsProcessing(true);
     setError(null);
 
     try {
-      const zipCode = formData.zipCode ? parseInt(formData.zipCode, 10) : null;
-      if (formData.zipCode && (isNaN(zipCode) || zipCode <= 0)) {
-        throw new Error('Invalid ZIP code');
+      if (!donorId) {
+        throw new Error('Donor ID is missing. Please try again.');
       }
-
-      const donorData = {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        phone: formData.phone || null,
-        address1: formData.address1 || null,
-        city: formData.city || null,
-        state: formData.state || null,
-        zipCode: zipCode || null,
-        dedicateGift: formData.dedicateGift,
-        dedicateTo: formData.dedicateTo || null,
-        anonymous: formData.anonymous,
-        updates: formData.updates,
-      };
-
-      const donorRef = await addDoc(collection(db, 'donors'), donorData);
-      const donorId = donorRef.id;
 
       const donationData = {
         amount: getCurrentAmount(),
         donationType: 'one-time',
         status: 'Pending',
         donationDate: serverTimestamp(),
-        donorId,
+        donorId: donorId,
         paymentMethod: 'credit',
         paymentStatus: 'Pending',
       };
+
+      const donationRef = await addDoc(collection(db, 'donations'), donationData);
+      const donationId = donationRef.id;
 
       const response = await fetch('/api/create-payment-intent', {
         method: 'POST',
@@ -326,20 +365,25 @@ export default function DonationsPage() {
         body: JSON.stringify({
           amount: Math.round(getCurrentAmount() * 100),
           metadata: {
-            donorId,
+            donorId: donorId,
             email: formData.email,
             donationType: 'one-time',
+            donationId: `DON-${donationId}`,
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            dedicateTo: formData.dedicateGift ? formData.dedicateTo : null,
+            anonymous: formData.anonymous,
           },
         }),
       });
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`API request failed with status ${response.status}: ${response.statusText}. Response: ${errorText}`);
+        throw new Error(`API request failed with status ${response.status}: ${errorText}`);
       }
 
       const responseData = await response.json();
-      const { clientSecret } = responseData;
+      const { clientSecret, metadata } = responseData;
 
       if (!clientSecret) {
         throw new Error('No clientSecret returned from API');
@@ -347,16 +391,19 @@ export default function DonationsPage() {
 
       const paymentIntentId = clientSecret.split('_secret')[0];
 
-      const fullDonationData = {
-        ...donationData,
+      await updateDoc(doc(db, 'donations', donationId), {
         paymentIntentId,
-      };
-
-      const donationRef = await addDoc(collection(db, 'donations'), fullDonationData);
-      const donationId = donationRef.id;
+      });
 
       setDonationId(donationId);
       setClientSecret(clientSecret);
+      setDonationDetails({
+        donorId: donorId,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        donationId: metadata.donationId,
+        dedicateTo: metadata.dedicateTo,
+      });
       setIsProcessing(false);
     } catch (err) {
       setError(`Failed to prepare donation: ${err.message}`);
@@ -372,18 +419,26 @@ export default function DonationsPage() {
         paymentDate: serverTimestamp(),
       });
 
-      await fetch('/api/send-donation-email', {
+      const emailResponse = await fetch('/api/send-donation-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email: formData.email,
           donationId: `DON-${donationId}`,
-          amount: getCurrentAmount(),
+          amount: getCurrentAmount().toFixed(2),
           firstName: formData.firstName,
           lastName: formData.lastName,
           donationType: 'one-time',
+          dedicateTo: formData.dedicateGift ? formData.dedicateTo : null,
+          anonymous: formData.anonymous,
+          donationDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
         }),
       });
+
+      if (!emailResponse.ok) {
+        const errorText = await emailResponse.text();
+        console.error(`Failed to send donation email: ${emailResponse.status} - ${errorText}`);
+      }
 
       setIsProcessing(false);
       setShowSuccess(true);
@@ -393,12 +448,14 @@ export default function DonationsPage() {
     }
   };
 
-  const nextStep = () => {
+  const nextStep = async () => {
     if (step === 1) {
       if (getCurrentAmount() <= 0) {
         alert('Please select or enter a donation amount');
         return;
       }
+      window.scrollTo(0, 0);
+      setStep(step + 1);
     } else if (step === 2) {
       if (!validateForm()) {
         const firstErrorField = Object.keys(validationErrors)[0];
@@ -409,13 +466,49 @@ export default function DonationsPage() {
         }
         return;
       }
-    }
 
-    window.scrollTo(0, 0);
-    setStep(step + 1);
+      try {
+        const zipCode = formData.zipCode ? parseInt(formData.zipCode, 10) : null;
+        if (formData.zipCode && (isNaN(zipCode) || zipCode <= 0)) {
+          setValidationErrors({ ...validationErrors, zipCode: 'Invalid ZIP code' });
+          return;
+        }
 
-    if (step + 1 === 3) {
-      prepareDonation();
+        const donorData = {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          phone: formData.phone || null,
+          address1: formData.address1 || null,
+          city: formData.city || null,
+          state: formData.state || null,
+          zipCode: zipCode || null,
+          dedicateGift: formData.dedicateGift,
+          dedicateTo: formData.dedicateGift ? formData.dedicateTo : null,
+          anonymous: formData.anonymous,
+          updates: formData.updates,
+          createdAt: serverTimestamp(),
+        };
+
+        const donorRef = await addDoc(collection(db, 'donors'), donorData);
+        const donorId = donorRef.id;
+
+        setDonationDetails({
+          ...donationDetails,
+          donorId: donorId,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+        });
+
+        window.scrollTo(0, 0);
+        setStep(step + 1);
+
+        if (step + 1 === 3) {
+          await prepareDonation(donorId);
+        }
+      } catch (err) {
+        setError(`Failed to save donor information: ${err.message}`);
+      }
     }
   };
 
@@ -455,9 +548,13 @@ export default function DonationsPage() {
             <span className="bg-gradient-to-r from-teal-500 to-cyan-500 bg-clip-text text-transparent"> Wireless EV Charging</span>
           </h1>
           <p className="text-xl text-gray-700 max-w-3xl mx-auto mb-8">
-            Your donation powers Evolve Charge’s mission to develop cutting-edge wireless charging technology, making electric vehicles more accessible and sustainable for all.
+            Your tax-deductible donation powers Evolve Charge’s mission to develop cutting-edge wireless charging technology, making electric vehicles more accessible and sustainable for all.
           </p>
           <div className="flex flex-wrap justify-center gap-8 text-sm text-gray-600">
+            <div className="flex items-center">
+              <div className="w-2 h-2 bg-teal-500 rounded-full mr-2"></div>
+              Tax-deductible
+            </div>
             <div className="flex items-center">
               <div className="w-2 h-2 bg-teal-500 rounded-full mr-2"></div>
               Secure payments
@@ -465,10 +562,6 @@ export default function DonationsPage() {
             <div className="flex items-center">
               <div className="w-2 h-2 bg-teal-500 rounded-full mr-2"></div>
               Supports EV innovation
-            </div>
-            <div className="flex items-center">
-              <div className="w-2 h-2 bg-teal-500 rounded-full mr-2"></div>
-              Trusted platform
             </div>
           </div>
         </motion.div>
@@ -626,7 +719,7 @@ export default function DonationsPage() {
           <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-4xl mx-auto">
             <motion.div variants={fadeIn} className="text-center mb-10">
               <h1 className="text-3xl font-bold text-gray-900 mb-4">Your Information</h1>
-              <p className="text-lg text-gray-700">Provide your details to receive updates on our wireless charging innovations.</p>
+              <p className="text-lg text-gray-700">Provide your details to receive your tax-deductible receipt and updates on our wireless charging innovations.</p>
             </motion.div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -689,7 +782,7 @@ export default function DonationsPage() {
                     />
                     {validationErrors.email && (
                       <p className="mt-1 text-sm text-red-600">{validationErrors.email}</p>
-                      )}
+                    )}
                   </div>
 
                   <div className="mb-6">
@@ -859,6 +952,18 @@ export default function DonationsPage() {
                     </div>
                   </div>
 
+                  <div className="bg-green-50 p-4 rounded-lg mb-6">
+                    <div className="flex items-center mb-2">
+                      <svg className="h-5 w-5 text-green-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span className="text-sm font-medium text-green-800">Tax Deductible</span>
+                    </div>
+                    <p className="text-sm text-green-700">
+                      Your donation is tax-deductible. You'll receive a receipt for your records.
+                    </p>
+                  </div>
+
                   <div className="bg-gray-50 p-4 rounded-lg">
                     <h3 className="font-medium text-gray-900 mb-2">Where Your Money Goes</h3>
                     <div className="space-y-2 text-sm text-gray-700">
@@ -891,7 +996,7 @@ export default function DonationsPage() {
           <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-4xl mx-auto">
             <motion.div variants={fadeIn} className="text-center mb-10">
               <h1 className="text-3xl font-bold text-gray-900 mb-4">Complete Your Donation</h1>
-              <p className="text-lg text-gray-700">Your support drives the future of wireless EV charging.</p>
+              <p className="text-lg text-gray-700">Your tax-deductible support drives the future of wireless EV charging.</p>
             </motion.div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -965,26 +1070,36 @@ export default function DonationsPage() {
                     </div>
                   </div>
 
-                  <div className="bg-gradient-to-br from-teal-50 to-cyan-50 p-4 rounded-lg">
-                    <h3 className="font-medium text-gray-900 mb-3">What Happens Next?</h3>
-                    <div className="space-y-3 text-sm text-gray-700">
-                      <div className="flex items-start">
-                        <svg className="h-5 w-5 text-teal-500 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                        <span>Instant donation confirmation email</span>
+                  <div className="bg-green-50 p-4 rounded-lg mb-6">
+                    <div className="flex items-center mb-2">
+                      <svg className="h-5 w-5 text-green-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span className="text-sm font-medium text-green-800">Tax Deductible</span>
+                    </div>
+                    <p className="text-sm text-green-700">
+                      Your donation is tax-deductible. You'll receive a receipt for your records.
+                    </p>
+                  </div>
+
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h3 className="font-medium text-gray-900 mb-2">Where Your Money Goes</h3>
+                    <div className="space-y-2 text-sm text-gray-700">
+                      <div className="flex justify-between">
+                        <span>Research & Development</span>
+                        <span>70%</span>
                       </div>
-                      <div className="flex items-start">
-                        <svg className="h-5 w-5 text-teal-500 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                        <span>Receipt within 24 hours</span>
+                      <div className="flex justify-between">
+                        <span>Pilot Deployments</span>
+                        <span>20%</span>
                       </div>
-                      <div className="flex items-start">
-                        <svg className="h-5 w-5 text-teal-500 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                        <span>Updates on our wireless charging progress</span>
+                      <div className="flex justify-between">
+                        <span>Community Outreach</span>
+                        <span>5%</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Administrative</span>
+                        <span>5%</span>
                       </div>
                     </div>
                   </div>
@@ -999,6 +1114,7 @@ export default function DonationsPage() {
           isOpen={showSuccess}
           onClose={() => setShowSuccess(false)}
           donationAmount={getCurrentAmount()}
+          donationDetails={donationDetails}
         />
       </div>
     </div>
