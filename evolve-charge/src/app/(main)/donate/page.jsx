@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { db } from '../../firebaseConfig.js';
-import { collection, addDoc, updateDoc, doc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, doc, serverTimestamp } from 'firebase/firestore';
 
 // Initialize Stripe
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
@@ -337,22 +337,17 @@ export default function DonationsPage() {
     setSelectedAmount(0);
   };
 
-  const prepareDonation = async (donorId) => {
+  const prepareDonation = async () => {
     setIsProcessing(true);
     setError(null);
 
     try {
-      if (!donorId) {
-        throw new Error('Donor ID is missing. Please try again.');
-      }
-
       const response = await fetch('/api/create-payment-intent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           amount: Math.round(getCurrentAmount() * 100),
           metadata: {
-            donorId: donorId,
             email: formData.email,
             donationType: 'one-time',
             firstName: formData.firstName,
@@ -369,7 +364,7 @@ export default function DonationsPage() {
       }
 
       const responseData = await response.json();
-      const { clientSecret, metadata } = responseData;
+      const { clientSecret } = responseData;
 
       if (!clientSecret) {
         throw new Error('No clientSecret returned from API');
@@ -377,11 +372,9 @@ export default function DonationsPage() {
 
       setClientSecret(clientSecret);
       setDonationDetails({
-        donorId: donorId,
         firstName: formData.firstName,
         lastName: formData.lastName,
-        donationId: metadata.donationId || '',
-        dedicateTo: metadata.dedicateTo,
+        dedicateTo: formData.dedicateGift ? formData.dedicateTo : null,
       });
       setIsProcessing(false);
     } catch (err) {
@@ -392,12 +385,36 @@ export default function DonationsPage() {
 
   const handlePaymentSuccess = async (paymentIntent) => {
     try {
+      const zipCode = formData.zipCode ? parseInt(formData.zipCode, 10) : null;
+      if (formData.zipCode && (isNaN(zipCode) || zipCode <= 0)) {
+        throw new Error('Invalid ZIP code');
+      }
+
+      const donorData = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone || null,
+        address1: formData.address1 || null,
+        city: formData.city || null,
+        state: formData.state || null,
+        zipCode: zipCode || null,
+        dedicateGift: formData.dedicateGift,
+        dedicateTo: formData.dedicateGift ? formData.dedicateTo : null,
+        anonymous: formData.anonymous,
+        updates: formData.updates,
+        createdAt: serverTimestamp(),
+      };
+
+      const donorRef = await addDoc(collection(db, 'donors'), donorData);
+      const donorId = donorRef.id;
+
       const donationData = {
         amount: getCurrentAmount(),
         donationType: 'one-time',
         status: 'Completed',
         donationDate: serverTimestamp(),
-        donorId: donationDetails.donorId,
+        donorId: donorId,
         paymentMethod: 'credit',
         paymentStatus: 'Succeeded',
         paymentIntentId: paymentIntent.id,
@@ -409,8 +426,11 @@ export default function DonationsPage() {
 
       setDonationId(donationId);
       setDonationDetails({
-        ...donationDetails,
+        donorId: donorId,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
         donationId: `DON-${donationId}`,
+        dedicateTo: formData.dedicateGift ? formData.dedicateTo : null,
       });
 
       const emailResponse = await fetch('/api/send-donation-email', {
@@ -461,47 +481,11 @@ export default function DonationsPage() {
         return;
       }
 
-      try {
-        const zipCode = formData.zipCode ? parseInt(formData.zipCode, 10) : null;
-        if (formData.zipCode && (isNaN(zipCode) || zipCode <= 0)) {
-          setValidationErrors({ ...validationErrors, zipCode: 'Invalid ZIP code' });
-          return;
-        }
+      window.scrollTo(0, 0);
+      setStep(step + 1);
 
-        const donorData = {
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-          phone: formData.phone || null,
-          address1: formData.address1 || null,
-          city: formData.city || null,
-          state: formData.state || null,
-          zipCode: zipCode || null,
-          dedicateGift: formData.dedicateGift,
-          dedicateTo: formData.dedicateGift ? formData.dedicateTo : null,
-          anonymous: formData.anonymous,
-          updates: formData.updates,
-          createdAt: serverTimestamp(),
-        };
-
-        const donorRef = await addDoc(collection(db, 'donors'), donorData);
-        const donorId = donorRef.id;
-
-        setDonationDetails({
-          ...donationDetails,
-          donorId: donorId,
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-        });
-
-        window.scrollTo(0, 0);
-        setStep(step + 1);
-
-        if (step + 1 === 3) {
-          await prepareDonation(donorId);
-        }
-      } catch (err) {
-        setError(`Failed to save donor information: ${err.message}`);
+      if (step + 1 === 3) {
+        await prepareDonation();
       }
     }
   };
