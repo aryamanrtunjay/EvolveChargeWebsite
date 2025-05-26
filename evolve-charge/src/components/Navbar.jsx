@@ -102,9 +102,14 @@ export default function Navigation() {
           >
             <div className="px-4 py-2">
               <div className="py-4">
-                <a href="reserve" className="block">
-                  <button className="w-full px-5 py-2 rounded-full font-medium bg-gradient-to-r from-teal-500 to-cyan-500 text-white">
-                    Reserve Now
+                <a href="order" className="block">
+                  <button className="w-full px-5 py-2 mb-4 rounded-full font-medium bg-gradient-to-r from-teal-500 to-cyan-500 text-white hover:shadow-lg hover:from-teal-600 hover:to-cyan-600">
+                    Pre-order Now
+                  </button>
+                </a>
+                <a href="donate" className="block">
+                  <button className="w-full px-5 py-2 rounded-full font-medium bg-gradient-to-r from-cyan-500 to-teal-500 text-white border border-cyan-400 hover:shadow-lg hover:from-cyan-600 hover:to-teal-600">
+                    Support The Missions
                   </button>
                 </a>
               </div>
