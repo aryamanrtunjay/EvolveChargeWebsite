@@ -8,7 +8,7 @@ import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { db } from '../firebaseConfig.js';
-import { collection, addDoc, serverTimestamp, query, where, getDocs, updateDoc, doc, getCountFromServer, orderBy, limit } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, query, where, getDocs, updateDoc, doc, getCountFromServer, getFirestore, orderBy, limit } from 'firebase/firestore';
 import Render from '@/images/Render.png';
 import Testimonials from '@/components/Testimonials.jsx';
 
@@ -404,6 +404,13 @@ export default function Home() {
   const [isOpen3, setisOpen3] = useState(false);
   const [isOpen4, setisOpen4] = useState(false);
   const [whichOpen, setWhichOpen] = useState([false, false, false, false]);
+  const [totalPreOrders, setTotalPreOrders] = useState(0);
+  const [totalDonations, setTotalDonations] = useState(0);
+  const [totalAmount, setTotalAmount] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const [error, setError] = useState(null);
+  const [donorsWithAmounts, setDonorsWithAmounts] = useState([]);
+  const [filter, setFilter] = useState('recent');
 
   const sectionRef = useRef(null);
   const { scrollYProgress } = useScroll({
@@ -498,6 +505,140 @@ export default function Home() {
 
     fetchReservationCount();
   }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const db = getFirestore();
+
+      // Fetch orders
+      const ordersSnapshot = await getDocs(collection(db, "orders"));
+      let preOrderSum = 0;
+      ordersSnapshot.forEach(doc => {
+        const data = doc.data();
+        if (data.paymentStatus === "Completed" && data.total) {
+          preOrderSum += data.total;
+        }
+      });
+      setTotalPreOrders(preOrderSum);
+
+      // Fetch donations
+      const donationsSnapshot = await getDocs(collection(db, "donations"));
+      let donationSum = 0;
+      donationsSnapshot.forEach(doc => {
+        const data = doc.data();
+        if (data.status === "Completed" && data.amount) {
+          donationSum += data.amount;
+        }
+      });
+      setTotalDonations(donationSum);
+
+      // Calculate total and progress
+      const total = preOrderSum + donationSum;
+      setTotalAmount(total);
+      const progressPercentage = (total / 10000) * 100;
+      setProgress(progressPercentage > 100 ? 100 : progressPercentage); // Cap at 100%
+    };
+
+    fetchData().catch(error => console.error("Error fetching data:", error));
+  }, []);
+
+ // Fetch and filter donors
+  useEffect(() => {
+    const fetchDonorsAndAmounts = async () => {
+      try {
+        setIsLoading(true);
+        // Step 1: Fetch donors
+        const donorsRef = collection(db, 'donors');
+        const donorsSnapshot = await getDocs(query(donorsRef));
+        const donorList = donorsSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        // Step 2: Fetch all donations
+        const donationsRef = collection(db, 'donations');
+        const donationsQuery = query(donationsRef, where('status', '==', 'Completed'));
+        const donationSnapshot = await getDocs(donationsQuery);
+        const donations = donationSnapshot.docs.map(doc => doc.data());
+
+        // Step 3: Process donations based on filter
+        let processedDonors = [];
+
+        // Define time ranges for filtering
+        const now = new Date('2025-05-27T16:10:00-07:00'); // Current date: May 27, 2025, 04:10 PM PDT
+        const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+        // Filter donations based on the selected filter
+        let filteredDonations = donations;
+        if (filter === 'top-day') {
+          filteredDonations = donations.filter(donation => {
+            const donationDate = donation.donationDate?.toDate ? donation.donationDate.toDate() : new Date(donation.donationDate * 1000);
+            return donationDate >= startOfDay && donationDate <= now;
+          });
+        } else if (filter === 'top-month') {
+          filteredDonations = donations.filter(donation => {
+            const donationDate = donation.donationDate?.toDate ? donation.donationDate.toDate() : new Date(donation.donationDate * 1000);
+            return donationDate >= startOfMonth && donationDate <= now;
+          });
+        }
+
+        if (filter === 'recent') {
+          // Sort by createdAt (most recent first)
+          const donorsWithDonations = await Promise.all(
+            donorList.map(async (donor) => {
+              const donorDonations = donations.filter(d => d.donorId === donor.id);
+              const amount = donorDonations.length > 0
+                ? donorDonations.reduce((sum, d) => sum + d.amount, 0).toFixed(2)
+                : '0.00';
+              return {
+                ...donor,
+                amount,
+              };
+            })
+          );
+          processedDonors = donorsWithDonations.sort((a, b) => {
+            const dateA = a.createdAt?.toDate() || new Date(0);
+            const dateB = b.createdAt?.toDate() || new Date(0);
+            return dateB - dateA;
+          });
+        } else {
+          // For top donors (day, month, all time), group donations by donor and sum amounts
+          const donorTotals = {};
+          filteredDonations.forEach(donation => {
+            const donorId = donation.donorId;
+            if (!donorTotals[donorId]) {
+              donorTotals[donorId] = { totalAmount: 0, donor: null };
+            }
+            donorTotals[donorId].totalAmount += donation.amount;
+            const donor = donorList.find(d => d.id === donorId);
+            if (donor) {
+              donorTotals[donorId].donor = donor;
+            }
+          });
+
+          // Convert to array and sort by total amount
+          processedDonors = Object.entries(donorTotals)
+            .filter(([_, data]) => data.donor) // Ensure donor exists
+            .map(([_, data]) => ({
+              ...data.donor,
+              amount: data.totalAmount.toFixed(2),
+            }))
+            .sort((a, b) => parseFloat(b.amount) - parseFloat(a.amount));
+        }
+
+        setDonorsWithAmounts(processedDonors);
+        setIsLoading(false);
+      } catch (err) {
+        console.error('Error fetching donors and amounts:', err);
+        setError('Failed to load donors. Please try again later.');
+        setIsLoading(false);
+      }
+    };
+
+    fetchDonorsAndAmounts();
+  }, [filter]);
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -804,40 +945,176 @@ export default function Home() {
       </section>
 
       {/* Donors Section */}
-      <section id="donors" className="relative py-8 md:py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={staggerContainer}
-            className="text-center mb-6"
-          >
-            <motion.h2
-              variants={fadeIn}
-              className="text-3xl md:text-4xl font-bold text-gray-900"
-            >
-              Our Supporters
-            </motion.h2>
-            <motion.p
-              variants={fadeIn}
-              className="text-lg text-gray-600 max-w-2xl mx-auto"
-            >
-              Thank you to our amazing donors who are helping us drive the future of EV charging.
-            </motion.p>
-          </motion.div>
-          <div className="flex justify-center">
-            <Link href="donate">
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                className="px-8 py-3 rounded-full bg-gradient-to-r from-teal-400 to-cyan-400 text-gray-50 font-medium shadow-lg hover:shadow-xl transition-all"
+      <section id="donors" className="relative overflow-hidden bg-gradient-to-b from-gray-50 to-white py-16">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="lg:grid lg:grid-cols-3 lg:gap-8">
+            {/* Left Section (Progress, Goal, CTA) */}
+            <div className="lg:col-span-2">
+              {/* Heading */}
+              <motion.div
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.3 }}
+                variants={staggerContainer}
+                className="text-center mb-12"
               >
-                Join Our Supporters
-              </motion.button>
-            </Link>
+                <motion.h2
+                  variants={fadeIn}
+                  className="text-5xl font-extrabold tracking-tight"
+                >
+                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-cyan-400">
+                    Our Supporters
+                  </span>
+                </motion.h2>
+                <motion.p
+                  variants={fadeIn}
+                  className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed"
+                >
+                  Thank you to our amazing donors who are helping us drive the future of EV charging.
+                </motion.p>
+              </motion.div>
+
+              {/* Stats Cards */}
+              <motion.div
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.3 }}
+                variants={staggerContainer}
+                className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12"
+              >
+                {[
+                  { label: "Total Raised", value: `$${totalAmount.toFixed(2)}`, color: "text-teal-600" },
+                  { label: "Goal", value: "$10,000", color: "text-gray-900" },
+                  { label: "Progress", value: `${progress.toFixed(1)}%`, color: "text-teal-600" },
+                ].map(({ label, value, color }) => (
+                  <motion.div
+                    key={label}
+                    variants={fadeIn}
+                    className="bg-white p-6 rounded-lg shadow-lg text-center"
+                  >
+                    <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">{label}</p>
+                    <p className={`mt-2 text-3xl font-bold ${color}`}>{value}</p>
+                  </motion.div>
+                ))}
+              </motion.div>
+
+              {/* Progress Bar with Label */}
+              <div className="max-w-lg mx-auto">
+                <div className="relative h-3 bg-gray-200 rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${progress}%` }}
+                    transition={{ duration: 1, ease: "easeOut" }}
+                    className="absolute left-0 top-0 h-full bg-gradient-to-r from-teal-400 to-cyan-400"
+                  />
+                </div>
+                <div className="mt-2 text-sm font-semibold text-gray-700 text-center">
+                  {progress.toFixed(1)}% of our $10,000 goal
+                </div>
+              </div>
+              {/* CTA */}
+              <div className="flex justify-center mt-16">
+                <Link href="donate">
+                  <motion.button
+                    whileHover={{ scale: 1.05, boxShadow: "0 10px 20px rgba(0,0,0,0.15)" }}
+                    whileTap={{ scale: 0.95 }}
+                    className="px-10 py-4 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white text-lg font-semibold shadow-2xl transition-all duration-300"
+                  >
+                    Join Our Supporters
+                  </motion.button>
+                </Link>
+              </div>
+            </div>
+
+            {/* Right Section (Scrolling Donors List with Filters) */}
+            <div className="lg:col-span-1 mt-12 lg:mt-0">
+              <div className="bg-white rounded-xl shadow-lg p-6 max-h-[500px] flex flex-col">
+                {/* Filter Buttons */}
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {[
+                    { label: "Recent", value: "recent" },
+                    { label: "Top (Day)", value: "top-day" },
+                    { label: "Top (Month)", value: "top-month" },
+                    { label: "Top (All Time)", value: "top-all" },
+                  ].map(({ label, value }) => (
+                    <button
+                      key={value}
+                      onClick={() => setFilter(value)}
+                      className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${
+                        filter === value
+                          ? 'bg-teal-500 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-teal-100'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Donors List */}
+                <div className="flex-1 overflow-y-auto">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4">Donors</h3>
+                  {isLoading ? (
+                    <p className="text-gray-600 text-center">Loading donors...</p>
+                  ) : error ? (
+                    <p className="text-red-600 text-center">{error}</p>
+                  ) : donorsWithAmounts.length === 0 ? (
+                    <p className="text-gray-600 text-center">No donors yet. Be the first to support the mission!</p>
+                  ) : (
+                    <div className="space-y-4">
+                      {donorsWithAmounts.map((donor) => (
+                        <motion.div
+                          key={donor.id}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="border-b border-gray-100 pb-4 last:border-b-0"
+                        >
+                          <div className="flex items-center">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-6 w-6 text-teal-500 mr-3"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                              />
+                            </svg>
+                            <div>
+                              <p className="text-lg font-medium text-gray-900">
+                                {donor.anonymous ? 'Anonymous Donor' : `${donor.firstName} ${donor.lastName}`}
+                              </p>
+                              <p className="text-teal-600 font-medium">
+                                Donated ${donor.amount}
+                              </p>
+                              {donor.dedicateTo && (
+                                <p className="text-gray-600 italic text-sm">
+                                  Dedicated to: {donor.dedicateTo}
+                                </p>
+                              )}
+                              <p className="text-gray-500 text-sm">
+                                Joined on{' '}
+                                {donor.createdAt?.toDate().toLocaleDateString('en-US', {
+                                  year: 'numeric',
+                                  month: 'long',
+                                  day: 'numeric',
+                                }) || 'Unknown Date'}
+                              </p>
+                            </div>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
-          <DonorCarousel />
         </div>
       </section>
 
@@ -859,7 +1136,7 @@ export default function Home() {
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">Join the EVolution</h2>
             <p className="text-lg md:text-xl mb-4 max-w-2xl mx-auto text-teal-50">
-              20% discount for the first 100 pre-orders alongside VIP treatment!
+              20% discount for the first 50 pre-orders alongside VIP treatment!
             </p>
             
             <div className="flex flex-col md:flex-row justify-center items-center space-y-2 md:space-y-0 md:space-x-8 mt-8 text-teal-50 font-medium">
