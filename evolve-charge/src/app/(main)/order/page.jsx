@@ -569,12 +569,12 @@ export default function OrderPage() {
               <motion.div variants={fadeIn} className="md:col-span-1">
                 <div className="bg-white rounded-xl shadow-md p-6 sticky top-28">
                   <h2 className="text-xl font-bold text-gray-900 mb-6">Pre-order Summary</h2>
-                  <div className="flex items-center mb-6">
+                  {/* <div className="flex items-center mb-6">
                     <div>
                       <h3 className="font-bold text-gray-900">{plans[selectedPlan]?.name || 'Unknown Plan'}</h3>
                       <p className="text-sm text-gray-500">{billingCycle === 'monthly' ? 'Monthly billing' : 'Annual billing'}</p>
                     </div>
-                  </div>
+                  </div> */}
                   <div className="border-t border-gray-200 pt-4 mb-4">
                     {orderSummary.oneTimeFee > 0 && (
                       <div className="flex justify-between mb-2">
@@ -908,12 +908,12 @@ export default function OrderPage() {
               <motion.div variants={fadeIn} className="md:col-span-1">
                 <div className="bg-white rounded-xl shadow-md p-6 sticky top-28">
                   <h2 className="text-xl font-bold text-gray-900 mb-6">Pre-order Summary</h2>
-                  <div className="flex items-center mb-6">
+                  {/* <div className="flex items-center mb-6">
                     <div>
                       <h3 className="font-bold text-gray-900">{plans[selectedPlan]?.name || 'Unknown Plan'}</h3>
                       <p className="text-sm text-gray-500">{billingCycle === 'monthly' ? 'Monthly billing' : 'Annual billing'}</p>
                     </div>
-                  </div>
+                  </div> */}
                   <div className="border-t border-gray-200 pt-4 mb-4">
                     {orderSummary.oneTimeFee > 0 && (
                       <div className="flex justify-between mb-2">
@@ -1014,12 +1014,12 @@ export default function OrderPage() {
               <motion.div variants={fadeIn} className="md:col-span-1">
                 <div className="bg-white rounded-xl shadow-md p-6 sticky top-28">
                   <h2 className="text-xl font-bold text-gray-900 mb-6">Pre-order Summary</h2>
-                  <div className="flex items-center mb-6">
+                  {/* <div className="flex items-center mb-6">
                     <div>
                       <h3 className="font-bold text-gray-900">{plans[selectedPlan]?.name || 'Unknown Plan'}</h3>
                       <p className="text-sm text-gray-500">{billingCycle === 'monthly' ? 'Monthly billing' : 'Annual billing'}</p>
                     </div>
-                  </div>
+                  </div> */}
                   <div className="border-t border-gray-200 pt-4 mb-4">
                     {orderSummary.oneTimeFee > 0 && (
                       <div className="flex justify-between mb-2">

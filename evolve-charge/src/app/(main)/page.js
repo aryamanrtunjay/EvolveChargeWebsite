@@ -563,6 +563,15 @@ export default function Home() {
                     Pre-order Yours Today
                   </motion.button>
                 </Link>
+                <Link href="donate">
+                  <motion.button
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    className="px-8 py-3 rounded-full bg-white hover:bg-gradient-to-r from-teal-400 to-cyan-400 hover:text-gray-50 text-teal-700 font-medium shadow-lg hover:shadow-xl transition-all"
+                  >
+                    Support Us
+                  </motion.button>
+                </Link>
               </motion.div>
             </motion.div>
           </div>
@@ -615,7 +624,7 @@ export default function Home() {
                 </svg>
               }
               title="Automatic Connection"
-              description="No more manual plugging. Get back hours of your life every month."
+              description="No more manual plugging. Get back hours of your life every year."
             />
             
             <FeatureCard
@@ -817,6 +826,17 @@ export default function Home() {
               Thank you to our amazing donors who are helping us drive the future of EV charging.
             </motion.p>
           </motion.div>
+          <div className="flex justify-center">
+            <Link href="donate">
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                className="px-8 py-3 rounded-full bg-gradient-to-r from-teal-400 to-cyan-400 text-gray-50 font-medium shadow-lg hover:shadow-xl transition-all"
+              >
+                Join Our Supporters
+              </motion.button>
+            </Link>
+          </div>
           <DonorCarousel />
         </div>
       </section>
