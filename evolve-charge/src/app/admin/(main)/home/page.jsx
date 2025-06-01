@@ -159,45 +159,58 @@ export default function AdminHome() {
         users: { total: usersTotal, new: usersNew },
         orders: { total: ordersTotal, new: ordersNew },
         mailingList: { total: mailingListTotal, new: mailingListNew }
-      });
-
-      // Fetch recent activity (combines users, orders, and mailing list sign ups)
+      });      // Fetch recent activity (combines users, orders, and mailing list sign ups)
       const recentUsers = await getDocs(query(usersCollection, orderBy("registerDate", "desc"), limit(5)));
       const recentOrders = await getDocs(query(ordersCollection, orderBy("orderDate", "desc"), limit(5)));
       const recentSubscriptions = await getDocs(query(mailingListCollection, orderBy("signupDate", "desc"), limit(5)));
+
+      // Create a map of user IDs to user data for quick lookup
+      const allUsers = await getDocs(usersCollection);
+      const usersMap = {};
+      allUsers.forEach(doc => {
+        usersMap[doc.id] = doc.data();
+      });
 
       const activity = [
         ...recentUsers.docs.map(doc => {
           const data = doc.data();
           return {
             type: 'New user',
-            email: data.email,
+            email: data.email || data['email-address'] || 'N/A',
             time: data.registerDate instanceof Timestamp ? 
               data.registerDate.toDate().getTime() : 
               data.registerDate,
-            details: `${data.firstName || ''} ${data.lastName || ''}`.trim()
+            details: `${data.firstName || data['first-name'] || ''} ${data.lastName || data['last-name'] || ''}`.trim()
           };
         }),
         ...recentOrders.docs.map(doc => {
           const data = doc.data();
+          const customer = usersMap[data.customerID];
+          const customerName = customer ? 
+            `${customer.firstName || customer['first-name'] || ''} ${customer.lastName || customer['last-name'] || ''}`.trim() :
+            'Unknown Customer';
+          const customerEmail = customer ? 
+            customer.email || customer['email-address'] || 'N/A' :
+            'N/A';
+          
           return {
             type: 'New order',
-            email: data.customerEmail,
+            email: customerEmail,
             time: data.orderDate instanceof Timestamp ? 
               data.orderDate.toDate().getTime() : 
               data.orderDate,
-            details: `Pre-order #${doc.id.substring(0, 8)} - $${data.total?.toFixed(2) || '0.00'}`
+            details: `${customerName} - Pre-order #${doc.id.substring(0, 8)} - $${data.total?.toFixed(2) || '0.00'}`
           };
         }),
         ...recentSubscriptions.docs.map(doc => {
           const data = doc.data();
           return {
             type: 'Newsletter sign-up',
-            email: data.email,
+            email: data.email || data['email-address'] || 'N/A',
             time: data.subscriptionDate instanceof Timestamp ? 
               data.subscriptionDate.toDate().getTime() : 
               data.subscriptionDate,
-            details: ''
+            details: `${data.firstName || data['first-name'] || ''} ${data.lastName || data['last-name'] || ''}`.trim()
           };
         })
       ];

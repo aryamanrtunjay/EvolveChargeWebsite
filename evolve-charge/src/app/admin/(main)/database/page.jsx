@@ -26,7 +26,6 @@ export default function AdminDatabase() {
   const [loading, setLoading] = useState(true);
   const [notification, setNotification] = useState(null);
   const router = useRouter();
-
   useEffect(() => {
     // Check if admin is logged in
     const isLoggedIn = sessionStorage.getItem('adminLoggedIn');
@@ -56,7 +55,28 @@ export default function AdminDatabase() {
         id: doc.id,
         ...doc.data()
       }));
-      setOrders(ordersData);
+
+      // Create a map of user IDs to user data for quick lookup
+      const usersMap = usersData.reduce((map, user) => {
+        map[user.id] = user;
+        return map;
+      }, {});
+
+      // Enhance orders with customer names
+      const ordersWithCustomerNames = ordersData.map(order => {
+        const customer = usersMap[order.customerID];
+        return {
+          ...order,
+          customerName: customer ? 
+            `${customer.firstName || customer['first-name'] || ''} ${customer.lastName || customer['last-name'] || ''}`.trim() :
+            'Unknown Customer',
+          customerEmail: customer ? 
+            customer.email || customer['email-address'] || 'N/A' :
+            'N/A'
+        };
+      });
+
+      setOrders(ordersWithCustomerNames);
 
       // Fetch mailing list
       const mailingListSnapshot = await getDocs(collection(db, 'mailing-list'));
@@ -452,12 +472,14 @@ export default function AdminDatabase() {
                   {/* Orders Collection */}
                   {activeCollection === 'orders' && (
                     <div>
-                      <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-gray-200">
+                      <div className="overflow-x-auto">                        <table className="min-w-full divide-y divide-gray-200">
                           <thead className="bg-gray-50">
                             <tr>
                               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Pre-order ID
+                              </th>
+                              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Customer Name
                               </th>
                               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Customer ID
@@ -476,8 +498,7 @@ export default function AdminDatabase() {
                               </th>
                             </tr>
                           </thead>
-                          <tbody className="bg-white divide-y divide-gray-200">
-                            {orders.map((order) => (
+                          <tbody className="bg-white divide-y divide-gray-200">                            {orders.map((order) => (
                               <Fragment key={order.id}>
                                 <tr 
                                   className={`hover:bg-gray-50 cursor-pointer ${expandedItem === order.id ? 'bg-gray-50' : ''}`}
@@ -485,6 +506,10 @@ export default function AdminDatabase() {
                                 >
                                   <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="text-sm font-medium text-gray-900">{order.id.substring(0, 8)}...</div>
+                                  </td>
+                                  <td className="px-6 py-4 whitespace-nowrap">
+                                    <div className="text-sm font-medium text-gray-900">{order.customerName || 'Unknown Customer'}</div>
+                                    <div className="text-sm text-gray-500">{order.customerEmail || 'N/A'}</div>
                                   </td>
                                   <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="text-sm text-gray-500">{order.customerID || 'N/A'}</div>
@@ -515,10 +540,9 @@ export default function AdminDatabase() {
                                       Delete
                                     </button>
                                   </td>
-                                </tr>
-                                {expandedItem === order.id && (
+                                </tr>                                {expandedItem === order.id && (
                                   <tr>
-                                    <td colSpan="6" className="px-6 py-4 bg-gray-50">
+                                    <td colSpan="7" className="px-6 py-4 bg-gray-50">
                                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
                                           <h4 className="font-medium text-gray-900 mb-2">Pre-order Details</h4>
@@ -583,10 +607,9 @@ export default function AdminDatabase() {
                                   </tr>
                                 )}
                               </Fragment>
-                            ))}
-                            {orders.length === 0 && (
+                            ))}                            {orders.length === 0 && (
                               <tr>
-                                <td colSpan="6" className="px-6 py-4 text-center text-sm text-gray-500">
+                                <td colSpan="7" className="px-6 py-4 text-center text-sm text-gray-500">
                                   No orders found
                                 </td>
                               </tr>
