@@ -36,7 +36,7 @@ function generatePDF({ firstName, lastName, amount, donationId, donationDate, de
   
   doc.setFontSize(12);
   doc.setFont('helvetica', 'normal');
-  doc.text('Tax-Deductible Donation Receipt', 105, 30, { align: 'center' });
+  doc.text('Donation Receipt', 105, 30, { align: 'center' });
 
   doc.setTextColor(...textColor);
 
@@ -85,22 +85,6 @@ function generatePDF({ firstName, lastName, amount, donationId, donationDate, de
     yPosition += 5;
   }
 
-  // Tax information box
-  doc.setFillColor(240, 240, 240);
-  doc.roundedRect(20, yPosition, 170, 35, 3, 3, 'F');
-  
-  doc.setFontSize(11);
-  doc.setFont('helvetica', 'bold');
-  doc.text('Tax-Deductible Information', 25, yPosition + 8);
-  
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(10);
-  const taxText = 'This donation is tax-deductible to the extent allowed by law. No goods or services were provided in exchange for this donation. Please retain this receipt for your tax records.';
-  const splitTaxText = doc.splitTextToSize(taxText, 160);
-  doc.text(splitTaxText, 25, yPosition + 16);
-  
-  yPosition += 45;
-
   // Thank you message
   doc.setFontSize(12);
   doc.setFont('helvetica', 'normal');
@@ -114,8 +98,6 @@ function generatePDF({ firstName, lastName, amount, donationId, donationDate, de
   doc.setFontSize(10);
   doc.setTextColor(...grayColor);
   doc.text('EVolve Charge Inc.', 20, yPosition);
-  yPosition += 5;
-  doc.text('A 501(c)(3) Nonprofit Organization', 20, yPosition);
   yPosition += 5;
   doc.text('EIN: XX-XXXXXXX', 20, yPosition);
   yPosition += 5;
@@ -279,7 +261,7 @@ export async function POST(request) {
               ${anonymousNote}
             </div>
             
-            <p>Your tax-deductible receipt is attached to this email for your records.</p>
+            <p>Your donation receipt is attached to this email for your records.</p>
             
             <div class="impact-list">
               <p><strong>Your support helps us:</strong></p>
@@ -305,7 +287,7 @@ export async function POST(request) {
           </div>
           <div class="email-footer">
             <p>© ${new Date().getFullYear()} EVolve Charge Inc. All rights reserved.</p>
-            <p>Sammamish, WA | A 501(c)(3) Nonprofit Organization</p>
+            <p>Sammamish, WA</p>
             <p>
               <a href="https://evolve-charge.com/#privacypolicy">Privacy Policy</a> | 
               <a href="https://evolve-charge.com/#tos">Terms of Service</a>
@@ -332,7 +314,7 @@ Donation Details:
 ${dedicateTo ? `- In Honor/Memory Of: ${dedicateTo}` : ''}
 ${anonymous ? '- This donation was made anonymously.' : ''}
 
-Your tax-deductible receipt is attached to this email for your records.
+Your donation receipt is attached to this email for your records.
 
 Your support helps us:
 - Develop innovative smart EV charging solutions
@@ -346,7 +328,6 @@ With gratitude,
 The EVolve Charge Team
 
 © ${new Date().getFullYear()} EVolve Charge Inc. All rights reserved.
-A 501(c)(3) Nonprofit Organization
 Sammamish, WA
 
 Follow us on social media:

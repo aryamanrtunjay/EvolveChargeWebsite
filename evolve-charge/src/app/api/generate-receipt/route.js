@@ -37,7 +37,7 @@ export async function POST(request) {
     
     doc.setFontSize(12);
     doc.setFont('helvetica', 'normal');
-    doc.text('Tax-Deductible Donation Receipt', 105, 30, { align: 'center' });
+    doc.text('Donation Receipt', 105, 30, { align: 'center' });
 
     // Reset text color
     doc.setTextColor(...textColor);
@@ -89,22 +89,6 @@ export async function POST(request) {
     } else {
       yPosition += 5;
     }
-
-    // Add box for important tax information
-    doc.setFillColor(240, 240, 240);
-    doc.roundedRect(20, yPosition, 170, 35, 3, 3, 'F');
-    
-    doc.setFontSize(11);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Tax-Deductible Information', 25, yPosition + 8);
-    
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(10);
-    const taxText = 'This donation is tax-deductible to the extent allowed by law. No goods or services were provided in exchange for this donation. Please retain this receipt for your tax records.';
-    const splitTaxText = doc.splitTextToSize(taxText, 160);
-    doc.text(splitTaxText, 25, yPosition + 16);
-    
-    yPosition += 45;
 
     // Thank you message
     doc.setFontSize(12);
