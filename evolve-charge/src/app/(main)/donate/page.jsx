@@ -165,11 +165,11 @@ function SuccessModal({ isOpen, onClose, donationAmount, donationDetails }) {
           </div>
           <h3 className="text-2xl font-bold text-gray-900 mb-2">Thank You!</h3>
           <p className="text-gray-600 mb-6">
-            Your tax-deductible donation of ${donationAmount ? donationAmount.toFixed(2) : '0.00'} will help advance wireless EV charging and sustainable transportation.
+            Your donation of ${donationAmount ? donationAmount.toFixed(2) : '0.00'} will help advance wireless EV charging and sustainable transportation.
           </p>
           <div className="bg-gray-50 p-4 rounded-lg mb-6">
             <p className="text-sm text-gray-700">
-              You'll receive a receipt via email shortly. Download your tax-deductible receipt below for your records.
+              You'll receive a receipt via email shortly. Download your receipt below for your records.
             </p>
           </div>
           <div className="flex flex-col space-y-4">
@@ -526,13 +526,9 @@ export default function DonationsPage() {
             <span className="bg-gradient-to-r from-teal-500 to-cyan-500 bg-clip-text text-transparent"> Wireless EV Charging</span>
           </h1>
           <p className="text-xl text-gray-700 max-w-3xl mx-auto mb-8">
-            Your tax-deductible donation powers Evolve Charge’s mission to develop cutting-edge wireless charging technology, making electric vehicles more accessible and sustainable for all.
+            Your donation powers Evolve Charge’s mission to develop cutting-edge wireless charging technology, making electric vehicles more accessible and sustainable for all.
           </p>
           <div className="flex flex-wrap justify-center gap-8 text-sm text-gray-600">
-            <div className="flex items-center">
-              <div className="w-2 h-2 bg-teal-500 rounded-full mr-2"></div>
-              Tax-deductible
-            </div>
             <div className="flex items-center">
               <div className="w-2 h-2 bg-teal-500 rounded-full mr-2"></div>
               Secure payments
@@ -697,7 +693,7 @@ export default function DonationsPage() {
           <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-4xl mx-auto">
             <motion.div variants={fadeIn} className="text-center mb-10">
               <h1 className="text-3xl font-bold text-gray-900 mb-4">Your Information</h1>
-              <p className="text-lg text-gray-700">Provide your details to receive your tax-deductible receipt and updates on our wireless charging innovations.</p>
+              <p className="text-lg text-gray-700">Provide your details to receive your receipt and updates on our wireless charging innovations.</p>
             </motion.div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -930,18 +926,6 @@ export default function DonationsPage() {
                     </div>
                   </div>
 
-                  <div className="bg-green-50 p-4 rounded-lg mb-6">
-                    <div className="flex items-center mb-2">
-                      <svg className="h-5 w-5 text-green-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      <span className="text-sm font-medium text-green-800">Tax Deductible</span>
-                    </div>
-                    <p className="text-sm text-green-700">
-                      Your donation is tax-deductible. You'll receive a receipt for your records.
-                    </p>
-                  </div>
-
                   <div className="bg-gray-50 p-4 rounded-lg">
                     <h3 className="font-medium text-gray-900 mb-2">Where Your Money Goes</h3>
                     <div className="space-y-2 text-sm text-gray-700">
@@ -974,7 +958,7 @@ export default function DonationsPage() {
           <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-4xl mx-auto">
             <motion.div variants={fadeIn} className="text-center mb-10">
               <h1 className="text-3xl font-bold text-gray-900 mb-4">Complete Your Donation</h1>
-              <p className="text-lg text-gray-700">Your tax-deductible support drives the future of wireless EV charging.</p>
+              <p className="text-lg text-gray-700">Your support drives the future of wireless EV charging.</p>
             </motion.div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -1052,18 +1036,6 @@ export default function DonationsPage() {
                       <span className="text-gray-900">Total</span>
                       <span className="text-gray-900">${getCurrentAmount().toFixed(2)}</span>
                     </div>
-                  </div>
-
-                  <div className="bg-green-50 p-4 rounded-lg mb-6">
-                    <div className="flex items-center mb-2">
-                      <svg className="h-5 w-5 text-green-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      <span className="text-sm font-medium text-green-800">Tax Deductible</span>
-                    </div>
-                    <p className="text-sm text-green-700">
-                      Your donation is tax-deductible. You'll receive a receipt for your records.
-                    </p>
                   </div>
 
                   <div className="bg-gray-50 p-4 rounded-lg">
