@@ -4,17 +4,18 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { db } from '../../../firebaseConfig.js';
-import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, getDocs } from 'firebase/firestore';
+import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, getDocs, getDoc } from 'firebase/firestore';
 import { DndContext, closestCenter, useSensor, useSensors, MouseSensor, TouchSensor, useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Line } from 'react-chartjs-2';
+import { Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   PointElement,
   LineElement,
+  BarElement,
   Title,
   Tooltip,
   Legend,
@@ -26,6 +27,7 @@ ChartJS.register(
   LinearScale,
   PointElement,
   LineElement,
+  BarElement,
   Title,
   Tooltip,
   Legend
@@ -164,7 +166,9 @@ export default function EngineeringDashboard() {
   const [tasks, setTasks] = useState([]);
   const [updates, setUpdates] = useState([]);
   const [burndownData, setBurndownData] = useState({});
-  const [selectedProjectId, setSelectedProjectId] = useState('');
+  const [selectedKanbanProjectId, setSelectedKanbanProjectId] = useState('all');
+  const [selectedBurndownProjectId, setSelectedBurndownProjectId] = useState('all');
+  const [selectedTimelineProjectId, setSelectedTimelineProjectId] = useState('all');
   const [newProject, setNewProject] = useState({ name: '', description: '', startDate: '', endDate: '', status: 'planning' });
   const [newTask, setNewTask] = useState({ projectId: '', title: '', description: '', assignedTo: '', dueDate: '', priority: 'medium', status: 'to-do' });
   const [newUpdate, setNewUpdate] = useState({ projectId: '', taskId: '', message: '', author: '' });
@@ -192,9 +196,6 @@ export default function EngineeringDashboard() {
       const projectData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setProjects(projectData);
       setLoading(false);
-      if (projectData.length > 0 && !selectedProjectId) {
-        setSelectedProjectId(projectData[0].id);
-      }
     });
 
     const unsubscribeTasks = onSnapshot(collection(db, 'tasks'), (snapshot) => {
@@ -212,49 +213,87 @@ export default function EngineeringDashboard() {
       unsubscribeTasks();
       unsubscribeUpdates();
     };
-  }, [router, selectedProjectId]);
+  }, [router]);
 
   const updateBurndownData = async (taskData) => {
     if (!projects.length) return;
 
+    // Calculate burndown data for individual projects
     for (const project of projects) {
-      const projectTasks = taskData.filter(task => task.projectId === project.id);
-      const completedTasks = projectTasks.filter(task => task.status === 'completed');
-      const totalTasks = projectTasks.length;
+        const projectTasks = taskData.filter(task => task.projectId === project.id);
+        const totalTasks = projectTasks.length;
 
-      const now = new Date('2025-06-11T00:57:00-07:00'); // June 11, 2025, 12:57 AM PDT
-      const burndownRecords = [];
-      for (let i = 3; i >= 0; i--) {
-        const weekStart = new Date(now.getTime() - i * 7 * 24 * 60 * 60 * 1000);
-        const weekEnd = new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000);
-        const tasksCompletedInWeek = completedTasks.filter(task => {
-          const dueDate = new Date(task.dueDate);
-          return dueDate >= weekStart && dueDate < weekEnd;
+        // Use the current actual date instead of hardcoded date
+        const now = new Date();
+        const burndownRecords = [];
+        
+        // Create daily data for the past 14 days
+        for (let i = 14; i >= 0; i--) {
+        const day = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+        const formattedDate = day.toISOString().split('T')[0];
+        
+        // For past days, calculate how many tasks were not completed on that day
+        const tasksRemainingOnDay = projectTasks.filter(task => {
+            if (task.status !== 'completed') return true;
+            // If task is completed, check if it was completed after this day
+            const completedDate = task.completedDate ? new Date(task.completedDate) : null;
+            return !completedDate || completedDate > day;
         }).length;
+        
         burndownRecords.push({
-          weekStartDate: weekStart.toISOString(),
-          tasksCompleted: tasksCompletedInWeek,
-          tasksRemaining: totalTasks - completedTasks.length,
+            date: formattedDate,
+            tasksRemaining: tasksRemainingOnDay
         });
-      }
-
-      const burndownCollection = collection(db, 'projects', project.id, 'burndown');
-      for (const record of burndownRecords) {
-        const existingDoc = await getDocs(burndownCollection);
-        const matchingDoc = existingDoc.docs.find(doc => doc.data().weekStartDate === record.weekStartDate);
-        if (matchingDoc) {
-          await updateDoc(doc(db, 'projects', project.id, 'burndown', matchingDoc.id), record);
-        } else {
-          await addDoc(burndownCollection, record);
         }
-      }
 
-      const burndownSnapshot = await getDocs(burndownCollection);
-      setBurndownData(prev => ({
+        const burndownCollection = collection(db, 'projects', project.id, 'burndown');
+        
+        // First clear existing burndown records
+        const existingDocs = await getDocs(burndownCollection);
+        for (const docSnapshot of existingDocs.docs) {
+        await deleteDoc(doc(db, 'projects', project.id, 'burndown', docSnapshot.id));
+        }
+        
+        // Add the new burndown records
+        for (const record of burndownRecords) {
+        await addDoc(burndownCollection, record);
+        }
+
+        const burndownSnapshot = await getDocs(burndownCollection);
+        setBurndownData(prev => ({
         ...prev,
         [project.id]: burndownSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })),
-      }));
+        }));
     }
+
+    // Calculate aggregated burndown data for all projects
+    const allTasks = taskData;
+    const now = new Date();
+    const allBurndownRecords = [];
+    
+    // Create daily data for the past 14 days
+    for (let i = 14; i >= 0; i--) {
+        const day = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+        const formattedDate = day.toISOString().split('T')[0];
+        
+        // Count tasks that were not completed by that date
+        const tasksRemainingOnDay = allTasks.filter(task => {
+        if (task.status !== 'completed') return true;
+        // If task is completed, check if it was completed after this day
+        const completedDate = task.completedDate ? new Date(task.completedDate) : null;
+        return !completedDate || completedDate > day;
+        }).length;
+        
+        allBurndownRecords.push({
+        date: formattedDate,
+        tasksRemaining: tasksRemainingOnDay
+        });
+    }
+
+    setBurndownData(prev => ({
+        ...prev,
+        all: allBurndownRecords,
+    }));
   };
 
   const showNotification = (message, type = 'success') => {
@@ -294,8 +333,8 @@ export default function EngineeringDashboard() {
   const handleTaskSubmit = async (e) => {
     e.preventDefault();
     try {
-      setLoading(true);
-      const taskData = {
+        setLoading(true);
+        const taskData = {
         projectId: newTask.projectId,
         title: newTask.title,
         description: newTask.description,
@@ -303,22 +342,31 @@ export default function EngineeringDashboard() {
         dueDate: new Date(newTask.dueDate).toISOString(),
         priority: newTask.priority,
         status: newTask.status,
-      };
-      if (editingId) {
+        };
+        
+        // Add completion date if the task is marked as completed
+        if (newTask.status === 'completed') {
+        taskData.completedDate = new Date().toISOString();
+        } else {
+        // If task was previously completed but now is not, remove completion date
+        taskData.completedDate = null;
+        }
+        
+        if (editingId) {
         await updateDoc(doc(db, 'tasks', editingId), taskData);
         setEditingId(null);
         showNotification('Task updated successfully');
-      } else {
+        } else {
         await addDoc(collection(db, 'tasks'), taskData);
         showNotification('Task added successfully');
-      }
-      setNewTask({ projectId: '', title: '', description: '', assignedTo: '', dueDate: '', priority: 'medium', status: 'to-do' });
-      setIsTaskModalOpen(false);
+        }
+        setNewTask({ projectId: '', title: '', description: '', assignedTo: '', dueDate: '', priority: 'medium', status: 'to-do' });
+        setIsTaskModalOpen(false);
     } catch (error) {
-      console.error('Error saving task:', error);
-      showNotification('Failed to save task', 'error');
+        console.error('Error saving task:', error);
+        showNotification('Failed to save task', 'error');
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
   };
 
@@ -364,47 +412,57 @@ export default function EngineeringDashboard() {
     if (!over || active.id === over.id) return;
 
     try {
-      setLoading(true);
-      const statusMap = {
+        setLoading(true);
+        const statusMap = {
         'to-do': 'to-do',
         'in-progress': 'in-progress',
         'completed': 'completed',
-      };
-      const newStatus = statusMap[over.id];
-      await updateDoc(doc(db, 'tasks', active.id), { status: newStatus });
-      showNotification('Task status updated successfully');
+        };
+        const newStatus = statusMap[over.id];
+        
+        const updateData = { status: newStatus };
+        
+        // If moving to completed, add completion date
+        if (newStatus === 'completed') {
+        updateData.completedDate = new Date().toISOString();
+        } 
+        // If moving out of completed, remove completion date
+        else {
+        updateData.completedDate = null;
+        }
+        
+        await updateDoc(doc(db, 'tasks', active.id), updateData);
+        showNotification('Task status updated successfully');
     } catch (error) {
-      console.error('Error updating task status:', error);
-      showNotification('Failed to update task status', 'error');
+        console.error('Error updating task status:', error);
+        showNotification('Failed to update task status', 'error');
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
   };
 
   const getBurndownChartData = () => {
-    if (!selectedProjectId || !burndownData[selectedProjectId]) {
-      return { labels: [], datasets: [] };
+    if (!selectedBurndownProjectId || !burndownData[selectedBurndownProjectId]) {
+        return { labels: [], datasets: [] };
     }
 
-    const projectBurndown = burndownData[selectedProjectId].sort((a, b) => new Date(a.weekStartDate) - new Date(b.weekStartDate));
+    const projectBurndown = burndownData[selectedBurndownProjectId]
+        .sort((a, b) => new Date(a.date) - new Date(b.date));
+    
     return {
-      labels: projectBurndown.map(record => new Date(record.weekStartDate).toLocaleDateString()),
-      datasets: [
+        labels: projectBurndown.map(record => {
+        const date = new Date(record.date);
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }),
+        datasets: [
         {
-          label: 'Tasks Completed',
-          data: projectBurndown.map(record => record.tasksCompleted),
-          borderColor: 'rgb(45, 212, 191)',
-          backgroundColor: 'rgba(45, 212, 191, 0.2)',
-          fill: true,
-        },
-        {
-          label: 'Tasks Remaining',
-          data: projectBurndown.map(record => record.tasksRemaining),
-          borderColor: 'rgb(234, 179, 8)',
-          backgroundColor: 'rgba(234, 179, 8, 0.2)',
-          fill: true,
-        },
-      ],
+            label: 'Tasks Remaining',
+            data: projectBurndown.map(record => record.tasksRemaining),
+            backgroundColor: 'rgba(45, 212, 191, 0.8)',
+            borderColor: 'rgb(45, 212, 191)',
+            borderWidth: 1,
+        }
+        ],
     };
   };
 
@@ -422,12 +480,14 @@ export default function EngineeringDashboard() {
       });
     } else {
       setEditingId(null);
-      setNewTask({ projectId: selectedProjectId, title: '', description: '', assignedTo: '', dueDate: '', priority: 'medium', status: 'to-do' });
+      setNewTask({ projectId: selectedKanbanProjectId === 'all' ? '' : selectedKanbanProjectId, title: '', description: '', assignedTo: '', dueDate: '', priority: 'medium', status: 'to-do' });
     }
     setIsTaskModalOpen(true);
   };
 
-  const filteredTasks = tasks.filter(task => task.projectId === selectedProjectId);
+  const filteredTasks = selectedKanbanProjectId === 'all'
+    ? tasks
+    : tasks.filter(task => task.projectId === selectedKanbanProjectId);
 
   if (loading) {
     return (
@@ -439,6 +499,22 @@ export default function EngineeringDashboard() {
       </div>
     );
   }
+
+  // Current date for the Gantt chart marker (03:47 PM PDT, June 11, 2025)
+  const currentDate = new Date('2025-06-11T15:47:00-07:00');
+
+  // Group tasks by due date
+  const taskDueDates = {};
+  const filteredTimelineTasks = selectedTimelineProjectId === 'all'
+    ? tasks
+    : tasks.filter(task => task.projectId === selectedTimelineProjectId);
+  filteredTimelineTasks.forEach(task => {
+    const dueDate = new Date(task.dueDate).toISOString().split('T')[0];
+    if (!taskDueDates[dueDate]) {
+      taskDueDates[dueDate] = [];
+    }
+    taskDueDates[dueDate].push(task);
+  });
 
   return (
     <div>
@@ -550,10 +626,11 @@ export default function EngineeringDashboard() {
                       <div className="mb-4">
                         <label className="block text-sm font-medium text-gray-700">Select Project</label>
                         <select
-                          value={selectedProjectId}
-                          onChange={e => setSelectedProjectId(e.target.value)}
+                          value={selectedKanbanProjectId}
+                          onChange={e => setSelectedKanbanProjectId(e.target.value)}
                           className="mt-1 text-gray-700 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
                         >
+                          <option value="all">All Projects</option>
                           {projects.map(project => (
                             <option key={project.id} value={project.id}>{project.name}</option>
                           ))}
@@ -721,31 +798,91 @@ export default function EngineeringDashboard() {
 
         <div className="mx-auto px-4 sm:px-6 md:px-8 mt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <CountdownTimer targetDate={new Date('2025-07-15T23:59:59Z')} />
+            <div>
+              <CountdownTimer targetDate={new Date('2025-07-15T23:59:59Z')} />
+              <div className="mt-4 bg-white p-4 rounded-lg shadow-lg">
+                <h3 className="text-md font-medium text-gray-900 mb-2">Task Due Dates Timeline</h3>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700">Select Project</label>
+                  <select
+                    value={selectedTimelineProjectId}
+                    onChange={e => setSelectedTimelineProjectId(e.target.value)}
+                    className="mt-1 text-gray-700 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
+                  >
+                    <option value="all">All Projects</option>
+                    {projects.map(project => (
+                      <option key={project.id} value={project.id}>{project.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="relative">
+                  {Object.keys(taskDueDates).length > 0 ? (
+                    <div className="space-y-4">
+                      {Object.entries(taskDueDates).map(([date, tasksForDate]) => {
+                        const dueDate = new Date(date);
+                        const isCurrentDate = dueDate.toDateString() === currentDate.toDateString();
+                        return (
+                          <div key={date} className="mb-2">
+                            <h4 className="text-sm font-medium text-gray-900">
+                              {dueDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                              {isCurrentDate && (
+                                <span className="ml-2 text-red-600 font-bold"> (Today)</span>
+                              )}
+                            </h4>
+                            <div className="ml-4 space-y-1">
+                              {tasksForDate.map(task => (
+                                <div key={task.id} className="text-sm text-gray-600">
+                                  {task.title}
+                                </div>
+                              ))}
+                            </div>
+                            {isCurrentDate && (
+                              <div
+                                className="absolute w-0.5 bg-red-600 h-full"
+                                style={{ left: '50%', transform: 'translateX(-50%)' }}
+                              />
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500">No tasks found</p>
+                  )}
+                </div>
+              </div>
+            </div>
             <div className="bg-white p-4 rounded-lg shadow-lg">
               <h3 className="text-md font-medium text-gray-900 mb-2">Task Burndown</h3>
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700">Select Project</label>
                 <select
-                  value={selectedProjectId}
-                  onChange={e => setSelectedProjectId(e.target.value)}
+                  value={selectedBurndownProjectId}
+                  onChange={e => setSelectedBurndownProjectId(e.target.value)}
                   className="mt-1 text-gray-700 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
                 >
+                  <option value="all">All Projects</option>
                   {projects.map(project => (
                     <option key={project.id} value={project.id}>{project.name}</option>
                   ))}
                 </select>
               </div>
-              <Line
+              <Bar
                 data={getBurndownChartData()}
                 options={{
                   responsive: true,
                   plugins: {
                     legend: { position: 'top' },
-                    title: { display: true, text: 'Task Burndown Chart' },
+                    title: { display: true, text: 'Daily Tasks Remaining' },
                   },
                   scales: {
-                    y: { title: { display: true, text: 'Tasks' } },
+                    y: { 
+                      title: { display: true, text: 'Tasks' },
+                      beginAtZero: true,
+                    },
+                    x: {
+                      title: { display: true, text: 'Date' }
+                    }
                   },
                 }}
               />
@@ -919,7 +1056,7 @@ export default function EngineeringDashboard() {
                   <select
                     value={newTask.priority}
                     onChange={e => setNewTask({ ...newTask, priority: e.target.value })}
-                    className="mt-1 text-gray-700 text-gray-700 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
+                    className="mt-1 text-gray-700 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
                   >
                     <option value="low">Low</option>
                     <option value="medium">Medium</option>

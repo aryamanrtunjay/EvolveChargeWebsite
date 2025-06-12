@@ -350,7 +350,7 @@ export default function MarketingDashboard() {
                               step="0.01"
                               value={newExpense.amount}
                               onChange={(e) => setNewExpense({ ...newExpense, amount: e.target.value })}
-                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
+                              className="mt-1 text-gray-700 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
                               required
                             />
                           </div>
@@ -359,7 +359,7 @@ export default function MarketingDashboard() {
                             <select
                               value={newExpense.category}
                               onChange={(e) => setNewExpense({ ...newExpense, category: e.target.value })}
-                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
+                              className="mt-1 text-gray-700 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
                               required
                             >
                               <option value="">Select Category</option>
@@ -375,7 +375,7 @@ export default function MarketingDashboard() {
                               type="date"
                               value={newExpense.date}
                               onChange={(e) => setNewExpense({ ...newExpense, date: e.target.value })}
-                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
+                              className="mt-1 text-gray-700 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
                               required
                             />
                           </div>
@@ -385,7 +385,7 @@ export default function MarketingDashboard() {
                               type="text"
                               value={newExpense.description}
                               onChange={(e) => setNewExpense({ ...newExpense, description: e.target.value })}
-                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
+                              className="mt-1 text-gray-700 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
                             />
                           </div>
                         </div>
@@ -477,7 +477,7 @@ export default function MarketingDashboard() {
                               type="text"
                               value={newCampaign.name}
                               onChange={(e) => setNewCampaign({ ...newCampaign, name: e.target.value })}
-                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
+                              className="mt-1 text-gray-700 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
                               required
                             />
                           </div>
@@ -487,7 +487,7 @@ export default function MarketingDashboard() {
                               type="date"
                               value={newCampaign.startDate}
                               onChange={(e) => setNewCampaign({ ...newCampaign, startDate: e.target.value })}
-                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
+                              className="mt-1 text-gray-700 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
                               required
                             />
                           </div>
@@ -497,7 +497,7 @@ export default function MarketingDashboard() {
                               type="date"
                               value={newCampaign.endDate}
                               onChange={(e) => setNewCampaign({ ...newCampaign, endDate: e.target.value })}
-                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
+                              className="mt-1 text-gray-700 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
                               required
                             />
                           </div>
@@ -508,7 +508,7 @@ export default function MarketingDashboard() {
                               step="0.01"
                               value={newCampaign.budget}
                               onChange={(e) => setNewCampaign({ ...newCampaign, budget: e.target.value })}
-                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
+                              className="mt-1 text-gray-700 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
                               required
                             />
                           </div>
@@ -518,7 +518,7 @@ export default function MarketingDashboard() {
                               type="number"
                               value={newCampaign.clicks}
                               onChange={(e) => setNewCampaign({ ...newCampaign, clicks: parseInt(e.target.value) || 0 })}
-                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
+                              className="mt-1 text-gray-700 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
                             />
                           </div>
                           <div>
@@ -527,7 +527,7 @@ export default function MarketingDashboard() {
                               type="number"
                               value={newCampaign.impressions}
                               onChange={(e) => setNewCampaign({ ...newCampaign, impressions: parseInt(e.target.value) || 0 })}
-                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
+                              className="mt-1 text-gray-700 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
                             />
                           </div>
                           <div>
@@ -536,7 +536,7 @@ export default function MarketingDashboard() {
                               type="number"
                               value={newCampaign.conversions}
                               onChange={(e) => setNewCampaign({ ...newCampaign, conversions: parseInt(e.target.value) || 0 })}
-                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
+                              className="mt-1 text-gray-700 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
                             />
                           </div>
                         </div>
