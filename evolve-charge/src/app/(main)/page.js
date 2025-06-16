@@ -172,9 +172,12 @@ function FAQItem({ question, answer, isActive, onClick, index }) {
 }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 // Numbers/stats component with counting animation
 function StatCard({ value, label, index }) {
 =======
+=======
+>>>>>>> Stashed changes
 // Numbers/stats component with counting animation and glassmorphism
 function StatCard({ value, units, label, index }) {
 >>>>>>> Stashed changes
@@ -222,9 +225,12 @@ function StatCard({ value, units, label, index }) {
       transition={{ delay: index * 0.2, duration: 0.4 }}
     >
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       <div className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">
         {count}+
 =======
+=======
+>>>>>>> Stashed changes
       <div className="flex flex-col items-center">
         <div className="text-4xl md:text-5xl font-bold text-teal-500 mb-2">
           {units === "$" ? <span className="text-teal-500">{units}</span> : null}
@@ -232,6 +238,9 @@ function StatCard({ value, units, label, index }) {
           {units !== "$" ? <span className="text-teal-500"> {units}</span> : null}
         </div>
         <div className="text-gray-600">{label}</div>
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
       </div>
     </motion.div>
@@ -239,7 +248,10 @@ function StatCard({ value, units, label, index }) {
 }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
 // Donor Carousel Component with glassmorphism
 function DonorCarousel() {
   const [donorsWithAmounts, setDonorsWithAmounts] = useState([]);
@@ -462,8 +474,11 @@ export default function Home() {
         
         await addDoc(mailingListRef, userData);
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         
         // Redirect to the reservation page with the email as a parameter
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
         window.location.href = `/reserve?email=${encodeURIComponent(email)}`;
@@ -623,6 +638,9 @@ export default function Home() {
     fetchDonorsAndAmounts();
   }, [filter]);
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
   return (
     <div className="min-h-screen bg-gray-50">
@@ -643,11 +661,15 @@ export default function Home() {
         title="How the EVolve Charger Works"
         controls={false}
         style={{ opacity, zIndex: 0 }}
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
       >
         <source src="/productDemo.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </motion.video>
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
       <section className="relative h-screen pt-32 pb-24 md:pt-48 md:pb-32 overflow-hidden items-center justify-center bg-black/20">
         <div className="relative max-w-7xl mx-auto md:ml-24 sm:px-6 lg:px-8 ">
@@ -725,11 +747,29 @@ export default function Home() {
               variants={fadeIn}
               className="mx-auto md:mx-0 inline-flex items-center px-4 py-2 rounded-full bg-teal-800 bg-opacity-30 backdrop-blur-2xl border border-teal-500 text-teal-200 text-sm font-medium mb-6 self-start"
             >
+=======
+      <section className="relative h-screen pt-32 pb-24 md:pt-48 md:pb-32 overflow-hidden items-center justify-center">
+        <div className="relative max-w-7xl mx-auto md:ml-24 sm:px-6 lg:px-8">
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={staggerContainer}
+            className="mx-auto px-6 md:px-0 md:py-0 py-10 flex flex-col items-center md:items-start"
+            style={{ y: textY }}
+          >
+            <motion.div 
+              variants={fadeIn}
+              className="mx-auto md:mx-0 inline-flex items-center px-4 py-2 rounded-full bg-teal-800 bg-opacity-30 backdrop-blur-2xl border border-teal-500 text-teal-200 text-sm font-medium mb-6 self-start"
+            >
+>>>>>>> Stashed changes
               <span className="flex h-2 w-2 mr-2">
                 <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-teal-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-300"></span>
               </span>
               Reservations Open Now! - Limited Spots
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
             </motion.div>
             
@@ -769,6 +809,7 @@ export default function Home() {
       </section>
       <motion.div
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.2, duration: 0.8 }}
@@ -778,6 +819,8 @@ export default function Home() {
           <ScrollIndicator className="z-0"/>
         </motion.div>
 =======
+=======
+>>>>>>> Stashed changes
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.2, duration: 0.8 }}
@@ -896,6 +939,7 @@ export default function Home() {
             >
               {[
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                 {
                   number: "01",
                   title: "Easy Installation",
@@ -917,10 +961,15 @@ export default function Home() {
                   description: "Receive updates on charging status, battery health, and energy usage through the app and integrate it into the smart home system."
                 }
 =======
+=======
+>>>>>>> Stashed changes
                 { number: "01", title: "Easy Installation", description: "We make installing your EVolve Charger a simple process so anyone can set it up with just a ladder, drill, and screwdriver." },
                 { number: "02", title: "Connect to App", description: "Download our app and connect your EVolve Charger to set preferences and monitor charging." },
                 { number: "03", title: "Automated Charging", description: "Park your vehicle, and the EVolve Charger automatically connects when needed based on your setting and then unplugs whenever you want to leave." },
                 { number: "04", title: "Smart Monitoring", description: "Receive updates on charging status, battery health, and energy usage through the app and integrate it into the smart home system." }
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
               ].map((step, index) => {
                 // Create a state variable name based on the step number
@@ -1388,6 +1437,7 @@ export default function Home() {
             )}
             <div className="max-w-md mx-auto mt-8">
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                 <Link href="reserve">
                   <motion.button
                     whileHover={{ scale: 1.03 }}
@@ -1401,6 +1451,8 @@ export default function Home() {
                 <p className="mt-2 text-red-300 text-sm">{submitError}</p>
               )}
 =======
+=======
+>>>>>>> Stashed changes
               <Link href="order">
                 <motion.button
                   whileHover={{ scale: 1.03 }}
@@ -1411,6 +1463,9 @@ export default function Home() {
                 </motion.button>
               </Link>
               {submitError && <p className="mt-2 text-red-300 text-sm">{submitError}</p>}
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
             </div>
           </motion.div>
@@ -1429,6 +1484,7 @@ export default function Home() {
             className="text-center mb-16"
           >
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             <motion.h2
               variants={fadeIn}
               className="text-3xl md:text-4xl font-bold mt-4 mb-4 text-gray-900"
@@ -1444,6 +1500,11 @@ export default function Home() {
             <motion.h2 variants={fadeIn} className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
               Frequently Asked Questions
             </motion.h2>
+=======
+            <motion.h2 variants={fadeIn} className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
+              Frequently Asked Questions
+            </motion.h2>
+>>>>>>> Stashed changes
             <motion.p variants={fadeIn} className="text-lg text-gray-600 max-w-2xl mx-auto">
               Get answers to common questions about The EVolve Charger.
 >>>>>>> Stashed changes
