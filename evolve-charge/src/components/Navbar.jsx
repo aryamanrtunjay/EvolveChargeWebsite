@@ -20,21 +20,12 @@ const NAV_ITEMS = [
   { label: 'Support', href: '/donate' },
   // { label: 'Support', href: '/support' },
 ];
-<<<<<<< Updated upstream
 >>>>>>> Stashed changes
 
 export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 <<<<<<< Updated upstream
 =======
-  const [scrolled, setScrolled] = useState(false);
-  const pathname = usePathname();
-  const hideCTA = ['/order', '/order/success'].includes(pathname);
->>>>>>> Stashed changes
-=======
-
-export default function Navigation() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   const hideCTA = ['/order', '/order/success'].includes(pathname);
@@ -54,13 +45,9 @@ export default function Navigation() {
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
 <<<<<<< Updated upstream
-<<<<<<< Updated upstream
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled ? 'py-3 shadow-md bg-white/90 backdrop-blur-sm' : 'py-5 bg-transparent'
       }`}
-=======
-      className="fixed top-4 left-0 right-0 z-50 mx-4 sm:mx-6 lg:mx-8"
->>>>>>> Stashed changes
 =======
       className="fixed top-4 left-0 right-0 z-50 mx-4 sm:mx-6 lg:mx-8"
 >>>>>>> Stashed changes
