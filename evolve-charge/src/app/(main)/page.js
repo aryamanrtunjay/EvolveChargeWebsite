@@ -123,7 +123,7 @@ function FeatureCard({ icon, title, description, index }) {
   );
 }
 
-// FAQ Item component with smooth animations
+// FAQ Item component with smooth animations and glassmorphism on active
 function FAQItem({ question, answer, isActive, onClick, index }) {
   return (
     <motion.div
@@ -135,7 +135,7 @@ function FAQItem({ question, answer, isActive, onClick, index }) {
     >
       <button
         onClick={onClick}
-        className="flex justify-between items-center w-full text-left px-6 py-4 focus:outline-none"
+        className="flex justify-between items-center w-full text-left px-6 py-4 focus:outline-none hover:bg-gray-50 transition-all"
       >
         <h3 className="text-lg font-semibold text-gray-900">{question}</h3>
         <div className={`flex items-center justify-center w-6 h-6 rounded-full bg-teal-50 text-teal-500 transform transition-transform ${
@@ -163,7 +163,7 @@ function FAQItem({ question, answer, isActive, onClick, index }) {
         transition={{ duration: 0.3 }}
         className="overflow-hidden"
       >
-        <div className="px-6 pb-4 text-gray-600">
+        <div className={`px-6 pb-4 text-gray-600 ${isActive ? 'bg-white/10 backdrop-blur-md border-t border-white/20' : ''}`}>
           <p>{answer}</p>
         </div>
       </motion.div>
@@ -171,8 +171,13 @@ function FAQItem({ question, answer, isActive, onClick, index }) {
   );
 }
 
+<<<<<<< Updated upstream
 // Numbers/stats component with counting animation
 function StatCard({ value, label, index }) {
+=======
+// Numbers/stats component with counting animation and glassmorphism
+function StatCard({ value, units, label, index }) {
+>>>>>>> Stashed changes
   const [count, setCount] = useState(0);
   const ref = useRef(null);
   const isInView = useRef(false);
@@ -209,21 +214,169 @@ function StatCard({ value, label, index }) {
   
   return (
     <motion.div
+      className="bg-white/10 backdrop-blur-md rounded-xl p-6 shadow-md"
       ref={ref}
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.5 }}
       transition={{ delay: index * 0.2, duration: 0.4 }}
-      className="flex flex-col items-center"
     >
+<<<<<<< Updated upstream
       <div className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">
         {count}+
+=======
+      <div className="flex flex-col items-center">
+        <div className="text-4xl md:text-5xl font-bold text-teal-500 mb-2">
+          {units === "$" ? <span className="text-teal-500">{units}</span> : null}
+          {count}
+          {units !== "$" ? <span className="text-teal-500"> {units}</span> : null}
+        </div>
+        <div className="text-gray-600">{label}</div>
+>>>>>>> Stashed changes
       </div>
-      <div className="text-gray-600">{label}</div>
     </motion.div>
   );
 }
 
+<<<<<<< Updated upstream
+=======
+// Donor Carousel Component with glassmorphism
+function DonorCarousel() {
+  const [donorsWithAmounts, setDonorsWithAmounts] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchDonorsAndAmounts = async () => {
+      try {
+        const donorsRef = collection(db, 'donors');
+        const q = query(donorsRef, orderBy('createdAt', 'desc'), limit(10));
+        const querySnapshot = await getDocs(q);
+        const donorList = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        const donorsWithDonations = await Promise.all(
+          donorList.map(async (donor) => {
+            const donationsRef = collection(db, 'donations');
+            const donationQuery = query(donationsRef, where('donorId', '==', donor.id));
+            const donationSnapshot = await getDocs(donationQuery);
+            
+            let amount = 'N/A';
+            if (!donationSnapshot.empty) {
+              const donationDoc = donationSnapshot.docs[0];
+              amount = donationDoc.data().amount.toFixed(2);
+            }
+
+            return { ...donor, amount };
+          })
+        );
+
+        setDonorsWithAmounts(donorsWithDonations);
+        setIsLoading(false);
+      } catch (err) {
+        console.error('Error fetching donors and amounts:', err);
+        setError('Failed to load donors. Please try again later.');
+        setIsLoading(false);
+      }
+    };
+
+    fetchDonorsAndAmounts();
+  }, []);
+
+  useEffect(() => {
+    if (donorsWithAmounts.length === 0) return;
+
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % donorsWithAmounts.length);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [donorsWithAmounts]);
+
+  const handleDotClick = (index) => {
+    setCurrentIndex(index);
+  };
+
+  if (isLoading) {
+    return <div className="text-center py-8"><p className="text-gray-600">Loading donors...</p></div>;
+  }
+
+  if (error) {
+    return <div className="text-center py-8"><p className="text-red-600">{error}</p></div>;
+  }
+
+  if (donorsWithAmounts.length === 0) {
+    return <div className="text-center py-8"><p className="text-gray-600">No donors yet. Be the first to support the mission!</p></div>;
+  }
+
+  return (
+    <div className="relative max-w-3xl mx-auto py-8">
+      <div className="overflow-hidden">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentIndex}
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -50 }}
+            transition={{ duration: 0.5 }}
+            className="bg-white/10 backdrop-blur-md rounded-xl shadow-md p-6 text-center border border-white/20"
+          >
+            <div className="flex items-center justify-center mb-4">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-8 w-8 text-teal-500 mr-3"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                />
+              </svg>
+              <h3 className="text-xl font-semibold text-gray-900">
+                {donorsWithAmounts[currentIndex].anonymous
+                  ? 'Anonymous Donor'
+                  : `${donorsWithAmounts[currentIndex].firstName} ${donorsWithAmounts[currentIndex].lastName}`}
+              </h3>
+            </div>
+            <p className="text-teal-600 font-medium mb-2">Donated ${donorsWithAmounts[currentIndex].amount}</p>
+            {donorsWithAmounts[currentIndex].dedicateTo && (
+              <p className="text-gray-600 italic mb-2">Dedicated to: {donorsWithAmounts[currentIndex].dedicateTo}</p>
+            )}
+            <p className="text-gray-500">
+              Joined on{' '}
+              {donorsWithAmounts[currentIndex].createdAt?.toDate().toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              }) || 'Unknown Date'}
+            </p>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+      <div className="flex justify-center mt-4 space-x-2">
+        {donorsWithAmounts.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => handleDotClick(index)}
+            className={`w-3 h-3 rounded-full transition-all ${
+              currentIndex === index ? 'bg-teal-500 scale-125' : 'bg-gray-300 hover:bg-teal-300'
+            }`}
+            aria-label={`Go to donor ${index + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+>>>>>>> Stashed changes
 export default function Home() {
   const router = useRouter();
   const [activeFAQ, setActiveFAQ] = useState(null);
@@ -245,19 +398,22 @@ export default function Home() {
   });
   
   const textY = useTransform(scrollYProgress, [0, 3], [0, -600]);
+<<<<<<< Updated upstream
   const imageY = useTransform(scrollYProgress, [0, 5], [0, -600])
 
   const opacity = useTransform(scrollYProgress, [0, 2], [1, 0]);
+=======
+  const imageY = useTransform(scrollYProgress, [0, 5], [0, -600]);
+  const opacity = useTransform(scrollYProgress, [0, 1], [1, 0]);
+>>>>>>> Stashed changes
 
   
   const TOTAL_DISCOUNT_SPOTS = 150;
 
-  // Toggle FAQ accordion
   const toggleFAQ = (index) => {
     setActiveFAQ(activeFAQ === index ? null : index);
   };
 
-  // FAQ data
   const faqItems = [
     {
       question: "Is NeoGen compatible with all electric vehicles?",
@@ -305,8 +461,11 @@ export default function Home() {
         };
         
         await addDoc(mailingListRef, userData);
+<<<<<<< Updated upstream
         
         // Redirect to the reservation page with the email as a parameter
+=======
+>>>>>>> Stashed changes
         window.location.href = `/reserve?email=${encodeURIComponent(email)}`;
       } else {
         // Email already exists, redirect to reservation page
@@ -332,7 +491,6 @@ export default function Home() {
         const mailingListRef = collection(db, 'mailing-list');
         const snapshot = await getCountFromServer(mailingListRef);
         const count = snapshot.data().count;
-        
         const remainingSpots = Math.max(0, TOTAL_DISCOUNT_SPOTS - count);
         setSpotsLeft(remainingSpots);
       } catch (error) {
@@ -347,6 +505,125 @@ export default function Home() {
     fetchReservationCount();
   }, []);
 
+<<<<<<< Updated upstream
+=======
+  useEffect(() => {
+    const fetchData = async () => {
+      const db = getFirestore();
+      const ordersSnapshot = await getDocs(collection(db, "orders"));
+      let preOrderSum = 0;
+      ordersSnapshot.forEach(doc => {
+        const data = doc.data();
+        if (data.paymentStatus === "Completed" && data.total) {
+          preOrderSum += data.total;
+        }
+      });
+      setTotalPreOrders(preOrderSum);
+
+      const donationsSnapshot = await getDocs(collection(db, "donations"));
+      let donationSum = 0;
+      donationsSnapshot.forEach(doc => {
+        const data = doc.data();
+        if (data.status === "Completed" && data.amount) {
+          donationSum += data.amount;
+        }
+      });
+      setTotalDonations(donationSum);
+
+      const total = preOrderSum + donationSum;
+      setTotalAmount(total);
+      const progressPercentage = (total / 10000) * 100;
+      setProgress(progressPercentage > 100 ? 100 : progressPercentage);
+    };
+
+    fetchData().catch(error => console.error("Error fetching data:", error));
+  }, []);
+
+  useEffect(() => {
+    const fetchDonorsAndAmounts = async () => {
+      try {
+        setIsLoading(true);
+        const donorsRef = collection(db, 'donors');
+        const donorsSnapshot = await getDocs(query(donorsRef));
+        const donorList = donorsSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        const donationsRef = collection(db, 'donations');
+        const donationsQuery = query(donationsRef, where('status', '==', 'Completed'));
+        const donationSnapshot = await getDocs(donationsQuery);
+        const donations = donationSnapshot.docs.map(doc => doc.data());
+
+        let processedDonors = [];
+        const now = new Date('2025-05-27T16:10:00-07:00');
+        const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+        let filteredDonations = donations;
+        if (filter === 'top-day') {
+          filteredDonations = donations.filter(donation => {
+            const donationDate = donation.donationDate?.toDate ? donation.donationDate.toDate() : new Date(donation.donationDate * 1000);
+            return donationDate >= startOfDay && donationDate <= now;
+          });
+        } else if (filter === 'top-month') {
+          filteredDonations = donations.filter(donation => {
+            const donationDate = donation.donationDate?.toDate ? donation.donationDate.toDate() : new Date(donation.donationDate * 1000);
+            return donationDate >= startOfMonth && donationDate <= now;
+          });
+        }
+
+        if (filter === 'recent') {
+          const donorsWithDonations = await Promise.all(
+            donorList.map(async (donor) => {
+              const donorDonations = donations.filter(d => d.donorId === donor.id);
+              const amount = donorDonations.length > 0
+                ? donorDonations.reduce((sum, d) => sum + d.amount, 0).toFixed(2)
+                : '0.00';
+              return { ...donor, amount };
+            })
+          );
+          processedDonors = donorsWithDonations.sort((a, b) => {
+            const dateA = a.createdAt?.toDate() || new Date(0);
+            const dateB = b.createdAt?.toDate() || new Date(0);
+            return dateB - dateA;
+          });
+        } else {
+          const donorTotals = {};
+          filteredDonations.forEach(donation => {
+            const donorId = donation.donorId;
+            if (!donorTotals[donorId]) {
+              donorTotals[donorId] = { totalAmount: 0, donor: null };
+            }
+            donorTotals[donorId].totalAmount += donation.amount;
+            const donor = donorList.find(d => d.id === donorId);
+            if (donor) {
+              donorTotals[donorId].donor = donor;
+            }
+          });
+
+          processedDonors = Object.entries(donorTotals)
+            .filter(([_, data]) => data.donor)
+            .map(([_, data]) => ({
+              ...data.donor,
+              amount: data.totalAmount.toFixed(2),
+            }))
+            .sort((a, b) => parseFloat(b.amount) - parseFloat(a.amount));
+        }
+
+        setDonorsWithAmounts(processedDonors);
+        setIsLoading(false);
+      } catch (err) {
+        console.error('Error fetching donors and amounts:', err);
+        setError('Failed to load donors. Please try again later.');
+        setIsLoading(false);
+      }
+    };
+
+    fetchDonorsAndAmounts();
+  }, [filter]);
+
+>>>>>>> Stashed changes
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
@@ -355,15 +632,23 @@ export default function Home() {
         muted
         autoPlay
         loop
+<<<<<<< Updated upstream
         preload="metadata"
         title="How NeoGen Works"
         style={{
           opacity
         }}
+=======
+        preload="auto"
+        title="How the EVolve Charger Works"
+        controls={false}
+        style={{ opacity, zIndex: 0 }}
+>>>>>>> Stashed changes
       >
         <source src="/productDemo.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </motion.video>
+<<<<<<< Updated upstream
       <section className="relative h-screen pt-32 pb-24 md:pt-48 md:pb-32 overflow-hidden items-center justify-center bg-black/20">
         <div className="relative max-w-7xl mx-auto md:ml-24 sm:px-6 lg:px-8 ">
           <div>
@@ -426,11 +711,64 @@ export default function Home() {
                   </motion.button>
                 </Link> */}
               </motion.div>
+=======
+      <section className="relative h-screen pt-32 pb-24 md:pt-48 md:pb-32 overflow-hidden items-center justify-center">
+        <div className="relative max-w-7xl mx-auto md:ml-24 sm:px-6 lg:px-8">
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={staggerContainer}
+            className="mx-auto px-6 md:px-0 md:py-0 py-10 flex flex-col items-center md:items-start"
+            style={{ y: textY }}
+          >
+            <motion.div 
+              variants={fadeIn}
+              className="mx-auto md:mx-0 inline-flex items-center px-4 py-2 rounded-full bg-teal-800 bg-opacity-30 backdrop-blur-2xl border border-teal-500 text-teal-200 text-sm font-medium mb-6 self-start"
+            >
+              <span className="flex h-2 w-2 mr-2">
+                <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-teal-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-300"></span>
+              </span>
+              Reservations Open Now! - Limited Spots
+>>>>>>> Stashed changes
             </motion.div>
-          </div>
+            
+            <motion.h1 
+              variants={fadeIn}
+              className="text-4xl text-center md:text-left md:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-white"
+            >
+              <span className="block">The World's First</span>
+              <span className="bg-gradient-to-r from-teal-300 to-cyan-300 bg-clip-text text-transparent">Automatic EV Charger</span>
+            </motion.h1>
+            
+            <motion.div 
+              variants={fadeIn}
+              className="flex flex-wrap gap-4 mt-2"
+            >
+              <Link href="order">
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="px-8 py-3 rounded-full bg-teal-500/30 backdrop-blur-md border border-teal-500/50 text-white font-medium shadow-lg hover:shadow-xl transition-all"
+                >
+                  Pre-order Yours Today
+                </motion.button>
+              </Link>
+              <Link href="donate">
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="px-8 py-3 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white font-medium shadow-lg hover:shadow-xl transition-all"
+                >
+                  Support Us
+                </motion.button>
+              </Link>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
       <motion.div
+<<<<<<< Updated upstream
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.2, duration: 0.8 }}
@@ -439,6 +777,67 @@ export default function Home() {
         >
           <ScrollIndicator className="z-0"/>
         </motion.div>
+=======
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.2, duration: 0.8 }}
+        className="absolute bottom-8 left-0 right-0 flex justify-center"
+        style={{ opacity: useTransform(scrollYProgress, [0, 0.1], [1, 0]) }}
+      >
+        <ScrollIndicator className="z-0"/>
+      </motion.div>
+
+      {/* Features Section */}
+      <section id="features" className="py-10 md:py-16 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-20 bg-gradient-to-b from-white to-transparent"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-teal-50 rounded-full opacity-70"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-cyan-50 rounded-full opacity-70"></div>
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={staggerContainer}
+            className="text-center mb-20"
+          >
+            <motion.h2 
+              variants={fadeIn}
+              className="text-3xl text-gray-900 md:text-4xl font-bold mt-4 mb-4"
+            >
+              Intelligent Charging Features
+            </motion.h2>
+            <motion.p 
+              variants={fadeIn}
+              className="text-lg text-gray-600 max-w-2xl mx-auto"
+            >
+              Our smart charging technology adapts to your vehicle needs and energy patterns to provide the best charging experience possible.
+            </motion.p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <FeatureCard
+              index={0}
+              icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>}
+              title="Automatic Connection"
+              description="No more manual plugging. Get back hours of your life every year."
+            />
+            <FeatureCard
+              index={1}
+              icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
+              title="Off-Peak Charging"
+              description="Intelligently charges your vehicle during non-peak hours to save you around ~$20 every single month."
+            />
+            <FeatureCard
+              index={2}
+              icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>}
+              title="Battery Health Monitoring"
+              description="Intelligent charging patterns help preserve your EV's battery health."
+            />
+          </div>
+        </div>
+      </section>
+>>>>>>> Stashed changes
 
       {/* How It Works */}
       <section id="how-it-works" className="relative py-16 md:py-24 bg-gray-50">
@@ -496,6 +895,7 @@ export default function Home() {
               className="space-y-6"
             >
               {[
+<<<<<<< Updated upstream
                 {
                   number: "01",
                   title: "Easy Installation",
@@ -516,6 +916,12 @@ export default function Home() {
                   title: "Smart Monitoring",
                   description: "Receive updates on charging status, battery health, and energy usage through the app and integrate it into the smart home system."
                 }
+=======
+                { number: "01", title: "Easy Installation", description: "We make installing your EVolve Charger a simple process so anyone can set it up with just a ladder, drill, and screwdriver." },
+                { number: "02", title: "Connect to App", description: "Download our app and connect your EVolve Charger to set preferences and monitor charging." },
+                { number: "03", title: "Automated Charging", description: "Park your vehicle, and the EVolve Charger automatically connects when needed based on your setting and then unplugs whenever you want to leave." },
+                { number: "04", title: "Smart Monitoring", description: "Receive updates on charging status, battery health, and energy usage through the app and integrate it into the smart home system." }
+>>>>>>> Stashed changes
               ].map((step, index) => {
                 // Create a state variable name based on the step number
                 const stateVarName = `isOpen${index + 1}`;
@@ -525,13 +931,9 @@ export default function Home() {
                     key={step.number}
                     variants={{
                       hidden: { opacity: 0, y: 20 },
-                      visible: { 
-                        opacity: 1, 
-                        y: 0,
-                        transition: { delay: index * 0.2, duration: 1.5 }
-                      }
+                      visible: { opacity: 1, y: 0, transition: { delay: index * 0.2, duration: 1.5 } }
                     }}
-                    className={`border ${whichOpen[index] ? "border-teal-400" : "border-gray"} rounded-2xl shadow-sm overflow-hidden hover:bg-gray-100`}
+                    className={`border ${whichOpen[index] ? 'border-teal-400 bg-white/10 backdrop-blur-md' : 'border-gray-200'} rounded-2xl shadow-sm overflow-hidden hover:bg-gray-100`}
                   >
                     <button 
                       onClick={() => {
@@ -560,7 +962,7 @@ export default function Home() {
                     </button>
                     
                     <div 
-                      className={`overflow-hidden transition-all duration-300 ease-in-out ${eval(stateVarName) ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}
+                      className={`overflow-hidden transition-all duration-300 ease-in-out ${eval(stateVarName) ? 'max-h-40 opacity-100 bg-white/10 backdrop-blur-md border-t border-white/20' : 'max-h-0 opacity-0'}`}
                       aria-expanded={eval(stateVarName)}
                     >
                       <div className="p-4 pt-0 ml-16">
@@ -568,7 +970,7 @@ export default function Home() {
                       </div>
                     </div>
                   </motion.div>
-                )
+                );
               })}
             </motion.div>
           </div>
@@ -637,6 +1039,7 @@ export default function Home() {
               description="Intelligent charging patterns help preserve your EV's battery health."
             />
           </div>
+<<<<<<< Updated upstream
           
           {/* <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -673,6 +1076,156 @@ export default function Home() {
                     </svg>
                   </div>
                   <div className="absolute inset-0 bg-dots-pattern opacity-10"></div>
+=======
+        </div>
+      </section>
+
+      {/* Donors Section */}
+      <section id="donors" className="relative overflow-hidden bg-gradient-to-b from-gray-50 to-white py-16">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="lg:grid lg:grid-cols-3 lg:gap-8">
+            <div className="lg:col-span-2">
+              <motion.div
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.3 }}
+                variants={staggerContainer}
+                className="text-center mb-12"
+              >
+                <motion.h2 variants={fadeIn} className="text-5xl font-extrabold tracking-tight">
+                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-cyan-400">Our Supporters</span>
+                </motion.h2>
+                <motion.p variants={fadeIn} className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                  Thank you to our amazing donors who are helping us drive the future of EV charging.
+                </motion.p>
+              </motion.div>
+
+              <motion.div
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.3 }}
+                variants={staggerContainer}
+                className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12"
+              >
+                {[
+                  { label: "Total Raised", value: `$${totalAmount.toFixed(2)}`, color: "text-teal-600" },
+                  { label: "Goal", value: "$10,000", color: "text-gray-900" },
+                  { label: "Progress", value: `${progress.toFixed(1)}%`, color: "text-teal-600" },
+                ].map(({ label, value, color }) => (
+                  <motion.div
+                    key={label}
+                    variants={fadeIn}
+                    className="bg-white/10 backdrop-blur-md p-6 rounded-lg shadow-lg text-center border border-white/20"
+                  >
+                    <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">{label}</p>
+                    <p className={`mt-2 text-3xl font-bold ${color}`}>{value}</p>
+                  </motion.div>
+                ))}
+              </motion.div>
+
+              <div className="max-w-lg mx-auto">
+                <div className="relative h-3 bg-gray-200 rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${progress}%` }}
+                    transition={{ duration: 1, ease: "easeOut" }}
+                    className="absolute left-0 top-0 h-full bg-gradient-to-r from-teal-400 to-cyan-400"
+                  />
+                </div>
+                <div className="mt-2 text-sm font-semibold text-gray-700 text-center">
+                  {progress.toFixed(1)}% of our $10,000 goal
+                </div>
+              </div>
+              <div className="flex justify-center mt-16">
+                <Link href="donate">
+                  <motion.button
+                    whileHover={{ scale: 1.05, boxShadow: "0 10px 20px rgba(0,0,0,0.15)" }}
+                    whileTap={{ scale: 0.95 }}
+                    className="px-10 py-4 rounded-full bg-teal-500/30 backdrop-blur-md border border-teal-500/50 text-white font-semibold shadow-2xl hover:shadow-3xl transition-all"
+                  >
+                    Join Our Supporters
+                  </motion.button>
+                </Link>
+              </div>
+            </div>
+
+            <div className="lg:col-span-1 mt-12 lg:mt-0">
+              <div className="bg-white rounded-xl shadow-lg p-6 max-h-[500px] flex flex-col">
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {[
+                    { label: "Recent", value: "recent" },
+                    { label: "Top (Day)", value: "top-day" },
+                    { label: "Top (Month)", value: "top-month" },
+                    { label: "Top (All Time)", value: "top-all" },
+                  ].map(({ label, value }) => (
+                    <button
+                      key={value}
+                      onClick={() => setFilter(value)}
+                      className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${
+                        filter === value ? 'bg-teal-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-teal-100'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="flex-1 overflow-y-auto">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4">Donors</h3>
+                  {isLoading ? (
+                    <p className="text-gray-600 text-center">Loading donors...</p>
+                  ) : error ? (
+                    <p className="text-red-600 text-center">{error}</p>
+                  ) : donorsWithAmounts.length === 0 ? (
+                    <p className="text-gray-600 text-center">No donors yet. Be the first to support the mission!</p>
+                  ) : (
+                    <div className="space-y-4">
+                      {donorsWithAmounts.map((donor) => (
+                        <motion.div
+                          key={donor.id}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="border-b border-gray-100 pb-4 last:border-b-0"
+                        >
+                          <div className="flex items-center">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-6 w-6 text-teal-500 mr-3"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                              />
+                            </svg>
+                            <div>
+                              <p className="text-lg font-medium text-gray-900">
+                                {donor.anonymous ? 'Anonymous Donor' : `${donor.firstName} ${donor.lastName}`}
+                              </p>
+                              <p className="text-teal-600 font-medium">Donated ${donor.amount}</p>
+                              {donor.dedicateTo && (
+                                <p className="text-gray-600 italic text-sm">Dedicated to: {donor.dedicateTo}</p>
+                              )}
+                              <p className="text-gray-500 text-sm">
+                                Joined on{' '}
+                                {donor.createdAt?.toDate().toLocaleDateString('en-US', {
+                                  year: 'numeric',
+                                  month: 'long',
+                                  day: 'numeric',
+                                }) || 'Unknown Date'}
+                              </p>
+                            </div>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  )}
+>>>>>>> Stashed changes
                 </div>
               </div>
             </div>
@@ -783,7 +1336,7 @@ export default function Home() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.8 }}
-            className="bg-white/10 rounded-3xl p-10 md:p-16 text-center shadow-xl border border-white/20"
+            className="bg-white/10 backdrop-blur-md rounded-3xl p-10 md:p-16 text-center shadow-xl border border-white/20"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">Join the EVolution</h2>
             <p className="text-lg md:text-xl mb-4 max-w-2xl mx-auto text-teal-50">
@@ -812,7 +1365,7 @@ export default function Home() {
             </div>
             {/* Discount Countdown Banner */}
             {isLoading ? (
-              <div className="bg-white/20 rounded-lg p-4 mt-8 max-w-lg mx-auto">
+              <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4 mt-8 max-w-lg mx-auto">
                 <p className="text-white animate-pulse">Loading special offer details...</p>
               </div>
             ) : spotsLeft > 0 ? (
@@ -820,26 +1373,21 @@ export default function Home() {
                 initial={{ scale: 0.95 }}
                 animate={{ scale: 1 }}
                 transition={{ repeat: Infinity, repeatType: "reverse", duration: 1.5 }}
-                className="bg-white/20 rounded-lg p-4 mt-8 max-w-lg mx-auto border-1 border-white/20"
+                className="bg-white/20 backdrop-blur-sm rounded-lg p-4 mt-8 max-w-lg mx-auto border-1 border-white/20"
               >
                 <p className="text-white text-xl font-medium mt-1">
                   Only {spotsLeft} {spotsLeft === 1 ? 'spot' : 'spots'} left!
                 </p>
               </motion.div>
             ) : (
-              <div className="bg-white/20 rounded-lg p-4 mb-8 max-w-lg mx-auto">
-                <p className="text-white">
-                  <span className="line-through">Special Discount Pricing</span>
-                </p>
-                <p className="text-yellow-300 font-bold">
-                  All discounted spots have been claimed!
-                </p>
-                <p className="text-white text-sm mt-1">
-                  Join now to get on our waitlist for future promotions.
-                </p>
+              <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4 mb-8 max-w-lg mx-auto">
+                <p className="text-white"><span className="line-through">Special Discount Pricing</span></p>
+                <p className="text-yellow-300 font-bold">All discounted spots have been claimed!</p>
+                <p className="text-white text-sm mt-1">Join now to get on our waitlist for future promotions.</p>
               </div>
             )}
             <div className="max-w-md mx-auto mt-8">
+<<<<<<< Updated upstream
                 <Link href="reserve">
                   <motion.button
                     whileHover={{ scale: 1.03 }}
@@ -852,6 +1400,18 @@ export default function Home() {
               {submitError && (
                 <p className="mt-2 text-red-300 text-sm">{submitError}</p>
               )}
+=======
+              <Link href="order">
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="px-8 py-3 rounded-full bg-teal-500/30 backdrop-blur-md border border-teal-500/50 text-white font-medium shadow-lg hover:shadow-xl transition-all"
+                >
+                  Pre-order Yours
+                </motion.button>
+              </Link>
+              {submitError && <p className="mt-2 text-red-300 text-sm">{submitError}</p>}
+>>>>>>> Stashed changes
             </div>
           </motion.div>
         </div>
@@ -868,6 +1428,7 @@ export default function Home() {
             variants={staggerContainer}
             className="text-center mb-16"
           >
+<<<<<<< Updated upstream
             <motion.h2
               variants={fadeIn}
               className="text-3xl md:text-4xl font-bold mt-4 mb-4 text-gray-900"
@@ -879,6 +1440,13 @@ export default function Home() {
               className="text-lg text-gray-600 max-w-2xl mx-auto"
             >
               Get answers to common questions about NeoGen.
+=======
+            <motion.h2 variants={fadeIn} className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
+              Frequently Asked Questions
+            </motion.h2>
+            <motion.p variants={fadeIn} className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Get answers to common questions about The EVolve Charger.
+>>>>>>> Stashed changes
             </motion.p>
           </motion.div>
   
