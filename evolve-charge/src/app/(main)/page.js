@@ -3,12 +3,12 @@
 // pages/index.js
 import Head from 'next/head';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import Link from 'next/link'
+import Link from 'next/link';
 import { db } from '../firebaseConfig.js';
-import { collection, addDoc, serverTimestamp, query, where, getDocs, updateDoc, doc, getCountFromServer } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, query, where, getDocs, updateDoc, doc, getCountFromServer, getFirestore, orderBy, limit } from 'firebase/firestore';
 import Render from '@/images/Render.png';
 
 // Animation variants
@@ -127,8 +127,8 @@ function FeatureCard({ icon, title, description, index }) {
 function FAQItem({ question, answer, isActive, onClick, index }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ y: 10 }}
+      whileInView={{ y: 0 }}
       viewport={{ once: true, amount: 0.8 }}
       transition={{ delay: index * 0.1, duration: 0.4 }}
       className="mb-5 bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100"
@@ -158,7 +158,6 @@ function FAQItem({ question, answer, isActive, onClick, index }) {
         initial={false}
         animate={{
           height: isActive ? 'auto' : 0,
-          opacity: isActive ? 1 : 0,
         }}
         transition={{ duration: 0.3 }}
         className="overflow-hidden"
@@ -171,13 +170,8 @@ function FAQItem({ question, answer, isActive, onClick, index }) {
   );
 }
 
-<<<<<<< Updated upstream
-// Numbers/stats component with counting animation
-function StatCard({ value, label, index }) {
-=======
 // Numbers/stats component with counting animation and glassmorphism
 function StatCard({ value, units, label, index }) {
->>>>>>> Stashed changes
   const [count, setCount] = useState(0);
   const ref = useRef(null);
   const isInView = useRef(false);
@@ -188,7 +182,7 @@ function StatCard({ value, units, label, index }) {
         if (entry.isIntersecting && !isInView.current) {
           isInView.current = true;
           let start = 0;
-          const duration = 1500;
+          const duration = 600;
           const startTime = Date.now();
           
           const timer = setInterval(() => {
@@ -221,10 +215,6 @@ function StatCard({ value, units, label, index }) {
       viewport={{ once: true, amount: 0.5 }}
       transition={{ delay: index * 0.2, duration: 0.4 }}
     >
-<<<<<<< Updated upstream
-      <div className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">
-        {count}+
-=======
       <div className="flex flex-col items-center">
         <div className="text-4xl md:text-5xl font-bold text-teal-500 mb-2">
           {units === "$" ? <span className="text-teal-500">{units}</span> : null}
@@ -232,14 +222,11 @@ function StatCard({ value, units, label, index }) {
           {units !== "$" ? <span className="text-teal-500"> {units}</span> : null}
         </div>
         <div className="text-gray-600">{label}</div>
->>>>>>> Stashed changes
       </div>
     </motion.div>
   );
 }
 
-<<<<<<< Updated upstream
-=======
 // Donor Carousel Component with glassmorphism
 function DonorCarousel() {
   const [donorsWithAmounts, setDonorsWithAmounts] = useState([]);
@@ -376,7 +363,6 @@ function DonorCarousel() {
   );
 }
 
->>>>>>> Stashed changes
 export default function Home() {
   const router = useRouter();
   const [activeFAQ, setActiveFAQ] = useState(null);
@@ -390,6 +376,13 @@ export default function Home() {
   const [isOpen3, setisOpen3] = useState(false);
   const [isOpen4, setisOpen4] = useState(false);
   const [whichOpen, setWhichOpen] = useState([false, false, false, false]);
+  const [totalPreOrders, setTotalPreOrders] = useState(0);
+  const [totalDonations, setTotalDonations] = useState(0);
+  const [totalAmount, setTotalAmount] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const [error, setError] = useState(null);
+  const [donorsWithAmounts, setDonorsWithAmounts] = useState([]);
+  const [filter, setFilter] = useState('recent');
 
   const sectionRef = useRef(null);
   const { scrollYProgress } = useScroll({
@@ -398,17 +391,10 @@ export default function Home() {
   });
   
   const textY = useTransform(scrollYProgress, [0, 3], [0, -600]);
-<<<<<<< Updated upstream
-  const imageY = useTransform(scrollYProgress, [0, 5], [0, -600])
-
-  const opacity = useTransform(scrollYProgress, [0, 2], [1, 0]);
-=======
   const imageY = useTransform(scrollYProgress, [0, 5], [0, -600]);
   const opacity = useTransform(scrollYProgress, [0, 1], [1, 0]);
->>>>>>> Stashed changes
 
-  
-  const TOTAL_DISCOUNT_SPOTS = 150;
+  const TOTAL_DISCOUNT_SPOTS = 50;
 
   const toggleFAQ = (index) => {
     setActiveFAQ(activeFAQ === index ? null : index);
@@ -416,12 +402,8 @@ export default function Home() {
 
   const faqItems = [
     {
-      question: "Is NeoGen compatible with all electric vehicles?",
-      answer: "Yes, NeoGen is designed to work with all major EV models using standard charging ports including Tesla, Ford, Hyundai, Kia, Chevrolet, Nissan, BMW, and more."
-    },
-    {
       question: "How does it plug into my car?",
-      answer: "NeoGen navigates above your vehicle where it is securely attached to high-strength steel wire, ensuring absolutely no risk to your vehicles while being out of the way of items stored in your garage. A charge plug is lowered and magnetically snaps to your EV's charge port, beginning the charging process."
+      answer: "The EVolve Charger navigates above your vehicle where it is securely attached to high-strength steel wire, ensuring absolutely no risk to your vehicles while being out of the way of items stored in your garage. A charge plug is lowered and magnetically snaps to your EV's charge port, beginning the charging process."
     },
     {
       question: "How long does installation take?",
@@ -429,16 +411,12 @@ export default function Home() {
     },
     {
       question: "Can I control when my vehicle charges?",
-      answer: "Absolutely. Through our mobile app, you can set specific charging times, energy price thresholds, or let our smart system automatically optimize based on your local utility's rates."
+      answer: "Absolutely. Through our mobile app, you can set specific charging times, energy price thresholds, or let our smart system automatically optimize based on your electricity rates."
     },
     {
       question: "What happens if there's a power outage?",
-      answer: "The NeoGen system will automatically resume its optimized charging schedule once power is restored. All your settings are securely stored in the cloud."
+      answer: "The EVolve Charger system will automatically resume its optimized charging schedule once power is restored. All your settings are securely stored in the cloud."
     },
-    {
-      question: "Is there a warranty?",
-      answer: "Yes, our standard warranty covers all hardware for 3 years. We also offer extended warranty options that provide coverage for up to 5 years."
-    }
   ];
 
   const handleWaitlistSubmit = async (e) => {
@@ -447,32 +425,23 @@ export default function Home() {
     setSubmitError(null);
     
     try {
-      // Check if email already exists
       const mailingListRef = collection(db, 'mailing-list');
       const emailQuery = query(mailingListRef, where("email", "==", email));
       const querySnapshot = await getDocs(emailQuery);
       
       if (querySnapshot.empty) {
-        // Email doesn't exist, create a new document
         const userData = {
           email: email,
           joinDate: serverTimestamp(),
-          isEligibleForDiscount: spotsLeft > 0 // Track discount eligibility
+          isEligibleForDiscount: spotsLeft > 0
         };
         
         await addDoc(mailingListRef, userData);
-<<<<<<< Updated upstream
-        
-        // Redirect to the reservation page with the email as a parameter
-=======
->>>>>>> Stashed changes
         window.location.href = `/reserve?email=${encodeURIComponent(email)}`;
       } else {
-        // Email already exists, redirect to reservation page
         window.location.href = `/reserve?email=${encodeURIComponent(email)}`;
       }
       
-      // Update the count after successful submission
       if (spotsLeft > 0) {
         setSpotsLeft(prevSpotsLeft => prevSpotsLeft - 1);
       }
@@ -488,15 +457,14 @@ export default function Home() {
     const fetchReservationCount = async () => {
       try {
         setIsLoading(true);
-        const mailingListRef = collection(db, 'mailing-list');
-        const snapshot = await getCountFromServer(mailingListRef);
+        const ordersRef = collection(db, 'orders');
+        const snapshot = await getCountFromServer(ordersRef);
         const count = snapshot.data().count;
         const remainingSpots = Math.max(0, TOTAL_DISCOUNT_SPOTS - count);
         setSpotsLeft(remainingSpots);
       } catch (error) {
         console.error('Error fetching reservation count:', error);
-        // Set a fallback number to avoid showing null
-        setSpotsLeft(25); // Fallback to create urgency if count fails
+        setSpotsLeft(25);
       } finally {
         setIsLoading(false);
       }
@@ -505,8 +473,6 @@ export default function Home() {
     fetchReservationCount();
   }, []);
 
-<<<<<<< Updated upstream
-=======
   useEffect(() => {
     const fetchData = async () => {
       const db = getFirestore();
@@ -623,95 +589,23 @@ export default function Home() {
     fetchDonorsAndAmounts();
   }, [filter]);
 
->>>>>>> Stashed changes
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
       <motion.video
-        className="fixed w-full h-full object-cover"
+        className="z-0 fixed w-full h-full object-cover bg-black/20"
         muted
+        poster="/images/poster.png"
         autoPlay
         loop
-<<<<<<< Updated upstream
-        preload="metadata"
-        title="How NeoGen Works"
-        style={{
-          opacity
-        }}
-=======
         preload="auto"
         title="How the EVolve Charger Works"
         controls={false}
         style={{ opacity, zIndex: 0 }}
->>>>>>> Stashed changes
       >
         <source src="/productDemo.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </motion.video>
-<<<<<<< Updated upstream
-      <section className="relative h-screen pt-32 pb-24 md:pt-48 md:pb-32 overflow-hidden items-center justify-center bg-black/20">
-        <div className="relative max-w-7xl mx-auto md:ml-24 sm:px-6 lg:px-8 ">
-          <div>
-            <motion.div
-              initial="hidden"
-              animate="visible"
-              variants={staggerContainer}
-              className="mx-auto px-6 md:px-20 py-10 flex flex-col items-center md:items-start"
-              style={{
-                y: textY
-              }}
-            >
-              <motion.div 
-                variants={fadeIn}
-                className="mx-auto md:mx-0 inline-flex items-center px-4 py-2 rounded-full bg-teal-800 bg-opacity-30 backdrop-blur-2xl border border-teal-500 text-teal-200 text-sm font-medium mb-6 self-start"
-              >
-                <span className="flex h-2 w-2 mr-2">
-                  <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-teal-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-300"></span>
-                </span>
-                Reservations Open Now! - Limited Spots
-              </motion.div>
-              
-              <motion.h1 
-                variants={fadeIn}
-                className="text-4xl text-center md:text-left md:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-white"
-              >
-                <span className="block">The World's First</span>
-                <span className="bg-gradient-to-r from-teal-300 to-cyan-300 bg-clip-text text-transparent">Automatic EV Charger</span>
-              </motion.h1>
-              
-              {/* <motion.p 
-                variants={fadeIn}
-                className="text-lg md:text-xl text-white mb-6 leading-relaxed max-w-xl"
-              >
-                The Next Generation of EV Charging. Automatic connection, optimized charging times, built to save you time, money, and keep your car healthy.
-              </motion.p> */}
-              
-              <motion.div 
-                variants={fadeIn}
-                className="flex flex-wrap gap-4 mt-2"
-              >
-                <Link href="reserve">
-                  <motion.button
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    className="px-8 py-3 rounded-full bg-gradient-to-r from-teal-400 to-cyan-400 text-gray-50 font-medium shadow-lg hover:shadow-xl transition-all"
-                  >
-                    Reserve Your NeoGen
-                  </motion.button>
-                </Link>
-                {/*                 
-                <Link href="#how-it-works">
-                  <motion.button
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    className="px-8 py-3 rounded-full border border-teal-400 text-white font-medium hover:bg-teal-800 hover:bg-opacity-50 transition-all"
-                  >
-                    Watch Demo
-                  </motion.button>
-                </Link> */}
-              </motion.div>
-=======
       <section className="relative h-screen pt-32 pb-24 md:pt-48 md:pb-32 overflow-hidden items-center justify-center">
         <div className="relative max-w-7xl mx-auto md:ml-24 sm:px-6 lg:px-8">
           <motion.div
@@ -730,7 +624,6 @@ export default function Home() {
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-300"></span>
               </span>
               Reservations Open Now! - Limited Spots
->>>>>>> Stashed changes
             </motion.div>
             
             <motion.h1 
@@ -768,16 +661,6 @@ export default function Home() {
         </div>
       </section>
       <motion.div
-<<<<<<< Updated upstream
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2, duration: 0.8 }}
-          className="absolute bottom-8 left-0 right-0 flex justify-center"
-          style={{ opacity: useTransform(scrollYProgress, [0, 0.1], [1, 0]) }}
-        >
-          <ScrollIndicator className="z-0"/>
-        </motion.div>
-=======
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.2, duration: 0.8 }}
@@ -837,14 +720,13 @@ export default function Home() {
           </div>
         </div>
       </section>
->>>>>>> Stashed changes
 
       {/* How It Works */}
-      <section id="how-it-works" className="relative py-16 md:py-24 bg-gray-50">
+      <section id="how-it-works" className="relative bg-gray-50">
         <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-gradient-to-bl from-teal-50 to-transparent rounded-bl-full opacity-70"></div>
         <div className="absolute bottom-0 left-0 w-1/4 h-1/4 bg-gradient-to-tr from-cyan-50 to-transparent rounded-tr-full opacity-70"></div>
         
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -856,7 +738,7 @@ export default function Home() {
               variants={fadeIn}
               className="text-3xl text-gray-900 md:text-4xl font-bold mt-4 mb-4"
             >
-              Meet <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-cyan-500">NeoGen</span>
+              Meet The <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-cyan-500">EVolve Charger</span>
             </motion.h2>
             <motion.p 
               variants={fadeIn}
@@ -877,7 +759,7 @@ export default function Home() {
               <div className="aspect-video">
                 <Image
                   src={Render}
-                  alt="NeoGen Smart EV Charger"
+                  alt="The EVolve Charger Smart EV Charger"
                   layout="fill"
                   objectFit="cover"
                   className="z-0"
@@ -895,35 +777,11 @@ export default function Home() {
               className="space-y-6"
             >
               {[
-<<<<<<< Updated upstream
-                {
-                  number: "01",
-                  title: "Easy Installation",
-                  description: "We make installing NeoGen a simple process so anyone can set it up with just a ladder, drill, and screwdriver."
-                },
-                {
-                  number: "02",
-                  title: "Connect to App",
-                  description: "Download our app and connect NeoGen to set preferences and monitor charging."
-                },
-                {
-                  number: "03",
-                  title: "Automated Charging",
-                  description: "Park your vehicle, and NeoGen automatically connects when needed based on your setting and then unplugs whenever you want to leave."
-                },
-                {
-                  number: "04",
-                  title: "Smart Monitoring",
-                  description: "Receive updates on charging status, battery health, and energy usage through the app and integrate it into the smart home system."
-                }
-=======
                 { number: "01", title: "Easy Installation", description: "We make installing your EVolve Charger a simple process so anyone can set it up with just a ladder, drill, and screwdriver." },
                 { number: "02", title: "Connect to App", description: "Download our app and connect your EVolve Charger to set preferences and monitor charging." },
                 { number: "03", title: "Automated Charging", description: "Park your vehicle, and the EVolve Charger automatically connects when needed based on your setting and then unplugs whenever you want to leave." },
                 { number: "04", title: "Smart Monitoring", description: "Receive updates on charging status, battery health, and energy usage through the app and integrate it into the smart home system." }
->>>>>>> Stashed changes
               ].map((step, index) => {
-                // Create a state variable name based on the step number
                 const stateVarName = `isOpen${index + 1}`;
                 
                 return (
@@ -937,7 +795,6 @@ export default function Home() {
                   >
                     <button 
                       onClick={() => {
-                        // Toggle the corresponding state variable
                         eval(`set${stateVarName}(!${stateVarName})`);
                         eval(whichOpen[index] = !whichOpen[index]);
                       }}
@@ -977,106 +834,21 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="py-20 md:py-32 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-20 bg-gradient-to-b from-white to-transparent"></div>
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-teal-50 rounded-full opacity-70"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-cyan-50 rounded-full opacity-70"></div>
+      {/* Key Statistics Section */}
+      <section id="statistics" className="relative py-16 md:py-24 bg-white">
+        <div className="absolute bottom-0 right-0 w-1/4 h-1/4 bg-gradient-to-tl from-cyan-50 to-transparent rounded-tl-full opacity-70"></div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={staggerContainer}
-            className="text-center mb-20"
-          >
-            <motion.h2 
-              variants={fadeIn}
-              className="text-3xl text-gray-900 md:text-4xl font-bold mt-4 mb-4"
-            >
-              Intelligent Charging Features
-            </motion.h2>
-            <motion.p 
-              variants={fadeIn}
-              className="text-lg text-gray-600 max-w-2xl mx-auto"
-            >
-              Our smart charging technology adapts to your vehicle needs and energy patterns to provide the best charging experience possible.
-            </motion.p>
-          </motion.div>
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">EVolve Charger by the Numbers</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">Discover the impact of our smart charging solution</p>
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <FeatureCard
-              index={0}
-              icon={
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              }
-              title="Automatic Connection"
-              description="No more manual plugging. Get back hours of your life every month."
-            />
-            
-            <FeatureCard
-              index={1}
-              icon={
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              }
-              title="Off-Peak Charging"
-              description="Intelligently charges your vehicle during non-peak hours to save energy costs and reduce grid load."
-            />
-            
-            <FeatureCard
-              index={2}
-              icon={
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              }
-              title="Battery Health Monitoring"
-              description="Intelligent charging patterns help preserve your EV's battery health."
-            />
+            <StatCard value={250} units="$" label="dollars saved every year" index={0} />
+            <StatCard value={15} units="years" label="added to your car's battery lifespan" index={1} />
+            <StatCard value={9} units="hours" label="saved plugging in every year" index={2} />
           </div>
-<<<<<<< Updated upstream
-          
-          {/* <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.8 }}
-            className="mt-20 bg-white rounded-3xl shadow-xl overflow-hidden"
-          >
-            <div className="grid grid-cols-1 md:grid-cols-2">
-              <div className="p-10 md:p-12 flex flex-col justify-center">
-                <div className="inline-block mb-4">
-                  <span className="bg-teal-50 text-teal-600 text-xs font-medium px-3 py-1 rounded-full">Coming Soon</span>
-                </div>
-                <h3 className="text-2xl md:text-3xl font-bold mb-4 text-gray-900">Smart Home Integration</h3>
-                <p className="text-gray-600 mb-6 leading-relaxed">
-                  Connect NeoGen with your smart home system to optimize energy usage across your entire home. Integrate with solar panels, home batteries, and other smart devices.
-                </p>
-                <ul className="space-y-3">
-                  {['Works with Alexa, Google Home, and HomeKit', 'Optimize charging with solar production', 'Voice command support', 'Energy usage dashboard'].map((item, i) => (
-                    <li key={i} className="flex items-center">
-                      <svg className="h-5 w-5 text-teal-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      <span className="text-gray-700">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="bg-gradient-to-br from-teal-500 to-cyan-600 p-10 flex items-center justify-center">
-                <div className="relative w-full h-64 md:h-full">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-32 w-32 text-white opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                    </svg>
-                  </div>
-                  <div className="absolute inset-0 bg-dots-pattern opacity-10"></div>
-=======
         </div>
       </section>
 
@@ -1225,102 +997,12 @@ export default function Home() {
                       ))}
                     </div>
                   )}
->>>>>>> Stashed changes
                 </div>
               </div>
             </div>
-          </motion.div> */}
+          </div>
         </div>
       </section>
-
-      {/* Join Waitlist Section
-      <section className="py-20 md:py-28 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={staggerContainer}
-            className="text-center mb-16"
-          >
-            <motion.div variants={fadeIn} className="inline-block">
-              <span className="bg-teal-50 text-teal-600 text-sm font-medium px-4 py-1 rounded-full">Early Access</span>
-            </motion.div>
-            <motion.h2 
-              variants={fadeIn}
-              className="text-3xl text-gray-900 md:text-4xl font-bold mt-4 mb-4"
-            >
-              Join Our Waitlist
-            </motion.h2>
-            <motion.p 
-              variants={fadeIn}
-              className="text-lg text-gray-600 max-w-2xl mx-auto"
-            >
-              Be the first to experience NeoGen when we launch. Sign up for our mailing list to receive exclusive updates and early-bird offers.
-            </motion.p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.6 }}
-            className="max-w-md mx-auto bg-white rounded-xl p-8 shadow-lg border border-gray-100"
-          >
-            <div className="mb-6">
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email address</label>
-              <input
-                type="email"
-                id="email"
-                placeholder="you@example.com"
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all"
-              />
-            </div>
-            
-            <div className="mb-6 text-gray-700">
-              <label htmlFor="ev-model" className="block text-sm font-medium text-gray-700 mb-1">EV Model (Optional)</label>
-              <select
-                id="ev-model"
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all"
-              >
-                <option value="">Select your EV model</option>
-                <option value="tesla">Tesla</option>
-                <option value="ford">Ford</option>
-                <option value="hyundai">Hyundai</option>
-                <option value="kia">Kia</option>
-                <option value="other">Other</option>
-              </select>
-            </div>
-            
-            <button 
-              className="w-full py-3 px-4 rounded-lg bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium shadow-md hover:shadow-lg transition-all"
-            >
-              Join the Waitlist
-            </button>
-            
-            <p className="mt-4 text-xs text-gray-500 text-center">
-              By signing up, you agree to receive updates about NeoGen. We'll never share your information with third parties.
-            </p>
-            
-            <div className="mt-6 pt-6 border-t border-gray-100">
-              <div className="flex flex-col items-center space-y-2">
-                <div className="flex items-center space-x-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                  </svg>
-                  <span className="text-sm text-gray-600">Secure</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                  </svg>
-                  <span className="text-sm text-gray-600">No spam, unsubscribe anytime</span>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section> */}
 
       {/* CTA Section */}
       <section className="py-20 md:py-28 bg-gradient-to-r from-teal-600 to-cyan-600 relative overflow-hidden">
@@ -1338,9 +1020,9 @@ export default function Home() {
             transition={{ duration: 0.8 }}
             className="bg-white/10 backdrop-blur-md rounded-3xl p-10 md:p-16 text-center shadow-xl border border-white/20"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">Join the EVolution</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">Join the EVolution</h2>
             <p className="text-lg md:text-xl mb-4 max-w-2xl mx-auto text-teal-50">
-              Enter the community that is ready to become a part of the next generation of EV users.
+              20% discount for the first 50 pre-orders alongside VIP treatment!
             </p>
             
             <div className="flex flex-col md:flex-row justify-center items-center space-y-2 md:space-y-0 md:space-x-8 mt-8 text-teal-50 font-medium">
@@ -1348,7 +1030,7 @@ export default function Home() {
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                Early access to pre-orders
+                Priority-Shipping
               </div>
               <div className="flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1360,10 +1042,9 @@ export default function Home() {
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                {spotsLeft > 0 ? 'Special launch pricing' : 'Future promotions'}
+                {spotsLeft > 0 ? '20% discount' : 'Future promotions'}
               </div>
             </div>
-            {/* Discount Countdown Banner */}
             {isLoading ? (
               <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4 mt-8 max-w-lg mx-auto">
                 <p className="text-white animate-pulse">Loading special offer details...</p>
@@ -1387,20 +1068,6 @@ export default function Home() {
               </div>
             )}
             <div className="max-w-md mx-auto mt-8">
-<<<<<<< Updated upstream
-                <Link href="reserve">
-                  <motion.button
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    className="px-8 py-3 rounded-full bg-white hover:bg-gradient-to-r from-teal-400 to-cyan-400 hover:text-gray-50 text-teal-700 font-medium shadow-lg hover:shadow-xl transition-all"
-                  >
-                    Reserve Your NeoGen
-                  </motion.button>
-                </Link>
-              {submitError && (
-                <p className="mt-2 text-red-300 text-sm">{submitError}</p>
-              )}
-=======
               <Link href="order">
                 <motion.button
                   whileHover={{ scale: 1.03 }}
@@ -1411,16 +1078,14 @@ export default function Home() {
                 </motion.button>
               </Link>
               {submitError && <p className="mt-2 text-red-300 text-sm">{submitError}</p>}
->>>>>>> Stashed changes
             </div>
           </motion.div>
         </div>
-        
       </section>
 
-      {/* FAQ Section
-      <section id="faq" className="py-20 md:py-28 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* FAQ Section */}
+      <section id="faq" className="relative py-16 md:py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-white">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -1428,25 +1093,11 @@ export default function Home() {
             variants={staggerContainer}
             className="text-center mb-16"
           >
-<<<<<<< Updated upstream
-            <motion.h2
-              variants={fadeIn}
-              className="text-3xl md:text-4xl font-bold mt-4 mb-4 text-gray-900"
-            >
-              Frequently Asked Questions
-            </motion.h2>
-            <motion.p
-              variants={fadeIn}
-              className="text-lg text-gray-600 max-w-2xl mx-auto"
-            >
-              Get answers to common questions about NeoGen.
-=======
             <motion.h2 variants={fadeIn} className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
               Frequently Asked Questions
             </motion.h2>
             <motion.p variants={fadeIn} className="text-lg text-gray-600 max-w-2xl mx-auto">
               Get answers to common questions about The EVolve Charger.
->>>>>>> Stashed changes
             </motion.p>
           </motion.div>
   
@@ -1463,7 +1114,7 @@ export default function Home() {
             ))}
           </div>
         </div>
-      </section> */}
+      </section>
     </div>
   );
 }
