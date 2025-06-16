@@ -597,6 +597,7 @@ export default function Home() {
         muted
         poster="/images/poster.png"
         autoPlay
+        playsInline
         loop
         preload="auto"
         title="How the EVolve Charger Works"
@@ -1083,39 +1084,6 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
-
-      {/* FAQ Section */}
-      {/* <section id="faq" className="relative py-16 md:py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-white">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={staggerContainer}
-            className="text-center mb-16"
-          >
-            <motion.h2 variants={fadeIn} className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
-              Frequently Asked Questions
-            </motion.h2>
-            <motion.p variants={fadeIn} className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Get answers to common questions about The EVolve Charger.
-            </motion.p>
-          </motion.div>
-  
-          <div className="max-w-3xl mx-auto space-y-5">
-            {faqItems.map((faq, index) => (
-              <FAQItem
-                key={index}
-                question={faq.question}
-                answer={faq.answer}
-                isActive={activeFAQ === index}
-                onClick={() => toggleFAQ(index)}
-                index={index}
-              />
-            ))}
-          </div>
-        </div>
-      </section> */}
     </div>
   );
 }

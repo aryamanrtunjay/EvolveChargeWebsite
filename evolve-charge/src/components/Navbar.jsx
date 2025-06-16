@@ -13,7 +13,6 @@ const NAV_ITEMS = [
   { label: 'About', href: '/about' },
   { label: 'FAQ', href: '/faq' },
   { label: 'Support Us', href: '/donate' },
-  // { label: 'Support', href: '/support' },
 ];
 
 export default function Navigation() {
@@ -22,6 +21,8 @@ export default function Navigation() {
   const pathname = usePathname();
   const hideCTA = ['/order', '/order/success'].includes(pathname);
   const navRefs = useRef({});
+  const mobileMenuRef = useRef(null); // Ref for mobile menu
+  const hamburgerRef = useRef(null); // Ref for hamburger button
   const activeHref = NAV_ITEMS.find((item) => item.href === pathname)?.href || null;
 
   useEffect(() => {
@@ -31,6 +32,24 @@ export default function Navigation() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Handle clicks outside the mobile menu to close it
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        mobileMenuOpen &&
+        mobileMenuRef.current &&
+        hamburgerRef.current &&
+        !mobileMenuRef.current.contains(event.target) &&
+        !hamburgerRef.current.contains(event.target)
+      ) {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [mobileMenuOpen]);
 
   return (
     <motion.header
@@ -62,7 +81,6 @@ export default function Navigation() {
                 {item.label}
               </Link>
             ))}
-            
           </div>
 
           {/* Desktop CTAs */}
@@ -75,19 +93,16 @@ export default function Navigation() {
                   Pre-order Now
                 </button>
               </Link>
-              {/* <Link href="/donate">
-                <button
-                  className="px-6 py-2 rounded-full font-medium transition-transform transform hover:scale-105 bg-white text-gray-600 border border-gray-300 shadow-sm drop-shadow-sm opacity-90"
-                >
-                  Support The Mission
-                </button>
-              </Link> */}
             </div>
           )}
 
           {/* Mobile Hamburger */}
           {!hideCTA && (
-            <button onClick={() => setMobileMenuOpen((o) => !o)} className="md:hidden drop-shadow-lg z-50">
+            <button
+              ref={hamburgerRef}
+              onClick={() => setMobileMenuOpen((o) => !o)}
+              className="md:hidden drop-shadow-lg z-50"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className={`h-6 w-6 ${'text-white'}`}
@@ -107,30 +122,62 @@ export default function Navigation() {
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div
+              ref={mobileMenuRef}
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden mt-2 mx-4 sm:mx-6 lg:mx-8 rounded-xl bg-[linear-gradient(135deg,rgba(50,50,50,0.6),rgba(80,80,80,0.3))] backdrop-blur-[5px] shadow-[0_10px_30px_rgba(0,0,0,0.2)] border border-gray-400/30"
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              className="md:hidden mt-2 mx-4 sm:mx-6 lg:mx-8 rounded-xl bg-[linear-gradient(135deg,rgba(50,50,50,0.6),rgba(80,80,80,0.3))] backdrop-blur-[5px] shadow-[0_10px_30px_rgba(0,0,0,0.2)] border border-gray-400/30 overflow-hidden"
             >
-              <div className="px-4 py-4 space-y-4">
-                {NAV_ITEMS.map((item) => (
-                  <Link key={item.href} href={item.href} className="block font-medium text-white">
-                    {item.label}
-                  </Link>
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ 
+                  duration: 0.3, 
+                  delay: 0.15, // Delay content appearance
+                  ease: 'easeOut' 
+                }}
+                className="px-4 py-4 space-y-4"
+              >
+                {NAV_ITEMS.map((item, index) => (
+                  <motion.div
+                    key={item.href}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ 
+                      duration: 0.2, 
+                      delay: 0.15 + (index * 0.05) // Stagger each item
+                    }}
+                  >
+                    <Link
+                      href={item.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block font-medium text-white hover:text-teal-300 transition-colors"
+                    >
+                      {item.label}
+                    </Link>
+                  </motion.div>
                 ))}
-                <div className="pt-4 border-t border-gray-400/30 space-y-2">
+                <motion.div 
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ 
+                    duration: 0.2, 
+                    delay: 0.15 + (NAV_ITEMS.length * 0.05)
+                  }}
+                  className="pt-4 border-t border-gray-400/30 space-y-2"
+                >
                   <Link href="/order" className="block">
-                    <button className="w-full px-6 py-2 rounded-full font-semibold bg-white text-teal-600 border-2 border-teal-600 shadow-lg drop-shadow-lg hover:scale-105 transition-transform">
+                    <button
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="w-full px-6 py-2 rounded-full font-semibold bg-white text-teal-600 border-2 border-teal-600 shadow-lg drop-shadow-lg hover:scale-105 transition-transform"
+                    >
                       Pre-order Now
                     </button>
                   </Link>
-                  {/* <Link href="/donate" className="block">
-                    <button className="w-full px-6 py-2 rounded-full font-medium bg-white text-gray-600 border border-gray-300 shadow-sm drop-shadow-sm opacity-90 hover:scale-105 transition-transform">
-                      Support The Mission
-                    </button>
-                  </Link> */}
-                </div>
-              </div>
+                </motion.div>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
