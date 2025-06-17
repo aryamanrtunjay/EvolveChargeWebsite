@@ -268,12 +268,13 @@ export default function FAQPage() {
       question: "How does the automatic connection system work?",
       answer: (
         <div>
-          <p className="mb-3">The EVolve Charger uses a patented magnetic connection system that automatically detects when your vehicle is in position. Here's how it works:</p>
+          <p className="mb-3">The EVolve Charger uses a magnetic connection system that automatically detects when your vehicle is in position. Here's how it works:</p>
           <ul className="list-disc list-inside space-y-1 text-sm">
-            <li>Vehicle detection sensors identify your EV's presence</li>
-            <li>The charging arm extends and aligns with your vehicle's charge port</li>
-            <li>Magnetic connectors ensure a secure, weatherproof connection</li>
-            <li>Charging begins automatically based on your preset preferences</li>
+            <li>Our patent-pending algorithm determines the best time to plug in your vehicle.</li>
+            <li>The charger autonomously navigates above your vehicle's charge port.</li>
+            <li>The charging cable descends until it's aligned with the charging cable.</li>
+            <li>The charger aligns via magnets to the vehicle's charge port and snaps to it.</li>
+            <li>The plug is pushed in automatically and charging begins.</li>
             <li>The system disconnects safely when charging is complete or you're ready to leave</li>
           </ul>
         </div>
@@ -287,45 +288,29 @@ export default function FAQPage() {
     {
       category: 'product',
       question: "How fast does the EVolve Charger charge my vehicle?",
-      answer: "The EVolve Charger provides up to 48A / 11.5kW of power, delivering approximately 35-40 miles of range per hour of charging for most electric vehicles. Actual charging speed depends on your vehicle's onboard charger capacity and battery conditions."
+      answer: "The EVolve Charger uses the charging cable that comes with your vehicle, no additional overhead required. So however much power your outlet can deliver and your vehicle can accept, that's the speed of charging."
     },
     {
       category: 'product',
       question: "Does the charger work in all weather conditions?",
-      answer: "Yes! The EVolve Charger is rated IP65 for weather resistance and operates reliably in temperatures from -40°F to 122°F (-40°C to 50°C). All connections are weathersealed, and the system includes built-in protection against rain, snow, ice, and extreme temperatures."
+      answer: "The current version of the EVolve Charger is designed for use inside the garage, we plan on releasing version that can charge vehicles parked outside the garage soon!"
     },
     {
       category: 'product',
       question: "Can I control when my vehicle charges?",
-      answer: "Absolutely! Through our mobile app, you can set specific charging schedules, set maximum charge levels, take advantage of time-of-use electricity rates, and even integrate with solar panel systems. The charger can also respond to utility demand response programs to help reduce energy costs."
+      answer: "Absolutely! Through our mobile app, you can set specific charging schedules, set maximum charge levels, take advantage of time-of-use electricity rates, and even tell us if you have trips coming up that need more battery!"
     },
 
     // Installation
     {
       category: 'installation',
       question: "How long does installation take?",
-      answer: "Most installations take 25-30 minutes for DIY setup with basic tools (ladder, drill, screwdriver). Professional installation is available and typically takes 1-2 hours, including electrical work if needed. Installation time may be longer if electrical upgrades are required."
+      answer: "Installation takes 25-30 minutes for with basic tools (ladder, drill, screwdriver). Professional installation is available if you do not have these tools and will take 10-15 minutes at a low cost. Installation time may be longer if electrical upgrades are required."
     },
     {
       category: 'installation',
       question: "Do I need an electrician to install the EVolve Charger?",
-      answer: "Not necessarily. If you have an existing 240V outlet (like a NEMA 14-50 used for electric dryers), you can install the EVolve Charger yourself using our step-by-step guide. If you need a new electrical circuit or outlet installed, you'll need a licensed electrician."
-    },
-    {
-      category: 'installation',
-      question: "What electrical requirements does the charger have?",
-      answer: (
-        <div>
-          <p className="mb-3">The EVolve Charger requires:</p>
-          <ul className="list-disc list-inside space-y-1 text-sm">
-            <li>240V AC electrical supply</li>
-            <li>50-amp circuit breaker (recommended)</li>
-            <li>NEMA 14-50 outlet or hardwired installation</li>
-            <li>WiFi connection for smart features</li>
-            <li>Adequate clearance (10 feet minimum ceiling height)</li>
-          </ul>
-        </div>
-      )
+      answer: "Not necessarily. If you have an outlet in your garage that you already use to charge your car, the EVolve Charger integrates seamlessely into that system. You can easily install the EVolve Charger yourself using our step-by-step guide. If you need a new electrical circuit or outlet installed, we will provide an electrician though rates for this service depend on complexity of the job."
     },
     {
       category: 'installation',
@@ -344,104 +329,68 @@ export default function FAQPage() {
       question: "Which electric vehicles are compatible with the EVolve Charger?",
       answer: (
         <div>
-          <p className="mb-3">The EVolve Charger is compatible with all electric vehicles that use the J1772 standard connector, including:</p>
+          <p className="mb-3">At this current point in time, the EVolve Charger is compatible with:</p>
           <ul className="list-disc list-inside space-y-1 text-sm mb-3">
-            <li>Tesla vehicles (with included adapter)</li>
-            <li>Nissan Leaf</li>
-            <li>Chevrolet Bolt EV/EUV</li>
-            <li>Ford Mustang Mach-E, F-150 Lightning</li>
-            <li>BMW i3, i4, iX</li>
-            <li>Volkswagen ID.4</li>
-            <li>Hyundai Ioniq 5, Kona Electric</li>
-            <li>And virtually all other EVs sold in North America</li>
+            <li>All Tesla Vehicles</li>
+            <li>All Hyundai EVs</li>
           </ul>
-          <p className="text-sm">Note: Tesla vehicles require the included J1772 adapter for compatibility.</p>
+          <p>We will be expanding our compatibility rapidly as we develop adapters to interact with each vehicle!</p>
         </div>
       )
     },
     {
       category: 'compatibility',
       question: "Will the EVolve Charger work with future EV models?",
-      answer: "Yes! The EVolve Charger uses the industry-standard J1772 connector and is designed to be future-compatible. Our software receives regular updates to support new vehicle models and features as they become available."
+      answer: "Yes! The EVolve Charger uses the industry-standard NACS connector and is designed to be future-compatible. The charger is capable of Over-The-Air (OTA) updates so upgrades will be regularly sent to existing chargers and to any new charger to support new vehicle models and features as they become available."
     },
     {
       category: 'compatibility',
       question: "Can I use the charger with multiple vehicles?",
-      answer: "Absolutely! The EVolve Charger can store profiles for multiple vehicles and automatically detect which vehicle is connected. Each vehicle can have its own charging preferences, schedules, and settings."
-    },
-    {
-      category: 'compatibility',
-      question: "Does the charger work with plug-in hybrids (PHEVs)?",
-      answer: "Yes, the EVolve Charger works perfectly with plug-in hybrid electric vehicles (PHEVs) like the Toyota Prius Prime, Honda Clarity, and BMW 330e. The intelligent charging system adapts to the smaller battery capacity of PHEVs."
+      answer: "Absolutely! The EVolve Charger can navigate to and store profiles for as many vehicles as you can fit in your garage and charging cable can reach with automatic detection of which vehicle requires charging. Each vehicle can have its own charging preferences, schedules, and settings."
     },
 
     // Pricing & Orders
     {
       category: 'pricing',
       question: "How much does the EVolve Charger cost?",
-      answer: (
-        <div>
-          <p className="mb-3">EVolve Charger pricing:</p>
-          <ul className="list-disc list-inside space-y-1 text-sm">
-            <li><strong>EVolve Standard:</strong> $1,199 (Pre-order: $1,199, Regular: $1,499)</li>
-            <li><strong>EVolve Pro:</strong> $1,599 (Pre-order: $1,599, Regular: $1,999)</li>
-            <li><strong>EVolve Enterprise:</strong> $2,299 (Pre-order: $2,299, Regular: $2,799)</li>
-          </ul>
-          <p className="text-sm mt-3">Pre-order pricing includes free shipping and a 30-day money-back guarantee.</p>
-        </div>
-      )
+      answer: "The charger has a fixed cost of $124.99, this includes the entire charger assembly. If you do not have a charging cable or your vehicle did not come with one then it costs $319.99 to also purchase the charging cable."
     },
     {
       category: 'pricing',
       question: "Are there any ongoing fees or subscription costs?",
-      answer: "No! There are no monthly fees, subscription costs, or hidden charges. All smart features, mobile app access, and software updates are included with your one-time purchase. Optional premium support plans are available but not required."
+      answer: "No! There are no monthly fees, subscription costs, or hidden charges. All smart features, mobile app access, and software updates are included with your one-time purchase."
     },
     {
       category: 'pricing',
       question: "When will my EVolve Charger ship?",
-      answer: "Pre-orders are expected to ship in Q2 2025. You'll receive email updates throughout the manufacturing process, including shipping notifications with tracking information. Pre-order customers receive priority shipping."
+      answer: "Orders within the Puget Sound region of Washington state will be delivered at latest by December 1, 2025. Order outside this region will arrive before February 1, 2025. You'll receive email updates throughout the manufacturing process, including shipping notifications with tracking information. Pre-order customers receive priority shipping."
     },
     {
       category: 'pricing',
       question: "What payment methods do you accept?",
-      answer: "We accept all major credit cards (Visa, Mastercard, American Express, Discover), PayPal, and financing options through Affirm. Business customers can also pay via bank transfer or purchase order."
-    },
-    {
-      category: 'pricing',
-      question: "Can I cancel or modify my pre-order?",
-      answer: "Yes, you can cancel or modify your pre-order at any time before shipping with no penalty. Simply contact our customer service team or log into your account to make changes."
+      answer: "We accept all major credit cards (Visa, Mastercard, American Express, Discover), PayPal, Google Pay, and financing options through Klarna. Business customers can also pay via bank transfer or purchase order."
     },
 
     // Support & Warranty
     {
       category: 'support',
       question: "What warranty does the EVolve Charger come with?",
-      answer: (
-        <div>
-          <p className="mb-3">Warranty coverage varies by model:</p>
-          <ul className="list-disc list-inside space-y-1 text-sm">
-            <li><strong>EVolve Standard:</strong> 3-year full warranty</li>
-            <li><strong>EVolve Pro:</strong> 5-year full warranty</li>
-            <li><strong>EVolve Enterprise:</strong> Lifetime warranty</li>
-          </ul>
-          <p className="text-sm mt-3">All warranties cover parts, labor, and software support. Extended warranty options are available for Standard and Pro models.</p>
-        </div>
-      )
+      answer: "We provide a 3 month warranty with the option to add an additional 2 years to that for just $49.99"
     },
     {
       category: 'support',
       question: "What kind of customer support is available?",
-      answer: "We offer comprehensive support including email support, phone support during business hours, live chat, and an extensive online knowledge base. Pro and Enterprise customers receive priority support with faster response times."
+      answer: "We offer comprehensive support including email support and phone support during business hours, alongside this FAQ page."
     },
     {
       category: 'support',
       question: "How do software updates work?",
-      answer: "The EVolve Charger receives automatic over-the-air software updates via WiFi. Updates include new features, performance improvements, and security patches. You can choose to install updates immediately or schedule them for convenient times."
+      answer: "The EVolve Charger receives automatic over-the-air software updates via WiFi. Updates include new features, performance improvements, and security patches. The updates will automatically install when there are no charges scheduled."
     },
     {
       category: 'support',
       question: "What happens if there's a power outage?",
-      answer: "The EVolve Charger automatically resumes operation after power is restored. All your settings and schedules are stored in the cloud, so nothing is lost. The system includes surge protection to prevent damage from power fluctuations."
+      answer: "The EVolve Charger automatically resumes operation after power is restored. All your settings and schedules are stored securely in the cloud, so nothing is lost."
     },
     {
       category: 'support',
@@ -458,7 +407,7 @@ export default function FAQPage() {
     {
       category: 'installation',
       question: "Can the charger be used outdoors?",
-      answer: "While the EVolve Charger is weather-resistant (IP65 rated), it's designed primarily for covered installation in garages. Outdoor installation requires additional weatherproofing and may void the warranty unless specifically approved."
+      answer: "The current version of the EVolve Charger is designed for use inside the garage, we plan on releasing version that can charge vehicles parked outside the garage soon!"
     },
     {
       category: 'compatibility',
@@ -592,14 +541,14 @@ export default function FAQPage() {
       </section>
 
       {/* Contact CTA Section */}
-      <section className="py-20 bg-gray-50">
+      {/* <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <ContactCTA />
         </div>
-      </section>
+      </section> */}
 
       {/* Quick Links Section */}
-      <section className="py-16 bg-white border-t border-gray-200">
+      {/* <section className="py-16 bg-white border-t border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="hidden"
@@ -670,72 +619,7 @@ export default function FAQPage() {
             ))}
           </div>
         </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="col-span-1 md:col-span-2">
-              <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">
-                EVolve Charger
-              </h3>
-              <p className="text-gray-300 mb-6 max-w-md">
-                Revolutionizing electric vehicle charging with intelligent automation, 
-                smart energy management, and advanced battery care technology.
-              </p>
-              <div className="flex space-x-4">
-                <a href="#" className="text-gray-400 hover:text-teal-400 transition-colors">
-                  <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
-                  </svg>
-                </a>
-                <a href="#" className="text-gray-400 hover:text-teal-400 transition-colors">
-                  <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z"/>
-                  </svg>
-                </a>
-                <a href="#" className="text-gray-400 hover:text-teal-400 transition-colors">
-                  <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                  </svg>
-                </a>
-              </div>
-            </div>
-            
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Product</h4>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-gray-300 hover:text-teal-400 transition-colors">Features</a></li>
-                <li><a href="#" className="text-gray-300 hover:text-teal-400 transition-colors">Specifications</a></li>
-                <li><a href="#" className="text-gray-300 hover:text-teal-400 transition-colors">Installation</a></li>
-                <li><a href="#" className="text-gray-300 hover:text-teal-400 transition-colors">Warranty</a></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Support</h4>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-gray-300 hover:text-teal-400 transition-colors">Documentation</a></li>
-                <li><a href="#" className="text-gray-300 hover:text-teal-400 transition-colors">Help Center</a></li>
-                <li><a href="#" className="text-gray-300 hover:text-teal-400 transition-colors">Contact Us</a></li>
-                <li><a href="#" className="text-gray-300 hover:text-teal-400 transition-colors">Live Chat</a></li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-400 text-sm">
-              © 2025 EVolve Charger. All rights reserved.
-            </p>
-            <div className="flex space-x-6 mt-4 md:mt-0">
-              <a href="#" className="text-gray-400 hover:text-teal-400 text-sm transition-colors">Privacy Policy</a>
-              <a href="#" className="text-gray-400 hover:text-teal-400 text-sm transition-colors">Terms of Service</a>
-              <a href="#" className="text-gray-400 hover:text-teal-400 text-sm transition-colors">Cookie Policy</a>
-            </div>
-          </div>
-        </div>
-      </footer>
+      </section> */}
     </div>
   );
 }

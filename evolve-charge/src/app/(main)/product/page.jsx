@@ -386,7 +386,7 @@ export default function ProductPage() {
                     whileTap={{ scale: 0.97 }}
                     className="px-8 py-4 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium shadow-lg hover:shadow-xl transition-all"
                   >
-                    Pre-Order Now - $1,199
+                    Pre-Order Now - $99.99
                   </motion.button>
                   <motion.button
                     whileHover={{ scale: 1.03 }}
