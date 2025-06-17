@@ -44,7 +44,7 @@ const staggerContainer = {
 };
 
 // Team Member Component
-function TeamMember({ name, role, bio, image, linkedin, x, delay = 0 }) {
+function TeamMember({ name, role1, role2, bio, image, linkedin, x, delay = 0 }) {
   return (
     <motion.div
       initial="hidden"
@@ -80,8 +80,9 @@ function TeamMember({ name, role, bio, image, linkedin, x, delay = 0 }) {
         </div>
         
         <h3 className="text-xl font-bold text-gray-900 mb-2">{name}</h3>
-        <p className="text-teal-600 font-medium mb-4">{role}</p>
-        <p className="text-gray-600 text-sm leading-relaxed mb-6">{bio}</p>
+        <p className="text-teal-600 font-medium">{role1}</p>
+        {role2 && <p className="text-teal-600 font-medium">{role2}</p>}
+        <p className="text-gray-600 text-sm leading-relaxed mt-4 mb-6">{bio}</p>
         
         <div className="flex justify-center space-x-3">
           {linkedin && (
@@ -513,7 +514,8 @@ export default function AboutPage() {
               <TeamMember
                 key={index}
                 name={member.name}
-                role={member.role}
+                role1={member.role1}
+                role2={member.role2}
                 bio={member.bio}
                 image={member.img}
                 linkedin={member.linkedin}
