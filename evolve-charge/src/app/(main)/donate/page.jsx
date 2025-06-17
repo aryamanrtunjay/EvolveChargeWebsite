@@ -5,7 +5,8 @@ import { motion } from 'framer-motion';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { db } from '../../firebaseConfig.js';
-import { collection, addDoc, doc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { CheckCircle, ArrowRight, Shield, ArrowLeft } from 'lucide-react';
 
 // Initialize Stripe
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
@@ -112,7 +113,6 @@ function SuccessModal({ isOpen, onClose, donationAmount, donationDetails }) {
 
   const generatePDF = async () => {
     try {
-      // Ensure all required fields are present
       const pdfData = {
         firstName: donationDetails.firstName || 'Donor',
         lastName: donationDetails.lastName || '',
@@ -121,8 +121,6 @@ function SuccessModal({ isOpen, onClose, donationAmount, donationDetails }) {
         donationDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
         dedicateTo: donationDetails.dedicateTo || null,
       };
-
-      console.log('Generating PDF with data:', pdfData);
 
       const response = await fetch('/api/generate-receipt', {
         method: 'POST',
@@ -159,9 +157,7 @@ function SuccessModal({ isOpen, onClose, donationAmount, donationDetails }) {
       >
         <div className="text-center">
           <div className="w-16 h-16 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
+            <CheckCircle className="h-8 w-8 text-white" />
           </div>
           <h3 className="text-2xl font-bold text-gray-900 mb-2">Thank You!</h3>
           <p className="text-gray-600 mb-6">
@@ -200,9 +196,8 @@ function SuccessModal({ isOpen, onClose, donationAmount, donationDetails }) {
   );
 }
 
-export default function DonationsPage() {
-  const [selectedAmount, setSelectedAmount] = useState(50);
-  const [customAmount, setCustomAmount] = useState('');
+export default function DonatePage() {
+  const [donationAmount, setDonationAmount] = useState(50);
   const [step, setStep] = useState(1);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -233,7 +228,14 @@ export default function DonationsPage() {
     dedicateTo: null,
   });
 
-  const predefinedAmounts = [25, 50, 100, 250, 500, 1000];
+  // Get donation amount from URL parameters
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const amountParam = urlParams.get('amount');
+    if (amountParam && !isNaN(parseFloat(amountParam))) {
+      setDonationAmount(parseFloat(amountParam));
+    }
+  }, []);
 
   const impactData = [
     {
@@ -268,13 +270,8 @@ export default function DonationsPage() {
     }
   ];
 
-  const getCurrentAmount = () => {
-    return customAmount ? parseFloat(customAmount) || 0 : selectedAmount;
-  };
-
   const getCurrentImpact = () => {
-    const amount = getCurrentAmount();
-    const impact = impactData.find(item => item.amount <= amount);
+    const impact = impactData.find(item => item.amount <= donationAmount);
     return impact || impactData[0];
   };
 
@@ -318,25 +315,6 @@ export default function DonationsPage() {
     }
   };
 
-  const handleAmountSelect = (amount) => {
-    setSelectedAmount(amount);
-    setCustomAmount('');
-  };
-
-  const handleCustomAmountChange = (e) => {
-    const value = e.target.value;
-    if (value === '' || /^\d*\.?\d*$/.test(value)) {
-      setCustomAmount(value);
-      setSelectedAmount(0);
-    }
-  };
-
-  const handleSliderChange = (e) => {
-    const value = e.target.value;
-    setCustomAmount(value);
-    setSelectedAmount(0);
-  };
-
   const prepareDonation = async () => {
     setIsProcessing(true);
     setError(null);
@@ -346,7 +324,7 @@ export default function DonationsPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          amount: Math.round(getCurrentAmount() * 100),
+          amount: Math.round(donationAmount * 100),
           metadata: {
             email: formData.email,
             donationType: 'one-time',
@@ -410,7 +388,7 @@ export default function DonationsPage() {
       const donorId = donorRef.id;
 
       const donationData = {
-        amount: getCurrentAmount(),
+        amount: donationAmount,
         donationType: 'one-time',
         status: 'Completed',
         donationDate: serverTimestamp(),
@@ -439,7 +417,7 @@ export default function DonationsPage() {
         body: JSON.stringify({
           email: formData.email,
           donationId: `DON-${donationId}`,
-          amount: getCurrentAmount().toFixed(2),
+          amount: donationAmount.toFixed(2),
           firstName: formData.firstName,
           lastName: formData.lastName,
           donationType: 'one-time',
@@ -464,13 +442,6 @@ export default function DonationsPage() {
 
   const nextStep = async () => {
     if (step === 1) {
-      if (getCurrentAmount() <= 0) {
-        alert('Please select or enter a donation amount');
-        return;
-      }
-      window.scrollTo(0, 0);
-      setStep(step + 1);
-    } else if (step === 2) {
       if (!validateForm()) {
         const firstErrorField = Object.keys(validationErrors)[0];
         const element = document.getElementById(firstErrorField);
@@ -483,10 +454,7 @@ export default function DonationsPage() {
 
       window.scrollTo(0, 0);
       setStep(step + 1);
-
-      if (step + 1 === 3) {
-        await prepareDonation();
-      }
+      await prepareDonation();
     }
   };
 
@@ -512,7 +480,7 @@ export default function DonationsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-32 pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50 pt-32 pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Hero Section */}
         <motion.div 
@@ -522,28 +490,27 @@ export default function DonationsPage() {
           className="text-center mb-16"
         >
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-            Accelerate the Future of
-            <span className="bg-gradient-to-r from-teal-500 to-cyan-500 bg-clip-text text-transparent"> Wireless EV Charging</span>
+            Complete Your
+            <span className="bg-gradient-to-r from-teal-500 to-cyan-500 bg-clip-text text-transparent"> Donation</span>
           </h1>
           <p className="text-xl text-gray-700 max-w-3xl mx-auto mb-8">
-            Your donation powers Evolve Charge’s mission to develop cutting-edge wireless charging technology, making electric vehicles more accessible and sustainable for all.
+            Thank you for supporting wireless EV charging innovation. Your ${donationAmount.toFixed(2)} donation will make a real difference.
           </p>
-          <div className="flex flex-wrap justify-center gap-8 text-sm text-gray-600">
-            <div className="flex items-center">
-              <div className="w-2 h-2 bg-teal-500 rounded-full mr-2"></div>
-              Secure payments
-            </div>
-            <div className="flex items-center">
-              <div className="w-2 h-2 bg-teal-500 rounded-full mr-2"></div>
-              Supports EV innovation
-            </div>
-          </div>
+          
+          {/* Back to Support Page Button */}
+          <button
+            onClick={() => window.location.href = '/support'}
+            className="inline-flex items-center text-teal-600 hover:text-teal-700 font-medium mb-8"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Support Page
+          </button>
         </motion.div>
 
         {/* Progress Indicator */}
-        <div className="max-w-3xl mx-auto mb-10">
+        <div className="max-w-2xl mx-auto mb-10">
           <div className="flex items-center justify-between mb-4">
-            {['Amount', 'Your Information', 'Payment'].map((label, index) => (
+            {['Your Information', 'Payment'].map((label, index) => (
               <div key={index} className="flex flex-col items-center">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
                   step > index + 1 
@@ -553,9 +520,7 @@ export default function DonationsPage() {
                       : 'bg-white border border-gray-300 text-gray-300'
                 }`}>
                   {step > index + 1 ? (
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
+                    <CheckCircle className="h-6 w-6" />
                   ) : (
                     index + 1
                   )}
@@ -571,139 +536,22 @@ export default function DonationsPage() {
           <div className="relative h-1 bg-gray-200 rounded-full">
             <div 
               className="absolute h-1 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full transition-all duration-500"
-              style={{ width: `${(step - 1) * 50}%` }}
+              style={{ width: `${(step - 1) * 100}%` }}
             ></div>
           </div>
         </div>
 
-        {/* Step 1: Donation Amount */}
+        {/* Step 1: Donor Information */}
         {step === 1 && (
-          <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <motion.div variants={slideInLeft} className="lg:col-span-2">
-                <div className="bg-white rounded-xl shadow-lg p-8">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Choose Your Impact</h2>
-                  
-                  {/* Predefined Amounts */}
-                  <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Suggested Amounts</h3>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                      {predefinedAmounts.map((amount) => (
-                        <button
-                          key={amount}
-                          onClick={() => handleAmountSelect(amount)}
-                          className={`p-4 rounded-lg border-2 transition-all ${
-                            selectedAmount === amount && !customAmount
-                              ? 'border-teal-500 bg-teal-50 text-teal-700'
-                              : 'border-gray-200 hover:border-gray-300 text-gray-700'
-                          }`}
-                        >
-                          <div className="text-2xl font-bold">${amount}</div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Custom Amount with Slider */}
-                  <div className="mb-8">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Custom Amount</h3>
-                    <div className="mb-4">
-                      <input
-                        type="range"
-                        min="0"
-                        max="1000"
-                        step="1"
-                        value={customAmount || 0}
-                        onChange={handleSliderChange}
-                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                        style={{
-                          background: `linear-gradient(to right, #0d9488 0%, #0d9488 ${(customAmount || 0) / 1000 * 100}%, #e5e7eb ${(customAmount || 0) / 1000 * 100}%, #e5e7eb 100%)`
-                        }}
-                      />
-                      <div className="flex justify-between text-sm text-gray-600 mt-2">
-                        <span>$0</span>
-                        <span>$1,000</span>
-                      </div>
-                    </div>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <span className="text-gray-500 text-lg">$</span>
-                      </div>
-                      <input
-                        type="text"
-                        value={customAmount}
-                        onChange={handleCustomAmountChange}
-                        placeholder="Enter amount"
-                        className="w-full text-black pl-8 pr-3 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                      />
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={nextStep}
-                    className="w-full py-3 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium shadow-md hover:shadow-lg transition-all"
-                  >
-                    Continue with ${getCurrentAmount().toFixed(2)}
-                  </button>
-                </div>
-              </motion.div>
-
-              <motion.div variants={slideInRight} className="lg:col-span-1">
-                <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">Your Impact</h3>
-                  <div className="text-center">
-                    <div className="text-4xl mb-2">{getCurrentImpact().icon}</div>
-                    <div className="text-2xl font-bold text-teal-600 mb-2">
-                      ${getCurrentAmount().toFixed(2)}
-                    </div>
-                    <p className="text-gray-600 text-sm">
-                      {getCurrentImpact().impact}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-xl p-6">
-                  <h3 className="text-lg font-bold text-gray-900 mb-4">Our Mission</h3>
-                  <div className="space-y-4 text-sm text-gray-700">
-                    <div className="flex items-start">
-                      <div className="w-2 h-2 bg-teal-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                      <p>Develop innovative smart EV charging solutions</p>
-                    </div>
-                    <div className="flex items-start">
-                      <div className="w-2 h-2 bg-teal-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                      <p>Make electric vehicle ownership more accessible</p>
-                    </div>
-                    <div className="flex items-start">
-                      <div className="w-2 h-2 bg-teal-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                      <p>Reduce carbon emissions through sustainable technology</p>
-                    </div>
-                    <div className="flex items-start">
-                      <div className="w-2 h-2 bg-teal-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                      <p>Making sure you never run out of charge again</p>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-          </motion.div>
-        )}
-
-        {/* Step 2: Donor Information */}
-        {step === 2 && (
           <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-4xl mx-auto">
-            <motion.div variants={fadeIn} className="text-center mb-10">
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">Your Information</h1>
-              <p className="text-lg text-gray-700">Provide your details to receive your receipt and updates on our wireless charging innovations.</p>
-            </motion.div>
-
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <motion.div variants={slideInLeft} className="lg:col-span-2">
-                <div className="bg-white rounded-xl shadow-lg p-8">
-                  <h2 className="text-xl font-bold text-gray-900 mb-6">Contact Information</h2>
+                <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Your Information</h2>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                     <div>
-                      <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
+                      <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
                         First Name *
                       </label>
                       <input
@@ -712,7 +560,7 @@ export default function DonationsPage() {
                         name="firstName"
                         value={formData.firstName}
                         onChange={handleInputChange}
-                        className={`w-full text-black px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent ${
+                        className={`w-full text-black px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all ${
                           validationErrors.firstName ? 'border-red-300 bg-red-50' : 'border-gray-300'
                         }`}
                       />
@@ -721,7 +569,7 @@ export default function DonationsPage() {
                       )}
                     </div>
                     <div>
-                      <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
+                      <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
                         Last Name *
                       </label>
                       <input
@@ -730,7 +578,7 @@ export default function DonationsPage() {
                         name="lastName"
                         value={formData.lastName}
                         onChange={handleInputChange}
-                        className={`w-full text-black px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent ${
+                        className={`w-full text-black px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all ${
                           validationErrors.lastName ? 'border-red-300 bg-red-50' : 'border-gray-300'
                         }`}
                       />
@@ -741,7 +589,7 @@ export default function DonationsPage() {
                   </div>
 
                   <div className="mb-6">
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                       Email Address *
                     </label>
                     <input
@@ -750,7 +598,7 @@ export default function DonationsPage() {
                       name="email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className={`w-full text-black px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent ${
+                      className={`w-full text-black px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all ${
                         validationErrors.email ? 'border-red-300 bg-red-50' : 'border-gray-300'
                       }`}
                     />
@@ -760,7 +608,7 @@ export default function DonationsPage() {
                   </div>
 
                   <div className="mb-6">
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
                       Phone Number (Optional)
                     </label>
                     <input
@@ -769,7 +617,7 @@ export default function DonationsPage() {
                       name="phone"
                       value={formData.phone}
                       onChange={handleInputChange}
-                      className="w-full text-black px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      className="w-full text-black px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                     />
                   </div>
 
@@ -778,16 +626,14 @@ export default function DonationsPage() {
                     
                     <div className="mb-4">
                       <div className="flex items-start">
-                        <div className="flex items-center h-5">
-                          <input
-                            id="dedicateGift"
-                            name="dedicateGift"
-                            type="checkbox"
-                            checked={formData.dedicateGift}
-                            onChange={handleInputChange}
-                            className="h-4 w-4 text-black text-teal-500 border-gray-300 rounded focus:ring-teal-500"
-                          />
-                        </div>
+                        <input
+                          id="dedicateGift"
+                          name="dedicateGift"
+                          type="checkbox"
+                          checked={formData.dedicateGift}
+                          onChange={handleInputChange}
+                          className="h-4 w-4 text-teal-500 border-gray-300 rounded focus:ring-teal-500 mt-1"
+                        />
                         <div className="ml-3">
                           <label htmlFor="dedicateGift" className="font-medium text-gray-700">
                             Dedicate this gift in honor or memory of someone
@@ -798,7 +644,7 @@ export default function DonationsPage() {
 
                     {formData.dedicateGift && (
                       <div className="mb-4">
-                        <label htmlFor="dedicateTo" className="block text-sm font-medium text-gray-700 mb-1">
+                        <label htmlFor="dedicateTo" className="block text-sm font-medium text-gray-700 mb-2">
                           In honor/memory of
                         </label>
                         <input
@@ -808,23 +654,21 @@ export default function DonationsPage() {
                           value={formData.dedicateTo}
                           onChange={handleInputChange}
                           placeholder="Enter name"
-                          className="w-full text-black px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                          className="w-full text-black px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                         />
                       </div>
                     )}
 
                     <div className="mb-4">
                       <div className="flex items-start">
-                        <div className="flex items-center h-5">
-                          <input
-                            id="anonymous"
-                            name="anonymous"
-                            type="checkbox"
-                            checked={formData.anonymous}
-                            onChange={handleInputChange}
-                            className="h-4 w-4 text-black text-teal-500 border-gray-300 rounded focus:ring-teal-500"
-                          />
-                        </div>
+                        <input
+                          id="anonymous"
+                          name="anonymous"
+                          type="checkbox"
+                          checked={formData.anonymous}
+                          onChange={handleInputChange}
+                          className="h-4 w-4 text-teal-500 border-gray-300 rounded focus:ring-teal-500 mt-1"
+                        />
                         <div className="ml-3">
                           <label htmlFor="anonymous" className="font-medium text-gray-700">
                             Make this donation anonymous
@@ -837,22 +681,20 @@ export default function DonationsPage() {
                   <div className="border-t border-gray-200 pt-6 mb-6">
                     <div className="mb-4">
                       <div className="flex items-start">
-                        <div className="flex items-center h-5">
-                          <input
-                            id="updates"
-                            name="updates"
-                            type="checkbox"
-                            checked={formData.updates}
-                            onChange={handleInputChange}
-                            className="h-4 w-4 text-black text-teal-500 border-gray-300 rounded focus:ring-teal-500"
-                          />
-                        </div>
+                        <input
+                          id="updates"
+                          name="updates"
+                          type="checkbox"
+                          checked={formData.updates}
+                          onChange={handleInputChange}
+                          className="h-4 w-4 text-teal-500 border-gray-300 rounded focus:ring-teal-500 mt-1"
+                        />
                         <div className="ml-3">
                           <label htmlFor="updates" className="font-medium text-gray-700">
-                            Send me updates about Evolve Charge's progress
+                            Send me updates about EVolve Charge's progress
                           </label>
-                          <p className="text-sm text-gray-500">
-                            Stay informed about our advancements in wireless EV charging.
+                          <p className="text-sm text-gray-500 mt-1">
+                            Stay informed about our wireless EV charging innovations
                           </p>
                         </div>
                       </div>
@@ -860,18 +702,16 @@ export default function DonationsPage() {
 
                     <div className="mb-4">
                       <div className="flex items-start">
-                        <div className="flex items-center h-5">
-                          <input
-                            id="agreeTerms"
-                            name="agreeTerms"
-                            type="checkbox"
-                            checked={formData.agreeTerms}
-                            onChange={handleInputChange}
-                            className={`h-4 w-4 text-teal-500 border rounded focus:ring-teal-500 ${
-                              validationErrors.agreeTerms ? 'border-red-300' : 'border-gray-300'
-                            }`}
-                          />
-                        </div>
+                        <input
+                          id="agreeTerms"
+                          name="agreeTerms"
+                          type="checkbox"
+                          checked={formData.agreeTerms}
+                          onChange={handleInputChange}
+                          className={`h-4 w-4 text-teal-500 border rounded focus:ring-teal-500 mt-1 ${
+                            validationErrors.agreeTerms ? 'border-red-300' : 'border-gray-300'
+                          }`}
+                        />
                         <div className="ml-3">
                           <label htmlFor="agreeTerms" className="font-medium text-gray-700">
                             I agree to the Terms of Service and Privacy Policy *
@@ -891,43 +731,46 @@ export default function DonationsPage() {
 
                   <div className="flex space-x-4">
                     <button
-                      onClick={prevStep}
-                      className="w-1/3 py-3 rounded-full border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+                      onClick={() => window.location.href = '/support'}
+                      className="w-1/3 py-3 rounded-xl border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-all flex items-center justify-center"
                     >
+                      <ArrowLeft className="w-4 h-4 mr-2" />
                       Back
                     </button>
                     <button
                       onClick={nextStep}
-                      className="w-2/3 py-3 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium shadow-md hover:shadow-lg transition-all"
+                      className="w-2/3 py-3 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-[1.02] flex items-center justify-center"
                     >
                       Continue to Payment
+                      <ArrowRight className="w-4 h-4 ml-2" />
                     </button>
                   </div>
                 </div>
               </motion.div>
 
               <motion.div variants={slideInRight} className="lg:col-span-1">
-                <div className="bg-white rounded-xl shadow-lg p-6 sticky top-28">
-                  <h2 className="text-xl font-bold text-gray-900 mb-6">Donation Summary</h2>
+                <div className="bg-white rounded-2xl shadow-xl p-6 sticky top-28 border border-gray-100">
+                  <h3 className="text-xl font-bold text-gray-900 mb-6">Donation Summary</h3>
                   
-                  <div className="mb-6">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-gray-600">Donation Amount</span>
-                      <span className="text-lg font-semibold text-gray-900">
-                        ${getCurrentAmount().toFixed(2)}
-                      </span>
+                  <div className="text-center mb-6">
+                    <div className="text-4xl mb-2">{getCurrentImpact().icon}</div>
+                    <div className="text-3xl font-bold text-teal-600 mb-2">
+                      ${donationAmount.toFixed(2)}
                     </div>
+                    <p className="text-gray-600 text-sm">
+                      {getCurrentImpact().impact}
+                    </p>
                   </div>
 
                   <div className="border-t border-gray-200 pt-4 mb-6">
-                    <div className="flex justify-between items-center font-bold text-lg">
+                    <div className="flex justify-between items-center font-bold text-xl">
                       <span className="text-gray-900">Total</span>
-                      <span className="text-gray-900">${getCurrentAmount().toFixed(2)}</span>
+                      <span className="text-gray-900">${donationAmount.toFixed(2)}</span>
                     </div>
                   </div>
 
                   <div className="bg-gray-50 p-4 rounded-lg">
-                    <h3 className="font-medium text-gray-900 mb-2">Where Your Money Goes</h3>
+                    <h4 className="font-medium text-gray-900 mb-3">Where Your Money Goes</h4>
                     <div className="space-y-2 text-sm text-gray-700">
                       <div className="flex justify-between">
                         <span>Research & Development</span>
@@ -953,35 +796,28 @@ export default function DonationsPage() {
           </motion.div>
         )}
 
-        {/* Step 3: Payment */}
-        {step === 3 && (
+        {/* Step 2: Payment */}
+        {step === 2 && (
           <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-4xl mx-auto">
-            <motion.div variants={fadeIn} className="text-center mb-10">
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">Complete Your Donation</h1>
-              <p className="text-lg text-gray-700">Your support drives the future of wireless EV charging.</p>
-            </motion.div>
-
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <motion.div variants={slideInLeft} className="lg:col-span-2">
-                <div className="bg-white rounded-xl shadow-lg p-8">
-                  <div className="flex items-center bg-white p-6 rounded-lg shadow-sm border border-gray-100 mt-6">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-blue-600 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                    </svg>
+                <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+                  <div className="flex items-center bg-blue-50 p-6 rounded-lg border border-blue-100 mb-6">
+                    <Shield className="h-8 w-8 text-blue-600 mr-4" />
                     <div>
                       <p className="text-base font-semibold text-gray-900">
                         Your Payment is Safe and Secure
                       </p>
                       <p className="text-sm text-gray-600 mt-1">
-                        We partner with <a href="https://stripe.com" target="_blank" className="text-blue-600 hover:underline font-medium">Stripe</a>, a globally trusted payment processor, to handle your transactions securely. Your credit card information is encrypted and never stored on our servers. Our platform is PCI-compliant and uses industry-standard 256-bit SSL encryption to protect your data.
+                        We use Stripe for secure payment processing with 256-bit SSL encryption
                       </p>
                     </div>
                   </div>
 
-                  <h2 className="text-xl font-bold text-gray-900 mb-6">Payment Information</h2>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Payment Information</h2>
                   
                   {error && (
-                    <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-lg">
+                    <div className="mb-6 p-4 bg-red-50 text-red-700 rounded-lg border border-red-200">
                       <div className="font-medium">Error:</div>
                       <div>{error}</div>
                     </div>
@@ -991,7 +827,7 @@ export default function DonationsPage() {
                     <Elements options={stripeOptions} stripe={stripePromise}>
                       <CheckoutForm
                         onSuccess={handlePaymentSuccess}
-                        amount={getCurrentAmount()}
+                        amount={donationAmount}
                         isProcessing={isProcessing}
                         setIsProcessing={setIsProcessing}
                         setError={setError}
@@ -1006,58 +842,37 @@ export default function DonationsPage() {
                     </div>
                   )}
 
-                  <div className="flex items-center bg-blue-50 p-4 rounded-lg mb-6">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <p className="text-sm text-blue-700">
-                      <strong>Impact:</strong> 1% of your donation goes to removing carbon from our atmosphere.
+                  <div className="flex items-center bg-teal-50 p-4 rounded-lg mt-6">
+                    <CheckCircle className="h-6 w-6 text-teal-500 mr-3" />
+                    <p className="text-sm text-teal-700">
+                      <strong>Impact:</strong> Your donation directly funds wireless EV charging research and development.
                     </p>
                   </div>
-
                 </div>
               </motion.div>
 
               <motion.div variants={slideInRight} className="lg:col-span-1">
-                <div className="bg-white rounded-xl shadow-lg p-6 sticky top-28">
-                  <h2 className="text-xl font-bold text-gray-900 mb-6">Donation Summary</h2>
+                <div className="bg-white rounded-2xl shadow-xl p-6 sticky top-28 border border-gray-100">
+                  <h3 className="text-xl font-bold text-gray-900 mb-6">Final Summary</h3>
                   
-                  <div className="mb-6">
-                    <div className="flex justify-between items-center mb-2">
+                  <div className="space-y-4 mb-6">
+                    <div className="flex justify-between">
                       <span className="text-gray-600">Donation Amount</span>
-                      <span className="text-lg font-semibold text-gray-900">
-                        ${getCurrentAmount().toFixed(2)}
-                      </span>
+                      <span className="font-semibold text-gray-700">${donationAmount.toFixed(2)}</span>
+                    </div>
+                    <div className="border-t pt-4">
+                      <div className="flex justify-between font-bold text-xl text-gray-700">
+                        <span>Total</span>
+                        <span className="text-teal-600">${donationAmount.toFixed(2)}</span>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="border-t border-gray-200 pt-4 mb-6">
-                    <div className="flex justify-between items-center font-bold text-lg">
-                      <span className="text-gray-900">Total</span>
-                      <span className="text-gray-900">${getCurrentAmount().toFixed(2)}</span>
-                    </div>
-                  </div>
-
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <h3 className="font-medium text-gray-900 mb-2">Where Your Money Goes</h3>
-                    <div className="space-y-2 text-sm text-gray-700">
-                      <div className="flex justify-between">
-                        <span>Research & Development</span>
-                        <span>70%</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Pilot Deployments</span>
-                        <span>20%</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Community Outreach</span>
-                        <span>5%</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Administrative</span>
-                        <span>5%</span>
-                      </div>
-                    </div>
+                  <div className="bg-teal-50 p-4 rounded-lg border border-teal-100">
+                    <h4 className="font-medium text-teal-900 mb-2">Thank You!</h4>
+                    <p className="text-sm text-teal-700">
+                      Your contribution helps accelerate sustainable transportation technology
+                    </p>
                   </div>
                 </div>
               </motion.div>
@@ -1068,8 +883,11 @@ export default function DonationsPage() {
         {/* Success Modal */}
         <SuccessModal
           isOpen={showSuccess}
-          onClose={() => setShowSuccess(false)}
-          donationAmount={getCurrentAmount()}
+          onClose={() => {
+            setShowSuccess(false);
+            window.location.href = '/support';
+          }}
+          donationAmount={donationAmount}
           donationDetails={donationDetails}
         />
       </div>

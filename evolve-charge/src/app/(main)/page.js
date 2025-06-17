@@ -847,15 +847,15 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <StatCard value={250} units="$" label="dollars saved every year" index={0} />
-            <StatCard value={15} units="years" label="added to your car's battery lifespan" index={1} />
-            <StatCard value={9} units="hours" label="saved plugging in every year" index={2} />
+            <StatCard value={300} units="%" label="increase in your car's battery lifespan" index={1} />
+            <StatCard value={10} units="hours" label="saved plugging in every year" index={2} />
           </div>
           <p className="text-center text-sm text-gray-500 mt-16">These figures represent estimated savings and benefits based on typical usage, and are not guaranteed results.</p>
         </div>
       </section>
 
       {/* Donors Section */}
-      <section id="donors" className="relative overflow-hidden bg-gradient-to-b from-gray-50 to-white py-16">
+      {/* <section id="donors" className="relative overflow-hidden bg-gradient-to-b from-gray-50 to-white py-16">
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:grid lg:grid-cols-3 lg:gap-8">
             <div className="lg:col-span-2">
@@ -1004,7 +1004,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* CTA Section */}
       <section className="py-20 md:py-28 bg-gradient-to-r from-teal-600 to-cyan-600 relative overflow-hidden">

@@ -12,7 +12,7 @@ const NAV_ITEMS = [
   { label: 'Product', href: '/product' },
   { label: 'About', href: '/about' },
   { label: 'FAQ', href: '/faq' },
-  { label: 'Support Us', href: '/donate' },
+  { label: 'Support Us', href: '/support-us' },
 ];
 
 export default function Navigation() {
