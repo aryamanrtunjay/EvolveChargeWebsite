@@ -224,7 +224,7 @@ const StorySection = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header with enhanced typography */}
-        <div className="text-center mb-16">
+        {/* <div className="text-center mb-16">
           <div className={`inline-flex items-center px-4 py-2 bg-gradient-to-r from-teal-100 to-cyan-100 rounded-full text-sm font-medium text-teal-800 mb-6 transform transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
             <Zap className="w-4 h-4 mr-2" />
             Our Journey to Revolutionize EV Charging
@@ -235,7 +235,7 @@ const StorySection = () => {
           <p className={`text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed transform transition-all duration-1000 delay-400 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
             From garage frustration to global innovation
           </p>
-        </div>
+        </div> */}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
           {/* Left side - Story content with enhanced interactivity */}
@@ -309,7 +309,8 @@ export default function AboutPage() {
   const teamMembers = [
     {
       name: "Aryaman Rtunjay",
-      role: "Co-Founder & co-CEO",
+      role1: "Co-Chief Executive Officer",
+      role2: "Co-Founder",
       bio: "Aryaman, a computer engineering student at the University of Washington, leads EVolve Charge with a passion for innovation. Skilled in Python, C++, JavaScript, and frameworks like NextJS, he blends hardware and software to simplify EV charging. Aryaman thrives on solving complex problems and driving collaborative impact.",
       linkedin: "https://linkedin.com/in/aryaman-rtunjay",
       x: "https://x.com/aryamanrtunjay",
@@ -317,21 +318,23 @@ export default function AboutPage() {
     },
     {
       name: "Bhanu Atmakuri",
-      role: "Co-Founder & co-CEO",
+      role1: "Co-Chief Executive Officer",
+      role2: "Co-Founder",
       bio: "Bhanu, a computer engineering student at the University of Washington, spearheads EVolve Charge’s product development. Expert in Python, JavaScript (NextJS, Tailwind), C, and PCB design, he’s guided the company from concept to patent-pending smart chargers. Bhanu also empowers young coders through Hackabyte, blending tech and impact.",
       linkedin: "https://www.linkedin.com/in/bhanu-atmakuri-9499752b3/",
       img: { src: "/images/bhanu.jpeg", alt: "BA" }
     },
     {
       name: "Shruthika Balasubramanian",
-      role: "Co-Founder & CMO",
+      role1: "Chief Marketing Officer",
+      role2: "Co-Founder",
       bio: "Shruthika drives EVolve Charge’s brand with a passion for computer science, business, and sustainability. As CMO, she crafts impactful narratives, blending technology with environmental and social justice goals. Her strategic vision amplifies the company’s mission to make EV charging seamless and sustainable.",
       linkedin: "https://www.linkedin.com/in/shruthika-balasubramanian-233634369/",
       img: { src: "/images/shruthika.jpeg", alt: "SB" }
     },
     {
       name: "Aadesh Kumar",
-      role: "CTO",
+      role1: "Principal Firmware Engineer",
       bio: "Aadesh, a robotics enthusiast, leads EVolve Charge’s technology as CTO. Skilled in programming autonomous systems, he designs the charger’s firmware and mobile app for seamless automation. Passionate about sustainability, Aadesh draws from his research in quantum computing and hydrogen aviation to drive EVolve’s mission to revolutionize EV charging.",
       linkedin: "https://www.linkedin.com/in/aadesh-kumar-9104a3215/",
       img: { src: "/images/aadesh.jpeg", alt: "AK" },
@@ -455,7 +458,7 @@ export default function AboutPage() {
       </section>
 
       {/* Timeline Section */}
-      <section className="py-20 bg-white">
+      {/* <section className="py-20 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="hidden"
@@ -484,7 +487,7 @@ export default function AboutPage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Team Section */}
       <section className="py-20 bg-gray-50">
