@@ -335,7 +335,7 @@ export default function AboutPage() {
     {
       name: "Aadesh Kumar",
       role1: "Principal Firmware Engineer",
-      bio: "Aadesh, a robotics enthusiast, leads EVolve Charge’s technology as CTO. Skilled in programming autonomous systems, he designs the charger’s firmware and mobile app for seamless automation. Passionate about sustainability, Aadesh draws from his research in quantum computing and hydrogen aviation to drive EVolve’s mission to revolutionize EV charging.",
+      bio: "Aadesh, a robotics enthusiast, leads EVolve Charge’s firmware design. Skilled in programming autonomous systems, he designs the charger’s firmware for seamless automation. Passionate about sustainability, Aadesh draws from his research in quantum computing and hydrogen aviation to drive EVolve’s mission to revolutionize EV charging.",
       linkedin: "https://www.linkedin.com/in/aadesh-kumar-9104a3215/",
       img: { src: "/images/aadesh.jpeg", alt: "AK" },
     }
