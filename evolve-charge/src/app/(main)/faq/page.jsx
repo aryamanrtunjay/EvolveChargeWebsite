@@ -432,7 +432,7 @@ export default function FAQPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="relative pt-20 pb-16 overflow-hidden bg-gradient-to-br from-teal-50 via-white to-cyan-50">
+      <section className="relative pt-32 pb-16 overflow-hidden bg-gradient-to-br from-teal-50 via-white to-cyan-50">
         <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-gradient-to-bl from-teal-100 to-transparent rounded-bl-full opacity-70"></div>
         <div className="absolute bottom-0 left-0 w-1/4 h-1/4 bg-gradient-to-tr from-cyan-100 to-transparent rounded-tr-full opacity-70"></div>
         
