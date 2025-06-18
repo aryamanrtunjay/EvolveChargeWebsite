@@ -177,7 +177,7 @@ const StorySection = () => {
     setIsVisible(true);
     const interval = setInterval(() => {
       setActiveStoryPoint((prev) => (prev + 1) % 3);
-    }, 4000);
+    }, 5000);
     return () => clearInterval(interval);
   }, []);
 
@@ -185,120 +185,182 @@ const StorySection = () => {
     {
       icon: Clock,
       title: "The Problem",
-      description: "EV owners waste 9+ hours per year manually plugging and unplugging their vehicles.",
-      color: "from-red-500 to-orange-500",
-      bgColor: "bg-red-50",
-      borderColor: "border-red-200"
+      description: "EVolve Charge was born from a simple frustration: why should charging your electric vehicle be any more complicated than parking in your garage? Our founders, both EV owners and engineers, experienced the daily hassle of manually plugging and unplugging their vehicles.",
+      color: "from-emerald-400 to-teal-500",
+      bgColor: "bg-emerald-500/10",
+      borderColor: "border-emerald-200/30",
+      glowColor: "shadow-emerald-500/20"
     },
     {
       icon: Target,
       title: "The Vision", 
-      description: "Charging should be as automatic as parking - no manual intervention required",
-      color: "from-blue-500 to-cyan-500",
-      bgColor: "bg-blue-50",
-      borderColor: "border-blue-200"
+      description: "After researching the market, we discovered that while EVs had advanced tremendously, charging infrastructure remained stuck in the past. We envisioned a world where your vehicle charges automatically, intelligently, and cost-effectively without any manual intervention.",
+      color: "from-blue-400 to-indigo-500",
+      bgColor: "bg-blue-500/10",
+      borderColor: "border-blue-200/30",
+      glowColor: "shadow-blue-500/20"
     },
     {
       icon: Zap,
       title: "The Solution",
-      description: "Intelligent automation that connects, charges, and optimizes without you lifting a finger",
-      color: "from-green-500 to-teal-500",
-      bgColor: "bg-green-50",
-      borderColor: "border-green-200"
+      description: "What started as weekend project in a garage has grown into a dedicated team of engineers, designers, and EV enthusiasts working to make this vision a reality. Today, we're proud to introduce the world's first truly automatic EV charger.",
+      color: "from-teal-400 to-cyan-500",
+      bgColor: "bg-teal-500/10",
+      borderColor: "border-teal-200/30",
+      glowColor: "shadow-teal-500/20"
     }
   ];
 
-  const milestones = [
-    { year: "2021", event: "Weekend garage project begins", icon: Lightbulb },
-    { year: "2022", event: "First prototype developed", icon: Zap },
-    { year: "2023", event: "Team expansion & funding", icon: Users },
-    { year: "2024", event: "World's first automatic EV charger", icon: Award }
-  ];
-
   return (
-    <section className="py-24 bg-gradient-to-br from-slate-50 via-white to-cyan-50 relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 opacity-30">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-br from-teal-200 to-cyan-200 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-br from-blue-200 to-indigo-200 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+    <section className="py-24 relative overflow-hidden">
+      {/* Background with subtle gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-blue-50/30"></div>
+      
+      {/* Floating orbs for ambient lighting */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-br from-emerald-300/20 to-teal-400/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-br from-blue-300/20 to-indigo-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-1/2 right-1/3 w-64 h-64 bg-gradient-to-br from-teal-300/15 to-cyan-400/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '4s' }}></div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Header with enhanced typography */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* Header */}
         {/* <div className="text-center mb-16">
-          <div className={`inline-flex items-center px-4 py-2 bg-gradient-to-r from-teal-100 to-cyan-100 rounded-full text-sm font-medium text-teal-800 mb-6 transform transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-            <Zap className="w-4 h-4 mr-2" />
-            Our Journey to Revolutionize EV Charging
-          </div>
-          <h2 className={`text-5xl md:text-6xl font-bold bg-gradient-to-r from-gray-900 via-teal-800 to-cyan-800 bg-clip-text text-transparent mb-6 transform transition-all duration-1000 delay-200 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-            Our Story
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+            Why We Started 
+            <span className="bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent"> EVolve Charge</span>
           </h2>
-          <p className={`text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed transform transition-all duration-1000 delay-400 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-            From garage frustration to global innovation
+          <div className="w-24 h-1 bg-gradient-to-r from-teal-500 to-cyan-500 mx-auto rounded-full mb-6"></div>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            Our journey from frustration to innovation
           </p>
         </div> */}
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
-          {/* Left side - Story content with enhanced interactivity */}
-          <div className={`space-y-8 transform transition-all duration-1000 delay-600 ${isVisible ? 'translate-x-0 opacity-100' : '-translate-x-8 opacity-0'}`}>
-            <div className="prose prose-lg text-gray-700 space-y-6">
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
-                <p className="text-lg leading-relaxed mb-4">
-                  EVolve Charge was born from a simple frustration: why should charging your electric vehicle be any more complicated than parking in your garage? Our founders, both EV owners and engineers, experienced the daily hassle of manually plugging and unplugging their vehicles.
-                </p>
-              </div>
+        {/* Story Grid Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          
+          {/* Left Side - Story Navigation */}
+          <div className="space-y-6">
+            {storyPoints.map((point, index) => {
+              const IconComponent = point.icon;
+              const isActive = activeStoryPoint === index;
+              
+              return (
+                <div 
+                  key={index}
+                  className={`group cursor-pointer transition-all duration-700 ease-out transform ${
+                    isActive ? 'scale-[1.02]' : 'hover:scale-[1.01]'
+                  }`}
+                  onMouseEnter={() => setActiveStoryPoint(index)}
+                  onClick={() => setActiveStoryPoint(index)}
+                >
+                  {/* Glassmorphism Card */}
+                  <div className={`
+                    relative bg-white/70 border border-white/30 rounded-2xl p-6
+                    shadow-xl transition-all duration-700
+                    ${isActive ? `${point.glowColor} shadow-2xl ring-1 ring-white/40` : 'shadow-lg hover:shadow-xl'}
+                  `}>
+                    
+                    {/* Gradient overlay for active state */}
+                    {isActive && (
+                      <div className={`absolute inset-0 ${point.bgColor} rounded-2xl opacity-60 transition-opacity duration-700`}></div>
+                    )}
+                    
+                    <div className="relative z-10 flex items-center gap-6">
+                      {/* Icon Section */}
+                      <div className="flex-shrink-0">
+                        <div className={`
+                          w-16 h-16 bg-gradient-to-r ${point.color} rounded-xl 
+                          flex items-center justify-center transform transition-all duration-500
+                          shadow-lg backdrop-blur-sm
+                          ${isActive ? 'rotate-3 scale-110 shadow-xl' : 'group-hover:rotate-1 group-hover:scale-105'}
+                        `}>
+                          <IconComponent className="w-8 h-8 text-white" />
+                        </div>
+                      </div>
 
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
-                <p className="text-lg leading-relaxed">
-                  After researching the market, we discovered that while EVs had advanced tremendously, charging infrastructure remained stuck in the past. We envisioned a world where your vehicle charges automatically, intelligently, and cost-effectively without any manual intervention.
-                </p>
-              </div>
+                      {/* Content Section */}
+                      <div className="flex-1">
+                        <h3 className={`
+                          text-xl md:text-2xl font-bold transition-colors duration-500 mb-2
+                          ${isActive ? 'text-gray-900' : 'text-gray-800'}
+                        `}>
+                          {point.title}
+                        </h3>
+                      </div>
 
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
-                <p className="text-lg leading-relaxed">
-                  What started as weekend project in a garage has grown into a dedicated team of engineers, designers, and EV enthusiasts working to make this vision a reality. Today, we're proud to introduce the world's first truly automatic EV charger.
+                      {/* Arrow indicator */}
+                      <div className="flex-shrink-0">
+                        <div className={`
+                          w-1 h-8 rounded-full transition-all duration-500
+                          ${isActive ? `bg-gradient-to-b ${point.color} opacity-100` : 'bg-gray-300 opacity-50'}
+                        `}></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Right Side - Story Content */}
+          <div className="lg:pl-8">
+            <div className="relative backdrop-blur-xl bg-white/60 border border-white/20 rounded-3xl p-8 shadow-2xl min-h-[400px] flex flex-col justify-center">
+              
+              {/* Active story gradient overlay */}
+              <div className={`absolute inset-0 ${storyPoints[activeStoryPoint].bgColor} rounded-3xl opacity-40 transition-all duration-700`}></div>
+              
+              <div className="relative z-10">
+                {/* Large Icon */}
+                <div className={`
+                  w-20 h-20 bg-gradient-to-r ${storyPoints[activeStoryPoint].color} rounded-2xl 
+                  flex items-center justify-center mb-6 shadow-lg transform transition-all duration-700
+                  ${isVisible ? 'rotate-3 scale-110' : ''}
+                `}>
+                  {React.createElement(storyPoints[activeStoryPoint].icon, { 
+                    className: "w-10 h-10 text-white" 
+                  })}
+                </div>
+
+                {/* Story Content */}
+                <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 transition-all duration-500">
+                  {storyPoints[activeStoryPoint].title}
+                </h3>
+                
+                <p className="text-lg leading-relaxed text-gray-700 transition-all duration-500">
+                  {storyPoints[activeStoryPoint].description}
                 </p>
+
+                {/* Story Number */}
+                <div className="mt-8 flex items-center gap-4">
+                  <div className={`
+                    px-4 py-2 rounded-full bg-gradient-to-r ${storyPoints[activeStoryPoint].color} 
+                    text-white font-bold text-sm shadow-lg
+                  `}>
+                    {String(activeStoryPoint + 1).padStart(2, '0')}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-          
-          {/* Right side - Interactive story points */}
-          <div className={`transform transition-all duration-1000 delay-800 ${isVisible ? 'translate-x-0 opacity-100' : 'translate-x-8 opacity-0'}`}>
-            <div className="sticky top-8">
-              <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border border-gray-100">
-                <div className="text-center mb-8">
-                  <h3 className="text-3xl font-bold text-gray-900 mb-4">Why We Started EVolve</h3>
-                  <div className="w-24 h-1 bg-gradient-to-r from-teal-500 to-cyan-500 mx-auto rounded-full"></div>
-                </div>
-                
-                <div className="space-y-6">
-                  {storyPoints.map((point, index) => {
-                    const IconComponent = point.icon;
-                    const isActive = activeStoryPoint === index;
-                    
-                    return (
-                      <div 
-                        key={index}
-                        className={`${point.bgColor} ${point.borderColor} rounded-2xl p-6 border-2 cursor-pointer transition-all duration-500 hover:scale-105 ${isActive ? 'ring-4 ring-teal-200 shadow-xl scale-105' : 'hover:shadow-lg'}`}
-                        onMouseEnter={() => setActiveStoryPoint(index)}
-                      >
-                        <div className="flex items-start space-x-4">
-                          <div className={`flex-shrink-0 w-14 h-14 bg-gradient-to-r ${point.color} rounded-xl flex items-center justify-center transform transition-all duration-300 ${isActive ? 'rotate-6 scale-110' : ''}`}>
-                            <IconComponent className="w-7 h-7 text-white" />
-                          </div>
-                          <div className="flex-1">
-                            <h4 className="text-xl font-bold text-gray-900 mb-3">{point.title}</h4>
-                            <p className={`text-gray-700 leading-relaxed transition-all duration-300 ${isActive ? 'text-gray-800' : ''}`}>
-                              {point.description}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
+        </div>
+
+        {/* Navigation dots for mobile */}
+        <div className="flex justify-center mt-12 lg:hidden">
+          <div className="flex gap-3">
+            {storyPoints.map((point, index) => (
+              <button
+                key={index}
+                onClick={() => setActiveStoryPoint(index)}
+                className={`
+                  w-4 h-4 rounded-full transition-all duration-500
+                  ${activeStoryPoint === index 
+                    ? `bg-gradient-to-r ${point.color} scale-125` 
+                    : 'bg-gray-300 hover:bg-gray-400'
+                  }
+                `}
+              />
+            ))}
           </div>
         </div>
       </div>
@@ -312,7 +374,7 @@ export default function AboutPage() {
       name: "Aryaman Rtunjay",
       role1: "Co-Chief Executive Officer",
       role2: "Co-Founder",
-      bio: "Aryaman, a computer engineering student at the University of Washington, leads EVolve Charge with a passion for innovation. Skilled in Python, C++, JavaScript, and frameworks like NextJS, he blends hardware and software to simplify EV charging. Aryaman thrives on solving complex problems and driving collaborative impact.",
+      bio: "Aryaman shapes EVolve Charge’s vision and strategy, leading with unparalleled expertise in end-to-end engineering. He designs and implements the core technology behind the company’s innovative chargers, driving transformative impact. He also develops and builds liquid-fueled sub-orbital rockets and develops AI tools for environmental policy in developing nations and early detection of Parkinson's Disease",
       linkedin: "https://linkedin.com/in/aryaman-rtunjay",
       x: "https://x.com/aryamanrtunjay",
       img: { src: "/images/aryaman.jpeg", alt: "AR" }
@@ -321,7 +383,7 @@ export default function AboutPage() {
       name: "Bhanu Atmakuri",
       role1: "Co-Chief Executive Officer",
       role2: "Co-Founder",
-      bio: "Bhanu, a computer engineering student at the University of Washington, spearheads EVolve Charge’s product development. Expert in Python, JavaScript (NextJS, Tailwind), C, and PCB design, he’s guided the company from concept to patent-pending smart chargers. Bhanu also empowers young coders through Hackabyte, blending tech and impact.",
+      bio: "Bhanu fuels EVolve Charge’s innovation, leading product development with expertise in Python, JavaScript, C, and PCB design. He is instrumental in bringing the company’s patent-pending smart chargers from concept to reality, ensuring technical excellence. Through his hackathon, Hackabyte, Bhanu inspires young coders, blending cutting-edge technology with community impact.",
       linkedin: "https://www.linkedin.com/in/bhanu-atmakuri-9499752b3/",
       img: { src: "/images/bhanu.jpeg", alt: "BA" }
     },
@@ -329,14 +391,14 @@ export default function AboutPage() {
       name: "Shruthika Balasubramanian",
       role1: "Chief Marketing Officer",
       role2: "Co-Founder",
-      bio: "Shruthika drives EVolve Charge’s brand with a passion for computer science, business, and sustainability. As CMO, she crafts impactful narratives, blending technology with environmental and social justice goals. Her strategic vision amplifies the company’s mission to make EV charging seamless and sustainable.",
+      bio: "Shruthika spearheads EVolve Charge’s marketing strategy, leveraging her passion for computer science and sustainability. As CMO, she designs targeted campaigns and compelling brand stories that highlight the company’s eco-friendly mission. Her data-driven approach to customer engagement and advocacy for environmental justice amplify EVolve’s impact in the EV charging space.",
       linkedin: "https://www.linkedin.com/in/shruthika-balasubramanian-233634369/",
       img: { src: "/images/shruthika.jpeg", alt: "SB" }
     },
     {
       name: "Aadesh Kumar",
       role1: "Principal Firmware Engineer",
-      bio: "Aadesh, a robotics enthusiast, leads EVolve Charge’s firmware design. Skilled in programming autonomous systems, he designs the charger’s firmware for seamless automation. Passionate about sustainability, Aadesh draws from his research in quantum computing and hydrogen aviation to drive EVolve’s mission to revolutionize EV charging.",
+      bio: "Aadesh leads EVolve Charge’s firmware development with a deep expertise in robotics and autonomous systems. As Principal Firmware Engineer, he crafts reliable, efficient firmware to ensure seamless charger performance and automation. Drawing from his research in quantum computing and sustainable aviation, Aadesh drives EVolve’s mission for cutting-edge, eco-friendly technology.",
       linkedin: "https://www.linkedin.com/in/aadesh-kumar-9104a3215/",
       img: { src: "/images/aadesh.jpeg", alt: "AK" },
     }
