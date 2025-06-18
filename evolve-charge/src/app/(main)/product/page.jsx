@@ -143,7 +143,7 @@ export default function VideoViewer() {
         const setToLastFrame = () => {
           if (video.duration) {
             console.log('Setting to last frame');
-            video.currentTime = video.duration - 0.01;
+            video.currentTime = video.duration;
           }
         };
         if (video.readyState >= 2) {
@@ -166,16 +166,18 @@ export default function VideoViewer() {
     if (videoRef.current) {
       videoRef.current.pause();
       if (videoRef.current.duration) {
-        videoRef.current.currentTime = videoRef.current.duration - 0.01;
+        videoRef.current.currentTime = videoRef.current.duration;
       }
     }
-    if (currentState === 'playingTo') {
-      setCurrentState('atPOI');
-      setShowDescription(true);
-    } else if (currentState === 'playingFrom') {
-      setCurrentState('start');
-      setShowDescription(false);
-    }
+    setTimeout(() => {
+      if (currentState === 'playingTo') {
+        setCurrentState('atPOI');
+        setShowDescription(true);
+      } else if (currentState === 'playingFrom') {
+        setCurrentState('start');
+        setShowDescription(false);
+      }
+    }, 100);
   };
 
   // Handle interactive point clicks
@@ -237,6 +239,7 @@ export default function VideoViewer() {
         className="w-full h-full object-cover"
         onEnded={handleVideoEnded}
         controls={false}
+        playsinline
       />
 
       {/* Interactive Points Overlay */}
