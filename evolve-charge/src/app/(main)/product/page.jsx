@@ -93,7 +93,7 @@ export default function VideoViewer() {
     };
 
     loadVideos().catch(err => {
-      console.error('Error preloading videos:', err);
+      console.error('Error preloading virtual garage:', err);
       setError('Failed to preload some videos. Check console for details.');
     });
   }, []);
@@ -210,7 +210,7 @@ export default function VideoViewer() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <p className="text-center text-lg mb-4">Loading Videos...</p>
+          <p className="text-center text-lg mb-4">Loading Virtual Garage...</p>
           {error && <p className="text-center text-red-400 text-sm mb-2">{error}</p>}
           <motion.div
             className="h-4 bg-white/5 rounded-full overflow-hidden"
