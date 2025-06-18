@@ -604,7 +604,7 @@ export default function Home() {
         controls={false}
         style={{ opacity, zIndex: 0 }}
       >
-        <source src="/videos/productDemo.mp4" type="video/mp4" />
+        <source src="https://demo.evolve-charge.com/productDemo.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </motion.video>
       <section className="relative h-screen pt-32 pb-24 md:pt-48 md:pb-32 overflow-hidden items-center justify-center">

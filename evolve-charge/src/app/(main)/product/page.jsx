@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Video file mapping
+// Video file mapping with full URLs
 const videos = {
-  1: { to: '/videos/ToCharger.mp4', from: '/videos/FromCharger.mp4' },
-  2: { to: '/videos/ToHolder.mp4', from: '/videos/FromHolder.mp4' },
-  3: { to: '/videos/ToHook.mp4', from: '/videos/FromHook.mp4' },
-  4: { to: '/videos/ToPlug.mp4', from: '/videos/FromPlug.mp4' },
+  1: { to: 'https://demo.evolve-charge.com/ToCharger.mp4', from: 'https://demo.evolve-charge.com/FromCharger.mp4' },
+  2: { to: 'https://demo.evolve-charge.com/ToHolder.mp4', from: 'https://demo.evolve-charge.com/FromHolder.mp4' },
+  3: { to: 'https://demo.evolve-charge.com/ToHook.mp4', from: 'https://demo.evolve-charge.com/FromHook.mp4' },
+  4: { to: 'https://demo.evolve-charge.com/ToPlug.mp4', from: 'https://demo.evolve-charge.com/FromPlug.mp4' },
 };
 
 // Interactive points configuration - easily repositionable
@@ -64,9 +64,14 @@ export default function VideoViewer() {
         const [type, num] = key.split('-');
         const videoUrl = videos[num][type === 'to' ? 'to' : 'from'];
         try {
-          const response = await fetch(videoUrl, { method: 'HEAD' });
-          if (!response.ok) throw new Error(`Video not found: ${videoUrl}`);
-          
+          const response = await fetch(videoUrl, { 
+            method: 'GET', 
+            headers: { Range: 'bytes=0-1' }, // Use GET with range to check availability
+            mode: 'cors'
+          });
+          if (!response.ok) throw new Error(`Video not found: ${videoUrl} (Status: ${response.status})`);
+          console.log(`GET request successful for ${videoUrl}, status: ${response.status}`);
+
           return new Promise((resolve) => {
             const video = document.createElement('video');
             video.preload = 'auto';
@@ -77,14 +82,29 @@ export default function VideoViewer() {
             };
             video.onerror = () => {
               console.error(`Failed to load: ${videoUrl}`);
-              resolve(key);
+              resolve(key); // Resolve to continue, even on error
             };
             document.body.appendChild(video);
             setTimeout(() => document.body.removeChild(video), 0);
           });
         } catch (err) {
           console.error(`Fetch error for ${videoUrl}:`, err);
-          return key;
+          // Fallback to direct loading if GET fails
+          return new Promise((resolve) => {
+            const video = document.createElement('video');
+            video.preload = 'auto';
+            video.src = videoUrl;
+            video.onloadeddata = () => {
+              console.log(`Fallback loaded: ${videoUrl}`);
+              resolve(key);
+            };
+            video.onerror = () => {
+              console.error(`Fallback failed for ${videoUrl}`);
+              resolve(key); // Continue despite error
+            };
+            document.body.appendChild(video);
+            setTimeout(() => document.body.removeChild(video), 0);
+          });
         }
       });
 
@@ -103,7 +123,7 @@ export default function VideoViewer() {
     setLoadedVideos(prev => {
       if (!prev[key]) {
         setLoadedCount(prevCount => {
-          const newCount = prevCount + 1;
+          const newCount = Math.min(prevCount + 1, totalVideos);
           console.log(`Loaded count updated to: ${newCount}/${totalVideos}`);
           return newCount;
         });
@@ -116,6 +136,7 @@ export default function VideoViewer() {
   // Set initial video when all videos are loaded
   useEffect(() => {
     if (isLoaded && currentState === 'loading') {
+      console.log('All videos loaded, setting initial state');
       setCurrentVideo(videos[1].from);
       setCurrentState('start');
     }
@@ -136,14 +157,14 @@ export default function VideoViewer() {
       const video = videoRef.current;
       if (currentState === 'playingTo' || currentState === 'playingFrom') {
         console.log('Playing video for state:', currentState);
-        video.play().catch(() => {});
+        video.play().catch(err => console.error('Autoplay failed:', err));
       } else if (currentState === 'atPOI' || currentState === 'start') {
         console.log('Pausing video for state:', currentState);
         video.pause();
         const setToLastFrame = () => {
           if (video.duration) {
             console.log('Setting to last frame');
-            video.currentTime = video.duration;
+            video.currentTime = video.duration - 0.01;
           }
         };
         if (video.readyState >= 2) {
@@ -166,7 +187,7 @@ export default function VideoViewer() {
     if (videoRef.current) {
       videoRef.current.pause();
       if (videoRef.current.duration) {
-        videoRef.current.currentTime = videoRef.current.duration;
+        videoRef.current.currentTime = videoRef.current.duration - 0.01;
       }
     }
     setTimeout(() => {
