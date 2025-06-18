@@ -9,7 +9,7 @@ import LogoWhite from '@/images/LogoWhite.svg';
 
 // Exclude Home since logo links back to home
 const NAV_ITEMS = [
-  // { label: 'Product', href: '/product' },
+  { label: 'Product', href: '/product' },
   { label: 'About', href: '/about' },
   { label: 'FAQ', href: '/faq' },
   { label: 'Support Us', href: '/support-us' },
