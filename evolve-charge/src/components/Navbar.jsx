@@ -9,7 +9,7 @@ import LogoWhite from '@/images/LogoWhite.svg';
 
 // Exclude Home since logo links back to home
 const NAV_ITEMS = [
-  // { label: 'Product', href: '/product' },
+  { label: 'Product', href: '/product' },
   { label: 'About', href: '/about' },
   { label: 'FAQ', href: '/faq' },
   { label: 'Support Us', href: '/support-us' },
@@ -18,6 +18,7 @@ const NAV_ITEMS = [
 export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(true);
   const pathname = usePathname();
   const hideCTA = ['/order', '/order/success'].includes(pathname);
   const navRefs = useRef({});
@@ -31,6 +32,16 @@ export default function Navigation() {
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Detect desktop vs mobile
+  useEffect(() => {
+    const checkIsDesktop = () => {
+      setIsDesktop(window.innerWidth >= 768); // Matches md breakpoint
+    };
+    checkIsDesktop();
+    window.addEventListener('resize', checkIsDesktop);
+    return () => window.removeEventListener('resize', checkIsDesktop);
   }, []);
 
   // Handle clicks outside the mobile menu to close it
@@ -70,16 +81,18 @@ export default function Navigation() {
           {/* Desktop Nav Links */}
           <div className="hidden md:flex space-x-12 relative">
             {NAV_ITEMS.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                ref={(el) => (navRefs.current[item.href] = el)}
-                className={`font-medium transition-colors hover:text-teal-300 drop-shadow-md ${
-                  pathname === item.href ? 'text-teal-300' : 'text-white'
-                } relative`}
-              >
-                {item.label}
-              </Link>
+              item.href === '/product' && !isDesktop ? null : (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  ref={(el) => (navRefs.current[item.href] = el)}
+                  className={`font-medium transition-colors hover:text-teal-300 drop-shadow-md ${
+                    pathname === item.href ? 'text-teal-300' : 'text-white'
+                  } relative`}
+                >
+                  {item.label}
+                </Link>
+              )
             ))}
           </div>
 
@@ -141,23 +154,25 @@ export default function Navigation() {
                 className="px-4 py-4 space-y-4"
               >
                 {NAV_ITEMS.map((item, index) => (
-                  <motion.div
-                    key={item.href}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ 
-                      duration: 0.2, 
-                      delay: 0.15 + (index * 0.05) // Stagger each item
-                    }}
-                  >
-                    <Link
-                      href={item.href}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block font-medium text-white hover:text-teal-300 transition-colors"
+                  item.href === '/product' ? null : (
+                    <motion.div
+                      key={item.href}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ 
+                        duration: 0.2, 
+                        delay: 0.15 + (index * 0.05) // Stagger each item
+                      }}
                     >
-                      {item.label}
-                    </Link>
-                  </motion.div>
+                      <Link
+                        href={item.href}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="block font-medium text-white hover:text-teal-300 transition-colors"
+                      >
+                        {item.label}
+                      </Link>
+                    </motion.div>
+                  )
                 ))}
                 <motion.div 
                   initial={{ opacity: 0, x: -20 }}
