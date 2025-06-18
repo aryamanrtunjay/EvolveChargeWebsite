@@ -239,7 +239,7 @@ export default function VideoViewer() {
         className="w-full h-full object-cover"
         onEnded={handleVideoEnded}
         controls={false}
-        playsinline
+        playsInline
       />
 
       {/* Interactive Points Overlay */}
