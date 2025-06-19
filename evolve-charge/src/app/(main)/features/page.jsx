@@ -293,7 +293,7 @@ export default function Features() {
                 <table className="w-full">
                   <tbody>
                     {[
-                      { label: "Wireless Connection", value: "Wi-Fi" },
+                      { label: "Automatic Connection", value: "Wi-Fi" },
                       { label: "Remote Updates", value: "Over-the-air software updates" },
                       { label: "Smart Home Integration", value: "HomeKit, Alexa, Google Home" },
                       { label: "Mobile App", value: "iOS, Android" },

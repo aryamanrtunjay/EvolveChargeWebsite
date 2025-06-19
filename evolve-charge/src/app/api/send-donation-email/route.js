@@ -88,7 +88,7 @@ function generatePDF({ firstName, lastName, amount, donationId, donationDate, de
   // Thank you message
   doc.setFontSize(12);
   doc.setFont('helvetica', 'normal');
-  const thankYouText = `Thank you for your generous donation to EVolve Charge. Your contribution of $${amount} supports our mission to advance wireless EV charging technology and promote sustainable transportation globally.`;
+  const thankYouText = `Thank you for your generous donation to EVolve Charge. Your contribution of $${amount} supports our mission to advance smart EV charging technology and promote sustainable transportation globally.`;
   const splitThankYou = doc.splitTextToSize(thankYouText, 170);
   doc.text(splitThankYou, 20, yPosition);
   
@@ -246,7 +246,7 @@ export async function POST(request) {
         <div class="email-container">
           <div class="email-header">
             <h1>EVolve Charge</h1>
-            <p>Advancing Wireless EV Charging Technology</p>
+            <p>Advancing Smart EV Charging Technology</p>
           </div>
           <div class="email-body">
             <p class="greeting">Dear ${firstName} ${lastName},</p>
@@ -266,7 +266,7 @@ export async function POST(request) {
             <div class="impact-list">
               <p><strong>Your support helps us:</strong></p>
               <ul>
-                <li>Develop innovative wireless EV charging solutions</li>
+                <li>Develop innovative smart EV charging solutions</li>
                 <li>Make electric vehicle ownership more accessible</li>
                 <li>Reduce carbon emissions through sustainable technology</li>
                 <li>Build partnerships for global EV infrastructure</li>

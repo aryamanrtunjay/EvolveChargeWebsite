@@ -93,7 +93,7 @@ export async function POST(request) {
     // Thank you message
     doc.setFontSize(12);
     doc.setFont('helvetica', 'normal');
-    const thankYouText = `Thank you for your generous donation to EVolve Charge. Your contribution of $${amount} supports our mission to advance wireless EV charging technology and promote sustainable transportation globally.`;
+    const thankYouText = `Thank you for your generous donation to EVolve Charge. Your contribution of $${amount} supports our mission to advance smart EV charging technology and promote sustainable transportation globally.`;
     const splitThankYou = doc.splitTextToSize(thankYouText, 170);
     doc.text(splitThankYou, 20, yPosition);
     

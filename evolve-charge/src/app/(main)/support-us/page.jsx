@@ -161,7 +161,7 @@ function SuccessModal({ isOpen, onClose, donationAmount, donationDetails }) {
           </div>
           <h3 className="text-2xl font-bold text-gray-900 mb-2">Thank You!</h3>
           <p className="text-gray-600 mb-6">
-            Your donation of ${donationAmount ? donationAmount.toFixed(2) : '0.00'} will help advance wireless EV charging and sustainable transportation.
+            Your donation of ${donationAmount ? donationAmount.toFixed(2) : '0.00'} will help advance smart, automatic EV charging and sustainable transportation.
           </p>
           <div className="bg-gray-50 p-4 rounded-lg mb-6">
             <p className="text-sm text-gray-700">
@@ -253,7 +253,7 @@ export default function SupportUsPage() {
     },
     {
       amount: 100,
-      impact: "Contributes to scalable wireless charging prototypes",
+      impact: "Contributes to scalable smart charging prototypes",
     },
     {
       amount: 250,
@@ -265,7 +265,7 @@ export default function SupportUsPage() {
     },
     {
       amount: 1000,
-      impact: "Drives large-scale adoption of wireless EV charging",
+      impact: "Drives large-scale adoption of smart, automatic EV charging",
     }
   ];
 
@@ -639,11 +639,11 @@ export default function SupportUsPage() {
               Support the Future of
               <br />
               <span className="bg-gradient-to-r from-teal-500 to-cyan-500 bg-clip-text text-transparent">
-                Wireless EV Charging
+                Smart EV Charging
               </span>
             </h1>
             <p className="text-xl text-gray-700 max-w-4xl mx-auto mb-12 leading-relaxed">
-              Your donation powers EVolve Charge's mission to develop cutting-edge wireless charging technology, making electric vehicles more accessible and sustainable for everyone.
+              Your donation powers EVolve Charge's mission to develop cutting-edge smart, automatic charging technology, making electric vehicles more accessible and sustainable for everyone.
             </p>
             
             {/* Trust indicators */}
@@ -730,7 +730,7 @@ export default function SupportUsPage() {
           <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-6xl mx-auto mb-20">
             <div className="text-center mb-12">
               <h2 className="text-4xl font-bold text-gray-900 mb-4">Choose Your Impact</h2>
-              <p className="text-xl text-gray-600">Every contribution accelerates the future of wireless EV charging</p>
+              <p className="text-xl text-gray-600">Every contribution accelerates the future of smart, automatic EV charging</p>
             </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -977,7 +977,7 @@ export default function SupportUsPage() {
                               Send me updates about EVolve Charge's progress
                             </label>
                             <p className="text-sm text-gray-500 mt-1">
-                              Stay informed about our wireless EV charging innovations
+                              Stay informed about our smart EV charging innovations
                             </p>
                           </div>
                         </div>
@@ -1082,7 +1082,7 @@ export default function SupportUsPage() {
             <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-4xl mx-auto">
               <motion.div variants={fadeIn} className="text-center mb-10">
                 <h2 className="text-3xl font-bold text-gray-900 mb-4">Complete Your Donation</h2>
-                <p className="text-lg text-gray-700">Your support drives the future of wireless EV charging</p>
+                <p className="text-lg text-gray-700">Your support drives the future of smart, automatic EV charging</p>
               </motion.div>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

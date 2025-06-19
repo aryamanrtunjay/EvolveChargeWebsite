@@ -161,7 +161,7 @@ function SuccessModal({ isOpen, onClose, donationAmount, donationDetails }) {
           </div>
           <h3 className="text-2xl font-bold text-gray-900 mb-2">Thank You!</h3>
           <p className="text-gray-600 mb-6">
-            Your donation of ${donationAmount ? donationAmount.toFixed(2) : '0.00'} will help advance wireless EV charging and sustainable transportation.
+            Your donation of ${donationAmount ? donationAmount.toFixed(2) : '0.00'} will help advance smart, automatic EV charging and sustainable transportation.
           </p>
           <div className="bg-gray-50 p-4 rounded-lg mb-6">
             <p className="text-sm text-gray-700">
@@ -250,7 +250,7 @@ export default function DonatePage() {
     },
     {
       amount: 100,
-      impact: "Contributes to scalable wireless charging prototypes",
+      impact: "Contributes to scalable smart charging prototypes",
       icon: "⚙️"
     },
     {
@@ -265,7 +265,7 @@ export default function DonatePage() {
     },
     {
       amount: 1000,
-      impact: "Drives large-scale adoption of wireless EV charging",
+      impact: "Drives large-scale adoption of smart, automatic EV charging",
       icon: "⚡"
     }
   ];
@@ -494,7 +494,7 @@ export default function DonatePage() {
             <span className="bg-gradient-to-r from-teal-500 to-cyan-500 bg-clip-text text-transparent"> Donation</span>
           </h1>
           <p className="text-xl text-gray-700 max-w-3xl mx-auto mb-8">
-            Thank you for supporting wireless EV charging innovation. Your ${donationAmount.toFixed(2)} donation will make a real difference.
+            Thank you for supporting smart, automatic EV charging innovation. Your ${donationAmount.toFixed(2)} donation will make a real difference.
           </p>
           
           {/* Back to Support Page Button */}
@@ -694,7 +694,7 @@ export default function DonatePage() {
                             Send me updates about EVolve Charge's progress
                           </label>
                           <p className="text-sm text-gray-500 mt-1">
-                            Stay informed about our wireless EV charging innovations
+                            Stay informed about our smart EV charging innovations
                           </p>
                         </div>
                       </div>
@@ -845,7 +845,7 @@ export default function DonatePage() {
                   <div className="flex items-center bg-teal-50 p-4 rounded-lg mt-6">
                     <CheckCircle className="h-6 w-6 text-teal-500 mr-3" />
                     <p className="text-sm text-teal-700">
-                      <strong>Impact:</strong> Your donation directly funds wireless EV charging research and development.
+                      <strong>Impact:</strong> Your donation directly funds smart EV charging research and development.
                     </p>
                   </div>
                 </div>
