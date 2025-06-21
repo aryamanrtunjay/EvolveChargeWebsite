@@ -675,7 +675,7 @@ export default function SupportUsPage() {
               <div className="text-2xl font-bold text-gray-900">${totalAmount.toFixed(0)}</div>
               <div className="text-sm text-gray-600">Total Raised</div>
               <div className="text-xs text-gray-500 mt-1">
-                Donations: ${totalDonations.toFixed(0)} • Pre-orders: ${totalPreOrders.toFixed(0)}
+                Donations: ${totalDonations.toFixed(0)} • Orders: ${totalPreOrders.toFixed(0)}
               </div>
             </motion.div>
             
@@ -1067,7 +1067,7 @@ export default function SupportUsPage() {
                       </div>
                       <div className="mt-4 p-3 bg-teal-50 rounded-lg border border-teal-100">
                         <p className="text-xs text-teal-700">
-                          <strong>Total funding includes:</strong> Direct donations (${totalDonations.toFixed(0)}) + Pre-order revenue (${totalPreOrders.toFixed(0)})
+                          <strong>Total funding includes:</strong> Direct donations (${totalDonations.toFixed(0)}) + Pre- (${totalPreOrders.toFixed(0)})
                         </p>
                       </div>
                     </div>

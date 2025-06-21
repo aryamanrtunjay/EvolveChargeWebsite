@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../../firebaseConfig.js'; // Adjust path if needed
+import { db } from '../../../firebaseConfig.js';
 
 // Animation variants
 const fadeIn = {
@@ -64,6 +64,8 @@ function OrderSuccessContent() {
               setCustomerData(customerSnap.data());
             }
           }
+        } else {
+          console.error('Order not found');
         }
       } catch (error) {
         console.error('Error fetching order details:', error);
@@ -87,8 +89,10 @@ function OrderSuccessContent() {
     'last-name': 'Johnson',
     'email-address': 'alex.johnson@example.com',
     'phone-number': '(555) 123-4567',
-    'vehicle-make': 'Tesla',
-    'vehicle-model': 'Model 3',
+    vehicles: [
+      { make: 'Tesla', model: 'Model 3', year: 2023, vin: '5YJ3E1EA0PF123456' },
+      { make: 'Ford', model: 'Mustang Mach-E', year: 2022, vin: '3FMTK3SU0NMA12345' }
+    ],
     address1: '123 Main Street',
     address2: 'Apt 4B',
     city: 'San Francisco',
@@ -114,16 +118,16 @@ function OrderSuccessContent() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Your Pre-order is Confirmed!</h1>
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Your Order is Confirmed!</h1>
             <p className="text-lg text-gray-700 mb-2">Thank you for your purchase. We're excited to welcome you to EVolve Charge!</p>
-            <p className="text-md text-gray-600">Pre-order #: <span className="font-medium">{orderNumber}</span></p>
+            <p className="text-md text-gray-600">Order #: <span className="font-medium">{orderNumber}</span></p>
             <div className="mt-4 inline-block text-sm bg-teal-100 text-teal-800 px-4 py-2 rounded-full">
               <span>An email confirmation has been sent to {customer['email-address']}</span>
             </div>
           </motion.div>
 
           <motion.div variants={fadeIn} className="bg-white rounded-xl shadow-md p-8 mb-8">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">Pre-order Details</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-6">Order Details</h2>
             <div className="flex items-center mb-6 pb-6 border-b border-gray-200">
               <div className="mr-4">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -149,9 +153,20 @@ function OrderSuccessContent() {
               </div>
               <div>
                 <h3 className="font-medium text-gray-900 mb-2">Vehicle Information</h3>
-                <div className="text-gray-700">
-                  <p><strong>Make:</strong> {customer['vehicle-make']}</p>
-                  <p><strong>Model:</strong> {customer['vehicle-model']}</p>
+                <div className="text-gray-700 space-y-4">
+                  {customer.vehicles && customer.vehicles.length > 0 ? (
+                    customer.vehicles.map((vehicle, index) => (
+                      <div key={index} className="border-l-4 border-teal-500 pl-4">
+                        <p className="font-medium text-gray-800">Vehicle {index + 1}</p>
+                        <p><strong>Make:</strong> {vehicle.make || 'Not specified'}</p>
+                        <p><strong>Model:</strong> {vehicle.model || 'Not specified'}</p>
+                        <p><strong>Year:</strong> {vehicle.year || 'Not specified'}</p>
+                        {vehicle.vin && <p><strong>VIN:</strong> {vehicle.vin}</p>}
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-gray-600">No vehicle information provided.</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -200,8 +215,8 @@ function OrderSuccessContent() {
                 <li className="flex">
                   <span className="bg-teal-500 text-white w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">3</span>
                   <div>
-                    <p className="font-medium text-gray-900">Delivery Coordination</p>
-                    <p className="text-gray-700 text-sm">We'll reach out to schedule your delivery and installation when your EVolve Charger is ready.</p>
+                    <p className="font-medium text-gray-900">App Access</p>
+                    <p className="text-gray-700 text-sm">We'll get your account ready on our app so you can monitor and customize your EVolve Charger</p>
                   </div>
                 </li>
               </ol>

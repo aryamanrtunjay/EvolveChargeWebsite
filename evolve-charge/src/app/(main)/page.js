@@ -645,7 +645,7 @@ export default function Home() {
                   whileTap={{ scale: 0.97 }}
                   className="px-8 py-3 rounded-full bg-teal-500/30 backdrop-blur-md border border-teal-500/50 text-white font-medium shadow-lg hover:shadow-xl transition-all"
                 >
-                  Pre-order Yours Today
+                  Order Yours Today
                 </motion.button>
               </Link>
               <Link href="donate">
@@ -1024,7 +1024,7 @@ export default function Home() {
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">Join the EVolution</h2>
             <p className="text-lg md:text-xl mb-4 max-w-2xl mx-auto text-teal-50">
-              20% discount for the first 50 pre-orders alongside VIP treatment!
+              20% discount for the first 50 orders alongside VIP treatment!
             </p>
             
             <div className="flex flex-col md:flex-row justify-center items-center space-y-2 md:space-y-0 md:space-x-8 mt-8 text-teal-50 font-medium">
@@ -1076,7 +1076,7 @@ export default function Home() {
                   whileTap={{ scale: 0.97 }}
                   className="px-8 py-3 rounded-full bg-teal-500/30 backdrop-blur-md border border-teal-500/50 text-white font-medium shadow-lg hover:shadow-xl transition-all"
                 >
-                  Pre-order Yours
+                  Order Yours
                 </motion.button>
               </Link>
               {submitError && <p className="mt-2 text-red-300 text-sm">{submitError}</p>}

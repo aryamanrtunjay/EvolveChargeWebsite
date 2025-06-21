@@ -423,7 +423,7 @@ export default function AboutPage() {
     {
       year: "2025",
       title: "Product Launch",
-      description: "Launched EVolve Charger with pre-orders exceeding expectations. Preparing for mass production and nationwide rollout."
+      description: "Launched EVolve Charger with orders exceeding expectations. Preparing for mass production and nationwide rollout."
     }
   ];
 
@@ -618,7 +618,7 @@ export default function AboutPage() {
                 whileTap={{ scale: 0.97 }}
                 className="flex-1 px-8 py-4 rounded-full bg-white text-teal-600 font-bold shadow-lg hover:shadow-xl transition-all"
               >
-                Pre-Order Now
+                Order Now
               </motion.button>
               <motion.button
                 whileHover={{ scale: 1.03 }}

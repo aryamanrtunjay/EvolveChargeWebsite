@@ -476,7 +476,7 @@ export default function AdminDatabase() {
                           <thead className="bg-gray-50">
                             <tr>
                               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Pre-order ID
+                                Order ID
                               </th>
                               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Customer Name
@@ -545,15 +545,15 @@ export default function AdminDatabase() {
                                     <td colSpan="7" className="px-6 py-4 bg-gray-50">
                                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
-                                          <h4 className="font-medium text-gray-900 mb-2">Pre-order Details</h4>
+                                          <h4 className="font-medium text-gray-900 mb-2">Order Details</h4>
                                           <dl className="grid grid-cols-2 gap-x-4 gap-y-2">
-                                            <dt className="text-sm font-medium text-gray-500">Pre-order ID</dt>
+                                            <dt className="text-sm font-medium text-gray-500">Order ID</dt>
                                             <dd className="text-sm text-gray-900">{order.id}</dd>
                                             
                                             <dt className="text-sm font-medium text-gray-500">Customer ID</dt>
                                             <dd className="text-sm text-gray-900">{order.customerID || 'N/A'}</dd>
                                             
-                                            <dt className="text-sm font-medium text-gray-500">Pre-order Date</dt>
+                                            <dt className="text-sm font-medium text-gray-500">Order Date</dt>
                                             <dd className="text-sm text-gray-900">{formatDate(order.orderDate)}</dd>
                                             
                                             <dt className="text-sm font-medium text-gray-500">Payment Date</dt>

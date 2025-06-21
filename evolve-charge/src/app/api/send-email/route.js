@@ -16,23 +16,23 @@ export async function POST(request) {
     const mailOptions = {
       from: `"EVolve Charge" <${process.env.EMAIL_USER}>`,
       to: email,
-      subject: `Pre-order Confirmation - ${orderNumber}`,
+      subject: `Order Confirmation - ${orderNumber}`,
       html: `
         <!DOCTYPE html>
         <html>
         <head>
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Pre-order Confirmation</title>
+          <title>Order Confirmation</title>
         </head>
         <body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">
           <div style="max-width: 600px; margin: 20px auto; background-color: #ffffff; padding: 20px; border-radius: 8px;">
-            <h1 style="font-size: 24px; color: #333333;">Thank You for Your Pre-order, ${firstName} ${lastName}!</h1>
+            <h1 style="font-size: 24px; color: #333333;">Thank You for Your Order, ${firstName} ${lastName}!</h1>
             <p style="font-size: 16px; color: #333333; line-height: 1.5;">
               Your purchase has been successfully submitted. Here are your order details:
             </p>
             <ul style="list-style: none; padding: 0; font-size: 16px; color: #333333;">
-              <li><strong>Pre-order Number:</strong> ${orderNumber}</li>
+              <li><strong>Order Number:</strong> ${orderNumber}</li>
               <li><strong>Plan:</strong> ${planName}</li>
               <li><strong>Total Paid:</strong> $${total.toFixed(2)}</li>
               <li><strong>Delivery Address:</strong> ${address}</li>

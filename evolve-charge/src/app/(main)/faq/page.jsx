@@ -129,7 +129,7 @@ function SearchBar({ searchTerm, onSearchChange }) {
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search frequently asked questions..."
-          className="block w-full pl-12 pr-4 py-4 border border-gray-200 rounded-xl leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-teal-500 focus:border-transparent shadow-sm"
+          className="block text-gray-700 w-full pl-12 pr-4 py-4 border border-gray-200 rounded-xl leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-teal-500 focus:border-transparent shadow-sm"
         />
       </div>
     </motion.div>
@@ -363,7 +363,7 @@ export default function FAQPage() {
     {
       category: 'pricing',
       question: "When will my EVolve Charger ship?",
-      answer: "Orders within the Puget Sound region of Washington state will be delivered at latest by December 1, 2025. Order outside this region will arrive before February 1, 2025. You'll receive email updates throughout the manufacturing process, including shipping notifications with tracking information. Pre-order customers receive priority shipping."
+      answer: "The first 55 orders within the Puget Sound region of Washington state will be delivered at latest by December 1, 2025. Order outside this region and outside the first 55 will receive their charger once their turn in line has arrived. You'll receive email updates throughout the manufacturing process, including shipping notifications with tracking information."
     },
     {
       category: 'pricing',

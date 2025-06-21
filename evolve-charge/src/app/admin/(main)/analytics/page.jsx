@@ -97,7 +97,7 @@ export default function KPIDashboard() {
   const fundraisingGoal = 10000;
   const fundraisingProgress = (totalRaised / fundraisingGoal) * 100;
 
-  // Pre-order Growth Rate (Weekly)
+  // Order Growth Rate (Weekly)
   const getWeeklyPreOrderGrowth = () => {
     const today = new Date();
     const weeks = {};
@@ -137,7 +137,7 @@ export default function KPIDashboard() {
     labels: getWeeklyPreOrderGrowth().labels,
     datasets: [
       {
-        label: 'Weekly Pre-order Growth Rate (%)',
+        label: 'Weekly Order Growth Rate (%)',
         data: getWeeklyPreOrderGrowth().data,
         borderColor: 'rgb(45, 212, 191)',
         backgroundColor: 'rgba(45, 212, 191, 0.2)',
@@ -209,10 +209,10 @@ export default function KPIDashboard() {
                   <h2 className="text-lg font-medium text-gray-900 mb-4">KPI Summary</h2>
                   <div className="space-y-6">
                     <div>
-                      <h3 className="text-md font-medium text-gray-900 mb-2">Pre-order Growth</h3>
+                      <h3 className="text-md font-medium text-gray-900 mb-2">Order Growth</h3>
                       <div className="bg-gray-50 rounded-lg p-3">
                         <div className="flex justify-between py-1">
-                          <span className="text-gray-600">Total Pre-orders:</span>
+                          <span className="text-gray-600">Total Orders:</span>
                           <span className="font-medium text-gray-700">{totalPreOrders}</span>
                         </div>
                         <div className="flex justify-between py-1">
@@ -282,9 +282,9 @@ export default function KPIDashboard() {
                 <div className="p-4">
                   <h2 className="text-lg font-medium text-gray-900 mb-4">KPI Details</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Pre-order Growth Chart */}
+                    {/* Order Growth Chart */}
                     <div>
-                      <h3 className="text-md font-medium text-gray-900 mb-2">Pre-order Growth Rate</h3>
+                      <h3 className="text-md font-medium text-gray-900 mb-2">Order Growth Rate</h3>
                       <div className="bg-gray-50 rounded-lg p-4">
                         <Line
                           data={preOrderGrowthChartData}
@@ -292,7 +292,7 @@ export default function KPIDashboard() {
                             responsive: true,
                             plugins: {
                               legend: { position: 'top' },
-                              title: { display: true, text: 'Weekly Pre-order Growth Rate' },
+                              title: { display: true, text: 'Weekly Order Growth Rate' },
                             },
                             scales: {
                               y: { title: { display: true, text: 'Growth Rate (%)' } },

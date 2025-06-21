@@ -83,7 +83,7 @@ export default function NotFoundPage() {
     { name: 'Home', path: '/', icon: Home },
     { name: 'Support Us', path: '/support', icon: Zap },
     { name: 'About', path: '/about', icon: Battery },
-    { name: 'Pre-Order', path: '/order', icon: ShoppingCart }
+    { name: 'Order', path: '/order', icon: ShoppingCart }
   ];
 
   return (

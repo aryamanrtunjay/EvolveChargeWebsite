@@ -103,7 +103,7 @@ export default function Navigation() {
                 <button
                   className="px-6 py-2 rounded-full font-semibold transition-transform transform hover:scale-105 bg-white text-teal-600 border-2 border-teal-600 shadow-lg drop-shadow-lg"
                 >
-                  Pre-order Now
+                  Order Now
                 </button>
               </Link>
             </div>
@@ -188,7 +188,7 @@ export default function Navigation() {
                       onClick={() => setMobileMenuOpen(false)}
                       className="w-full px-6 py-2 rounded-full font-semibold bg-white text-teal-600 border-2 border-teal-600 shadow-lg drop-shadow-lg hover:scale-105 transition-transform"
                     >
-                      Pre-order Now
+                      Order Now
                     </button>
                   </Link>
                 </motion.div>
