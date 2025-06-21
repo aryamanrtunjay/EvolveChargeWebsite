@@ -383,6 +383,7 @@ export default function Home() {
   const [error, setError] = useState(null);
   const [donorsWithAmounts, setDonorsWithAmounts] = useState([]);
   const [filter, setFilter] = useState('recent');
+  const [isModalOpen, setIsModalOpen] = useState(false); // New state for modal
 
   const sectionRef = useRef(null);
   const { scrollYProgress } = useScroll({
@@ -639,16 +640,15 @@ export default function Home() {
               variants={fadeIn}
               className="flex flex-wrap gap-4 mt-2"
             >
-              <Link href="order">
-                <motion.button
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="px-8 py-3 rounded-full bg-teal-500/30 backdrop-blur-md border border-teal-500/50 text-white font-medium shadow-lg hover:shadow-xl transition-all"
-                >
-                  Order Yours Today
-                </motion.button>
-              </Link>
-              <Link href="donate">
+              <motion.button
+                onClick={() => setIsModalOpen(true)}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                className="px-8 py-3 rounded-full bg-teal-500/30 backdrop-blur-md border border-teal-500/50 text-white font-medium shadow-lg hover:shadow-xl transition-all"
+              >
+                Order Now
+              </motion.button>
+              <Link href="/donate">
                 <motion.button
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
@@ -661,6 +661,145 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
+
+      {/* Modal for Order Options */}
+      <AnimatePresence>
+        {isModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
+            onClick={() => setIsModalOpen(false)}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modal-title"
+          >
+            <motion.div
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 50, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 max-w-xl w-full mx-4 border border-teal-500/40 shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h2 id="modal-title" className="text-3xl font-bold text-white">Secure Your EVolve Charger</h2>
+                <motion.button
+                  onClick={() => setIsModalOpen(false)}
+                  className="p-2 rounded-full bg-gray-500/30 text-white/80 hover:bg-gray-500/50 transition-colors"
+                  aria-label="Close modal"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </motion.button>
+              </div>
+              <p className="text-white/70 mb-8 text-center text-base">
+                Order now to lock in your spot for the world’s first automatic EV charger.
+              </p>
+              
+              <div className="space-y-6">
+                {/* Reserve Option */}
+                <Link href="/reserve">
+                  <motion.div
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full p-6 rounded-xl bg-white/5 border border-gray-500/50 cursor-pointer"
+                  >
+                    <div className="flex justify-between items-start mb-4">
+                      <h3 className="text-lg font-semibold text-white/90">Reserve Your Spot</h3>
+                      <span className="text-xl font-bold text-white/80">$5.00</span>
+                    </div>
+                    <div className="space-y-3 text-sm">
+                      <div className="flex items-center text-white/70">
+                        <svg className="w-4 h-4 mr-2 text-white/40" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        <span>Join the reservation queue</span>
+                      </div>
+                      <div className="flex items-center text-white/70">
+                        <svg className="w-4 h-4 mr-2 text-white/40" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        <span>Pay balance when charger is ready</span>
+                      </div>
+                      <div className="flex items-center text-white/70">
+                        <svg className="w-4 h-4 mr-2 text-white/40" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        <span>Delivery based on queue position</span>
+                      </div>
+                    </div>
+                    <div className="mt-4 text-xs text-white/50">
+                      Delivery timeline depends on production schedule.
+                    </div>
+                    <motion.button
+                      className="mt-4 w-full px-6 py-3 rounded-full bg-teal-500/20 border border-teal-500/50 text-white font-medium text-center hover:bg-teal-500/30 transition-colors"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      Reserve Now
+                    </motion.button>
+                  </motion.div>
+                </Link>
+                {/* Priority Order Option */}
+                <div className="relative">
+                  <div className="absolute -top-3 left-4 bg-teal-500 text-white text-xs font-bold px-2.5 py-1 rounded-full z-10">
+                    Most Popular
+                  </div>
+                  <Link href="/order">
+                    <motion.div
+                      whileHover={{ scale: 1.02, boxShadow: "0 0 15px rgba(45, 212, 191, 0.3)" }}
+                      whileTap={{ scale: 0.98 }}
+                      className="w-full p-6 rounded-xl bg-gradient-to-r from-teal-600/30 to-teal-700/30 border-2 border-teal-400 cursor-pointer"
+                    >
+                      <div className="flex justify-between items-start mb-4">
+                        <h3 className="text-xl font-bold text-teal-300">Priority Order</h3>
+                        <span className="text-2xl font-bold text-teal-200">$99.99</span>
+                      </div>
+                      <div className="space-y-3 text-sm">
+                        <div className="flex items-center text-green-300">
+                          <svg className="w-4 h-4 mr-2 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                          </svg>
+                          <span className="font-medium">#1 in delivery queue</span>
+                        </div>
+                        <div className="flex items-center text-green-300">
+                          <svg className="w-4 h-4 mr-2 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                          </svg>
+                          <span className="font-medium">Guaranteed delivery by Dec 1, 2025</span>
+                        </div>
+                        <div className="flex items-center text-green-300">
+                          <svg className="w-4 h-4 mr-2 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                          </svg>
+                          <span>Pay in full to secure priority</span>
+                        </div>
+                      </div>
+                      <div className="mt-4 text-xs text-teal-200 italic">
+                        Limited priority spots available! Ships upon production completion.
+                      </div>
+                      <motion.button
+                        className="mt-4 w-full px-6 py-3 rounded-full bg-teal-500 text-white font-medium text-center hover:bg-teal-600 transition-colors"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        animate={{ scale: [1, 1.02, 1], transition: { duration: 2, repeat: Infinity } }}
+                      >
+                        Order Now
+                      </motion.button>
+                    </motion.div>
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -854,158 +993,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Donors Section */}
-      {/* <section id="donors" className="relative overflow-hidden bg-gradient-to-b from-gray-50 to-white py-16">
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="lg:grid lg:grid-cols-3 lg:gap-8">
-            <div className="lg:col-span-2">
-              <motion.div
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.3 }}
-                variants={staggerContainer}
-                className="text-center mb-12"
-              >
-                <motion.h2 variants={fadeIn} className="text-5xl font-extrabold tracking-tight">
-                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-cyan-400">Our Supporters</span>
-                </motion.h2>
-                <motion.p variants={fadeIn} className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                  Thank you to our amazing donors who are helping us drive the future of EV charging.
-                </motion.p>
-              </motion.div>
-
-              <motion.div
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.3 }}
-                variants={staggerContainer}
-                className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12"
-              >
-                {[
-                  { label: "Total Raised", value: `$${totalAmount.toFixed(2)}`, color: "text-teal-600" },
-                  { label: "Goal", value: "$10,000", color: "text-gray-900" },
-                  { label: "Progress", value: `${progress.toFixed(1)}%`, color: "text-teal-600" },
-                ].map(({ label, value, color }) => (
-                  <motion.div
-                    key={label}
-                    variants={fadeIn}
-                    className="bg-white/10 backdrop-blur-md p-6 rounded-lg shadow-lg text-center border border-white/20"
-                  >
-                    <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">{label}</p>
-                    <p className={`mt-2 text-3xl font-bold ${color}`}>{value}</p>
-                  </motion.div>
-                ))}
-              </motion.div>
-
-              <div className="max-w-lg mx-auto">
-                <div className="relative h-3 bg-gray-200 rounded-full overflow-hidden">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${progress}%` }}
-                    transition={{ duration: 1, ease: "easeOut" }}
-                    className="absolute left-0 top-0 h-full bg-gradient-to-r from-teal-400 to-cyan-400"
-                  />
-                </div>
-                <div className="mt-2 text-sm font-semibold text-gray-700 text-center">
-                  {progress.toFixed(1)}% of our $10,000 goal
-                </div>
-              </div>
-              <div className="flex justify-center mt-16">
-                <Link href="donate">
-                  <motion.button
-                    whileHover={{ scale: 1.05, boxShadow: "0 10px 20px rgba(0,0,0,0.15)" }}
-                    whileTap={{ scale: 0.95 }}
-                    className="px-10 py-4 rounded-full bg-teal-500/30 backdrop-blur-md border border-teal-500/50 text-white font-semibold shadow-2xl hover:shadow-3xl transition-all"
-                  >
-                    Join Our Supporters
-                  </motion.button>
-                </Link>
-              </div>
-            </div>
-
-            <div className="lg:col-span-1 mt-12 lg:mt-0">
-              <div className="bg-white rounded-xl shadow-lg p-6 max-h-[500px] flex flex-col">
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {[
-                    { label: "Recent", value: "recent" },
-                    { label: "Top (Day)", value: "top-day" },
-                    { label: "Top (Month)", value: "top-month" },
-                    { label: "Top (All Time)", value: "top-all" },
-                  ].map(({ label, value }) => (
-                    <button
-                      key={value}
-                      onClick={() => setFilter(value)}
-                      className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${
-                        filter === value ? 'bg-teal-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-teal-100'
-                      }`}
-                    >
-                      {label}
-                    </button>
-                  ))}
-                </div>
-
-                <div className="flex-1 overflow-y-auto">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-4">Donors</h3>
-                  {isLoading ? (
-                    <p className="text-gray-600 text-center">Loading donors...</p>
-                  ) : error ? (
-                    <p className="text-red-600 text-center">{error}</p>
-                  ) : donorsWithAmounts.length === 0 ? (
-                    <p className="text-gray-600 text-center">No donors yet. Be the first to support the mission!</p>
-                  ) : (
-                    <div className="space-y-4">
-                      {donorsWithAmounts.map((donor) => (
-                        <motion.div
-                          key={donor.id}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.3 }}
-                          className="border-b border-gray-100 pb-4 last:border-b-0"
-                        >
-                          <div className="flex items-center">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-6 w-6 text-teal-500 mr-3"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-                              />
-                            </svg>
-                            <div>
-                              <p className="text-lg font-medium text-gray-900">
-                                {donor.anonymous ? 'Anonymous Donor' : `${donor.firstName} ${donor.lastName}`}
-                              </p>
-                              <p className="text-teal-600 font-medium">Donated ${donor.amount}</p>
-                              {donor.dedicateTo && (
-                                <p className="text-gray-600 italic text-sm">Dedicated to: {donor.dedicateTo}</p>
-                              )}
-                              <p className="text-gray-500 text-sm">
-                                Joined on{' '}
-                                {donor.createdAt?.toDate().toLocaleDateString('en-US', {
-                                  year: 'numeric',
-                                  month: 'long',
-                                  day: 'numeric',
-                                }) || 'Unknown Date'}
-                              </p>
-                            </div>
-                          </div>
-                        </motion.div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section> */}
-
       {/* CTA Section */}
       <section className="py-20 md:py-28 bg-gradient-to-r from-teal-600 to-cyan-600 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
@@ -1024,7 +1011,7 @@ export default function Home() {
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">Join the EVolution</h2>
             <p className="text-lg md:text-xl mb-4 max-w-2xl mx-auto text-teal-50">
-              20% discount for the first 50 orders alongside VIP treatment!
+              20% discount for the first 50 pre-orders alongside VIP treatment!
             </p>
             
             <div className="flex flex-col md:flex-row justify-center items-center space-y-2 md:space-y-0 md:space-x-8 mt-8 text-teal-50 font-medium">
@@ -1070,15 +1057,14 @@ export default function Home() {
               </div>
             )}
             <div className="max-w-md mx-auto mt-8">
-              <Link href="order">
-                <motion.button
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="px-8 py-3 rounded-full bg-teal-500/30 backdrop-blur-md border border-teal-500/50 text-white font-medium shadow-lg hover:shadow-xl transition-all"
-                >
-                  Order Yours
-                </motion.button>
-              </Link>
+              <motion.button
+                onClick={() => setIsModalOpen(true)}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                className="px-8 py-3 rounded-full bg-teal-500/30 backdrop-blur-md border border-teal-500/50 text-white font-medium shadow-lg hover:shadow-xl transition-all"
+              >
+                Order Yours
+              </motion.button>
               {submitError && <p className="mt-2 text-red-300 text-sm">{submitError}</p>}
             </div>
           </motion.div>

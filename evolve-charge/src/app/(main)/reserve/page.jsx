@@ -1,359 +1,563 @@
-"use client";
+'use client';
 
-import { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { db } from '../../firebaseConfig.js';
-import { collection, addDoc, serverTimestamp, query, where, getDocs, updateDoc, doc } from 'firebase/firestore';
+import { useRouter } from 'next/navigation';
+import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+
+// Initialize Stripe
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_TEST_KEY);
 
 // Animation variants
 const fadeIn = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+  hidden: { opacity: 0, y: 15 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
 };
 
 const staggerContainer = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.2 } }
+  visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
 };
 
-// SearchParams component that uses the hook
-function EmailFromSearchParams({ setEmail }) {
-  const searchParams = useSearchParams();
-  
-  useEffect(() => {
-    const emailParam = searchParams.get('email');
-    if (emailParam) {
-      setEmail(emailParam);
-    }
-  }, [searchParams, setEmail]);
-  
-  return null; // This component doesn't render anything
+const slideUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+};
+
+// Digital Wallet Buttons Component
+function DigitalWalletButtons({ onPaymentSuccess, isProcessing, setIsProcessing }) {
+  return (
+    <div className="space-y-3 mb-4">
+      <button
+        type="button"
+        disabled={isProcessing}
+        className="w-full bg-black text-white py-3 px-4 rounded-xl font-medium text-base flex items-center justify-center space-x-2 hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M19.88 5.63c-.4-.4-.93-.63-1.49-.63H5.61c-.56 0-1.09.23-1.49.63-.4.4-.63.93-.63 1.49v9.76c0 .56.23 1.09.63 1.49.4.4.93.63 1.49.63h12.78c.56 0 1.09-.23 1.49-.63.4-.4.63-.93.63-1.49V7.12c0-.56-.23-1.09-.63-1.49zm-1.49 1.49v9.76H5.61V7.12h12.78z"/>
+          <path d="M8.83 10.28c0-.39.31-.7.7-.7h.93c.39 0 .7.31.7.7v3.44c0 .39-.31.7-.7.7H9.53c-.39 0-.7-.31-.7-.7v-3.44zm4.74 0c0-.39.31-.7.7-.7h.93c.39 0 .7.31.7.7v3.44c0 .39-.31.7-.7.7h-.93c-.39 0-.7-.31-.7-.7v-3.44z"/>
+        </svg>
+        <span>Pay with Apple Pay</span>
+      </button>
+      
+      <button
+        type="button"
+        disabled={isProcessing}
+        className="w-full bg-white border-2 border-gray-200 text-gray-800 py-3 px-4 rounded-xl font-medium text-base flex items-center justify-center space-x-2 hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <svg className="w-5 h-5" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
+        <span>Pay with Google Pay</span>
+      </button>
+      
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-gray-200"></div>
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-white px-3 text-gray-500 font-medium">Or pay with card</span>
+        </div>
+      </div>
+    </div>
+  );
 }
 
-export default function ReservePage() {
-  const router = useRouter();
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    address: '',
-    city: '',
-    state: '',
-    zipCode: '',
-    vehicleMake: '',
-    vehicleModel: '',
-    installationType: 'residential',
-    installationNotes: '',
-    agreeTerms: false
-  });
-  
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState(null);
+// Checkout Form Component
+function CheckoutForm({ onSuccess, isProcessing, setIsProcessing, setError, formData }) {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [errorMessage, setErrorMessage] = useState(null);
 
-  // Function to update email from URL parameter
-  const setEmailFromParam = (email) => {
-    if (email) {
-      setFormData(prev => ({
-        ...prev,
-        email: email
-      }));
+  const handlePayment = async () => {
+    if (!stripe || !elements) {
+      setErrorMessage('Payment system not initialized.');
+      return false;
     }
-  };
 
-  const vehicleMakes = [
-    "Tesla", "Ford", "Chevrolet", "Nissan", "BMW", "Audi",
-    "Volkswagen", "Hyundai", "Kia", "Porsche", "Rivian", "Lucid",
-    "Toyota", "Mercedes-Benz", "Polestar", "Volvo", "Other"
-  ];
-
-  const stateOptions = [
-    "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", 
-    "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", 
-    "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", 
-    "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", 
-    "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"
-  ];
-
-  const installationTypes = [
-    { id: "residential", label: "Residential" },
-    { id: "commercial", label: "Commercial" },
-    { id: "multi-family", label: "Multi-Family Dwelling" }
-  ];
-
-  const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    
-    if (type === 'checkbox') {
-      setFormData({
-        ...formData,
-        [name]: checked
-      });
-    } else {
-      setFormData({
-        ...formData,
-        [name]: value
-      });
+    // Validate form data before payment
+    if (!formData.fullName.trim() || !formData.email.trim() || !formData.agreeTerms) {
+      setErrorMessage('Please complete all required fields.');
+      return false;
     }
-  };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    
-    
+    setIsProcessing(true);
+    setErrorMessage(null);
+
     try {
-      const reservationData = {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        phone: formData.phone || null,
-        vehicleMake: formData.vehicleMake || null,
-        vehicleModel: formData.vehicleModel || null,
-        lastUpdated: serverTimestamp()
-      };
+      const { error, paymentIntent } = await stripe.confirmPayment({
+        elements,
+        confirmParams: { return_url: `${window.location.origin}/reserve/success` },
+        redirect: 'if_required',
+      });
 
-      // Check if the email already exists in the database
-      const mailingListRef = collection(db, 'mailing-list');
-      const emailQuery = query(mailingListRef, where("email", "==", formData.email));
-      const querySnapshot = await getDocs(emailQuery);
-      
-      let actionTaken = "added";
-      
-      if (querySnapshot.empty) {
-        // Email doesn't exist, create a new document
-        reservationData.reservationDate = serverTimestamp(); // Add creation timestamp
-        await addDoc(mailingListRef, reservationData);
+      if (error) {
+        setErrorMessage(error.message);
+        setIsProcessing(false);
+        return false;
+      } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+        await onSuccess(paymentIntent);
+        return true;
       } else {
-        // Email exists, update the existing document
-        const docRef = doc(db, 'mailing-list', querySnapshot.docs[0].id);
-        await updateDoc(docRef, reservationData);
-        actionTaken = "updated";
+        setErrorMessage('Payment did not complete successfully.');
+        setIsProcessing(false);
+        return false;
       }
-      
-      // Optional: Send confirmation email via API
-      fetch('/api/send-welcome-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: formData.email,
-          firstName: formData.firstName,
-          reservationId: new Date().getTime().toString(),
-          isNewUser: actionTaken === "added"
-        }),
-      }).catch(error => console.error('Error sending confirmation email:', error));
-
-      setSubmitStatus({ status: 'success', action: actionTaken });
-      
-      // Reset only certain fields after successful submission
-      setFormData(prev => ({
-        firstName: '',
-        lastName: '',
-        email: '',
-        vehicleMake: '',
-        vehicleModel: '',
-        address: '',
-        city: '',
-        state: '',
-        zipCode: '',
-        installationNotes: '',
-        agreeTerms: false
-      }));
-      router.push(`/reserve/success?firstName=${encodeURIComponent(formData.firstName)}&email=${encodeURIComponent(formData.email)}}`)
-    } catch (error) {
-      console.error('Error submitting reservation:', error);
-      setSubmitStatus({ status: 'error' });
-    } finally {
-      setIsSubmitting(false);
-      
-      // Auto-scroll to top to see success message
-      window.scrollTo(0, 0);
-      
-      // Reset status after 5 seconds
-      setTimeout(() => {
-        setSubmitStatus(null);
-      }, 5000);
+    } catch (err) {
+      setErrorMessage('Payment failed. Please try again.');
+      setIsProcessing(false);
+      return false;
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-600 via-teal-600 to-cyan-600 pt-32 pb-20">
-      {/* Suspense boundary for useSearchParams */}
-      <Suspense fallback={null}>
-        <EmailFromSearchParams setEmail={setEmailFromParam} />
-      </Suspense>
+    <div className="space-y-4">
+      <PaymentElement
+        options={{
+          style: {
+            base: {
+              fontSize: '16px',
+              color: '#1f2937',
+              fontFamily: 'system-ui, -apple-system, sans-serif',
+              '::placeholder': { color: '#9ca3af' },
+              iconColor: '#059669',
+            },
+          },
+        }}
+      />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-3xl mx-auto">
-          {/* Header Section */}
-          <motion.div variants={fadeIn} className="text-center mb-10">
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-50 mb-4">Reserve Your EVolve Charger</h1>
-            <p className="text-lg text-gray-50">
-              You're one step closer to transforming your EV charging experience.
-            </p>
+      {errorMessage && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700 flex items-center space-x-2"
+        >
+          <svg className="w-4 h-4 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>{errorMessage}</span>
+        </motion.div>
+      )}
+      
+      <motion.button
+        type="button"
+        onClick={handlePayment}
+        disabled={!stripe || isProcessing}
+        whileHover={{ scale: isProcessing ? 1 : 1.02 }}
+        whileTap={{ scale: isProcessing ? 1 : 0.98 }}
+        className="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold text-lg shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center min-h-[56px]"
+      >
+        {isProcessing ? (
+          <>
+            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>Securing Your Spot...</span>
+          </>
+        ) : (
+          <>
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+            <span>Reserve Now • $5</span>
+          </>
+        )}
+      </motion.button>
+    </div>
+  );
+}
+
+export default function ReservePage() {
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    agreeTerms: false,
+  });
+  const [validationErrors, setValidationErrors] = useState({});
+  const [clientSecret, setClientSecret] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState(null);
+  const router = useRouter();
+
+  // Dynamic data for social proof and urgency
+  const fastChargingCost = 32; // Full session cost for anchoring
+  const reservationsToday = 127;
+  const localDrivers = 89;
+  const cityName = "your area";
+
+  // Create payment intent on mount
+  useEffect(() => {
+    const createPaymentIntent = async () => {
+      try {
+        const response = await fetch('/api/create-payment-intent', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            amount: 500, // $5 in cents
+            metadata: { type: 'reservation' },
+          }),
+        });
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`API request failed: ${errorText}`);
+        }
+        const { clientSecret } = await response.json();
+        if (!clientSecret) throw new Error('No clientSecret returned');
+        setClientSecret(clientSecret);
+      } catch (err) {
+        setError('Unable to initialize secure payment. Please refresh and try again.');
+        console.error(err);
+      }
+    };
+
+    createPaymentIntent();
+  }, []);
+
+  // Real-time validation
+  const validateField = (name, value) => {
+    const errors = { ...validationErrors };
+    
+    switch (name) {
+      case 'fullName':
+        if (!value.trim()) {
+          errors.fullName = 'Full name is required';
+        } else if (value.trim().split(' ').length < 2) {
+          errors.fullName = 'Please enter both first and last name';
+        } else {
+          delete errors.fullName;
+        }
+        break;
+      case 'email':
+        if (!value.trim()) {
+          errors.email = 'Email address is required';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          errors.email = 'Please enter a valid email address';
+        } else {
+          delete errors.email;
+        }
+        break;
+      case 'agreeTerms':
+        if (!value) {
+          errors.agreeTerms = 'Please agree to continue';
+        } else {
+          delete errors.agreeTerms;
+        }
+        break;
+    }
+    
+    setValidationErrors(errors);
+  };
+
+  // Handle input changes with real-time validation
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    const newValue = type === 'checkbox' ? checked : value;
+    
+    setFormData({
+      ...formData,
+      [name]: newValue,
+    });
+    
+    // Real-time validation
+    validateField(name, newValue);
+  };
+
+  // Handle payment success
+  const handlePaymentSuccess = async (paymentIntent) => {
+    try {
+      const [firstName, ...lastNameParts] = formData.fullName.trim().split(' ');
+      const lastName = lastNameParts.join(' ') || '';
+      
+      const reservationData = {
+        firstName,
+        lastName,
+        fullName: formData.fullName,
+        email: formData.email,
+        paymentIntentId: paymentIntent.id,
+        status: 'confirmed',
+        reservationDate: serverTimestamp(),
+        amount: 5.00,
+      };
+      
+      const reservationRef = await addDoc(collection(db, 'reservations'), reservationData);
+      
+      // Send confirmation email
+      await fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: formData.email,
+          reservationNumber: `EV-${reservationRef.id.slice(-6).toUpperCase()}`,
+          firstName,
+          fullName: formData.fullName,
+        }),
+      });
+      
+      router.push(`/reserve/success?reservationId=${reservationRef.id}&name=${encodeURIComponent(firstName)}`);
+    } catch (err) {
+      setError('Reservation confirmed but email notification failed. Please contact support with your payment confirmation.');
+      console.error(err);
+    }
+  };
+
+  const options = {
+    clientSecret,
+    appearance: {
+      theme: 'stripe',
+      variables: {
+        colorPrimary: '#059669',
+        colorBackground: '#ffffff',
+        colorText: '#1f2937',
+        colorDanger: '#dc2626',
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+        spacingUnit: '4px',
+        borderRadius: '12px',
+      },
+    },
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-emerald-50">
+      <div className="max-w-md mx-auto px-4 py-8">
+        
+        {/* Header Section with Anchoring and Social Proof */}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainer}
+          className="text-center mt-20 mb-8"
+        >
+          
+          <motion.h1
+            variants={fadeIn}
+            className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 leading-tight"
+          >
+            <span className="text-emerald-600">Reserve now</span>
+          </motion.h1>
+
+          <motion.div variants={fadeIn} className="flex items-center justify-center space-x-6 text-sm text-gray-600">
+            <div className="flex items-center space-x-1">
+              <svg className="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              <span className="font-medium">{reservationsToday} reserved today</span>
+            </div>
+            <div className="flex items-center space-x-1">
+              <svg className="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+              </svg>
+              <span className="font-medium">{localDrivers} from {cityName}</span>
+            </div>
           </motion.div>
+        </motion.div>
 
-          {/* Success/Error Message */}
-          {submitStatus && (
-            <motion.div 
-              variants={fadeIn}
-              className={`mb-8 p-4 rounded-lg ${
-                submitStatus.status === 'success' 
-                  ? 'bg-green-50 text-green-800 border border-green-200' 
-                  : 'bg-red-50 text-red-800 border border-red-200'
-              }`}
-            >
-              {submitStatus.status === 'success' ? (
-                <div className="flex items-center">
-                  <svg className="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <p>
-                    {submitStatus.action === "added" 
-                      ? "Your reservation has been confirmed! Check your inbox for reservation details."
-                      : "Your information has been updated successfully! Check your inbox for the latest details."}
-                  </p>
-                </div>
-              ) : (
-                <div className="flex items-center">
-                  <svg className="h-5 w-5 text-red-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                  </svg>
-                  <p>There was an error submitting your reservation. Please try again.</p>
-                </div>
-              )}
-            </motion.div>
-          )}
-
-          {/* Main Form */}
-          <motion.form variants={fadeIn} onSubmit={handleSubmit}>
-            <div className="bg-white rounded-xl shadow-[inset_0_-1px_5px_rgba(10,10,10,15)] p-6 mb-8">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">Your Information</h2>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <div>
-                  <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-                  <input
-                    type="text"
-                    id="firstName"
-                    name="firstName"
-                    value={formData.firstName}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-                  <input
-                    type="text"
-                    id="lastName"
-                    name="lastName"
-                    value={formData.lastName}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                  />
-                </div>
+        {/* Main Form Card */}
+        <motion.div
+          variants={slideUp}
+          className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden"
+        >
+          <div className="p-6 sm:p-8">
+            
+            {/* Form Fields */}
+            <div className="space-y-5 mb-6">
+              <div>
+                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  id="fullName"
+                  name="fullName"
+                  value={formData.fullName}
+                  onChange={handleInputChange}
+                  autoComplete="name"
+                  required
+                  className={`w-full px-4 py-3 text-gray-900 border rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all text-base ${
+                    validationErrors.fullName ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-gray-50'
+                  }`}
+                  placeholder="Sarah Miller"
+                />
+                {validationErrors.fullName && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-xs text-red-600 mt-1 flex items-center space-x-1"
+                  >
+                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                    <span>{validationErrors.fullName}</span>
+                  </motion.p>
+                )}
               </div>
-              
-              <div className="mb-6">
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  Email Address
+                </label>
                 <input
                   type="email"
                   id="email"
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
+                  autoComplete="email"
                   required
-                  className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                  className={`w-full px-4 py-3 text-gray-900 border rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all text-base ${
+                    validationErrors.email ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-gray-50'
+                  }`}
+                  placeholder="sarah.miller@email.com"
                 />
-              </div>
-              <h2 className="text-xl font-bold text-gray-900 mb-6">Your EV</h2>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <div>
-                  <label htmlFor="vehicleMake" className="block text-sm font-medium text-gray-700 mb-1">Vehicle Make</label>
-                  <select
-                    id="vehicleMake"
-                    name="vehicleMake"
-                    value={formData.vehicleMake}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                {validationErrors.email && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-xs text-red-600 mt-1 flex items-center space-x-1"
                   >
-                    <option value="">Select Make</option>
-                    {vehicleMakes.map((make) => (
-                      <option key={make} value={make}>{make}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label htmlFor="vehicleModel" className="block text-sm font-medium text-gray-700 mb-1">Vehicle Model</label>
-                  <input
-                    type="text"
-                    id="vehicleModel"
-                    name="vehicleModel"
-                    value={formData.vehicleModel}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                    placeholder="e.g., Model 3, Mach-E, ID.4"
-                  />
-                </div>
-              </div>
-              <div className="flex items-start mb-4">
-                <div className="flex items-center h-5">
-                  <input
-                    id="agreeTerms"
-                    name="agreeTerms"
-                    type="checkbox"
-                    checked={formData.agreeTerms}
-                    onChange={handleInputChange}
-                    required
-                    className="h-4 w-4 text-teal-500 border-gray-300 rounded focus:ring-teal-500"
-                  />
-                </div>
-                <div className="ml-3 text-sm">
-                  <label htmlFor="agreeTerms" className="font-medium text-gray-700">
-                    I agree to the terms and conditions
-                  </label>
-                  <p className="text-gray-500">
-                    By checking this box, you agree to our{' '}
-                    <a href="#tos" className="text-teal-500 hover:underline">Terms of Service</a> and{' '}
-                    <a href="#privacypolicy" className="text-teal-500 hover:underline">Privacy Policy</a>
-                  </p>
-                </div>
-              </div>
-              <div className="flex justify-center">
-                <button
-                  type="submit"
-                  disabled={!formData.agreeTerms || isSubmitting}
-                  className={`px-8 py-3 rounded-full font-medium transition-all ${
-                    formData.agreeTerms && !isSubmitting
-                      ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white shadow-md hover:shadow-lg'
-                      : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                  } min-w-[200px]`}
-                >
-                  {isSubmitting ? (
-                    <div className="flex items-center justify-center">
-                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Processing...
-                    </div>
-                  ) : (
-                    'Complete Reservation'
-                  )}
-                </button>
+                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                    <span>{validationErrors.email}</span>
+                  </motion.p>
+                )}
               </div>
             </div>
-            
-           
-          </motion.form>
+
+            {/* Payment Section */}
+            <div className="border-t border-gray-100 pt-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Secure Payment</h3>
+                <div className="flex items-center space-x-2">
+                  <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                  <span className="text-xs text-gray-600 font-medium">256-bit SSL</span>
+                </div>
+              </div>
+              
+              {clientSecret ? (
+                <Elements options={options} stripe={stripePromise}>
+                  {/* <DigitalWalletButtons 
+                    onPaymentSuccess={handlePaymentSuccess}
+                    isProcessing={isProcessing}
+                    setIsProcessing={setIsProcessing}
+                  /> */}
+                  <CheckoutForm
+                    onSuccess={handlePaymentSuccess}
+                    isProcessing={isProcessing}
+                    setIsProcessing={setIsProcessing}
+                    setError={setError}
+                    formData={formData}
+                  />
+                </Elements>
+              ) : (
+                <div className="text-center py-8">
+                  <div className="animate-spin h-6 w-6 border-2 border-emerald-500 rounded-full border-t-transparent mx-auto"></div>
+                  <p className="text-gray-600 text-sm mt-3">Initializing secure payment...</p>
+                </div>
+              )}
+            </div>
+
+            {/* Terms and Conditions */}
+            <div className="mt-6 pt-4 border-t border-gray-100">
+              <div className="flex items-start space-x-3">
+                <input
+                  id="agreeTerms"
+                  name="agreeTerms"
+                  type="checkbox"
+                  checked={formData.agreeTerms}
+                  onChange={handleInputChange}
+                  required
+                  className={`h-4 w-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500 mt-0.5 ${
+                    validationErrors.agreeTerms ? 'border-red-300' : ''
+                  }`}
+                />
+                <label htmlFor="agreeTerms" className="text-xs text-gray-600 leading-relaxed">
+                  I agree to the{' '}
+                  <a href="/terms" className="text-emerald-600 hover:text-emerald-700 underline">Terms of Service</a>{' '}
+                  and{' '}
+                  <a href="/privacy" className="text-emerald-600 hover:text-emerald-700 underline">Privacy Policy</a>.
+                </label>
+              </div>
+              {validationErrors.agreeTerms && (
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-xs text-red-600 mt-1 ml-7"
+                >
+                  {validationErrors.agreeTerms}
+                </motion.p>
+              )}
+            </div>
+
+            {/* Error Display */}
+            {error && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700"
+              >
+                {error}
+              </motion.div>
+            )}
+          </div>
+
+          {/* Trust Indicators Footer */}
+          <div className="bg-gray-50 px-6 py-4 sm:px-8">
+            <div className="flex items-center justify-center space-x-6 text-xs text-gray-500">
+              <div className="flex items-center space-x-1">
+                <svg className="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>Priority access guaranteed</span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <svg className="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                </svg>
+                <span>100% refundable</span>
+              </div>
+            </div>
+            <div className="text-center mt-3">
+              <p className="text-xs text-gray-500">
+                Secured by <span className="font-semibold text-gray-700">Stripe</span> • 
+                PCI DSS Level 1 Certified • Bank-grade encryption
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Additional Trust Signals */}
+        <motion.div 
+          variants={fadeIn}
+          className="mt-6 text-center"
+        >
+          <div className="inline-flex items-center space-x-4 text-xs text-gray-500">
+            <div className="flex items-center space-x-1">
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              <span>HTTPS Secured</span>
+            </div>
+            <div className="flex items-center space-x-1">
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+              </svg>
+              <span>SOC 2 Compliant</span>
+            </div>
+            <div className="flex items-center space-x-1">
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z" clipRule="evenodd" />
+              </svg>
+              <span>Privacy Protected</span>
+            </div>
+          </div>
         </motion.div>
       </div>
     </div>

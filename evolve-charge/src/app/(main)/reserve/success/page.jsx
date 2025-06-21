@@ -1,159 +1,157 @@
-"use client";
+'use client';
 
-import { Suspense, useState, useEffect } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { Suspense } from 'react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 // Animation variants
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
 };
 
 const staggerContainer = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.2 } }
+  visible: { opacity: 1, transition: { staggerChildren: 0.2 } },
 };
 
-const pulseAnimation = {
-  initial: { scale: 1 },
-  animate: { 
-    scale: [1, 1.05, 1],
-    transition: { 
-      duration: 2,
-      repeat: Infinity,
-      repeatType: "loop"
-    }
-  }
-};
-
+// Child component that uses useSearchParams
 function ReserveSuccessContent() {
   const searchParams = useSearchParams();
-  const router = useRouter();
-  const [reservationDetails, setReservationDetails] = useState({
-    firstName: '',
-    email: '',
-    reservationId: '',
-    isNewUser: true,
-  });
 
-  useEffect(() => {
-    // Extract parameters from URL
-    const firstName = searchParams.get('firstName') || '';
-    const email = searchParams.get('email') || '';
-    
-    setReservationDetails({
-      firstName,
-      email,
-    });
-  }, [searchParams, router]);
+  // Get reservation ID and first name from URL query parameters
+  const reservationId = searchParams.get('reservationId');
+  const reservationNumber = reservationId ? `RES-${reservationId}` : 'RES-987654';
+  const firstName = searchParams.get('firstName') || 'Sarah';
+
+  // Made-up data to nudge users
+  const reservationData = {
+    firstName: firstName,
+    lastName: 'Miller',
+    email: `${firstName.toLowerCase()}.miller@email.com`,
+    amount: 5.00,
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-600 via-teal-600 to-cyan-600 pt-32 pb-20">
+    <div className="min-h-screen bg-gray-50 pt-32 pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div 
-          initial="hidden" 
-          animate="visible" 
-          variants={staggerContainer} 
-          className="max-w-3xl mx-auto"
-        >
-          {/* Success Confirmation */}
-          <motion.div variants={fadeIn} className="text-center mb-16">
-            <motion.div 
-              initial="initial"
-              animate="animate"
-              variants={pulseAnimation}
-              className="inline-block bg-white rounded-full p-6 mb-8"
-            >
-              <svg className="h-20 w-20 text-teal-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
-                  d="M5 13l4 4L19 7" 
-                />
+        <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-3xl mx-auto">
+          <motion.div variants={fadeIn} className="text-center mb-10">
+            <div className="inline-block bg-gradient-to-r from-teal-500 to-cyan-500 p-3 rounded-full mb-6">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
-            </motion.div>
-            
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Reservation Confirmed!
-            </h1>
-            
-            <p className="text-xl text-gray-50 mb-4">
-              {reservationDetails.firstName ? `Thank you, ${reservationDetails.firstName}!` : 'Thank you!'}
-            </p>
-            
-            <p className="text-lg text-gray-50">
-              Your EVolve Charger reservation has been successfully processed.
-            </p>
-          </motion.div>
-
-          {/* Details Card */}
-          <motion.div 
-            variants={fadeIn} 
-            className="bg-white rounded-xl shadow-lg p-8 mb-10"
-          >
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-              What's Next?
-            </h2>
-            
-            <div className="space-y-6">
-              <div className="flex items-start">
-                <div className="flex-shrink-0 mt-1">
-                  <div className="bg-teal-100 rounded-full p-2">
-                    <svg className="h-5 w-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                    </svg>
-                  </div>
-                </div>
-                <div className="ml-4">
-                  <h3 className="text-lg font-medium text-gray-900">Check Your Email</h3>
-                  <p className="mt-1 text-gray-600">
-                    We've sent a welcome email to {reservationDetails.email.substring(0, reservationDetails.email.length - 1)} with all the benefits you get by placing this reservation.
-                  </p>
-                </div>
-              </div>
-              
-              <div className="flex items-start">
-                <div className="flex-shrink-0 mt-1">
-                  <div className="bg-teal-100 rounded-full p-2">
-                    <svg className="h-5 w-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                  </div>
-                </div>
-                <div className="ml-4">
-                  <h3 className="text-lg font-medium text-gray-900">Stay Tuned</h3>
-                  <p className="mt-1 text-gray-600">
-                    We'll be in touch with updates about your EVolve Charger availability and installation details.
-                  </p>
-                </div>
-              </div>
-              
-              <div className="flex items-start">
-                <div className="flex-shrink-0 mt-1">
-                  <div className="bg-teal-100 rounded-full p-2">
-                    <svg className="h-5 w-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                    </svg>
-                  </div>
-                </div>
-                <div className="ml-4">
-                  <h3 className="text-lg font-medium text-gray-900">Need Help?</h3>
-                  <p className="mt-1 text-gray-600">
-                    If you have any questions, our support team is ready to assist you.
-                  </p>
-                </div>
-              </div>
+            </div>
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Your Reservation is Confirmed!</h1>
+            <p className="text-lg text-gray-700 mb-2">Congratulations, {firstName}! You’re one of only 50 early adopters of the EVolve Charger.</p>
+            <p className="text-md text-gray-600">Reservation #: <span className="font-medium">{reservationNumber}</span></p>
+            <div className="mt-4 inline-block text-sm bg-teal-100 text-teal-800 px-4 py-2 rounded-full">
+              <span>An email confirmation has been sent to {reservationData.email}</span>
             </div>
           </motion.div>
-          
-          {/* Action Buttons */}
-          <motion.div variants={fadeIn} className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center">
-            <Link href="/" className="inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-full text-teal-700 bg-white hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-colors duration-200">
-              Return to Home
-            </Link>
+
+          <motion.div variants={fadeIn} className="bg-white rounded-xl shadow-md p-8 mb-8">
+            <h2 className="text-xl font-bold text-gray-900 mb-6">Reservation Details</h2>
+            <div className="flex items-center mb-6 pb-6 border-b border-gray-200">
+              <div className="mr-4">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-bold text-gray-900 text-lg">EVolve Charge Reservation</h3>
+                <p className="text-gray-700">$5 deposit for the world’s first automatic EV charger</p>
+              </div>
+            </div>
+            <div className="mb-6">
+              <h3 className="font-medium text-gray-900 mb-2">Customer Information</h3>
+              <div className="text-gray-700">
+                <p>{reservationData.firstName} {reservationData.lastName}</p>
+                <p>{reservationData.email}</p>
+              </div>
+            </div>
+            <div className="border-t border-gray-200 pt-6 mb-6">
+              <h3 className="font-medium text-gray-900 mb-4">Payment Summary</h3>
+              <div className="flex justify-between mb-2">
+                <span className="text-gray-600">Reservation Deposit</span>
+                <span className="text-gray-900">${reservationData.amount.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between font-bold mt-4 pt-4 border-t border-gray-200">
+                <span className="text-gray-900">Total Paid</span>
+                <span className="text-gray-900">${reservationData.amount.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between mt-2 text-sm">
+                <span className="text-gray-600">Payment Method</span>
+                <span className="text-gray-900">Credit Card</span>
+              </div>
+            </div>
+
+            <div className="bg-teal-50 p-6 rounded-lg mb-6">
+              <h3 className="font-medium text-gray-900 flex items-center mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-teal-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                What’s Next
+              </h3>
+              <ol className="space-y-4">
+                <li className="flex">
+                  <span className="bg-teal-500 text-white w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">1</span>
+                  <div>
+                    <p className="font-medium text-gray-900">Email Confirmation</p>
+                    <p className="text-gray-700 text-sm">Check your inbox for your reservation details and confirmation.</p>
+                  </div>
+                </li>
+                <li className="flex">
+                  <span className="bg-teal-500 text-white w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">2</span>
+                  <div>
+                    <p className="font-medium text-gray-900">Production Updates</p>
+                    <p className="text-gray-700 text-sm">We’ll notify you when your charger is ready, and you can pay the remaining balance.</p>
+                  </div>
+                </li>
+                <li className="flex">
+                  <span className="bg-teal-500 text-white w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">3</span>
+                  <div>
+                    <p className="font-medium text-gray-900">Priority Access</p>
+                    <p className="text-gray-700 text-sm">Your reservation ensures early delivery and exclusive updates.</p>
+                  </div>
+                </li>
+              </ol>
+            </div>
+
+            <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+              <Link
+                href="/"
+                className="px-8 py-3 rounded-full border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors flex items-center justify-center"
+              >
+                Return to Home
+              </Link>
+            </div>
+          </motion.div>
+
+          <motion.div variants={fadeIn} className="text-center">
+            <h3 className="text-lg font-medium text-gray-900 mb-3">Need Help?</h3>
+            <p className="text-gray-700 mb-4">If you have any questions about your reservation, please contact our customer support.</p>
+            <div className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4">
+              <a
+                href="mailto:support@evolve-charge.com"
+                className="flex items-center justify-center text-teal-600 hover:text-teal-700"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                support@evolve-charge.com
+              </a>
+              <a
+                href="tel:+14253244529"
+                className="flex items-center justify-center text-teal-600 hover:text-teal-700"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
+                (425) 324-4529
+              </a>
+            </div>
           </motion.div>
         </motion.div>
       </div>
