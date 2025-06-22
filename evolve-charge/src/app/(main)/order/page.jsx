@@ -46,7 +46,7 @@ function ChargingCableModal({ isOpen, onClose }) {
           />
         </div>
         <p className="text-gray-700 text-sm">
-          The Tesla Wall Connector plug is a high-power charging solution designed for Tesla vehicles. The standard mobile connector is included with almost all Tesla vehicles, if you have this (or the Tesla Wall Connector) then do not purchase this add-on.
+          If you have already own a cable that you use to charge your vehicle then DO NOT PURCHASE this add-on. The EVolve Charger is designed to integrate with the charger you already use. If you do not own one then we will provide a charging cable designed to work with the vehicle you own (specify vehicle in next section).
         </p>
         <button
           onClick={onClose}
@@ -209,7 +209,7 @@ export default function OrderPage() {
     return acc;
   }, {});
 
-  const addOnsList = [
+   const addOnsList = [
     { name: 'professionalInstallation', label: 'Professional Installation', price: 40, description: 'Expert installation at your location.' },
     { 
       name: 'chargingCable', 
@@ -217,12 +217,22 @@ export default function OrderPage() {
       price: 320, 
       description: 'High-quality, durable charging cable.',
       additionalDescription: (
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="text-teal-500 hover:underline text-sm"
-        >
-          You may already have this
-        </button>
+        <div className="space-y-3">
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+            <p className="text-amber-800 text-sm font-semibold mb-2">
+              ⚠️ DO NOT PURCHASE if you already have a charging cable for your vehicle
+            </p>
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="inline-flex items-center px-4 py-2 bg-amber-100 hover:bg-amber-200 border border-amber-300 rounded-lg text-amber-800 text-sm font-semibold transition-all duration-200 hover:shadow-md"
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Click here to check if you need this
+            </button>
+          </div>
+        </div>
       )
     },
     { name: 'extendedWarranty', label: 'Extended Warranty', price: 50, description: 'Additional 2 years of coverage for your charger.' }
@@ -862,7 +872,7 @@ export default function OrderPage() {
 
                 {/* Vehicle Information */}
                 <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 p-8 hover:shadow-3xl transition-all duration-300">
-                  <div className="flex justify-between items-center mb-8">
+                  <div className="flex md:justify-between items-center mb-8">
                     <div className="flex items-center">
                       <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center mr-4">
                         <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -873,7 +883,7 @@ export default function OrderPage() {
                     </div>
                     <button
                       onClick={addVehicle}
-                      className="flex items-center px-6 py-3 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-2xl font-semibold hover:shadow-xl hover:scale-105 transition-all"
+                      className="hidden md:flex items-center px-6 py-3 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-2xl font-semibold hover:shadow-xl hover:scale-105 transition-all"
                     >
                       <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4"></path>
@@ -1003,6 +1013,15 @@ export default function OrderPage() {
                       </div>
                     </div>
                   ))}
+                  <button
+                    onClick={addVehicle}
+                    className="md:hidden flex items-center justify-center w-full px-6 py-3 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-2xl font-semibold hover:shadow-xl hover:scale-105 transition-all mt-4"
+                  >
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Add Vehicle
+                  </button>
                 </div>
 
                 {/* Delivery Address */}

@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import LogoWhite from '@/images/LogoWhite.svg';
+import OrderChoiceModal from './OrderChoiceModal';
 
 // Exclude Home since logo links back to home
 const NAV_ITEMS = [
@@ -17,15 +18,18 @@ const NAV_ITEMS = [
 
 export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isDesktop, setIsDesktop] = useState(true);
   const pathname = usePathname();
-  const hideCTA = ['/order', '/order/success'].includes(pathname);
+  const hideCTA = ['/order', '/order/success', '/reserve', '/reserve/success'].includes(pathname);
   const navRefs = useRef({});
-  const mobileMenuRef = useRef(null); // Ref for mobile menu
-  const hamburgerRef = useRef(null); // Ref for hamburger button
+  const mobileMenuRef = useRef(null);
+  const hamburgerRef = useRef(null);
+  const modalRef = useRef(null);
   const activeHref = NAV_ITEMS.find((item) => item.href === pathname)?.href || null;
 
+  // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
@@ -37,14 +41,14 @@ export default function Navigation() {
   // Detect desktop vs mobile
   useEffect(() => {
     const checkIsDesktop = () => {
-      setIsDesktop(window.innerWidth >= 768); // Matches md breakpoint
+      setIsDesktop(window.innerWidth >= 768);
     };
     checkIsDesktop();
     window.addEventListener('resize', checkIsDesktop);
     return () => window.removeEventListener('resize', checkIsDesktop);
   }, []);
 
-  // Handle clicks outside the mobile menu to close it
+  // Handle clicks outside mobile menu and modal
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -56,11 +60,48 @@ export default function Navigation() {
       ) {
         setMobileMenuOpen(false);
       }
+      if (
+        isModalOpen &&
+        modalRef.current &&
+        !modalRef.current.contains(event.target)
+      ) {
+        setIsModalOpen(false);
+      }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [mobileMenuOpen]);
+  }, [mobileMenuOpen, isModalOpen]);
+
+  // Focus trap for modal
+  useEffect(() => {
+    if (isModalOpen) {
+      const focusableElements = modalRef.current?.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      const firstElement = focusableElements?.[0];
+      const lastElement = focusableElements?.[focusableElements.length - 1];
+
+      const handleKeyDown = (e) => {
+        if (e.key === 'Tab') {
+          if (e.shiftKey && document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement?.focus();
+          } else if (!e.shiftKey && document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement?.focus();
+          }
+        }
+        if (e.key === 'Escape') {
+          setIsModalOpen(false);
+        }
+      };
+
+      document.addEventListener('keydown', handleKeyDown);
+      firstElement?.focus();
+      return () => document.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [isModalOpen]);
 
   return (
     <motion.header
@@ -99,13 +140,12 @@ export default function Navigation() {
           {/* Desktop CTAs */}
           {!hideCTA && (
             <div className="hidden md:flex items-center space-x-6">
-              <Link href="/order">
-                <button
-                  className="px-6 py-2 rounded-full font-semibold transition-transform transform hover:scale-105 bg-white text-teal-600 border-2 border-teal-600 shadow-lg drop-shadow-lg"
-                >
-                  Order Now
-                </button>
-              </Link>
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="px-6 py-2 rounded-full font-semibold transition-transform transform hover:scale-105 bg-white text-teal-600 border-2 border-teal-600 shadow-lg drop-shadow-lg"
+              >
+                Order Now
+              </button>
             </div>
           )}
 
@@ -118,7 +158,7 @@ export default function Navigation() {
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className={`h-6 w-6 ${'text-white'}`}
+                className="h-6 w-6 text-white"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -146,11 +186,7 @@ export default function Navigation() {
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                transition={{ 
-                  duration: 0.3, 
-                  delay: 0.15, // Delay content appearance
-                  ease: 'easeOut' 
-                }}
+                transition={{ duration: 0.3, delay: 0.15, ease: 'easeOut' }}
                 className="px-4 py-4 space-y-4"
               >
                 {NAV_ITEMS.map((item, index) => (
@@ -159,10 +195,7 @@ export default function Navigation() {
                       key={item.href}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ 
-                        duration: 0.2, 
-                        delay: 0.15 + (index * 0.05) // Stagger each item
-                      }}
+                      transition={{ duration: 0.2, delay: 0.15 + (index * 0.05) }}
                     >
                       <Link
                         href={item.href}
@@ -174,29 +207,30 @@ export default function Navigation() {
                     </motion.div>
                   )
                 ))}
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ 
-                    duration: 0.2, 
-                    delay: 0.15 + (NAV_ITEMS.length * 0.05)
-                  }}
+                  transition={{ duration: 0.2, delay: 0.15 + (NAV_ITEMS.length * 0.05) }}
                   className="pt-4 border-t border-gray-400/30 space-y-2"
                 >
-                  <Link href="/order" className="block">
-                    <button
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="w-full px-6 py-2 rounded-full font-semibold bg-white text-teal-600 border-2 border-teal-600 shadow-lg drop-shadow-lg hover:scale-105 transition-transform"
-                    >
-                      Order Now
-                    </button>
-                  </Link>
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      setIsModalOpen(true);
+                    }}
+                    className="w-full px-6 py-2 rounded-full font-semibold bg-white text-teal-600 border-2 border-teal-600 shadow-lg drop-shadow-lg hover:scale-105 transition-transform"
+                  >
+                    Order Now
+                  </button>
                 </motion.div>
               </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
       )}
+
+      {/* Modal */}
+      <OrderChoiceModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </motion.header>
   );
 }

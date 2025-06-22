@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ChevronRight, Zap, Clock, Target, Lightbulb, Users, Award } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaXTwitter } from "react-icons/fa6";
+import OrderChoiceModal from '@/components/OrderChoiceModal';
 
 // Animation variants
 const fadeIn = {
@@ -235,7 +236,7 @@ const StorySection = () => {
             Our journey from frustration to innovation
           </p>
         </div> */}
-
+        
         {/* Story Grid Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           
@@ -369,6 +370,9 @@ const StorySection = () => {
 };
 
 export default function AboutPage() {
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const teamMembers = [
     {
       name: "Aryaman Rtunjay",
@@ -520,6 +524,9 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Order Choice Modal */}
+      <OrderChoiceModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+
       {/* Timeline Section */}
       {/* <section className="py-20 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -608,17 +615,18 @@ export default function AboutPage() {
               Join the EV Revolution
             </h2>
             <p className="text-lg md:text-xl mb-8 max-w-3xl mx-auto text-teal-50 leading-relaxed">
-              Ready to experience the future of EV charging? Join thousands of customers who have already 
+              Ready to experience the future of EV charging? Join the customers who have already 
               made the switch to intelligent, automatic charging with EVolve.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-lg mx-auto">
               <motion.button
+                onClick={() => setIsModalOpen(true)}
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
-                className="flex-1 px-8 py-4 rounded-full bg-white text-teal-600 font-bold shadow-lg hover:shadow-xl transition-all"
+                className="px-8 py-3 rounded-full bg-teal-500/30 backdrop-blur-md border border-teal-500/50 text-white font-medium shadow-lg hover:shadow-xl transition-all"
               >
-                Order Now
+                Order Yours
               </motion.button>
               <motion.button
                 whileHover={{ scale: 1.03 }}
