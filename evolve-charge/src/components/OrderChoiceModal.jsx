@@ -21,7 +21,7 @@ export default function OrderChoiceModal({ isOpen, onClose }) {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between items-center mb-6 sticky top-0 z-10">
-              <h2 id="modal-title" className="text-3xl font-bold text-white">Secure Your EVolve Charger</h2>
+              <h2 id="modal-title" className="text-2xl font-bold text-white">Secure Your EVolve Charger</h2>
               <button
                 onClick={onClose}
                 className="p-2 rounded-full bg-gray-300/30 text-white/80 hover:bg-gray-500/50 transition-colors"
