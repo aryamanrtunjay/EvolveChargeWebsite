@@ -396,7 +396,7 @@ export default function Home() {
   const imageY = useTransform(scrollYProgress, [0, 5], [0, -600]);
   const opacity = useTransform(scrollYProgress, [0, 1], [1, 0]);
 
-  const TOTAL_DISCOUNT_SPOTS = 50;
+  const TOTAL_DISCOUNT_SPOTS = 60;
 
   const toggleFAQ = (index) => {
     setActiveFAQ(activeFAQ === index ? null : index);
@@ -877,7 +877,7 @@ export default function Home() {
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">Join the EVolution</h2>
             <p className="text-lg md:text-xl mb-4 max-w-2xl mx-auto text-teal-50">
-              20% discount for the first 50 pre-orders alongside VIP treatment!
+              20% discount for the first 100 pre-orders alongside VIP treatment!
             </p>
             
             <div className="flex flex-col md:flex-row justify-center items-center space-y-2 md:space-y-0 md:space-x-8 mt-8 text-teal-50 font-medium">
