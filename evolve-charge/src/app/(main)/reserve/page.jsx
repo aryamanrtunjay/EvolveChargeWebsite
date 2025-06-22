@@ -5,10 +5,11 @@ import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
+import { db } from '../../firebaseConfig.js';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 // Initialize Stripe
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_TEST_KEY);
 
 // Animation variants
 const fadeIn = {
@@ -165,7 +166,7 @@ function CheckoutForm({ onSuccess, isProcessing, setIsProcessing, setError, form
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
-            <span>Reserve Now • $5</span>
+            <span>Reserve Now • $4.99</span>
           </>
         )}
       </motion.button>
@@ -199,7 +200,7 @@ export default function ReservePage() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            amount: 500, // $5 in cents
+            amount: 499, // $4.99 in cents
             metadata: { type: 'reservation' },
           }),
         });
@@ -282,13 +283,13 @@ export default function ReservePage() {
         paymentIntentId: paymentIntent.id,
         status: 'confirmed',
         reservationDate: serverTimestamp(),
-        amount: 5.00,
+        amount: 4.99,
       };
       
       const reservationRef = await addDoc(collection(db, 'reservations'), reservationData);
       
       // Send confirmation email
-      await fetch('/api/send-email', {
+      await fetch('/api/send-reserve-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -381,7 +382,7 @@ export default function ReservePage() {
                   className={`w-full px-4 py-3 text-gray-900 border rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all text-base ${
                     validationErrors.fullName ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-gray-50'
                   }`}
-                  placeholder="Sarah Miller"
+                  placeholder="Full Name Here"
                 />
                 {validationErrors.fullName && (
                   <motion.p
@@ -412,7 +413,7 @@ export default function ReservePage() {
                   className={`w-full px-4 py-3 text-gray-900 border rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all text-base ${
                     validationErrors.email ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-gray-50'
                   }`}
-                  placeholder="sarah.miller@email.com"
+                  placeholder="your@email.com"
                 />
                 {validationErrors.email && (
                   <motion.p

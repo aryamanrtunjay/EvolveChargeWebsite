@@ -69,7 +69,7 @@ export default function OrderChoiceModal({ isOpen, onClose }) {
                   >
                     <div className="flex justify-between items-start mb-4">
                       <h3 className="text-lg font-semibold text-white/90">Reserve Your Spot</h3>
-                      <span className="text-xl font-bold text-white/80">$5.00</span>
+                      <span className="text-xl font-bold text-white/80">$4.99</span>
                     </div>
                     <div className="space-y-3 text-sm">
                       <div className="flex items-center text-white/70">

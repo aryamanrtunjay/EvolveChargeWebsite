@@ -20,18 +20,45 @@ const staggerContainer = {
 function ReserveSuccessContent() {
   const searchParams = useSearchParams();
 
-  // Get reservation ID and first name from URL query parameters
+  // Get query parameters
   const reservationId = searchParams.get('reservationId');
-  const reservationNumber = reservationId ? `RES-${reservationId}` : 'RES-987654';
-  const firstName = searchParams.get('firstName') || 'Sarah';
+  const name = searchParams.get('name');
+  const fullName = searchParams.get('fullName');
+  const reservationNumber = reservationId ? `EV-${reservationId.slice(-6).toUpperCase()}` : null;
 
-  // Made-up data to nudge users
+  // Reservation data (no fallbacks)
   const reservationData = {
-    firstName: firstName,
-    lastName: 'Miller',
-    email: `${firstName.toLowerCase()}.miller@email.com`,
-    amount: 5.00,
+    displayName: fullName ? decodeURIComponent(fullName) : (name ? decodeURIComponent(name) : null),
+    email: null, // Email not passed in query params, rely on Firestore/email
+    amount: 4.99,
   };
+
+  // Error state for invalid/missing reservationId
+  if (!reservationId || !reservationNumber) {
+    return (
+      <div className="min-h-screen bg-gray-50 pt-32 pb-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <motion.div initial="hidden" animate="visible" variants={fadeIn}>
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Reservation Error</h1>
+            <p className="text-lg text-red-600 mb-4">Invalid or missing reservation details. Please contact support.</p>
+            <p className="text-gray-700 mb-4">
+              If you have questions about your reservation, reach out to us at{' '}
+              <a href="mailto:support@evolve-charge.com" className="text-teal-600 hover:text-teal-700 underline">
+                support@evolve-charge.com
+              </a>{' '}
+              or call (425) 324-4529.
+            </p>
+            <Link
+              href="/"
+              className="inline-block px-8 py-3 rounded-full border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+            >
+              Return to Home
+            </Link>
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 pt-32 pb-20">
@@ -44,10 +71,14 @@ function ReserveSuccessContent() {
               </svg>
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Your Reservation is Confirmed!</h1>
-            <p className="text-lg text-gray-700 mb-2">Congratulations, {firstName}! You’re one of only 50 early adopters of the EVolve Charger.</p>
+            {reservationData.displayName && (
+              <p className="text-lg text-gray-700 mb-2">
+                Congratulations, {reservationData.displayName}! You’re one of the early adopters of the EVolve Charger.
+              </p>
+            )}
             <p className="text-md text-gray-600">Reservation #: <span className="font-medium">{reservationNumber}</span></p>
             <div className="mt-4 inline-block text-sm bg-teal-100 text-teal-800 px-4 py-2 rounded-full">
-              <span>An email confirmation has been sent to {reservationData.email}</span>
+              <span>An email confirmation has been sent to your registered email address.</span>
             </div>
           </motion.div>
 
@@ -61,16 +92,17 @@ function ReserveSuccessContent() {
               </div>
               <div>
                 <h3 className="font-bold text-gray-900 text-lg">EVolve Charge Reservation</h3>
-                <p className="text-gray-700">$5 deposit for the world’s first automatic EV charger</p>
+                <p className="text-gray-700">$4.99 deposit for the world’s first automatic EV charger</p>
               </div>
             </div>
-            <div className="mb-6">
-              <h3 className="font-medium text-gray-900 mb-2">Customer Information</h3>
-              <div className="text-gray-700">
-                <p>{reservationData.firstName} {reservationData.lastName}</p>
-                <p>{reservationData.email}</p>
+            {reservationData.displayName && (
+              <div className="mb-6">
+                <h3 className="font-medium text-gray-900 mb-2">Customer Information</h3>
+                <div className="text-gray-700">
+                  <p>{reservationData.displayName}</p>
+                </div>
               </div>
-            </div>
+            )}
             <div className="border-t border-gray-200 pt-6 mb-6">
               <h3 className="font-medium text-gray-900 mb-4">Payment Summary</h3>
               <div className="flex justify-between mb-2">
