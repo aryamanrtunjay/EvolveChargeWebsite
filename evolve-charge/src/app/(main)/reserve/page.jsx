@@ -9,7 +9,7 @@ import { db } from '../../firebaseConfig.js';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 // Initialize Stripe
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_TEST_KEY);
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
 // Animation variants
 const fadeIn = {
