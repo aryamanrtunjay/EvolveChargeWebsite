@@ -33,7 +33,7 @@ export default function OrderChoiceModal({ isOpen, onClose }) {
               </button>
             </div>
             <p className="text-white/70 mb-8 text-center text-base">
-              Order now to lock in your spot for the world’s first automatic EV charger.
+              Order now to lock in your spot for the world's first automatic EV charger.
             </p>
 
             <div className="space-y-6 max-h-[calc(100vh-200px)] overflow-y-auto">
@@ -78,19 +78,19 @@ export default function OrderChoiceModal({ isOpen, onClose }) {
                                 <svg className="w-4 h-4 mr-2 text-white/40" fill="currentColor" viewBox="0 0 20 20">
                                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                 </svg>
-                                <span>Join the reservation queue</span>
-                              </div>
-                              <div className="flex items-center text-white/70">
-                                <svg className="w-4 h-4 mr-2 text-white/40" fill="currentColor" viewBox="0 0 20 20">
-                                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                </svg>
-                                <span>Pay balance when charger is ready</span>
+                                <span>Join the delivery queue</span>
                               </div>
                               <div className="flex items-center text-white/70">
                                 <svg className="w-4 h-4 mr-2 text-white/40" fill="currentColor" viewBox="0 0 20 20">
                                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                 </svg>
                                 <span>Delivery based on queue position</span>
+                              </div>
+                              <div className="flex items-center text-white/70">
+                                <svg className="w-4 h-4 mr-2 text-white/40" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                </svg>
+                                <span>Pay balance when charger is ready</span>
                               </div>
                             </div>
                             <div className="mt-4 text-xs text-white/50">
@@ -119,19 +119,19 @@ export default function OrderChoiceModal({ isOpen, onClose }) {
                           <svg className="w-4 h-4 mr-2 text-white/40" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                           </svg>
-                          <span>Join the reservation queue</span>
-                        </div>
-                        <div className="flex items-center text-white/70">
-                          <svg className="w-4 h-4 mr-2 text-white/40" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                          </svg>
-                          <span>Pay balance when charger is ready</span>
+                          <span>Join the delivery queue</span>
                         </div>
                         <div className="flex items-center text-white/70">
                           <svg className="w-4 h-4 mr-2 text-white/40" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                           </svg>
                           <span>Delivery based on queue position</span>
+                        </div>
+                        <div className="flex items-center text-white/70">
+                          <svg className="w-4 h-4 mr-2 text-white/40" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                          </svg>
+                          <span>Pay balance when charger is ready</span>
                         </div>
                       </div>
                       <div className="mt-4 text-xs text-white/50">
@@ -161,7 +161,10 @@ export default function OrderChoiceModal({ isOpen, onClose }) {
                   >
                     <span className="text-lg font-semibold text-teal-300">Priority Order</span>
                     <div className="flex items-center">
-                      <span className="text-xl font-bold text-teal-200 mr-2">$99.99</span>
+                      <div className="flex flex-col items-end mr-2">
+                        <span className="text-sm text-gray-400 line-through">$124.99</span>
+                        <span className="text-xl font-bold text-teal-200">$99.99</span>
+                      </div>
                       <motion.svg
                         className="w-5 h-5 text-teal-200"
                         fill="none"
@@ -203,7 +206,7 @@ export default function OrderChoiceModal({ isOpen, onClose }) {
                                 <svg className="w-4 h-4 mr-2 text-green-400" fill="currentColor" viewBox="0 0 20 20">
                                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                 </svg>
-                                <span>Pay in full to secure priority</span>
+                                <span>Pay in full now and secure priority</span>
                               </div>
                             </div>
                             <div className="mt-4 text-xs text-teal-200 italic">
@@ -225,7 +228,10 @@ export default function OrderChoiceModal({ isOpen, onClose }) {
                     <div className="w-full p-6 rounded-xl bg-gradient-to-r from-teal-600/30 to-teal-700/30 border-2 border-teal-400 cursor-pointer">
                       <div className="flex justify-between items-start mb-4">
                         <h3 className="text-xl font-bold text-teal-300">Priority Order</h3>
-                        <span className="text-2xl font-bold text-teal-200">$99.99</span>
+                        <div className="flex flex-col items-end">
+                          <span className="text-lg text-gray-400 line-through">$124.99</span>
+                          <span className="text-2xl font-bold text-teal-200">$99.99</span>
+                        </div>
                       </div>
                       <div className="space-y-3 text-sm">
                         <div className="flex items-center text-green-300">
@@ -244,7 +250,7 @@ export default function OrderChoiceModal({ isOpen, onClose }) {
                           <svg className="w-4 h-4 mr-2 text-green-400" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                           </svg>
-                          <span>Pay in full to secure priority</span>
+                          <span>Pay in full now and secure priority</span>
                         </div>
                       </div>
                       <div className="mt-4 text-xs text-teal-200 italic">

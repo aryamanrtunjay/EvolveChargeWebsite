@@ -704,7 +704,7 @@ export default function Home() {
             </motion.p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <FeatureCard
               index={0}
               icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>}
@@ -713,12 +713,18 @@ export default function Home() {
             />
             <FeatureCard
               index={1}
+              icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>}
+              title="Works with Your Current Setup"
+              description="Seamlessly integrates with your existing charger - no need to replace anything you already have."
+            />
+            <FeatureCard
+              index={2}
               icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
               title="Off-Peak Charging"
               description="Intelligently charges your vehicle during non-peak hours to save you around ~$20 every single month."
             />
             <FeatureCard
-              index={2}
+              index={3}
               icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>}
               title="Battery Health Monitoring"
               description="Intelligent charging patterns help preserve your EV's battery health."
@@ -783,7 +789,7 @@ export default function Home() {
               className="space-y-6"
             >
               {[
-                { number: "01", title: "Easy Installation", description: "We make installing your EVolve Charger a simple process so anyone can set it up with just a ladder, drill, and screwdriver." },
+                { number: "01", title: "Easy Installation", description: "We make installing your EVolve Charger a simple process so anyone can set it up with just a ladder, drill, and 6 provided screws!" },
                 { number: "02", title: "Connect to App", description: "Download our app and connect your EVolve Charger to set preferences and monitor charging." },
                 { number: "03", title: "Automated Charging", description: "Park your vehicle, and the EVolve Charger automatically connects when needed based on your setting and then unplugs whenever you want to leave." },
                 { number: "04", title: "Smart Monitoring", description: "Receive updates on charging status, battery health, and energy usage through the app and integrate it into the smart home system." }
@@ -877,7 +883,7 @@ export default function Home() {
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">Join the EVolution</h2>
             <p className="text-lg md:text-xl mb-4 max-w-2xl mx-auto text-teal-50">
-              20% discount for the first 100 pre-orders alongside VIP treatment!
+              20% discount for the first 100 full orders alongside VIP treatment!
             </p>
             
             <div className="flex flex-col md:flex-row justify-center items-center space-y-2 md:space-y-0 md:space-x-8 mt-8 text-teal-50 font-medium">

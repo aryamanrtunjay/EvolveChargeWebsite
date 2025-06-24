@@ -51,7 +51,7 @@ export async function POST(request) {
               <li>Enjoy priority access for early delivery and exclusive updates.</li>
             </ul>
             <p style="font-size: 16px; color: #333333; line-height: 1.5; margin-top: 20px;">
-              If you have any questions, contact us at 
+              If you have any questions or would like to refund and cancel your reservation to be a part of the Next Generation of EV Charging, contact us at 
               <a href="mailto:support@evolve-charge.com" style="color: #0066cc; text-decoration: none;">support@evolve-charge.com</a> or call (425) 324-4529.
             </p>
             <p style="font-size: 16px; color: #333333; margin-top: 20px;">Best regards,<br>The EVolve Charge Team</p>
