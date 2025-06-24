@@ -4,6 +4,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ChevronRight, Zap, Clock, Target, Lightbulb, Users, Award } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaXTwitter } from "react-icons/fa6";
+import Script from 'next/script';
+import Head from 'next/head';
 import OrderChoiceModal from '@/components/OrderChoiceModal';
 
 // Animation variants
@@ -433,6 +435,19 @@ export default function AboutPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Head>
+        <Script
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            !function(e,t,n,s,u,a){e.twq||(s=e.twq=function(){s.exe?s.exe.apply(s,arguments):s.queue.push(arguments);
+            },s.version='1.1',s.queue=[],u=t.createElement(n),u.async=!0,u.src='https://static.ads-twitter.com/uwt.js',
+            a=t.getElementsByTagName(n)[0],a.parentNode.insertBefore(u,a))}(window,document,'script');
+            twq('config','q1bwx');
+          `,
+        }}
+      />
+      </Head>
       {/* Hero Section */}
       <section className="relative pt-32 pb-16 overflow-hidden bg-gradient-to-br from-teal-50 via-white to-cyan-50">
         <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-gradient-to-bl from-teal-100 to-transparent rounded-bl-full opacity-70"></div>

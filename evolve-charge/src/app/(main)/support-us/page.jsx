@@ -7,6 +7,8 @@ import { loadStripe } from '@stripe/stripe-js';
 import { db } from '../../firebaseConfig.js';
 import { collection, addDoc, doc, serverTimestamp, query, orderBy, limit, getDocs, where, getFirestore } from 'firebase/firestore';
 import { Heart, Users, Zap, Target, TrendingUp, Award, Gift, Shield, CheckCircle, ArrowRight, DollarSign, Globe } from 'lucide-react';
+import Head from 'next/head';
+import Script from 'next/script';
 
 // Initialize Stripe
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
@@ -51,7 +53,7 @@ function CheckoutForm({ onSuccess, amount, isProcessing, setIsProcessing, setErr
       const { error, paymentIntent } = await stripe.confirmPayment({
         elements,
         confirmParams: {
-          return_url: `${window.location.origin}/support`,
+          return_url: `${window.location.origin}/support-us`,
         },
         redirect: 'if_required',
       });
@@ -616,6 +618,19 @@ export default function SupportUsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50">
+      <Head>
+        <Script
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            !function(e,t,n,s,u,a){e.twq||(s=e.twq=function(){s.exe?s.exe.apply(s,arguments):s.queue.push(arguments);
+            },s.version='1.1',s.queue=[],u=t.createElement(n),u.async=!0,u.src='https://static.ads-twitter.com/uwt.js',
+            a=t.getElementsByTagName(n)[0],a.parentNode.insertBefore(u,a))}(window,document,'script');
+            twq('config','q1bwx');
+          `,
+        }}
+      />
+      </Head>
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-32 pb-20">
         {/* Animated background elements */}

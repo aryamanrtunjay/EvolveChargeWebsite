@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../firebaseConfig.js';
+import Head from 'next/head';
+import Script from 'next/script';
 
 // Animation variants
 const fadeIn = {
@@ -110,6 +112,19 @@ function OrderSuccessContent() {
 
   return (
     <div className="min-h-screen bg-gray-50 pt-32 pb-20">
+      <Head>
+        <Script
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            !function(e,t,n,s,u,a){e.twq||(s=e.twq=function(){s.exe?s.exe.apply(s,arguments):s.queue.push(arguments);
+            },s.version='1.1',s.queue=[],u=t.createElement(n),u.async=!0,u.src='https://static.ads-twitter.com/uwt.js',
+            a=t.getElementsByTagName(n)[0],a.parentNode.insertBefore(u,a))}(window,document,'script');
+            twq('config','q1bwx');
+          `,
+        }}
+      />
+      </Head>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-3xl mx-auto">
           <motion.div variants={fadeIn} className="text-center mb-10">

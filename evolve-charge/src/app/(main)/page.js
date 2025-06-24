@@ -4,6 +4,7 @@
 import Head from 'next/head';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import Script from 'next/script';
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -593,6 +594,19 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Head>
+        <Script
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            !function(e,t,n,s,u,a){e.twq||(s=e.twq=function(){s.exe?s.exe.apply(s,arguments):s.queue.push(arguments);
+            },s.version='1.1',s.queue=[],u=t.createElement(n),u.async=!0,u.src='https://static.ads-twitter.com/uwt.js',
+            a=t.getElementsByTagName(n)[0],a.parentNode.insertBefore(u,a))}(window,document,'script');
+            twq('config','q1bwx');
+          `,
+        }}
+      />
+      </Head>
       {/* Hero Section */}
       <motion.video
         className="z-0 fixed w-full h-full object-cover bg-black/20"

@@ -5,6 +5,8 @@ import { motion } from 'framer-motion';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { db } from '../../firebaseConfig.js';
+import Script from 'next/script';
+import Head from 'next/head';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { CheckCircle, ArrowRight, Shield, ArrowLeft } from 'lucide-react';
 
@@ -481,6 +483,19 @@ export default function DonatePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50 pt-32 pb-20">
+      <Head>
+        <Script
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            !function(e,t,n,s,u,a){e.twq||(s=e.twq=function(){s.exe?s.exe.apply(s,arguments):s.queue.push(arguments);
+            },s.version='1.1',s.queue=[],u=t.createElement(n),u.async=!0,u.src='https://static.ads-twitter.com/uwt.js',
+            a=t.getElementsByTagName(n)[0],a.parentNode.insertBefore(u,a))}(window,document,'script');
+            twq('config','q1bwx');
+          `,
+        }}
+      />
+      </Head>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Hero Section */}
         <motion.div 
@@ -499,11 +514,11 @@ export default function DonatePage() {
           
           {/* Back to Support Page Button */}
           <button
-            onClick={() => window.location.href = '/support'}
+            onClick={() => window.location.href = '/support-us'}
             className="inline-flex items-center text-teal-600 hover:text-teal-700 font-medium mb-8"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Support Page
+            Back
           </button>
         </motion.div>
 
@@ -731,7 +746,7 @@ export default function DonatePage() {
 
                   <div className="flex space-x-4">
                     <button
-                      onClick={() => window.location.href = '/support'}
+                      onClick={() => window.location.href = '/support-us'}
                       className="w-1/3 py-3 rounded-xl border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-all flex items-center justify-center"
                     >
                       <ArrowLeft className="w-4 h-4 mr-2" />
