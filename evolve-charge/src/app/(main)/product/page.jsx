@@ -256,8 +256,7 @@ export default function VideoViewer() {
 
   return (
     <div className="relative h-screen bg-gradient-to-b from-gray-900 to-gray-800 overflow-hidden">
-      <Head>
-        <Script
+      <Script
         strategy="afterInteractive"
         dangerouslySetInnerHTML={{
           __html: `
@@ -268,7 +267,6 @@ export default function VideoViewer() {
           `,
         }}
       />
-      </Head>
       {/* Main video player */}
       <video
         ref={videoRef}

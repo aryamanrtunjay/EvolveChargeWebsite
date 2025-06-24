@@ -327,8 +327,7 @@ export default function ReservePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-emerald-50">
-      <Head>
-        <Script
+      <Script
         strategy="afterInteractive"
         dangerouslySetInnerHTML={{
           __html: `
@@ -339,7 +338,6 @@ export default function ReservePage() {
           `,
         }}
       />
-      </Head>
       <div className="max-w-md mx-auto px-4 py-8">
         
         {/* Header Section with Anchoring and Social Proof */}

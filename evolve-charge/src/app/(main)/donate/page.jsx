@@ -483,8 +483,7 @@ export default function DonatePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50 pt-32 pb-20">
-      <Head>
-        <Script
+      <Script
         strategy="afterInteractive"
         dangerouslySetInnerHTML={{
           __html: `
@@ -495,7 +494,6 @@ export default function DonatePage() {
           `,
         }}
       />
-      </Head>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Hero Section */}
         <motion.div 

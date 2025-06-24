@@ -552,8 +552,7 @@ export default function OrderPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 pt-32 pb-20">
-      <Head>
-        <Script
+      <Script
         strategy="afterInteractive"
         dangerouslySetInnerHTML={{
           __html: `
@@ -564,7 +563,6 @@ export default function OrderPage() {
           `,
         }}
       />
-      </Head>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Enhanced Order Progress */}
         <div className="max-w-4xl mx-auto mb-16">

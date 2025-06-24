@@ -618,8 +618,7 @@ export default function SupportUsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50">
-      <Head>
-        <Script
+      <Script
         strategy="afterInteractive"
         dangerouslySetInnerHTML={{
           __html: `
@@ -630,7 +629,6 @@ export default function SupportUsPage() {
           `,
         }}
       />
-      </Head>
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-32 pb-20">
         {/* Animated background elements */}
