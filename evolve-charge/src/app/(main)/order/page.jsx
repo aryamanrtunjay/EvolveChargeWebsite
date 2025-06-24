@@ -514,6 +514,17 @@ export default function OrderPage() {
         paymentDate: serverTimestamp(),
       });
 
+      // Fire Twitter/X conversion tracking event
+      if (typeof window !== 'undefined' && window.twq) {
+        window.twq('event', 'tw-q1bwx-q1bwy', {
+          value: orderSummary.total, // Pass the total order value
+          conversion_id: orderId, // Use the Firebase order ID for deduplication
+          email_address: formData.email // Pass the user's email
+        });
+      } else {
+        console.warn('Twitter Pixel (twq) not initialized');
+      }
+
       await fetch('/api/send-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

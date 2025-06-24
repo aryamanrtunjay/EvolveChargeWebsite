@@ -289,6 +289,17 @@ export default function ReservePage() {
       };
       
       const reservationRef = await addDoc(collection(db, 'reservations'), reservationData);
+
+      // Fire Twitter/X conversion tracking event
+      if (typeof window !== 'undefined' && window.twq) {
+        window.twq('event', 'tw-q1bwx-q1bwy', {
+          value: 4.99, // Pass the total order value
+          conversion_id: reservationRef.id.slice(-6).toUpperCase(), // Use the Firebase order ID for deduplication
+          email_address: formData.email // Pass the user's email
+        });
+      } else {
+        console.warn('Twitter Pixel (twq) not initialized');
+      }
       
       // Send confirmation email
       await fetch('/api/send-reserve-email', {
