@@ -12,6 +12,7 @@ import { db } from '../firebaseConfig.js';
 import { collection, addDoc, serverTimestamp, query, where, getDocs, updateDoc, doc, getCountFromServer, getFirestore, orderBy, limit } from 'firebase/firestore';
 import Render from '@/images/Render.png';
 import OrderChoiceModal from '@/components/OrderChoiceModal.jsx';
+import { ChevronDown, ChevronUp, Calculator } from 'lucide-react';
 
 // Animation variants
 const fadeIn = {
@@ -172,12 +173,13 @@ function FAQItem({ question, answer, isActive, onClick, index }) {
   );
 }
 
-// Numbers/stats component with counting animation and glassmorphism
-function StatCard({ value, units, label, index }) {
+// Numbers/stats component with counting animation, glassmorphism, and calculation dropdown
+function StatCard({ value, units, label, calculation, index }) {
   const [count, setCount] = useState(0);
+  const [showCalculation, setShowCalculation] = useState(false);
   const ref = useRef(null);
   const isInView = useRef(false);
-  
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -186,31 +188,31 @@ function StatCard({ value, units, label, index }) {
           let start = 0;
           const duration = 600;
           const startTime = Date.now();
-          
+
           const timer = setInterval(() => {
             const elapsedTime = Date.now() - startTime;
             const progress = Math.min(elapsedTime / duration, 1);
             const currentCount = Math.floor(progress * value);
-            
+
             setCount(currentCount);
-            
+
             if (progress === 1) clearInterval(timer);
           }, 16);
         }
       },
       { threshold: 0.5 }
     );
-    
+
     if (ref.current) observer.observe(ref.current);
-    
+
     return () => {
       if (ref.current) observer.unobserve(ref.current);
     };
   }, [value]);
-  
+
   return (
     <motion.div
-      className="bg-white/10 backdrop-blur-md rounded-xl p-6 shadow-md"
+      className="bg-white/10 backdrop-blur-md rounded-xl p-6 shadow-md flex flex-col"
       ref={ref}
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -219,12 +221,37 @@ function StatCard({ value, units, label, index }) {
     >
       <div className="flex flex-col items-center">
         <div className="text-4xl md:text-5xl font-bold text-teal-500 mb-2">
-          {units === "$" ? <span className="text-teal-500">{units}</span> : null}
+          {units === '$' ? <span className="text-teal-500">{units}</span> : null}
           {count}
-          {units !== "$" ? <span className="text-teal-500"> {units}</span> : null}
+          {units !== '$' ? <span className="text-teal-500"> {units}</span> : null}
         </div>
-        <div className="text-gray-600">{label}</div>
+        <div className="text-gray-700 text-center mb-3">{label}</div>
+
+        {/* Calculation dropdown toggle */}
+        <button
+          onClick={() => setShowCalculation(!showCalculation)}
+          className="flex items-center gap-2 text-sm text-teal-500 hover:text-teal-600 transition-colors duration-200"
+        >
+          <Calculator size={16} />
+          <span>How?</span>
+          {showCalculation ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+        </button>
       </div>
+
+      {/* Calculation details */}
+      <motion.div
+        initial={false}
+        animate={{
+          height: showCalculation ? 'auto' : 0,
+          opacity: showCalculation ? 1 : 0,
+        }}
+        transition={{ duration: 0.3, ease: 'easeInOut' }}
+        className="overflow-hidden w-full"
+      >
+        <div className="mt-4 p-4 bg-white/5 rounded-lg border border-white/10">
+          <div className="text-sm text-gray-700 leading-relaxed">{calculation}</div>
+        </div>
+      </motion.div>
     </motion.div>
   );
 }
@@ -609,7 +636,7 @@ export default function Home() {
       />
       {/* Hero Section */}
       <motion.video
-        className="z-0 fixed w-full h-full object-cover bg-black/20"
+        className="z-0 fixed w-full h-full object-cover bg-black/40"
         muted
         poster="/images/poster.png"
         autoPlay
@@ -623,7 +650,7 @@ export default function Home() {
         <source src="https://demo.evolve-charge.com/productDemo.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </motion.video>
-      <section className="relative h-screen pt-32 pb-24 md:pt-48 md:pb-32 overflow-hidden items-center justify-center">
+      <section className="relative h-screen bg-black/20 pt-32 pb-24 md:pt-48 md:pb-32 overflow-hidden items-center justify-center">
         <div className="relative max-w-7xl mx-auto md:ml-24 sm:px-6 lg:px-8">
           <motion.div
             initial="hidden"
@@ -870,10 +897,28 @@ export default function Home() {
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">Discover the impact of our smart charging solution</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <StatCard value={250} units="$" label="dollars saved every year" index={0} />
-            <StatCard value={300} units="%" label="increase in your car's battery lifespan" index={1} />
-            <StatCard value={10} units="hours" label="saved plugging in every year" index={2} />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+            <StatCard
+              value={275}
+              units="$"
+              label="dollars saved every year"
+              calculation="Smart charging saves $216/year by reducing home charging costs 32% ($674 to $458, for 13,500 miles at $0.05/mile). Plus, extending battery life by 7.5% saves $60/year (for an $8,000 battery over 10 years). Total: $216 + $60 = $275/year."
+              index={0}
+            />
+            <StatCard
+              value={3}
+              units="yrs"
+              label="extra battery life"
+              calculation="Optimal 20–80 % Level‑2 charging trims annual capacity loss to ~1.25 % (vs 2.4 %), so the pack stays above the 70 % warranty line for roughly 2.7 additional calendar‑years—worth ≈35 000 extra miles of driving or up to $4 000 deferred replacement cost."
+              index={1}
+            />
+            <StatCard
+              value={5}
+              units="hours"
+              label="saved plugging in every year"
+              calculation="Manual plugging/unplugging takes ~2 minutes daily (pull cable, plug, close door). Automation eliminates this: 150 charges/year × 2 minutes.charge = 300 minutes = 5 hours/year."
+              index={2}
+            />
           </div>
           <p className="text-center text-sm text-gray-500 mt-16">These figures represent estimated savings and benefits based on typical usage, and are not guaranteed results.</p>
         </div>
