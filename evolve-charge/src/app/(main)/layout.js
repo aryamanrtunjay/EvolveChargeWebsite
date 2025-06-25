@@ -3,6 +3,7 @@ import { Chakra_Petch } from 'next/font/google'
 import { Analytics } from "@vercel/analytics/react"
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Script from "next/script";
 
 import "../globals.css";
 
