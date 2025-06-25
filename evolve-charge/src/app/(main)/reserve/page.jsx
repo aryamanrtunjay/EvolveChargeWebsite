@@ -292,7 +292,7 @@ export default function ReservePage() {
 
       // Fire Twitter/X conversion tracking event
       if (typeof window !== 'undefined' && window.twq) {
-        window.twq('event', 'tw-q1bwx-q1bwy', {
+        window.twq('event', 'tw-q1blv-q1bmb', {
           value: 4.99, // Pass the total order value
           conversion_id: reservationRef.id.slice(-6).toUpperCase(), // Use the Firebase order ID for deduplication
           email_address: formData.email // Pass the user's email
@@ -345,7 +345,7 @@ export default function ReservePage() {
             !function(e,t,n,s,u,a){e.twq||(s=e.twq=function(){s.exe?s.exe.apply(s,arguments):s.queue.push(arguments);
             },s.version='1.1',s.queue=[],u=t.createElement(n),u.async=!0,u.src='https://static.ads-twitter.com/uwt.js',
             a=t.getElementsByTagName(n)[0],a.parentNode.insertBefore(u,a))}(window,document,'script');
-            twq('config','q1bwx');
+            twq('config','q1blv');
           `,
         }}
       />
