@@ -641,13 +641,6 @@ export default function AboutPage() {
               >
                 Order Yours
               </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                className="flex-1 px-8 py-4 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white font-medium shadow-lg hover:shadow-xl transition-all"
-              >
-                Contact Us
-              </motion.button>
             </div>
           </motion.div>
         </div>
