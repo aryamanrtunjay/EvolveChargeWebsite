@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { Suspense, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
@@ -15,7 +15,7 @@ const fadeIn = {
   visible: { 
     opacity: 1, 
     y: 0,
-    transition: { duration: 0.6 }
+    transition: { duration: 0.6, ease: 'easeOut' }
   }
 };
 
@@ -104,14 +104,24 @@ function OrderSuccessContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 pt-32 pb-20 flex justify-center items-center">
-        <div className="animate-spin h-12 w-12 border-4 border-teal-500 rounded-full border-t-transparent"></div>
+      <div className="min-h-screen bg-white flex justify-center items-center">
+        <motion.div
+          className="bg-white/70 backdrop-blur-md rounded-2xl p-8 border border-black/10 shadow-lg"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="flex flex-col items-center">
+            <div className="animate-spin h-8 w-8 border-4 border-[#C9A86A] rounded-full border-t-transparent mb-4"></div>
+            <p className="text-[#6F6F6F] text-base tracking-wide">Loading your order details...</p>
+          </div>
+        </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-32 pb-20">
+    <div className="min-h-screen bg-white pt-32 pb-20">
       <Script
         strategy="afterInteractive"
         dangerouslySetInnerHTML={{
@@ -126,36 +136,36 @@ function OrderSuccessContent() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-3xl mx-auto">
           <motion.div variants={fadeIn} className="text-center mb-10">
-            <div className="inline-block bg-gradient-to-r from-teal-500 to-cyan-500 p-3 rounded-full mb-6">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            <div className="inline-block bg-[#C9A86A]/10 p-3 rounded-full mb-6">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-[#C9A86A]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Your Order is Confirmed!</h1>
-            <p className="text-lg text-gray-700 mb-2">Thank you for your purchase. We're excited to welcome you to EVolve Charge!</p>
-            <p className="text-md text-gray-600">Order #: <span className="font-medium">{orderNumber}</span></p>
-            <div className="mt-4 inline-block text-sm bg-teal-100 text-teal-800 px-4 py-2 rounded-full">
+            <h1 className="text-3xl md:text-4xl font-bold text-[#111111] mb-4 tracking-tight">Your Order is Confirmed!</h1>
+            <p className="text-lg text-[#6F6F6F] mb-2 leading-relaxed">Thank you for your purchase. We're excited to welcome you to EVolve Charge!</p>
+            <p className="text-md text-[#6F6F6F] tracking-wide">Order #: <span className="font-medium">{orderNumber}</span></p>
+            <div className="mt-4 inline-block text-sm bg-[#F5F6F7] text-[#6F6F6F] px-4 py-2 rounded-full">
               <span>An email confirmation has been sent to {customer['email-address']}</span>
             </div>
           </motion.div>
 
-          <motion.div variants={fadeIn} className="bg-white rounded-xl shadow-md p-8 mb-8">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">Order Details</h2>
-            <div className="flex items-center mb-6 pb-6 border-b border-gray-200">
+          <motion.div variants={fadeIn} className="bg-white/70 backdrop-blur-md rounded-xl shadow-lg p-8 mb-8 border border-black/10">
+            <h2 className="text-xl font-bold text-[#111111] mb-6 tracking-wide">Order Details</h2>
+            <div className="flex items-center mb-6 pb-6 border-b border-black/10">
               <div className="mr-4">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7" />
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-[#C9A86A]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7" />
                 </svg>
               </div>
               <div>
-                <h3 className="font-bold text-gray-900 text-lg">EVolve Charge Smart Charger</h3>
-                <p className="text-gray-700">Advanced EV charging solution for your home</p>
+                <h3 className="font-bold text-[#111111] text-lg tracking-wide">EVolve Charge Smart Charger</h3>
+                <p className="text-[#6F6F6F] leading-relaxed">Advanced EV charging solution for your home</p>
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div>
-                <h3 className="font-medium text-gray-900 mb-2">Delivery Address</h3>
-                <div className="text-gray-700">
+                <h3 className="font-medium text-[#111111] mb-2 tracking-wide">Delivery Address</h3>
+                <div className="text-[#6F6F6F] leading-relaxed">
                   <p>{customer['first-name']} {customer['last-name']}</p>
                   <p>{customer.address1}</p>
                   {customer.address2 && <p>{customer.address2}</p>}
@@ -165,12 +175,12 @@ function OrderSuccessContent() {
                 </div>
               </div>
               <div>
-                <h3 className="font-medium text-gray-900 mb-2">Vehicle Information</h3>
-                <div className="text-gray-700 space-y-4">
+                <h3 className="font-medium text-[#111111] mb-2 tracking-wide">Vehicle Information</h3>
+                <div className="text-[#6F6F6F] space-y-4 leading-relaxed">
                   {customer.vehicles && customer.vehicles.length > 0 ? (
                     customer.vehicles.map((vehicle, index) => (
-                      <div key={index} className="border-l-4 border-teal-500 pl-4">
-                        <p className="font-medium text-gray-800">Vehicle {index + 1}</p>
+                      <div key={index} className="border-l-4 border-[#C9A86A] pl-4">
+                        <p className="font-medium text-[#111111] tracking-wide">Vehicle {index + 1}</p>
                         <p><strong>Make:</strong> {vehicle.make || 'Not specified'}</p>
                         <p><strong>Model:</strong> {vehicle.model || 'Not specified'}</p>
                         <p><strong>Year:</strong> {vehicle.year || 'Not specified'}</p>
@@ -178,92 +188,94 @@ function OrderSuccessContent() {
                       </div>
                     ))
                   ) : (
-                    <p className="text-gray-600">No vehicle information provided.</p>
+                    <p className="text-[#6F6F6F]">No vehicle information provided.</p>
                   )}
                 </div>
               </div>
             </div>
-            <div className="border-t border-gray-200 pt-6 mb-6">
-              <h3 className="font-medium text-gray-900 mb-4">Payment Summary</h3>
+            <div className="border-t border-black/10 pt-6 mb-6">
+              <h3 className="font-medium text-[#111111] mb-4 tracking-wide">Payment Summary</h3>
               <div className="flex justify-between mb-2">
-                <span className="text-gray-600">Hardware</span>
-                <span className="text-gray-900">${orderData.subtotal.toFixed(2)}</span>
+                <span className="text-[#6F6F6F]">Hardware</span>
+                <span className="text-[#111111]">${orderData.subtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between mb-2">
-                <span className="text-gray-600">Tax</span>
-                <span className="text-gray-900">${orderData.tax.toFixed(2)}</span>
+                <span className="text-[#6F6F6F]">Tax</span>
+                <span className="text-[#111111]">${orderData.tax.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between font-bold mt-4 pt-4 border-t border-gray-200">
-                <span className="text-gray-900">Total Paid</span>
-                <span className="text-gray-900">${orderData.total.toFixed(2)}</span>
+              <div className="flex justify-between font-bold mt-4 pt-4 border-t border-black/10">
+                <span className="text-[#111111] tracking-wide">Total Paid</span>
+                <span className="text-[#111111]">${orderData.total.toFixed(2)}</span>
               </div>
               <div className="flex justify-between mt-2 text-sm">
-                <span className="text-gray-600">Payment Method</span>
-                <span className="text-gray-900">Credit Card</span>
+                <span className="text-[#6F6F6F]">Payment Method</span>
+                <span className="text-[#111111]">Credit Card</span>
               </div>
             </div>
             
-            <div className="bg-teal-50 p-6 rounded-lg mb-6">
-              <h3 className="font-medium text-gray-900 flex items-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-teal-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <div className="bg-[#F5F6F7] p-6 rounded-lg mb-6">
+              <h3 className="font-medium text-[#111111] flex items-center mb-4 tracking-wide">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#C9A86A] mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 What's Next
               </h3>
               <ol className="space-y-4">
                 <li className="flex">
-                  <span className="bg-teal-500 text-white w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">1</span>
+                  <span className="bg-[#C9A86A] text-[#111111] w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">1</span>
                   <div>
-                    <p className="font-medium text-gray-900">Production & Preparation</p>
-                    <p className="text-gray-700 text-sm">Your EVolve Charger will now enter production. We'll keep you updated on its progress.</p>
+                    <p className="font-medium text-[#111111] tracking-wide">Production & Preparation</p>
+                    <p className="text-[#6F6F6F] text-sm leading-relaxed">Your EVolve Charger will now enter production. We'll keep you updated on its progress.</p>
                   </div>
                 </li>
                 <li className="flex">
-                  <span className="bg-teal-500 text-white w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">2</span>
+                  <span className="bg-[#C9A86A] text-[#111111] w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">2</span>
                   <div>
-                    <p className="font-medium text-gray-900">Development News & Updates</p>
-                    <p className="text-gray-700 text-sm">You'll receive regular email updates on your order and our latest features.</p>
+                    <p className="font-medium text-[#111111] tracking-wide">Development News & Updates</p>
+                    <p className="text-[#6F6F6F] text-sm leading-relaxed">You'll receive regular email updates on your order and our latest features.</p>
                   </div>
                 </li>
                 <li className="flex">
-                  <span className="bg-teal-500 text-white w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">3</span>
+                  <span className="bg-[#C9A86A] text-[#111111] w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">3</span>
                   <div>
-                    <p className="font-medium text-gray-900">App Access</p>
-                    <p className="text-gray-700 text-sm">We'll get your account ready on our app so you can monitor and customize your EVolve Charger</p>
+                    <p className="font-medium text-[#111111] tracking-wide">App Access</p>
+                    <p className="text-[#6F6F6F] text-sm leading-relaxed">We'll get your account ready on our app so you can monitor and customize your EVolve Charger</p>
                   </div>
                 </li>
               </ol>
             </div>
 
             <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-              <Link
-                href="/"
-                className="px-8 py-3 rounded-full border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors flex items-center justify-center"
-              >
-                Return to Home
-              </Link>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Link
+                  href="/"
+                  className="px-8 py-3 rounded-full border border-black/10 text-[#111111]/70 font-medium hover:bg-[#F5F6F7] transition-colors flex items-center justify-center"
+                >
+                  Return to Home
+                </Link>
+              </motion.div>
             </div>
           </motion.div>
 
           <motion.div variants={fadeIn} className="text-center">
-            <h3 className="text-lg font-medium text-gray-900 mb-3">Need Help?</h3>
-            <p className="text-gray-700 mb-4">If you have any questions about your order, please contact our customer support.</p>
+            <h3 className="text-lg font-medium text-[#111111] mb-3 tracking-wide">Need Help?</h3>
+            <p className="text-[#6F6F6F] mb-4 leading-relaxed">If you have any questions about your order, please contact our customer support.</p>
             <div className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4">
               <a
                 href="mailto:support@evolve-charge.com"
-                className="flex items-center justify-center text-teal-600 hover:text-teal-700"
+                className="flex items-center justify-center text-[#C9A86A] hover:text-[#B48F55] transition-colors"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
                 support@evolve-charge.com
               </a>
               <a
                 href="tel:+14253244529"
-                className="flex items-center justify-center text-teal-600 hover:text-teal-700"
+                className="flex items-center justify-center text-[#C9A86A] hover:text-[#B48F55] transition-colors"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
                 (425) 324-4529
               </a>
@@ -280,8 +292,18 @@ export default function OrderSuccessPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-gray-50 pt-32 pb-20 flex justify-center items-center">
-          <div className="animate-spin h-12 w-12 border-4 border-teal-500 rounded-full border-t-transparent"></div>
+        <div className="min-h-screen bg-white flex justify-center items-center">
+          <motion.div
+            className="bg-white/70 backdrop-blur-md rounded-2xl p-8 border border-black/10 shadow-lg"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="flex flex-col items-center">
+              <div className="animate-spin h-8 w-8 border-4 border-[#C9A86A] rounded-full border-t-transparent mb-4"></div>
+              <p className="text-[#6F6F6F] text-base tracking-wide">Loading your order details...</p>
+            </div>
+          </motion.div>
         </div>
       }
     >

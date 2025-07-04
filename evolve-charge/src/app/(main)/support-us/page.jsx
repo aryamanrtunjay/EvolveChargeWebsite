@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
@@ -11,12 +11,12 @@ import Head from 'next/head';
 import Script from 'next/script';
 
 // Initialize Stripe
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_TEST_KEY);
 
 // Animation variants
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } }
 };
 
 const staggerContainer = {
@@ -66,26 +66,28 @@ function CheckoutForm({ onSuccess, amount, isProcessing, setIsProcessing, setErr
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-[#111111] mb-2 tracking-wide">
           Card Information
         </label>
         <PaymentElement />
       </div>
       
       {errorMessage && (
-        <div className="p-3 bg-red-50 text-red-700 rounded-lg text-sm">
+        <div className="p-3 bg-red-50 text-red-700 rounded-lg text-sm border border-red-200">
           {errorMessage}
         </div>
       )}
       
-      <button
+      <motion.button
         type="submit"
         disabled={!stripe || isProcessing}
-        className="w-full py-3 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium shadow-md hover:shadow-lg transition-all flex justify-center items-center disabled:opacity-50"
+        className="w-full py-3 rounded-full bg-[#C9A86A] text-[#111111] font-medium shadow-lg hover:shadow-xl transition-all flex justify-center items-center disabled:opacity-50"
+        whileHover={{ scale: 1.05, backgroundColor: '#D1B47A' }}
+        whileTap={{ scale: 0.95 }}
       >
         {isProcessing ? (
           <>
-            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-[#111111]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
@@ -94,7 +96,7 @@ function CheckoutForm({ onSuccess, amount, isProcessing, setIsProcessing, setErr
         ) : (
           `Donate $${amount.toFixed(2)}`
         )}
-      </button>
+      </motion.button>
     </form>
   );
 }
@@ -141,45 +143,51 @@ function SuccessModal({ isOpen, onClose, donationAmount, donationDetails }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <motion.div 
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-white rounded-xl p-8 max-w-md w-full mx-4"
+        className="bg-white/70 backdrop-blur-md rounded-xl p-8 max-w-md w-full mx-4 border border-black/10 shadow-lg"
       >
         <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-4">
-            <CheckCircle className="h-8 w-8 text-white" />
+          <div className="w-16 h-16 bg-[#C9A86A]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <CheckCircle className="h-8 w-8 text-[#C9A86A]" />
           </div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">Thank You!</h3>
-          <p className="text-gray-600 mb-6">
+          <h3 className="text-2xl font-bold text-[#111111] mb-2 tracking-wide">Thank You!</h3>
+          <p className="text-[#6F6F6F] mb-6 leading-relaxed">
             Your donation of ${donationAmount ? donationAmount.toFixed(2) : '0.00'} will help advance smart, automatic EV charging and sustainable transportation.
           </p>
-          <div className="bg-gray-50 p-4 rounded-lg mb-6">
-            <p className="text-sm text-gray-700">
+          <div className="bg-[#F5F6F7] p-4 rounded-lg mb-6">
+            <p className="text-sm text-[#6F6F6F]">
               You'll receive a receipt via email shortly. Download your receipt below for your records.
             </p>
           </div>
           <div className="flex flex-col space-y-4">
-            <button
+            <motion.button
               onClick={generatePDF}
-              className="w-full py-2 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium hover:shadow-md transition-all"
+              className="w-full py-2 rounded-full bg-[#C9A86A] text-[#111111] font-medium shadow-lg hover:shadow-xl transition-all"
+              whileHover={{ scale: 1.05, backgroundColor: '#D1B47A' }}
+              whileTap={{ scale: 0.95 }}
             >
               Download Receipt
-            </button>
+            </motion.button>
             <div className="flex space-x-4">
-              <button
+              <motion.button
                 onClick={() => window.location.href = '/'}
-                className="w-1/2 py-2 rounded-full bg-gray-200 text-gray-700 font-medium hover:bg-gray-300 transition-all"
+                className="w-1/2 py-2 rounded-full bg-[#F5F6F7] text-[#111111]/70 font-medium hover:bg-[#C9A86A]/10 transition-all"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 Back to Home
-              </button>
-              <button
+              </motion.button>
+              <motion.button
                 onClick={onClose}
-                className="w-1/2 py-2 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium hover:shadow-md transition-all"
+                className="w-1/2 py-2 rounded-full bg-[#C9A86A] text-[#111111] font-medium shadow-lg hover:shadow-xl transition-all"
+                whileHover={{ scale: 1.05, backgroundColor: '#D1B47A' }}
+                whileTap={{ scale: 0.95 }}
               >
                 Close
-              </button>
+              </motion.button>
             </div>
           </div>
         </div>
@@ -211,20 +219,18 @@ export default function SupportUsPage() {
   const [donationId, setDonationId] = useState('');
   const [error, setError] = useState(null);
   const [donationDetails, setDonationDetails] = useState({});
-
-  // Stats states
+  const [isLoading, setIsLoading] = useState(true);
+  const [filter, setFilter] = useState('recent');
   const [donorsWithAmounts, setDonorsWithAmounts] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
   const [totalDonations, setTotalDonations] = useState(0);
   const [totalPreOrders, setTotalPreOrders] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-  const [filter, setFilter] = useState('recent');
 
   const predefinedAmounts = [25, 50, 100, 250, 500, 1000];
   const progress = Math.min((totalAmount / 10000) * 100, 100);
 
   const impactData = [
-    { amount: 25, impact: "Supports EVolve Charge's research and development", icon: "🔬" },
+    { amount: 25, impact: "Supports Ampereon's research and development", icon: "🔬" },
     { amount: 50, impact: "Funds development of smart charging software", icon: "💻" },
     { amount: 100, impact: "Contributes to scalable smart charging prototypes", icon: "⚡" },
     { amount: 250, impact: "Helps deploy charging solutions in underserved areas", icon: "🌍" },
@@ -239,13 +245,11 @@ export default function SupportUsPage() {
       try {
         const db = getFirestore();
         
-        // Fetch orders and donations in parallel
         const [ordersSnapshot, donationsSnapshot] = await Promise.all([
           getDocs(collection(db, "orders")),
           getDocs(collection(db, "donations"))
         ]);
 
-        // Calculate totals
         let preOrderSum = 0;
         ordersSnapshot.forEach(doc => {
           const data = doc.data();
@@ -266,7 +270,6 @@ export default function SupportUsPage() {
         setTotalDonations(donationSum);
         setTotalAmount(preOrderSum + donationSum);
 
-        // Load donors
         const donorsRef = collection(db, 'donors');
         let donorsQuery;
 
@@ -440,7 +443,6 @@ export default function SupportUsPage() {
         dedicateTo: formData.dedicateGift ? formData.dedicateTo : null,
       });
 
-      // Send email (non-blocking)
       fetch('/api/send-donation-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -492,12 +494,12 @@ export default function SupportUsPage() {
   const stripeOptions = {
     clientSecret,
     appearance: {
-      theme: 'stripe',
+      theme: 'flat',
       variables: {
-        colorPrimary: '#0d9488',
-        colorBackground: '#ffffff',
-        colorText: '#1f2937',
-        colorDanger: '#ef4444',
+        colorPrimary: '#C9A86A',
+        colorBackground: '#FFFFFF',
+        colorText: '#111111',
+        colorDanger: '#EF4444',
         fontFamily: 'system-ui, -apple-system, sans-serif',
         spacingUnit: '4px',
         borderRadius: '8px',
@@ -506,7 +508,7 @@ export default function SupportUsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50">
+    <div className="min-h-screen bg-white">
       <Script
         strategy="afterInteractive"
         dangerouslySetInnerHTML={{
@@ -520,40 +522,37 @@ export default function SupportUsPage() {
       />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden pt-32 pb-20">
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-br from-teal-200 to-cyan-200 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-br from-blue-200 to-indigo-200 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-        </div>
+      <section className="relative overflow-hidden pt-32 pb-20 bg-white">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#F5F6F7] to-white"></div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div initial="hidden" animate="visible" variants={fadeIn} className="text-center mb-16">
-            <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-teal-100 to-cyan-100 rounded-full text-sm font-medium text-teal-800 mb-6">
+            <div className="inline-flex items-center px-4 py-2 bg-[#C9A86A]/10 rounded-full text-sm font-medium text-[#C9A86A] mb-6 tracking-wide">
               <Heart className="w-4 h-4 mr-2" />
               Join Our Mission
             </div>
-            <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-gray-900 via-teal-800 to-cyan-800 bg-clip-text text-transparent mb-8">
+            <h1 className="text-5xl md:text-7xl font-bold text-[#111111] mb-8 tracking-tight">
               Support the Future of
               <br />
-              <span className="bg-gradient-to-r from-teal-500 to-cyan-500 bg-clip-text text-transparent">
+              <span className="text-[#C9A86A]">
                 Smart EV Charging
               </span>
             </h1>
-            <p className="text-xl text-gray-700 max-w-4xl mx-auto mb-12 leading-relaxed">
-              Your donation powers EVolve Charge's mission to develop cutting-edge smart, automatic charging technology, making electric vehicles more accessible and sustainable for everyone.
+            <p className="text-xl text-[#6F6F6F] max-w-4xl mx-auto mb-12 leading-relaxed">
+              Your donation powers Ampereon's mission to develop cutting-edge smart, automatic charging technology, making electric vehicles more accessible and sustainable for everyone.
             </p>
             
-            <div className="flex flex-wrap justify-center gap-8 text-sm text-gray-600 mb-8">
+            <div className="flex flex-wrap justify-center gap-8 text-sm text-[#6F6F6F] mb-8">
               <div className="flex items-center">
-                <Shield className="w-5 h-5 mr-2 text-teal-500" />
+                <Shield className="w-5 h-5 mr-2 text-[#C9A86A]" />
                 Secure payments via Stripe
               </div>
               <div className="flex items-center">
-                <Award className="w-5 h-5 mr-2 text-teal-500" />
+                <Award className="w-5 h-5 mr-2 text-[#C9A86A]" />
                 100% goes to EV innovation
               </div>
               <div className="flex items-center">
-                <Globe className="w-5 h-5 mr-2 text-teal-500" />
+                <Globe className="w-5 h-5 mr-2 text-[#C9A86A]" />
                 Global impact initiative
               </div>
             </div>
@@ -562,17 +561,17 @@ export default function SupportUsPage() {
           {/* Stats Cards */}
           <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
             {[
-              { icon: DollarSign, value: `$${totalAmount.toFixed(0)}`, label: "Total Raised", color: "text-teal-500" },
-              { icon: Target, value: "$10,000", label: "Goal", color: "text-blue-500" },
-              { icon: Users, value: donorsWithAmounts.length, label: "Supporters", color: "text-green-500" },
-              { icon: TrendingUp, value: `${progress.toFixed(1)}%`, label: "Complete", color: "text-purple-500" }
+              { icon: DollarSign, value: `$${totalAmount.toFixed(0)}`, label: "Total Raised", color: "text-[#C9A86A]" },
+              { icon: Target, value: "$10,000", label: "Goal", color: "text-[#C9A86A]" },
+              { icon: Users, value: donorsWithAmounts.length, label: "Supporters", color: "text-[#C9A86A]" },
+              { icon: TrendingUp, value: `${progress.toFixed(1)}%`, label: "Complete", color: "text-[#C9A86A]" }
             ].map(({ icon: Icon, value, label, color }) => (
-              <motion.div key={label} variants={fadeIn} className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/50 text-center hover:scale-105 transition-all duration-300">
+              <motion.div key={label} variants={fadeIn} className="bg-white/70 backdrop-blur-md rounded-2xl p-6 border border-black/10 shadow-lg hover:scale-105 transition-all duration-300">
                 <Icon className={`w-8 h-8 ${color} mx-auto mb-3`} />
-                <div className="text-2xl font-bold text-gray-900">{value}</div>
-                <div className="text-sm text-gray-600">{label}</div>
+                <div className="text-2xl font-bold text-[#111111]">{value}</div>
+                <div className="text-sm text-[#6F6F6F]">{label}</div>
                 {label === "Total Raised" && (
-                  <div className="text-xs text-gray-500 mt-1">
+                  <div className="text-xs text-[#6F6F6F] mt-1">
                     Donations: ${totalDonations.toFixed(0)} • Orders: ${totalPreOrders.toFixed(0)}
                   </div>
                 )}
@@ -582,16 +581,16 @@ export default function SupportUsPage() {
 
           {/* Progress Bar */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }} className="max-w-2xl mx-auto mb-16">
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-white/50">
-              <div className="relative h-4 bg-gray-200 rounded-full overflow-hidden mb-4">
+            <div className="bg-white/70 backdrop-blur-md rounded-2xl p-8 border border-black/10 shadow-lg">
+              <div className="relative h-2 bg-[#F5F6F7] rounded-full overflow-hidden mb-4">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${progress}%` }}
                   transition={{ duration: 1.5, ease: "easeOut" }}
-                  className="absolute left-0 top-0 h-full bg-gradient-to-r from-teal-400 to-cyan-400 rounded-full"
+                  className="absolute left-0 top-0 h-full bg-[#C9A86A] rounded-full"
                 />
               </div>
-              <div className="text-center text-gray-700 font-medium">
+              <div className="text-center text-[#6F6F6F] font-medium">
                 {progress.toFixed(1)}% of our $10,000 goal • ${Math.max(10000 - totalAmount, 0).toFixed(0)} remaining
               </div>
             </div>
@@ -600,7 +599,7 @@ export default function SupportUsPage() {
       </section>
 
       {/* Main Content */}
-      <section className="py-20">
+      <section className="py-20 bg-[#F5F6F7]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Step Navigation */}
           <div className="max-w-4xl mx-auto mb-12">
@@ -608,109 +607,113 @@ export default function SupportUsPage() {
               {[1, 2, 3].map((stepNum) => (
                 <React.Fragment key={stepNum}>
                   <div className={`flex items-center justify-center w-10 h-10 rounded-full ${
-                    step >= stepNum ? 'bg-teal-500 text-white' : 'bg-gray-200 text-gray-500'
+                    step >= stepNum ? 'bg-[#C9A86A] text-[#111111]' : 'bg-[#F5F6F7] text-[#6F6F6F]'
                   }`}>
                     {stepNum}
                   </div>
                   {stepNum < 3 && (
-                    <div className={`h-1 w-16 ${step > stepNum ? 'bg-teal-500' : 'bg-gray-200'}`} />
+                    <div className={`h-1 w-16 ${step > stepNum ? 'bg-[#C9A86A]' : 'bg-[#F5F6F7]'}`} />
                   )}
                 </React.Fragment>
               ))}
             </div>
-            <div className="flex justify-center space-x-16 text-sm text-gray-600">
-              <span className={step >= 1 ? 'text-teal-600 font-medium' : ''}>Choose Amount</span>
-              <span className={step >= 2 ? 'text-teal-600 font-medium' : ''}>Your Info</span>
-              <span className={step >= 3 ? 'text-teal-600 font-medium' : ''}>Payment</span>
+            <div className="flex justify-center space-x-16 text-sm text-[#6F6F6F]">
+              <span className={step >= 1 ? 'text-[#111111] font-medium' : ''}>Choose Amount</span>
+              <span className={step >= 2 ? 'text-[#111111] font-medium' : ''}>Your Info</span>
+              <span className={step >= 3 ? 'text-[#111111] font-medium' : ''}>Payment</span>
             </div>
           </div>
 
           {step === 1 && (
             <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-6xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-4xl font-bold text-gray-900 mb-4">Choose Your Impact</h2>
-                <p className="text-xl text-gray-600">Every contribution accelerates the future of smart, automatic EV charging</p>
+                <h2 className="text-4xl font-bold text-[#111111] mb-4 tracking-tight">Choose Your Impact</h2>
+                <p className="text-xl text-[#6F6F6F] leading-relaxed">Every contribution accelerates the future of smart, automatic EV charging</p>
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2">
-                  <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-                    <h3 className="text-2xl font-bold text-gray-900 mb-6">Suggested Amounts</h3>
+                  <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-lg p-8 border border-black/10">
+                    <h3 className="text-2xl font-bold text-[#111111] mb-6 tracking-wide">Suggested Amounts</h3>
                     
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
                       {predefinedAmounts.map((amount) => (
-                        <button
+                        <motion.button
                           key={amount}
                           onClick={() => handleAmountSelect(amount)}
                           className={`p-6 rounded-xl border-2 transition-all transform hover:scale-105 ${
                             selectedAmount === amount && !customAmount
-                              ? 'border-teal-500 bg-gradient-to-br from-teal-50 to-cyan-50 text-teal-700 shadow-lg'
-                              : 'border-gray-200 hover:border-gray-300 text-gray-700 hover:shadow-md'
+                              ? 'border-[#C9A86A] bg-[#C9A86A]/10 text-[#111111] shadow-lg'
+                              : 'border-black/10 hover:border-[#C9A86A]/30 text-[#111111] hover:shadow-md'
                           }`}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
                         >
                           <div className="text-3xl font-bold">${amount}</div>
-                        </button>
+                        </motion.button>
                       ))}
                     </div>
 
                     <div className="mb-8">
-                      <h3 className="text-xl font-semibold text-gray-900 mb-4">Custom Amount</h3>
+                      <h3 className="text-xl font-semibold text-[#111111] mb-4 tracking-wide">Custom Amount</h3>
                       <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                          <span className="text-gray-500 text-xl">$</span>
+                          <span className="text-[#6F6F6F] text-xl">$</span>
                         </div>
                         <input
                           type="text"
                           value={customAmount}
                           onChange={handleCustomAmountChange}
                           placeholder="Enter amount"
-                          className="w-full text-black pl-10 pr-4 py-4 text-xl border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                          className="w-full text-[#111111] pl-10 pr-4 py-4 text-xl border border-black/10 rounded-xl bg-white/70 backdrop-blur-md focus:ring-2 focus:ring-[#C9A86A]/50 focus:border-transparent transition-all"
                         />
                       </div>
                     </div>
 
-                    <button
+                    <motion.button
                       onClick={nextStep}
-                      className="w-full py-4 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-semibold text-lg shadow-lg hover:shadow-xl transition-all transform hover:scale-[1.02] flex items-center justify-center"
+                      className="w-full py-4 rounded-full bg-[#C9A86A] text-[#111111] font-medium shadow-lg hover:shadow-xl transition-all flex items-center justify-center"
+                      whileHover={{ scale: 1.05, backgroundColor: '#D1B47A' }}
+                      whileTap={{ scale: 0.95 }}
                     >
                       Continue with ${getCurrentAmount().toFixed(2)}
                       <ArrowRight className="w-5 h-5 ml-2" />
-                    </button>
+                    </motion.button>
                   </div>
                 </div>
 
                 <div className="lg:col-span-1">
                   <div className="sticky top-8 space-y-6">
-                    <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
-                      <h3 className="text-xl font-bold text-gray-900 mb-4">Your Impact</h3>
+                    <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-lg p-6 border border-black/10">
+                      <h3 className="text-xl font-bold text-[#111111] mb-4 tracking-wide">Your Impact</h3>
                       <div className="text-center">
                         <div className="text-5xl mb-3">{getCurrentImpact().icon}</div>
-                        <div className="text-3xl font-bold text-teal-600 mb-3">
+                        <div className="text-3xl font-bold text-[#111111] mb-3">
                           ${getCurrentAmount().toFixed(2)}
                         </div>
-                        <p className="text-gray-600 text-sm leading-relaxed">
+                        <p className="text-[#6F6F6F] text-sm leading-relaxed">
                           {getCurrentImpact().impact}
                         </p>
                       </div>
                     </div>
 
-                    <div className="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-6 border border-teal-100">
-                      <h3 className="text-lg font-bold text-gray-900 mb-4">Our Mission</h3>
-                      <div className="space-y-3 text-sm text-gray-700">
+                    <div className="bg-white/70 backdrop-blur-md rounded-2xl p-6 border border-black/10">
+                      <h3 className="text-lg font-bold text-[#111111] mb-4 tracking-wide">Our Mission</h3>
+                      <div className="space-y-3 text-sm text-[#6F6F6F]">
                         <div className="flex items-start">
-                          <Zap className="w-4 h-4 text-teal-500 mt-1 mr-3 flex-shrink-0" />
+                          <Zap className="w-4 h-4 text-[#C9A86A] mt-1 mr-3 flex-shrink-0" />
                           <p>Develop innovative smart EV charging solutions</p>
                         </div>
                         <div className="flex items-start">
-                          <Globe className="w-4 h-4 text-teal-500 mt-1 mr-3 flex-shrink-0" />
+                          <Globe className="w-4 h-4 text-[#C9A86A] mt-1 mr-3 flex-shrink-0" />
                           <p>Make electric vehicle ownership more accessible</p>
                         </div>
                         <div className="flex items-start">
-                          <Heart className="w-4 h-4 text-teal-500 mt-1 mr-3 flex-shrink-0" />
+                          <Heart className="w-4 h-4 text-[#C9A86A] mt-1 mr-3 flex-shrink-0" />
                           <p>Reduce carbon emissions through sustainable technology</p>
                         </div>
                         <div className="flex items-start">
-                          <Target className="w-4 h-4 text-teal-500 mt-1 mr-3 flex-shrink-0" />
+                          <Target className="w-4 h-4 text-[#C9A86A] mt-1 mr-3 flex-shrink-0" />
                           <p>Ensure you never run out of charge again</p>
                         </div>
                       </div>
@@ -724,18 +727,18 @@ export default function SupportUsPage() {
           {step === 2 && (
             <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-4xl mx-auto">
               <div className="text-center mb-10">
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">Your Information</h2>
-                <p className="text-lg text-gray-700">Help us send your receipt and keep you updated on our progress</p>
+                <h2 className="text-3xl font-bold text-[#111111] mb-4 tracking-tight">Your Information</h2>
+                <p className="text-lg text-[#6F6F6F] leading-relaxed">Help us send your receipt and keep you updated on our progress</p>
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2">
-                  <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-                    <h3 className="text-xl font-bold text-gray-900 mb-6">Contact Information</h3>
+                  <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-lg p-8 border border-black/10">
+                    <h3 className="text-xl font-bold text-[#111111] mb-6 tracking-wide">Contact Information</h3>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                       <div>
-                        <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
+                        <label htmlFor="firstName" className="block text-sm font-medium text-[#111111] mb-2 tracking-wide">
                           First Name *
                         </label>
                         <input
@@ -744,8 +747,8 @@ export default function SupportUsPage() {
                           name="firstName"
                           value={formData.firstName}
                           onChange={handleInputChange}
-                          className={`w-full text-black px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all ${
-                            validationErrors.firstName ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                          className={`w-full text-[#111111] px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#C9A86A]/50 focus:border-transparent transition-all bg-white/70 backdrop-blur-md ${
+                            validationErrors.firstName ? 'border-red-300 bg-red-50' : 'border-black/10'
                           }`}
                         />
                         {validationErrors.firstName && (
@@ -753,7 +756,7 @@ export default function SupportUsPage() {
                         )}
                       </div>
                       <div>
-                        <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
+                        <label htmlFor="lastName" className="block text-sm font-medium text-[#111111] mb-2 tracking-wide">
                           Last Name *
                         </label>
                         <input
@@ -762,8 +765,8 @@ export default function SupportUsPage() {
                           name="lastName"
                           value={formData.lastName}
                           onChange={handleInputChange}
-                          className={`w-full text-black px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all ${
-                            validationErrors.lastName ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                          className={`w-full text-[#111111] px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#C9A86A]/50 focus:border-transparent transition-all bg-white/70 backdrop-blur-md ${
+                            validationErrors.lastName ? 'border-red-300 bg-red-50' : 'border-black/10'
                           }`}
                         />
                         {validationErrors.lastName && (
@@ -773,7 +776,7 @@ export default function SupportUsPage() {
                     </div>
 
                     <div className="mb-6">
-                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                      <label htmlFor="email" className="block text-sm font-medium text-[#111111] mb-2 tracking-wide">
                         Email Address *
                       </label>
                       <input
@@ -782,8 +785,8 @@ export default function SupportUsPage() {
                         name="email"
                         value={formData.email}
                         onChange={handleInputChange}
-                        className={`w-full text-black px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all ${
-                          validationErrors.email ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                        className={`w-full text-[#111111] px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#C9A86A]/50 focus:border-transparent transition-all bg-white/70 backdrop-blur-md ${
+                          validationErrors.email ? 'border-red-300 bg-red-50' : 'border-black/10'
                         }`}
                       />
                       {validationErrors.email && (
@@ -791,8 +794,8 @@ export default function SupportUsPage() {
                       )}
                     </div>
 
-                    <div className="border-t border-gray-200 pt-6 mb-6">
-                      <h4 className="text-lg font-semibold text-gray-900 mb-4">Gift Options</h4>
+                    <div className="border-t border-black/10 pt-6 mb-6">
+                      <h4 className="text-lg font-semibold text-[#111111] mb-4 tracking-wide">Gift Options</h4>
                       
                       <div className="space-y-4">
                         <div className="flex items-start">
@@ -802,10 +805,10 @@ export default function SupportUsPage() {
                             type="checkbox"
                             checked={formData.dedicateGift}
                             onChange={handleInputChange}
-                            className="h-4 w-4 text-teal-500 border-gray-300 rounded focus:ring-teal-500 mt-1"
+                            className="h-4 w-4 text-[#C9A86A] border-black/10 rounded focus:ring-[#C9A86A]/50 mt-1"
                           />
                           <div className="ml-3">
-                            <label htmlFor="dedicateGift" className="font-medium text-gray-700">
+                            <label htmlFor="dedicateGift" className="font-medium text-[#111111] tracking-wide">
                               Dedicate this gift in honor or memory of someone
                             </label>
                           </div>
@@ -813,7 +816,7 @@ export default function SupportUsPage() {
 
                         {formData.dedicateGift && (
                           <div className="ml-7">
-                            <label htmlFor="dedicateTo" className="block text-sm font-medium text-gray-700 mb-2">
+                            <label htmlFor="dedicateTo" className="block text-sm font-medium text-[#111111] mb-2 tracking-wide">
                               In honor/memory of
                             </label>
                             <input
@@ -823,7 +826,7 @@ export default function SupportUsPage() {
                               value={formData.dedicateTo}
                               onChange={handleInputChange}
                               placeholder="Enter name"
-                              className="w-full text-black px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                              className="w-full text-[#111111] px-4 py-3 border border-black/10 rounded-lg focus:ring-2 focus:ring-[#C9A86A]/50 focus:border-transparent transition-all bg-white/70 backdrop-blur-md"
                             />
                           </div>
                         )}
@@ -835,10 +838,10 @@ export default function SupportUsPage() {
                             type="checkbox"
                             checked={formData.anonymous}
                             onChange={handleInputChange}
-                            className="h-4 w-4 text-teal-500 border-gray-300 rounded focus:ring-teal-500 mt-1"
+                            className="h-4 w-4 text-[#C9A86A] border-black/10 rounded focus:ring-[#C9A86A]/50 mt-1"
                           />
                           <div className="ml-3">
-                            <label htmlFor="anonymous" className="font-medium text-gray-700">
+                            <label htmlFor="anonymous" className="font-medium text-[#111111] tracking-wide">
                               Make this donation anonymous
                             </label>
                           </div>
@@ -851,13 +854,13 @@ export default function SupportUsPage() {
                             type="checkbox"
                             checked={formData.updates}
                             onChange={handleInputChange}
-                            className="h-4 w-4 text-teal-500 border-gray-300 rounded focus:ring-teal-500 mt-1"
+                            className="h-4 w-4 text-[#C9A86A] border-black/10 rounded focus:ring-[#C9A86A]/50 mt-1"
                           />
                           <div className="ml-3">
-                            <label htmlFor="updates" className="font-medium text-gray-700">
-                              Send me updates about EVolve Charge's progress
+                            <label htmlFor="updates" className="font-medium text-[#111111] tracking-wide">
+                              Send me updates about Ampereon's progress
                             </label>
-                            <p className="text-sm text-gray-500 mt-1">
+                            <p className="text-sm text-[#6F6F6F] mt-1">
                               Stay informed about our smart EV charging innovations
                             </p>
                           </div>
@@ -870,12 +873,12 @@ export default function SupportUsPage() {
                             type="checkbox"
                             checked={formData.agreeTerms}
                             onChange={handleInputChange}
-                            className={`h-4 w-4 text-teal-500 border rounded focus:ring-teal-500 mt-1 ${
-                              validationErrors.agreeTerms ? 'border-red-300' : 'border-gray-300'
+                            className={`h-4 w-4 text-[#C9A86A] border rounded focus:ring-[#C9A86A]/50 mt-1 ${
+                              validationErrors.agreeTerms ? 'border-red-300' : 'border-black/10'
                             }`}
                           />
                           <div className="ml-3">
-                            <label htmlFor="agreeTerms" className="font-medium text-gray-700">
+                            <label htmlFor="agreeTerms" className="font-medium text-[#111111] tracking-wide">
                               I agree to the Terms of Service and Privacy Policy *
                             </label>
                             {validationErrors.agreeTerms && (
@@ -887,47 +890,51 @@ export default function SupportUsPage() {
                     </div>
 
                     <div className="flex space-x-4">
-                      <button
+                      <motion.button
                         onClick={prevStep}
-                        className="w-1/3 py-3 rounded-xl border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-all flex items-center justify-center"
+                        className="w-1/3 py-3 rounded-full border border-black/10 text-[#111111]/70 font-medium hover:bg-[#F5F6F7] transition-all flex items-center justify-center"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                       >
                         <ArrowLeft className="w-4 h-4 mr-2" />
                         Back
-                      </button>
-                      <button
+                      </motion.button>
+                      <motion.button
                         onClick={nextStep}
-                        className="w-2/3 py-3 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-[1.02] flex items-center justify-center"
+                        className="w-2/3 py-3 rounded-full bg-[#C9A86A] text-[#111111] font-medium shadow-lg hover:shadow-xl transition-all flex items-center justify-center"
+                        whileHover={{ scale: 1.05, backgroundColor: '#D1B47A' }}
+                        whileTap={{ scale: 0.95 }}
                       >
                         Continue to Payment
                         <ArrowRight className="w-5 h-5 ml-2" />
-                      </button>
+                      </motion.button>
                     </div>
                   </div>
                 </div>
 
                 <div className="lg:col-span-1">
-                  <div className="bg-white rounded-2xl shadow-xl p-6 sticky top-28 border border-gray-100">
-                    <h3 className="text-xl font-bold text-gray-900 mb-6">Donation Summary</h3>
+                  <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-lg p-6 sticky top-28 border border-black/10">
+                    <h3 className="text-xl font-bold text-[#111111] mb-6 tracking-wide">Donation Summary</h3>
                     
                     <div className="mb-6">
                       <div className="flex justify-between items-center mb-2">
-                        <span className="text-gray-600">Donation Amount</span>
-                        <span className="text-xl font-semibold text-gray-900">
+                        <span className="text-[#6F6F6F]">Donation Amount</span>
+                        <span className="text-xl font-semibold text-[#111111]">
                           ${getCurrentAmount().toFixed(2)}
                         </span>
                       </div>
                     </div>
 
-                    <div className="border-t border-gray-200 pt-4 mb-6">
+                    <div className="border-t border-black/10 pt-4 mb-6">
                       <div className="flex justify-between items-center font-bold text-xl">
-                        <span className="text-gray-900">Total</span>
-                        <span className="text-gray-900">${getCurrentAmount().toFixed(2)}</span>
+                        <span className="text-[#111111]">Total</span>
+                        <span className="text-[#111111]">${getCurrentAmount().toFixed(2)}</span>
                       </div>
                     </div>
 
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <h4 className="font-medium text-gray-900 mb-3">Where Your Money Goes</h4>
-                      <div className="space-y-2 text-sm text-gray-700">
+                    <div className="bg-[#F5F6F7] p-4 rounded-lg">
+                      <h4 className="font-medium text-[#111111] mb-3 tracking-wide">Where Your Money Goes</h4>
+                      <div className="space-y-2 text-sm text-[#6F6F6F]">
                         <div className="flex justify-between">
                           <span>Research & Development</span>
                           <span>70%</span>
@@ -945,8 +952,8 @@ export default function SupportUsPage() {
                           <span>5%</span>
                         </div>
                       </div>
-                      <div className="mt-4 p-3 bg-teal-50 rounded-lg border border-teal-100">
-                        <p className="text-xs text-teal-700">
+                      <div className="mt-4 p-3 bg-[#C9A86A]/10 rounded-lg border border-[#C9A86A]/30">
+                        <p className="text-xs text-[#6F6F6F]">
                           <strong>Total funding includes:</strong> Direct donations (${totalDonations.toFixed(0)}) + Pre-orders (${totalPreOrders.toFixed(0)})
                         </p>
                       </div>
@@ -960,26 +967,26 @@ export default function SupportUsPage() {
           {step === 3 && (
             <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-4xl mx-auto">
               <div className="text-center mb-10">
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">Complete Your Donation</h2>
-                <p className="text-lg text-gray-700">Your support drives the future of smart, automatic EV charging</p>
+                <h2 className="text-3xl font-bold text-[#111111] mb-4 tracking-tight">Complete Your Donation</h2>
+                <p className="text-lg text-[#6F6F6F] leading-relaxed">Your support drives the future of smart, automatic EV charging</p>
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2">
-                  <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-                    <div className="flex items-center bg-blue-50 p-6 rounded-lg border border-blue-100 mb-6">
-                      <Shield className="h-8 w-8 text-blue-600 mr-4" />
+                  <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-lg p-8 border border-black/10">
+                    <div className="flex items-center bg-[#F5F6F7] p-6 rounded-lg border border-black/10 mb-6">
+                      <Shield className="h-8 w-8 text-[#C9A86A] mr-4" />
                       <div>
-                        <p className="text-base font-semibold text-gray-900">
+                        <p className="text-base font-semibold text-[#111111] tracking-wide">
                           Your Payment is Safe and Secure
                         </p>
-                        <p className="text-sm text-gray-600 mt-1">
+                        <p className="text-sm text-[#6F6F6F] mt-1">
                           We use Stripe for secure payment processing with 256-bit SSL encryption
                         </p>
                       </div>
                     </div>
 
-                    <h3 className="text-xl font-bold text-gray-900 mb-6">Payment Information</h3>
+                    <h3 className="text-xl font-bold text-[#111111] mb-6 tracking-wide">Payment Information</h3>
                     
                     {error && (
                       <div className="mb-6 p-4 bg-red-50 text-red-700 rounded-lg border border-red-200">
@@ -1000,43 +1007,47 @@ export default function SupportUsPage() {
                       </Elements>
                     ) : (
                       <div className="flex flex-col items-center justify-center py-8">
-                        <div className="animate-spin h-8 w-8 border-4 border-teal-500 rounded-full border-t-transparent mb-4"></div>
-                        <p className="text-gray-600">
+                        <div className="animate-spin h-8 w-8 border-4 border-[#C9A86A] rounded-full border-t-transparent mb-4"></div>
+                        <p className="text-[#6F6F6F]">
                           {isProcessing ? 'Preparing your donation...' : 'Loading payment form...'}
                         </p>
                       </div>
                     )}
 
-                    <button
+                    <motion.button
                       onClick={prevStep}
-                      className="mt-6 px-6 py-2 rounded-xl border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-all flex items-center"
+                      className="mt-6 px-6 py-2 rounded-full border border-black/10 text-[#111111]/70 font-medium hover:bg-[#F5F6F7] transition-all flex items-center"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                     >
                       <ArrowLeft className="w-4 h-4 mr-2" />
                       Back to Information
-                    </button>
+                    </motion.button>
                   </div>
                 </div>
 
                 <div className="lg:col-span-1">
-                  <div className="bg-white rounded-2xl shadow-xl p-6 sticky top-28 border border-gray-100">
-                    <h3 className="text-xl font-bold text-gray-900 mb-6">Final Summary</h3>
+                  <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-lg p-6 sticky top-28 border border-black/10">
+                    <h3 className="text-xl font-bold text-[#111111] mb-6 tracking-wide">Final Summary</h3>
                     
                     <div className="space-y-4 mb-6">
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Donation Amount</span>
-                        <span className="font-semibold">${getCurrentAmount().toFixed(2)}</span>
+                        <span className="text-[#6F6F6F]">Donation Amount</span>
+                        <span className="font-semibold text-[#111111]">
+                          ${getCurrentAmount().toFixed(2)}
+                        </span>
                       </div>
-                      <div className="border-t pt-4">
+                      <div className="border-t border-black/10 pt-4">
                         <div className="flex justify-between font-bold text-xl">
-                          <span>Total</span>
-                          <span className="text-teal-600">${getCurrentAmount().toFixed(2)}</span>
+                          <span className="text-[#111111]">Total</span>
+                          <span className="text-[#111111]">${getCurrentAmount().toFixed(2)}</span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="bg-teal-50 p-4 rounded-lg border border-teal-100">
-                      <h4 className="font-medium text-teal-900 mb-2">Thank You!</h4>
-                      <p className="text-sm text-teal-700">
+                    <div className="bg-[#C9A86A]/10 p-4 rounded-lg border border-[#C9A86A]/30">
+                      <h4 className="font-medium text-[#111111] mb-2 tracking-wide">Thank You!</h4>
+                      <p className="text-sm text-[#6F6F6F]">
                         Your contribution helps accelerate sustainable transportation technology
                       </p>
                     </div>
@@ -1055,8 +1066,8 @@ export default function SupportUsPage() {
             className="mt-20"
           >
             <div className="flex flex-col gap-6">
-              <div className="bg-white rounded-2xl shadow-xl border border-gray-100">
-                <div className="p-6 border-b border-gray-100">
+              <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-lg border border-black/10">
+                <div className="p-6 border-b border-black/10">
                   <div className="flex flex-wrap gap-2 mb-4">
                     {[
                       { label: 'Recent', value: 'recent' },
@@ -1064,21 +1075,23 @@ export default function SupportUsPage() {
                       { label: 'Top Month', value: 'top-month' },
                       { label: 'All Time', value: 'top-all' },
                     ].map(({ label, value }) => (
-                      <button
+                      <motion.button
                         key={value}
                         onClick={() => setFilter(value)}
                         className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${
                           filter === value
-                            ? 'bg-teal-500 text-white shadow-md'
-                            : 'bg-gray-100 text-gray-700 hover:bg-teal-100'
+                            ? 'bg-[#C9A86A] text-[#111111] shadow-md'
+                            : 'bg-[#F5F6F7] text-[#111111]/70 hover:bg-[#C9A86A]/10'
                         }`}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                       >
                         {label}
-                      </button>
+                      </motion.button>
                     ))}
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 flex items-center">
-                    <Users className="w-5 h-5 mr-2 text-teal-500" />
+                  <h3 className="text-xl font-semibold text-[#111111] flex items-center tracking-wide">
+                    <Users className="w-5 h-5 mr-2 text-[#C9A86A]" />
                     Our Donors
                   </h3>
                 </div>
@@ -1086,13 +1099,13 @@ export default function SupportUsPage() {
                 <div className="p-6 overflow-x-auto">
                   {isLoading ? (
                     <div className="flex items-center justify-center py-8">
-                      <div className="animate-spin h-6 w-6 border-2 border-teal-500 rounded-full border-t-transparent mr-2"></div>
-                      <p className="text-gray-600 text-sm">Loading supporters...</p>
+                      <div className="animate-spin h-6 w-6 border-2 border-[#C9A86A] rounded-full border-t-transparent mr-2"></div>
+                      <p className="text-[#6F6F6F] text-sm">Loading supporters...</p>
                     </div>
                   ) : donorsWithAmounts.length === 0 ? (
                     <div className="text-center py-8">
-                      <Heart className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                      <p className="text-gray-600 text-sm">No supporters yet. Be the first to join our mission!</p>
+                      <Heart className="w-12 h-12 text-[#6F6F6F] mx-auto mb-3" />
+                      <p className="text-[#6F6F6F] text-sm">No supporters yet. Be the first to join our mission!</p>
                     </div>
                   ) : (
                     <div className="flex gap-4">
@@ -1102,21 +1115,21 @@ export default function SupportUsPage() {
                           initial={{ opacity: 0, x: 20 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ duration: 0.3 }}
-                          className="bg-gray-50 rounded-lg p-4 flex-shrink-0 w-64 hover:bg-gray-100 transition-all"
+                          className="bg-white/70 backdrop-blur-md rounded-lg p-4 flex-shrink-0 w-64 hover:bg-white/80 transition-all border border-black/10"
                         >
                           <div className="flex items-start">
-                            <div className="w-8 h-8 bg-gradient-to-br from-teal-100 to-cyan-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-                              <Users className="w-4 h-4 text-teal-600" />
+                            <div className="w-8 h-8 bg-[#C9A86A]/10 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                              <Users className="w-4 h-4 text-[#C9A86A]" />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="font-medium text-gray-900 truncate text-sm">
+                              <p className="font-medium text-[#111111] truncate text-sm tracking-wide">
                                 {donor.anonymous ? 'Anonymous Supporter' : `${donor.firstName} ${donor.lastName}`}
                               </p>
-                              <p className="text-teal-600 font-semibold text-xs">Donated ${donor.amount.toFixed(2)}</p>
+                              <p className="text-[#C9A86A] font-semibold text-xs">Donated ${donor.amount.toFixed(2)}</p>
                               {donor.dedicateTo && (
-                                <p className="text-gray-500 italic text-xs truncate">In honor of: {donor.dedicateTo}</p>
+                                <p className="text-[#6F6F6F] italic text-xs truncate">In honor of: {donor.dedicateTo}</p>
                               )}
-                              <p className="text-gray-400 text-xs">
+                              <p className="text-[#6F6F6F] text-xs">
                                 {donor.createdAt?.toDate?.()?.toLocaleDateString('en-US', {
                                   month: 'short',
                                   day: 'numeric',

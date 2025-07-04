@@ -66,8 +66,8 @@ export default function AdminLogin() {
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
       <Head>
-        <title>EVolve Charge | Admin Login</title>
-        <meta name="description" content="Admin login for EVolve Charge" />
+        <title>Ampereon | Admin Login</title>
+        <meta name="description" content="Admin login for Ampereon" />
       </Head>
 
       <motion.div

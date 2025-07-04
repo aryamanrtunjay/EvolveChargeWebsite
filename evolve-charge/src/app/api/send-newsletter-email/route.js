@@ -92,11 +92,11 @@ export async function POST(request) {
             ${htmlContent}
             <div class="footer">
               <p>
-                This email was sent to you because you subscribed to the EVolve Charge newsletter.
+                This email was sent to you because you subscribed to Ampereon newsletter.
                 <br>
                 If you no longer wish to receive these emails, please email support@evolve-charge.com
               </p>
-              <p>© ${new Date().getFullYear()} EVolve Charge. All rights reserved.</p>
+              <p>© ${new Date().getFullYear()} Ampereon. All rights reserved.</p>
             </div>
           </div>
         </body>
@@ -120,7 +120,7 @@ export async function POST(request) {
         const personalizedHtml = emailTemplate.replace('{{EMAIL}}', encodeURIComponent(email));
         
         const mailOptions = {
-          from: `"EVolve Charge" <${process.env.EMAIL_USER}>`,
+          from: `"Ampereon" <${process.env.EMAIL_USER}>`,
           to: email,
           subject: subject,
           html: personalizedHtml,

@@ -14,7 +14,7 @@ export async function POST(request) {
     });
 
     const mailOptions = {
-      from: `"EVolve Charge" <${process.env.EMAIL_USER}>`,
+      from: `"Ampereon" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: `Order Confirmation - ${orderNumber}`,
       html: `
@@ -41,7 +41,7 @@ export async function POST(request) {
               We’ll keep you updated on the status of your order. If you have any questions, feel free to contact us at 
               <a href="mailto:support@evolve-charge.com" style="color: #0066cc; text-decoration: none;">support@evolve-charge.com</a>.
             </p>
-            <p style="font-size: 16px; color: #333333; margin-top: 20px;">Best regards,<br>The EVolve Charge Team</p>
+            <p style="font-size: 16px; color: #333333; margin-top: 20px;">Best regards,<br>The Ampereon Team</p>
           </div>
         </body>
         </html>

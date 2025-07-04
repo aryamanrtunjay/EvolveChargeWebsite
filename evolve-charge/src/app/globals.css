@@ -14,8 +14,9 @@
   }
 }
 
-.chakra-petch {
-  font-family: var(--font-chakra-petch);
+.inter {
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
 }
 
 body {

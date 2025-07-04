@@ -129,8 +129,8 @@ export default function Features() {
   return (
     <div className="min-h-screen bg-white">
       <Head>
-        <title>Features | EVolve Charge - Smart EV Charging Solutions</title>
-        <meta name="description" content="Explore the advanced features of EVolve Charge's automatic EV charging solutions." />
+        <title>Features | Ampereon - Smart EV Charging Solutions</title>
+        <meta name="description" content="Explore the advanced features of Ampereon's automatic EV charging solutions." />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -154,7 +154,7 @@ export default function Features() {
               variants={fadeIn}
               className="text-lg md:text-xl mb-10 opacity-90"
             >
-              Discover how EVolve Charge is revolutionizing electric vehicle charging with smart automation, optimization, and health monitoring.
+              Discover how Ampereon is revolutionizing electric vehicle charging with smart automation, optimization, and health monitoring.
             </motion.p>
           </motion.div>
         </div>
@@ -333,7 +333,7 @@ export default function Features() {
               variants={fadeIn}
               className="text-lg text-gray-700 max-w-2xl mx-auto"
             >
-              See how EVolve Charge stacks up against traditional charging solutions.
+              See how Ampereon stacks up against traditional charging solutions.
             </motion.p>
           </motion.div>
 
@@ -348,7 +348,7 @@ export default function Features() {
               <thead>
                 <tr className="bg-gradient-to-r from-teal-500 to-cyan-600 text-white">
                   <th className="py-4 px-6 text-left">Feature</th>
-                  <th className="py-4 px-6 text-center">EVolve Charge</th>
+                  <th className="py-4 px-6 text-center">Ampereon</th>
                   <th className="py-4 px-6 text-center">Traditional Wall Chargers</th>
                   <th className="py-4 px-6 text-center">Public Charging</th>
                 </tr>
@@ -417,7 +417,7 @@ export default function Features() {
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Experience the Future of EV Charging?</h2>
             <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto opacity-90">
-              Join our growing community of EV owners who are enjoying the convenience and efficiency of EVolve Charge.
+              Join our growing community of EV owners who are enjoying the convenience and efficiency of Ampereon.
             </p>
             <a href="reserve">
               <motion.button
@@ -425,7 +425,7 @@ export default function Features() {
                 whileTap={{ scale: 0.95 }}
                 className="px-8 py-3 rounded-full bg-white text-teal-500 font-medium shadow-md hover:shadow-lg transition-all"
               >
-                Reserve Your EVolve Charger
+                Reserve Your Ampereon
               </motion.button>
             </a>
             <p className="mt-4 text-sm opacity-80">Limited early-bird pricing available. Free installation included.</p>

@@ -6,7 +6,7 @@ import 'slick-carousel/slick/slick-theme.css';
 const Testimonials = () => {
   const testimonials = [
     {
-      quote: "The EVolve Charger has made charging my EV so much easier. I love the automated features!",
+      quote: "Ampereon has made charging my EV so much easier. I love the automated features!",
       author: "John D."
     },
     {
@@ -45,7 +45,7 @@ const Testimonials = () => {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900">What Our Customers Say</h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">Hear from EV owners who love using the EVolve Charger</p>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">Hear from EV owners who love using Ampereon</p>
         </div>
 
         <Slider {...settings}>

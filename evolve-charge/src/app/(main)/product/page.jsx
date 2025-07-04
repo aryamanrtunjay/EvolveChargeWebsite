@@ -7,10 +7,10 @@ import Script from 'next/script';
 
 // Video file mapping with full URLs
 const videos = {
-  1: { to: 'https://demo.evolve-charge.com/ToCharger.mp4', from: 'https://demo.evolve-charge.com/FromCharger.mp4' },
-  2: { to: 'https://demo.evolve-charge.com/ToHolder.mp4', from: 'https://demo.evolve-charge.com/FromHolder.mp4' },
-  3: { to: 'https://demo.evolve-charge.com/ToHook.mp4', from: 'https://demo.evolve-charge.com/FromHook.mp4' },
-  demo: { to: 'https://demo.evolve-charge.com/productPageDemo.mp4', from: 'https://demo.evolve-charge.com/reverseDemo.mp4' }, // Demo video with from
+  1: { to: 'https://demo.ampereonenergy.com/ToCharger.mp4', from: 'https://demo.ampereonenergy.com/FromCharger.mp4' },
+  2: { to: 'https://demo.ampereonenergy.com/ToHolder.mp4', from: 'https://demo.ampereonenergy.com/FromHolder.mp4' },
+  3: { to: 'https://demo.ampereonenergy.com/ToHook.mp4', from: 'https://demo.ampereonenergy.com/FromHook.mp4' },
+  demo: { to: 'https://demo.ampereonenergy.com/productPageDemo.mp4', from: 'https://demo.ampereonenergy.com/reverseDemo.mp4' },
 };
 
 // Interactive points configuration
@@ -24,7 +24,7 @@ const interactivePoints = {
 const descriptions = {
   1: {
     title: 'The Charger',
-    content: 'The heart and soul of the EVolve Charger. A compact, efficient, lightweight, and stylish module that is hooked safely onto the guide wires of the EVolve system and traverses to any car inside your garage automatically at the optimal time to charge.'
+    content: 'The heart and soul of Ampereon. A compact, efficient, lightweight, and stylish module that is hooked safely onto the guide wires of the Ampereon system and traverses to any car inside your garage automatically at the optimal time to charge.'
   },
   2: {
     title: 'Wire Holder',
@@ -48,9 +48,7 @@ export default function VideoViewer() {
   const [fakeProgress, setFakeProgress] = useState(0);
   const [loadingDuration, setLoadingDuration] = useState(null);
   const [loadingStartTime, setLoadingStartTime] = useState(null);
-  const [currentLoadingMessage, setCurrentLoadingMessage] = useState('');
   const videoRef = useRef(null);
-
 
   // List of all video keys to check loading status
   const allVideos = [
@@ -59,19 +57,12 @@ export default function VideoViewer() {
     'to-demo',
     'from-demo',
   ];
-  // Cool loading messages for different progress stages
+
+  // Minimalistic loading messages
   const loadingMessages = [
-    { progress: 0, message: "Initializing Virtual Garage Environment...", detail: "Setting up 3D rendering engine" },
-    { progress: 8, message: "Calibrating Interactive Systems...", detail: "Configuring touch points and animations" },
-    { progress: 18, message: "Loading EVolve Charger Assets...", detail: "Importing high-resolution 3D models" },
-    { progress: 28, message: "Optimizing Video Streams...", detail: "Preparing seamless transitions" },
-    { progress: 40, message: "Building Interactive Hotspots...", detail: "Creating responsive UI elements" },
-    { progress: 52, message: "Synchronizing Audio Systems...", detail: "Testing multimedia compatibility" },
-    { progress: 65, message: "Applying Advanced Lighting...", detail: "Enhancing visual realism" },
-    { progress: 75, message: "Finalizing User Experience...", detail: "Optimizing performance metrics" },
-    { progress: 85, message: "Running Quality Assurance...", detail: "Validating interactive components" },
-    { progress: 92, message: "Preparing Launch Sequence...", detail: "Warming up the garage doors" },
-    { progress: 98, message: "Welcome to Your Virtual Garage!", detail: "Experience is ready" }
+    { progress: 0, message: "Preparing Your Virtual Garage..." },
+    { progress: 50, message: "Optimizing Experience..." },
+    { progress: 90, message: "Ready to Launch..." }
   ];
 
   const totalVideos = allVideos.length;
@@ -80,11 +71,9 @@ export default function VideoViewer() {
   // Initialize fake loading on component mount
   useEffect(() => {
     if (currentState === 'loading' && loadingDuration === null) {
-      // Random duration between 3-5 seconds
       const duration = 3000 + Math.random() * 2000;
       setLoadingDuration(duration);
       setLoadingStartTime(Date.now());
-      console.log(`Fake loading will take ${duration}ms`);
     }
   }, [currentState, loadingDuration]);
 
@@ -96,27 +85,21 @@ export default function VideoViewer() {
         const progress = Math.min((elapsed / loadingDuration) * 100, 100);
         setFakeProgress(progress);
 
-        // Update loading message based on progress
         const currentMsg = loadingMessages
           .slice()
           .reverse()
-          .find(msg => progress >= msg.progress);
+          .find(msg => progress >= msg.progress) || loadingMessages[0];
         
-        if (currentMsg && currentMsg.message !== currentLoadingMessage) {
-          setCurrentLoadingMessage(currentMsg.message);
-        }
-
-        // Complete loading when both fake progress is done AND videos are loaded
         if (progress >= 100 && isLoaded) {
           setCurrentState('start');
           setShowPoster(true);
           clearInterval(interval);
         }
-      }, 50); // Update every 50ms for smooth animation
+      }, 50);
 
       return () => clearInterval(interval);
     }
-  }, [currentState, loadingStartTime, loadingDuration, isLoaded, currentLoadingMessage, loadingMessages]);
+  }, [currentState, loadingStartTime, loadingDuration, isLoaded]);
 
   // Preload videos with Promise.all
   useEffect(() => {
@@ -131,35 +114,29 @@ export default function VideoViewer() {
             mode: 'cors'
           });
           if (!response.ok) throw new Error(`Video not found: ${videoUrl} (Status: ${response.status})`);
-          console.log(`GET request successful for ${videoUrl}, status: ${response.status}`);
 
           return new Promise((resolve) => {
             const video = document.createElement('video');
             video.preload = 'auto';
             video.src = videoUrl;
             video.onloadeddata = () => {
-              console.log(`Loaded: ${videoUrl}`);
               resolve(key);
             };
             video.onerror = () => {
-              console.error(`Failed to load: ${videoUrl}`);
               resolve(key);
             };
             document.body.appendChild(video);
             setTimeout(() => document.body.removeChild(video), 0);
           });
         } catch (err) {
-          console.error(`Fetch error for ${videoUrl}:`, err);
           return new Promise((resolve) => {
             const video = document.createElement('video');
             video.preload = 'auto';
             video.src = videoUrl;
             video.onloadeddata = () => {
-              console.log(`Fallback loaded: ${videoUrl}`);
               resolve(key);
             };
             video.onerror = () => {
-              console.error(`Fallback failed for ${videoUrl}`);
               resolve(key);
             };
             document.body.appendChild(video);
@@ -173,8 +150,7 @@ export default function VideoViewer() {
     };
 
     loadVideos().catch(err => {
-      console.error('Error preloading virtual garage:', err);
-      setError('Failed to preload some videos. Check console for details.');
+      setError('Failed to preload some videos. Please try again later.');
     });
   }, []);
 
@@ -182,29 +158,16 @@ export default function VideoViewer() {
   const handleVideoLoaded = (key) => {
     setLoadedVideos(prev => {
       if (!prev[key]) {
-        setLoadedCount(prevCount => {
-          const newCount = Math.min(prevCount + 1, totalVideos);
-          console.log(`Loaded count updated to: ${newCount}/${totalVideos}`);
-          return newCount;
-        });
+        setLoadedCount(prevCount => Math.min(prevCount + 1, totalVideos));
         return { ...prev, [key]: true };
       }
       return prev;
     });
   };
 
-  // Set initial video when all videos are loaded (but don't exit loading yet)
-  useEffect(() => {
-    if (isLoaded && currentState === 'loading') {
-      console.log('All videos loaded, waiting for fake progress to complete');
-      // Don't change state here - let the fake progress timer handle it
-    }
-  }, [isLoaded, currentState]);
-
   // Set video src when currentVideo changes
   useEffect(() => {
     if (videoRef.current && currentVideo) {
-      console.log('Setting video src to:', currentVideo);
       videoRef.current.src = currentVideo;
       videoRef.current.load();
     }
@@ -214,18 +177,14 @@ export default function VideoViewer() {
   useEffect(() => {
     if (videoRef.current) {
       const video = videoRef.current;
-      if (currentState === 'playingTo' || currentState === 'playingFrom' || currentState === 'playingDemo' || currentState === 'playingDemoReverse') {
-        console.log('Playing video for state:', currentState);
-        setShowPoster(false); // Hide poster when playing video
+      if (['playingTo', 'playingFrom', 'playingDemo', 'playingDemoReverse'].includes(currentState)) {
+        setShowPoster(false);
         video.play().catch(err => console.error('Autoplay failed:', err));
       } else if (currentState === 'atPOI') {
-        console.log('Pausing video for state:', currentState);
-        setShowPoster(false); // Show video last frame, not poster
+        setShowPoster(false);
         video.pause();
-        // Set to last frame to ensure it shows the end state
         const setToLastFrame = () => {
           if (video.duration && video.duration > 0) {
-            console.log('Setting to last frame');
             video.currentTime = video.duration - 0.01;
           }
         };
@@ -240,8 +199,7 @@ export default function VideoViewer() {
           return () => video.removeEventListener('loadeddata', handleLoadedData);
         }
       } else if (currentState === 'start') {
-        console.log('Showing poster for start state');
-        setShowPoster(true); // Show poster on start screen
+        setShowPoster(true);
         video.pause();
       }
     }
@@ -249,9 +207,6 @@ export default function VideoViewer() {
 
   // Handle video ending
   const handleVideoEnded = () => {
-    console.log('Video ended, current state:', currentState);
-    
-    // Ensure we stay on the last frame
     if (videoRef.current && videoRef.current.duration) {
       videoRef.current.currentTime = videoRef.current.duration - 0.01;
       videoRef.current.pause();
@@ -262,19 +217,14 @@ export default function VideoViewer() {
         setCurrentState('atPOI');
         setShowDescription(true);
       } else if (currentState === 'playingFrom') {
-        // After "from" video ends, show poster and return to start
         setShowPoster(true);
         setCurrentState('start');
         setShowDescription(false);
       } else if (currentState === 'playingDemo') {
-        // Automatically play the reverse demo video
-        console.log('Demo "to" ended, playing reverse video');
         setCurrentVideo(videos.demo.from);
         setCurrentState('playingDemoReverse');
         setShowDescription(false);
       } else if (currentState === 'playingDemoReverse') {
-        // After demo reverse ends, show poster and return to start
-        console.log('Demo "from" ended, returning to start with poster');
         setShowPoster(true);
         setCurrentState('start');
         setShowDescription(false);
@@ -288,7 +238,7 @@ export default function VideoViewer() {
     setCurrentVideo(videos[poi].to);
     setCurrentState('playingTo');
     setShowDescription(false);
-    setShowPoster(false); // Hide poster when starting video
+    setShowPoster(false);
   };
 
   // Handle back button click
@@ -303,7 +253,7 @@ export default function VideoViewer() {
     setCurrentVideo(videos.demo.to);
     setCurrentState('playingDemo');
     setShowDescription(false);
-    setShowPoster(false); // Hide poster when starting demo
+    setShowPoster(false);
   };
 
   // Close description panel
@@ -311,7 +261,7 @@ export default function VideoViewer() {
     setShowDescription(false);
   };
 
-  // Enhanced loading screen with fake progress and cool messages
+  // Minimalistic loading screen
   if (currentState === 'loading') {
     const currentMsg = loadingMessages
       .slice()
@@ -319,173 +269,55 @@ export default function VideoViewer() {
       .find(msg => fakeProgress >= msg.progress) || loadingMessages[0];
 
     return (
-      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-teal-900 text-white overflow-hidden">
-        {/* Animated background particles */}
-        <div className="absolute inset-0">
-          {[...Array(25)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-2 h-2 bg-teal-400/20 rounded-full"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-              }}
-              animate={{
-                y: [0, -150, 0],
-                opacity: [0, 1, 0],
-                scale: [0, 1.2, 0],
-              }}
-              transition={{
-                duration: 4 + Math.random() * 3,
-                repeat: Infinity,
-                delay: Math.random() * 4,
-                ease: "easeInOut",
-              }}
-            />
-          ))}
-        </div>
-
+      <div className="flex items-center justify-center h-screen bg-white text-[#111111] overflow-hidden">
         <motion.div
-          className="relative w-full max-w-2xl p-10 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl"
-          initial={{ opacity: 0, y: 50, scale: 0.9 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="relative w-full max-w-md p-8 bg-white/70 backdrop-blur-md border border-black/10 rounded-2xl shadow-lg"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
         >
-          {/* Logo and Brand */}
           <motion.div
-            className="text-center mb-10"
+            className="text-center mb-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.6 }}
           >
-            <motion.div
-              className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-teal-400 to-cyan-500 rounded-2xl flex items-center justify-center shadow-xl"
-              animate={{
-                rotateY: [0, 180, 360],
-                scale: [1, 1.15, 1],
-                boxShadow: [
-                  "0 10px 30px rgba(20, 184, 166, 0.3)",
-                  "0 20px 60px rgba(34, 211, 238, 0.4)",
-                  "0 10px 30px rgba(20, 184, 166, 0.3)"
-                ]
-              }}
-              transition={{
-                duration: 4,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            >
-              <div className="w-10 h-10 bg-white rounded-xl opacity-95" />
-            </motion.div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent mb-2">
-              EVolve Charger
-            </h1>
-            <p className="text-white/70 text-xl">Virtual Garage Experience</p>
+            <h1 className="text-3xl font-bold text-[#C9A86A] mb-2 tracking-tight">AMPEREON</h1>
+            <p className="text-[#6F6F6F] text-lg leading-relaxed">Virtual Garage Experience</p>
           </motion.div>
 
-          {/* Main Loading Message */}
           <motion.div
-            className="text-center mb-8"
+            className="text-center mb-6"
             key={currentMsg.message}
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className="text-2xl font-semibold mb-3 text-white">
-              {currentMsg.message}
-            </h2>
-            <p className="text-teal-300 text-lg">
-              {currentMsg.detail}
-            </p>
+            <p className="text-[#6F6F6F] text-base">{currentMsg.message}</p>
           </motion.div>
 
-          {/* Enhanced Progress Bar */}
           <motion.div
-            className="relative mb-8"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.5, duration: 0.6 }}
-          >
-            {/* Progress percentage display */}
-            <motion.div
-              className="text-center mb-4"
-              animate={{ scale: [1, 1.05, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            >
-              <span className="text-4xl font-bold text-transparent bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text">
-                {Math.round(fakeProgress)}%
-              </span>
-            </motion.div>
-          </motion.div>
-
-          {/* Advanced loading animation */}
-          <motion.div
-            className="flex justify-center space-x-3 mb-6"
+            className="relative w-full h-1 bg-[#F5F6F7] rounded-full"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.7, duration: 0.6 }}
+            transition={{ delay: 0.5, duration: 0.6 }}
           >
-            {[0, 1, 2, 3, 4].map((i) => (
-              <motion.div
-                key={i}
-                className="w-3 h-3 bg-gradient-to-r from-teal-400 to-cyan-400 rounded-full shadow-lg"
-                animate={{
-                  scale: [1, 1.5, 1],
-                  opacity: [0.4, 1, 0.4],
-                  y: [0, -10, 0],
-                }}
-                transition={{
-                  duration: 1.5,
-                  repeat: Infinity,
-                  delay: i * 0.15,
-                  ease: "easeInOut",
-                }}
-              />
-            ))}
+            <motion.div
+              className="absolute top-0 left-0 h-full bg-[#C9A86A] rounded-full"
+              style={{ width: `${fakeProgress}%` }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
+            />
           </motion.div>
 
-          {/* System status */}
-          <motion.div
-            className="text-center text-white/60 text-sm space-y-1"
-            animate={{ opacity: [0.6, 1, 0.6] }}
-            transition={{ duration: 2, repeat: Infinity }}
-          >
-            <div className="flex justify-center items-center space-x-2">
-              <motion.div
-                className="w-2 h-2 bg-green-400 rounded-full"
-                animate={{ scale: [1, 1.3, 1] }}
-                transition={{ duration: 1, repeat: Infinity }}
-              />
-              <span>System Status: Online</span>
-            </div>
-            <div className="flex justify-center items-center space-x-2">
-              <motion.div
-                className="w-2 h-2 bg-blue-400 rounded-full"
-                animate={{ scale: [1, 1.3, 1] }}
-                transition={{ duration: 1, repeat: Infinity, delay: 0.3 }}
-              />
-              <span>Connection: Secure</span>
-            </div>
-            <div className="flex justify-center items-center space-x-2">
-              <motion.div
-                className="w-2 h-2 bg-teal-400 rounded-full"
-                animate={{ scale: [1, 1.3, 1] }}
-                transition={{ duration: 1, repeat: Infinity, delay: 0.6 }}
-              />
-              <span>Ready for Launch</span>
-            </div>
-          </motion.div>
-
-          {/* Error display (if any) */}
           <AnimatePresence>
             {error && (
               <motion.div
-                className="mt-6 p-4 bg-red-500/20 border border-red-500/40 rounded-xl"
+                className="mt-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
               >
-                <p className="text-red-300 text-sm text-center">{error}</p>
+                <p className="text-red-500 text-sm text-center">{error}</p>
               </motion.div>
             )}
           </AnimatePresence>
@@ -495,7 +327,7 @@ export default function VideoViewer() {
   }
 
   return (
-    <div className="relative h-screen bg-gradient-to-b from-gray-900 to-gray-800 overflow-hidden">
+    <div className="relative h-screen bg-black overflow-hidden">
       <Script
         strategy="afterInteractive"
         dangerouslySetInnerHTML={{
@@ -519,12 +351,11 @@ export default function VideoViewer() {
       {/* Product Poster */}
       <div className={`absolute inset-0 ${showPoster ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300 pointer-events-none`}>
         <img 
-          src="https://demo.evolve-charge.com/productPoster.png" 
-          alt="EVolve Charger Product"
+          src="https://demo.ampereonenergy.com/productPoster.png" 
+          alt="Ampereon"
           className="w-full h-full object-cover"
           onError={(e) => {
             console.error('Failed to load poster image');
-            // Fallback: hide poster and show video if image fails to load
             setShowPoster(false);
           }}
         />
@@ -550,34 +381,29 @@ export default function VideoViewer() {
                   whileHover={{ scale: 1.2 }}
                   whileTap={{ scale: 0.9 }}
                 >
-                  {/* Pulsing outer ring */}
                   <motion.div
-                    className="absolute inset-0 bg-teal-400/30 rounded-full"
+                    className="absolute inset-0 bg-[#C9A86A]/30 rounded-full"
                     animate={{
-                      scale: [1, 1.5, 1],
-                      opacity: [0.7, 0.2, 0.7],
+                      scale: [1, 1.3, 1],
+                      opacity: [0.5, 0.2, 0.5],
                     }}
                     transition={{
                       duration: 2,
                       repeat: Infinity,
                       ease: "easeInOut"
                     }}
-                    style={{ width: '60px', height: '60px', left: '-15px', top: '-15px' }}
+                    style={{ width: '50px', height: '50px', left: '-10px', top: '-10px' }}
                   />
-                  
-                  {/* Main orb */}
-                  <div className="w-8 h-8 bg-gradient-to-r from-teal-400 to-cyan-400 rounded-full shadow-lg border-2 border-white/20 backdrop-blur-sm flex items-center justify-center text-white font-bold text-sm">
+                  <div className="w-6 h-6 bg-[#C9A86A] rounded-full border border-white/20 flex items-center justify-center text-[#111111] font-medium text-xs">
                     {poi}
                   </div>
-                  
-                  {/* Hover label */}
                   <motion.div
-                    className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-black/80 backdrop-blur-md px-3 py-1 rounded-lg text-white text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                    className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-[#111111]/80 backdrop-blur-sm px-3 py-1 rounded-lg text-white text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                     initial={{ y: 10 }}
                     whileHover={{ y: 0 }}
                   >
                     {point.label}
-                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black/80"></div>
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-[#111111]/80"></div>
                   </motion.div>
                 </motion.button>
               </motion.div>
@@ -597,18 +423,16 @@ export default function VideoViewer() {
             transition={{ duration: 0.3 }}
           >
             <motion.button
-              whileHover={{ scale: 1.1 }}
+              whileHover={{ scale: 1.05, backgroundColor: '#D1B47A' }}
               whileTap={{ scale: 0.95 }}
               onClick={handleDemoClick}
-              className="px-6 py-2 rounded-full font-semibold transition-transform transform hover:scale-105 bg-white text-teal-600 border-2 border-teal-600 shadow-lg drop-shadow-lg"
+              className="px-6 py-3 rounded-full bg-[#C9A86A] text-[#111111] font-medium shadow-lg hover:shadow-xl transition-all"
             >
               Play Demo
             </motion.button>
           </motion.div>
         )}
       </AnimatePresence>
-
-
 
       {/* Back Button for POI */}
       <AnimatePresence>
@@ -621,10 +445,10 @@ export default function VideoViewer() {
             transition={{ duration: 0.3 }}
           >
             <motion.button
-              whileHover={{ scale: 1.1 }}
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleBackClick}
-              className="bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-6 py-3 shadow-lg hover:bg-teal-500/20 transition-all text-white font-medium"
+              className="bg-white/70 backdrop-blur-md border border-black/10 rounded-full px-6 py-3 shadow-lg hover:bg-white/80 transition-all text-[#111111] font-medium"
             >
               ← Back to Overview
             </motion.button>
@@ -643,34 +467,34 @@ export default function VideoViewer() {
             transition={{ duration: 0.3 }}
           >
             <motion.div
-              className="w-full max-w-lg bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl p-6 text-white"
+              className="w-full max-w-lg bg-white/70 backdrop-blur-md border border-black/10 rounded-2xl shadow-lg p-6 text-[#111111]"
               initial={{ opacity: 0, scale: 0.8, y: 50 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.8, y: 50 }}
               transition={{ duration: 0.4, ease: "easeOut" }}
             >
               <div className="flex justify-between items-start mb-4">
-                <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-400">
+                <h2 className="text-2xl font-semibold text-[#111111] tracking-wide">
                   {descriptions[currentPOI].title}
                 </h2>
                 <button
                   onClick={handleCloseDescription}
-                  className="text-white/60 hover:text-white transition-colors duration-200 text-xl"
+                  className="text-[#6F6F6F] hover:text-[#111111] transition-colors duration-200 text-xl"
                 >
                   ✕
                 </button>
               </div>
               
-              <p className="text-white/90 leading-relaxed mb-6">
+              <p className="text-[#6F6F6F] leading-relaxed mb-6">
                 {descriptions[currentPOI].content}
               </p>
               
               <div className="flex space-x-3">
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
+                  whileHover={{ scale: 1.05, backgroundColor: '#D1B47A' }}
                   whileTap={{ scale: 0.95 }}
                   onClick={handleBackClick}
-                  className="flex-1 bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white font-medium py-3 px-6 rounded-lg transition-all duration-200 shadow-lg"
+                  className="flex-1 bg-[#C9A86A] text-[#111111] font-medium py-3 px-6 rounded-full transition-all duration-200 shadow-lg"
                 >
                   Return to Overview
                 </motion.button>
@@ -679,7 +503,7 @@ export default function VideoViewer() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={handleCloseDescription}
-                  className="bg-white/10 hover:bg-white/20 text-white font-medium py-3 px-6 rounded-lg transition-all duration-200 border border-white/20"
+                  className="bg-white/10 border border-[#111111]/20 text-[#111111]/70 font-medium py-3 px-6 rounded-full transition-all duration-200"
                 >
                   Stay Here
                 </motion.button>
