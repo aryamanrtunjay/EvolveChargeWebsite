@@ -40,7 +40,7 @@ function FAQItem({ question, answer, isActive, onClick, index }) {
         className="flex justify-between items-center w-full text-left px-6 py-5 focus:outline-none hover:bg-white/80 transition-all"
       >
         <h3 className="text-lg font-semibold text-[#111111] pr-4 tracking-wide">{question}</h3>
-        <div className={`flex items-center justify-center w-8 h-8 rounded-full bg-[#C9A86A]/10 text-[#C9A86A] flex-shrink-0 transform transition-transform duration-300 ${
+        <div className={`flex items-center justify-center w-8 h-8 rounded-full bg-[#EFBF04]/10 text-[#EFBF04] flex-shrink-0 transform transition-transform duration-300 ${
           isActive ? 'rotate-180' : ''
         }`}>
           <svg
@@ -95,7 +95,7 @@ function CategoryFilter({ categories, activeCategory, onCategoryChange }) {
           onClick={() => onCategoryChange(category.id)}
           className={`px-4 py-3 rounded-full font-medium transition-all ${
             activeCategory === category.id
-              ? 'bg-[#C9A86A] text-[#111111] shadow-lg'
+              ? 'bg-[#EFBF04] text-[#111111] shadow-lg'
               : 'bg-white/70 backdrop-blur-md text-[#111111]/70 border border-black/10 shadow-sm hover:bg-[#F5F6F7] hover:text-[#111111]'
           }`}
           whileHover={{ scale: 1.05 }}
@@ -131,7 +131,7 @@ function SearchBar({ searchTerm, onSearchChange }) {
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search frequently asked questions..."
-          className="block text-[#111111] w-full pl-12 pr-4 py-4 border border-black/10 rounded-xl leading-5 bg-white/70 backdrop-blur-md placeholder-[#6F6F6F] focus:outline-none focus:ring-2 focus:ring-[#C9A86A]/50 focus:border-transparent shadow-sm"
+          className="block text-[#111111] w-full pl-12 pr-4 py-4 border border-black/10 rounded-xl leading-5 bg-white/70 backdrop-blur-md placeholder-[#6F6F6F] focus:outline-none focus:ring-2 focus:ring-[#EFBF04]/50 focus:border-transparent shadow-sm"
         />
       </div>
     </motion.div>
@@ -150,8 +150,8 @@ function ContactCTA() {
     >
       <div className="max-w-3xl mx-auto">
         <div className="mb-6">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-[#C9A86A]/10 rounded-full mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-[#C9A86A]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-[#EFBF04]/10 rounded-full mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-[#EFBF04]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
@@ -165,40 +165,40 @@ function ContactCTA() {
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white/70 backdrop-blur-md rounded-xl p-6 border border-black/10">
-            <div className="w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-3 bg-[#C9A86A]/10">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#C9A86A]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-3 bg-[#EFBF04]/10">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#EFBF04]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
             </div>
             <h4 className="font-semibold text-[#111111] mb-2 tracking-wide">Email Support</h4>
             <p className="text-[#6F6F6F] text-sm mb-3">Get detailed answers via email</p>
-            <a href="mailto:support@evolvecharger.com" className="text-[#C9A86A] font-medium hover:text-[#B48F55]">
+            <a href="mailto:support@evolvecharger.com" className="text-[#EFBF04] font-medium hover:text-[#B48F55]">
               support@evolvecharger.com
             </a>
           </div>
           
           <div className="bg-white/70 backdrop-blur-md rounded-xl p-6 border border-black/10">
-            <div className="w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-3 bg-[#C9A86A]/10">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#C9A86A]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-3 bg-[#EFBF04]/10">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#EFBF04]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
               </svg>
             </div>
             <h4 className="font-semibold text-[#111111] mb-2 tracking-wide">Phone Support</h4>
             <p className="text-[#6F6F6F] text-sm mb-3">Speak with our experts directly</p>
-            <a href="tel:+1-555-EVOLVE" className="text-[#C9A86A] font-medium hover:text-[#B48F55]">
+            <a href="tel:+1-555-EVOLVE" className="text-[#EFBF04] font-medium hover:text-[#B48F55]">
               1-555-EVOLVE
             </a>
           </div>
           
           <div className="bg-white/70 backdrop-blur-md rounded-xl p-6 border border-black/10">
-            <div className="w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-3 bg-[#C9A86A]/10">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#C9A86A]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-3 bg-[#EFBF04]/10">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#EFBF04]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
               </svg>
             </div>
             <h4 className="font-semibold text-[#111111] mb-2 tracking-wide">Live Chat</h4>
             <p className="text-[#6F6F6F] text-sm mb-3">Chat with us in real-time</p>
-            <button className="text-[#C9A86A] font-medium hover:text-[#B48F55]">
+            <button className="text-[#EFBF04] font-medium hover:text-[#B48F55]">
               Start Chat
             </button>
           </div>
@@ -208,7 +208,7 @@ function ContactCTA() {
           <motion.button
             whileHover={{ scale: 1.05, backgroundColor: '#D1B47A' }}
             whileTap={{ scale: 0.95 }}
-            className="px-8 py-3 rounded-full bg-[#C9A86A] text-[#111111] font-medium shadow-lg hover:shadow-xl transition-all"
+            className="px-8 py-3 rounded-full bg-[#EFBF04] text-[#111111] font-medium shadow-lg hover:shadow-xl transition-all"
           >
             Contact Support
           </motion.button>
@@ -457,7 +457,7 @@ export default function FAQPage() {
           >
             <motion.div
               variants={fadeIn}
-              className="inline-flex items-center px-4 py-2 rounded-full bg-[#C9A86A]/10 text-[#C9A86A] text-sm font-medium mb-6 tracking-wide"
+              className="inline-flex items-center px-4 py-2 rounded-full bg-[#EFBF04]/10 text-[#EFBF04] text-sm font-medium mb-6 tracking-wide"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -470,7 +470,7 @@ export default function FAQPage() {
               className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-[#111111] tracking-tight"
             >
               <span className="block">Everything You Need</span>
-              <span className="text-[#C9A86A]">
+              <span className="text-[#EFBF04]">
                 to Know
               </span>
             </motion.h1>
@@ -527,7 +527,7 @@ export default function FAQPage() {
                 }}
                 whileHover={{ scale: 1.05, backgroundColor: '#D1B47A' }}
                 whileTap={{ scale: 0.95 }}
-                className="px-6 py-3 rounded-full bg-[#C9A86A] text-[#111111] font-medium shadow-lg hover:shadow-xl transition-all"
+                className="px-6 py-3 rounded-full bg-[#EFBF04] text-[#111111] font-medium shadow-lg hover:shadow-xl transition-all"
               >
                 View All Questions
               </motion.button>
@@ -610,20 +610,20 @@ export default function FAQPage() {
                 key={index}
                 href={resource.link}
                 variants={fadeIn}
-                className="group bg-white/70 backdrop-blur-md rounded-xl p-6 border border-black/10 shadow-sm hover:shadow-md hover:border-[#C9A86A]/30 transition-all"
+                className="group bg-white/70 backdrop-blur-md rounded-xl p-6 border border-black/10 shadow-sm hover:shadow-md hover:border-[#EFBF04]/30 transition-all"
               >
-                <div className="w-12 h-12 rounded-lg flex items-center justify-center mb-4 group-hover:bg-[#C9A86A]/10 transition-colors bg-[#F5F6F7]">
-                  <div className="text-[#C9A86A]">
+                <div className="w-12 h-12 rounded-lg flex items-center justify-center mb-4 group-hover:bg-[#EFBF04]/10 transition-colors bg-[#F5F6F7]">
+                  <div className="text-[#EFBF04]">
                     {resource.icon}
                   </div>
                 </div>
-                <h3 className="text-lg font-semibold text-[#111111] mb-2 group-hover:text-[#C9A86A] transition-colors tracking-wide">
+                <h3 className="text-lg font-semibold text-[#111111] mb-2 group-hover:text-[#EFBF04] transition-colors tracking-wide">
                   {resource.title}
                 </h3>
                 <p className="text-[#6F6F6F] text-sm leading-relaxed">
                   {resource.description}
                 </p>
-                <div className="mt-4 flex items-center text-[#C9A86A] text-sm font-medium">
+                <div className="mt-4 flex items-center text-[#EFBF04] text-sm font-medium">
                   Learn more
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />

@@ -54,7 +54,7 @@ function ReserveSuccessContent() {
           <p className="text-lg text-red-600 mb-4">Invalid or missing reservation details. Please contact support.</p>
           <p className="text-[#6F6F6F] mb-8">
             Reach out at{' '}
-            <a href="mailto:support@evolve-charge.com" className="text-[#C9A86A] hover:text-[#B48F55] underline">
+            <a href="mailto:support@evolve-charge.com" className="text-[#EFBF04] hover:text-[#B48F55] underline">
               support@evolve-charge.com
             </a>{' '}
             or call (425) 324-4529.
@@ -114,11 +114,11 @@ function ReserveSuccessContent() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <div className="inline-block bg-[#C9A86A]/10 p-3 rounded-full mb-6">
-            <CheckCircle className="h-12 w-12 text-[#C9A86A]" />
+          <div className="inline-block bg-[#EFBF04]/10 p-3 rounded-full mb-6">
+            <CheckCircle className="h-12 w-12 text-[#EFBF04]" />
           </div>
           <h1 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight">
-            Your Reservation is <span className="text-[#C9A86A]">Confirmed!</span>
+            Your Reservation is <span className="text-[#EFBF04]">Confirmed!</span>
           </h1>
           {reservationData.displayName && (
             <p className="text-lg text-[#6F6F6F] mb-4">
@@ -128,7 +128,7 @@ function ReserveSuccessContent() {
           <p className="text-md text-[#6F6F6F] mb-6">
             Reservation #: <span className="font-medium">{reservationNumber}</span>
           </p>
-          <div className="inline-block text-sm bg-[#C9A86A]/10 text-[#C9A86A] px-4 py-2 rounded-full">
+          <div className="inline-block text-sm bg-[#EFBF04]/10 text-[#EFBF04] px-4 py-2 rounded-full">
             An email confirmation has been sent to your registered email.
           </div>
         </motion.div>
@@ -156,7 +156,7 @@ function ReserveSuccessContent() {
           >
             <h2 className="text-2xl font-bold mb-6 tracking-tight">Reservation Details</h2>
             <motion.div variants={fadeUpVariants} className="flex items-center mb-6 pb-6 border-b border-[#111111]/8">
-              <div className="mr-4 text-[#C9A86A]">
+              <div className="mr-4 text-[#EFBF04]">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7" />
                 </svg>
@@ -207,19 +207,19 @@ function ReserveSuccessContent() {
             {nextSteps.map((step, i) => (
               <motion.div
                 key={i}
-                className="bg-white backdrop-blur-sm rounded-2xl p-8 border border-[#111111]/8 hover:border-[#C9A86A]/30 transition-all shadow-sm"
+                className="bg-white backdrop-blur-sm rounded-2xl p-8 border border-[#111111]/8 hover:border-[#EFBF04]/30 transition-all shadow-sm"
                 variants={fadeUpVariants}
                 transition={{ delay: i * 0.1 }}
                 whileHover={{ y: -5, scale: 1.02 }}
               >
                 <div className="flex items-center gap-4 mb-4">
-                  <span className="bg-[#C9A86A] text-white w-8 h-8 rounded-full flex items-center justify-center">{i + 1}</span>
+                  <span className="bg-[#EFBF04] text-white w-8 h-8 rounded-full flex items-center justify-center">{i + 1}</span>
                   <h3 className="text-xl font-bold">{step.title}</h3>
                 </div>
                 <p className="text-[#6F6F6F]">{step.desc}</p>
                 <button
                   onClick={() => setActiveAccordion(activeAccordion === i ? null : i)}
-                  className="flex items-center gap-2 text-[#C9A86A] hover:text-[#B48F55] transition-colors mt-4 focus:outline-none focus:ring-2 focus:ring-[#C9A86A] focus:ring-offset-2 rounded px-2 py-1"
+                  className="flex items-center gap-2 text-[#EFBF04] hover:text-[#B48F55] transition-colors mt-4 focus:outline-none focus:ring-2 focus:ring-[#EFBF04] focus:ring-offset-2 rounded px-2 py-1"
                 >
                   Learn More <ChevronDown className={`w-4 h-4 transition-transform ${activeAccordion === i ? 'rotate-180' : ''}`} />
                 </button>
@@ -258,14 +258,14 @@ function ReserveSuccessContent() {
           <div className="flex flex-col sm:flex-row justify-center gap-6">
             <a
               href="mailto:support@evolve-charge.com"
-              className="flex items-center justify-center text-[#C9A86A] hover:text-[#B48F55] transition-colors"
+              className="flex items-center justify-center text-[#EFBF04] hover:text-[#B48F55] transition-colors"
             >
               <Mail className="w-5 h-5 mr-2" />
               support@evolve-charge.com
             </a>
             <a
               href="tel:+14253244529"
-              className="flex items-center justify-center text-[#C9A86A] hover:text-[#B48F55] transition-colors"
+              className="flex items-center justify-center text-[#EFBF04] hover:text-[#B48F55] transition-colors"
             >
               <Phone className="w-5 h-5 mr-2" />
               (425) 324-4529
@@ -291,7 +291,7 @@ function ReserveSuccessContent() {
           </p>
           <Link
             href="/"
-            className="px-8 py-4 bg-[#C9A86A] text-white font-semibold rounded-full hover:brightness-110 transition transform hover:scale-105 focus:ring-2 focus:ring-[#C9A86A]/40 shadow-lg shadow-[#C9A86A]/30"
+            className="px-8 py-4 bg-[#EFBF04] text-white font-semibold rounded-full hover:brightness-110 transition transform hover:scale-105 focus:ring-2 focus:ring-[#EFBF04]/40 shadow-lg shadow-[#EFBF04]/30"
           >
             Return to Home
           </Link>
@@ -306,7 +306,7 @@ export default function ReserveSuccessPage() {
     <Suspense
       fallback={
         <div className="min-h-screen bg-[#F5F6F7] flex justify-center items-center">
-          <div className="animate-spin h-12 w-12 border-4 border-[#C9A86A] rounded-full border-t-transparent"></div>
+          <div className="animate-spin h-12 w-12 border-4 border-[#EFBF04] rounded-full border-t-transparent"></div>
         </div>
       }
     >

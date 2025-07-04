@@ -112,7 +112,7 @@ function OrderSuccessContent() {
           transition={{ duration: 0.6 }}
         >
           <div className="flex flex-col items-center">
-            <div className="animate-spin h-8 w-8 border-4 border-[#C9A86A] rounded-full border-t-transparent mb-4"></div>
+            <div className="animate-spin h-8 w-8 border-4 border-[#EFBF04] rounded-full border-t-transparent mb-4"></div>
             <p className="text-[#6F6F6F] text-base tracking-wide">Loading your order details...</p>
           </div>
         </motion.div>
@@ -136,8 +136,8 @@ function OrderSuccessContent() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-3xl mx-auto">
           <motion.div variants={fadeIn} className="text-center mb-10">
-            <div className="inline-block bg-[#C9A86A]/10 p-3 rounded-full mb-6">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-[#C9A86A]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="inline-block bg-[#EFBF04]/10 p-3 rounded-full mb-6">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-[#EFBF04]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 13l4 4L19 7" />
               </svg>
             </div>
@@ -153,7 +153,7 @@ function OrderSuccessContent() {
             <h2 className="text-xl font-bold text-[#111111] mb-6 tracking-wide">Order Details</h2>
             <div className="flex items-center mb-6 pb-6 border-b border-black/10">
               <div className="mr-4">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-[#C9A86A]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-[#EFBF04]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7" />
                 </svg>
               </div>
@@ -179,7 +179,7 @@ function OrderSuccessContent() {
                 <div className="text-[#6F6F6F] space-y-4 leading-relaxed">
                   {customer.vehicles && customer.vehicles.length > 0 ? (
                     customer.vehicles.map((vehicle, index) => (
-                      <div key={index} className="border-l-4 border-[#C9A86A] pl-4">
+                      <div key={index} className="border-l-4 border-[#EFBF04] pl-4">
                         <p className="font-medium text-[#111111] tracking-wide">Vehicle {index + 1}</p>
                         <p><strong>Make:</strong> {vehicle.make || 'Not specified'}</p>
                         <p><strong>Model:</strong> {vehicle.model || 'Not specified'}</p>
@@ -215,28 +215,28 @@ function OrderSuccessContent() {
             
             <div className="bg-[#F5F6F7] p-6 rounded-lg mb-6">
               <h3 className="font-medium text-[#111111] flex items-center mb-4 tracking-wide">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#C9A86A] mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#EFBF04] mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 What's Next
               </h3>
               <ol className="space-y-4">
                 <li className="flex">
-                  <span className="bg-[#C9A86A] text-[#111111] w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">1</span>
+                  <span className="bg-[#EFBF04] text-[#111111] w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">1</span>
                   <div>
                     <p className="font-medium text-[#111111] tracking-wide">Production & Preparation</p>
                     <p className="text-[#6F6F6F] text-sm leading-relaxed">Your EVolve Charger will now enter production. We'll keep you updated on its progress.</p>
                   </div>
                 </li>
                 <li className="flex">
-                  <span className="bg-[#C9A86A] text-[#111111] w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">2</span>
+                  <span className="bg-[#EFBF04] text-[#111111] w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">2</span>
                   <div>
                     <p className="font-medium text-[#111111] tracking-wide">Development News & Updates</p>
                     <p className="text-[#6F6F6F] text-sm leading-relaxed">You'll receive regular email updates on your order and our latest features.</p>
                   </div>
                 </li>
                 <li className="flex">
-                  <span className="bg-[#C9A86A] text-[#111111] w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">3</span>
+                  <span className="bg-[#EFBF04] text-[#111111] w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">3</span>
                   <div>
                     <p className="font-medium text-[#111111] tracking-wide">App Access</p>
                     <p className="text-[#6F6F6F] text-sm leading-relaxed">We'll get your account ready on our app so you can monitor and customize your EVolve Charger</p>
@@ -263,7 +263,7 @@ function OrderSuccessContent() {
             <div className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4">
               <a
                 href="mailto:support@evolve-charge.com"
-                className="flex items-center justify-center text-[#C9A86A] hover:text-[#B48F55] transition-colors"
+                className="flex items-center justify-center text-[#EFBF04] hover:text-[#B48F55] transition-colors"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -272,7 +272,7 @@ function OrderSuccessContent() {
               </a>
               <a
                 href="tel:+14253244529"
-                className="flex items-center justify-center text-[#C9A86A] hover:text-[#B48F55] transition-colors"
+                className="flex items-center justify-center text-[#EFBF04] hover:text-[#B48F55] transition-colors"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
@@ -300,7 +300,7 @@ export default function OrderSuccessPage() {
             transition={{ duration: 0.6 }}
           >
             <div className="flex flex-col items-center">
-              <div className="animate-spin h-8 w-8 border-4 border-[#C9A86A] rounded-full border-t-transparent mb-4"></div>
+              <div className="animate-spin h-8 w-8 border-4 border-[#EFBF04] rounded-full border-t-transparent mb-4"></div>
               <p className="text-[#6F6F6F] text-base tracking-wide">Loading your order details...</p>
             </div>
           </motion.div>

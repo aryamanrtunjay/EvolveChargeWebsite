@@ -73,8 +73,8 @@ function TeamMember({ name, role1, role2, bio, image, linkedin, x, delay = 0 }) 
                 className="w-full h-full rounded-full object-cover"
               />
             ) : (
-              <div className="w-20 h-20 bg-[#C9A86A]/20 rounded-full flex items-center justify-center">
-                <span className="text-2xl font-bold text-[#C9A86A]">
+              <div className="w-20 h-20 bg-[#EFBF04]/20 rounded-full flex items-center justify-center">
+                <span className="text-2xl font-bold text-[#EFBF04]">
                   {name.split(' ').map(n => n[0]).join('')}
                 </span>
               </div>
@@ -91,7 +91,7 @@ function TeamMember({ name, role1, role2, bio, image, linkedin, x, delay = 0 }) 
           {linkedin && (
             <a 
               href={linkedin}
-              className="w-10 h-10 bg-[#F5F6F7] text-[#111111]/70 rounded-full flex items-center justify-center hover:bg-[#C9A86A]/20 hover:text-[#C9A86A] transition-colors"
+              className="w-10 h-10 bg-[#F5F6F7] text-[#111111]/70 rounded-full flex items-center justify-center hover:bg-[#EFBF04]/20 hover:text-[#EFBF04] transition-colors"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
@@ -101,7 +101,7 @@ function TeamMember({ name, role1, role2, bio, image, linkedin, x, delay = 0 }) 
           {x && (
             <a 
               href={x}
-              className="w-10 h-10 bg-[#F5F6F7] text-[#111111]/70 rounded-full flex items-center justify-center hover:bg-[#C9A86A]/20 hover:text-[#C9A86A] transition-colors"
+              className="w-10 h-10 bg-[#F5F6F7] text-[#111111]/70 rounded-full flex items-center justify-center hover:bg-[#EFBF04]/20 hover:text-[#EFBF04] transition-colors"
             >
               <FaXTwitter className="w-5 h-5" />
             </a>
@@ -129,8 +129,8 @@ function ValueCard({ icon, title, description, index }) {
       }}
       className="bg-white/70 backdrop-blur-md rounded-xl p-8 border border-black/10 shadow-lg hover:shadow-xl transition-all text-center"
     >
-      <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 bg-[#C9A86A]/10">
-        <div className="text-[#C9A86A]">
+      <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 bg-[#EFBF04]/10">
+        <div className="text-[#EFBF04]">
           {icon}
         </div>
       </div>
@@ -158,8 +158,8 @@ function Milestone({ year, title, description, index }) {
       className="flex items-center space-x-6"
     >
       <div className="flex-shrink-0">
-        <div className="w-16 h-16 bg-[#C9A86A]/20 rounded-full flex items-center justify-center border border-[#C9A86A]/30 shadow-sm">
-          <span className="text-[#C9A86A] font-semibold text-sm">{year}</span>
+        <div className="w-16 h-16 bg-[#EFBF04]/20 rounded-full flex items-center justify-center border border-[#EFBF04]/30 shadow-sm">
+          <span className="text-[#EFBF04] font-semibold text-sm">{year}</span>
         </div>
       </div>
       <div className="flex-1 bg-white/70 backdrop-blur-md rounded-xl p-6 border border-black/10 shadow-sm">
@@ -187,28 +187,28 @@ const StorySection = () => {
       icon: Clock,
       title: "The Problem",
       description: "Ampereon was born from a simple frustration: why should charging your electric vehicle be any more complicated than parking in your garage? Our founders, both EV owners and engineers, experienced the daily hassle of manually plugging and unplugging their vehicles.",
-      color: "#C9A86A",
-      bgColor: "bg-[#C9A86A]/10",
-      borderColor: "border-[#C9A86A]/30",
-      glowColor: "shadow-[#C9A86A]/20"
+      color: "#EFBF04",
+      bgColor: "bg-[#EFBF04]/10",
+      borderColor: "border-[#EFBF04]/30",
+      glowColor: "shadow-[#EFBF04]/20"
     },
     {
       icon: Target,
       title: "The Vision", 
       description: "After researching the market, we discovered that while EVs had advanced tremendously, charging infrastructure remained stuck in the past. We envisioned a world where your vehicle charges automatically, intelligently, and cost-effectively without any manual intervention.",
-      color: "#C9A86A",
-      bgColor: "bg-[#C9A86A]/10",
-      borderColor: "border-[#C9A86A]/30",
-      glowColor: "shadow-[#C9A86A]/20"
+      color: "#EFBF04",
+      bgColor: "bg-[#EFBF04]/10",
+      borderColor: "border-[#EFBF04]/30",
+      glowColor: "shadow-[#EFBF04]/20"
     },
     {
       icon: Zap,
       title: "The Solution",
       description: "What started as a weekend project in a garage has grown into a dedicated team of engineers, designers, and EV enthusiasts working to make this vision a reality. Today, we're proud to introduce the world's first truly automatic EV charger.",
-      color: "#C9A86A",
-      bgColor: "bg-[#C9A86A]/10",
-      borderColor: "border-[#C9A86A]/30",
-      glowColor: "shadow-[#C9A86A]/20"
+      color: "#EFBF04",
+      bgColor: "bg-[#EFBF04]/10",
+      borderColor: "border-[#EFBF04]/30",
+      glowColor: "shadow-[#EFBF04]/20"
     }
   ];
 
@@ -244,12 +244,12 @@ const StorySection = () => {
                     <div className="relative z-10 flex items-center gap-6">
                       <div className="flex-shrink-0">
                         <div className={`
-                          w-16 h-16 bg-[#C9A86A]/20 rounded-xl 
+                          w-16 h-16 bg-[#EFBF04]/20 rounded-xl 
                           flex items-center justify-center transform transition-all duration-300
                           shadow-sm backdrop-blur-sm
                           ${isActive ? 'rotate-3 scale-110 shadow-md' : 'group-hover:rotate-1 group-hover:scale-105'}
                         `}>
-                          <IconComponent className="w-8 h-8 text-[#C9A86A]" />
+                          <IconComponent className="w-8 h-8 text-[#EFBF04]" />
                         </div>
                       </div>
 
@@ -265,7 +265,7 @@ const StorySection = () => {
                       <div className="flex-shrink-0">
                         <div className={`
                           w-1 h-8 rounded-full transition-all duration-300
-                          ${isActive ? `bg-[#C9A86A] opacity-100` : 'bg-[#6F6F6F]/50 opacity-50'}
+                          ${isActive ? `bg-[#EFBF04] opacity-100` : 'bg-[#6F6F6F]/50 opacity-50'}
                         `}></div>
                       </div>
                     </div>
@@ -281,12 +281,12 @@ const StorySection = () => {
               
               <div className="relative z-10">
                 <div className={`
-                  w-20 h-20 bg-[#C9A86A]/20 rounded-2xl 
+                  w-20 h-20 bg-[#EFBF04]/20 rounded-2xl 
                   flex items-center justify-center mb-6 shadow-sm transform transition-all duration-300
                   ${isVisible ? 'rotate-3 scale-110' : ''}
                 `}>
                   {React.createElement(storyPoints[activeStoryPoint].icon, { 
-                    className: "w-10 h-10 text-[#C9A86A]" 
+                    className: "w-10 h-10 text-[#EFBF04]" 
                   })}
                 </div>
 
@@ -300,8 +300,8 @@ const StorySection = () => {
 
                 <div className="mt-8 flex items-center gap-4">
                   <div className={`
-                    px-4 py-2 rounded-full bg-[#C9A86A]/20 
-                    text-[#C9A86A] font-semibold text-sm shadow-sm
+                    px-4 py-2 rounded-full bg-[#EFBF04]/20 
+                    text-[#EFBF04] font-semibold text-sm shadow-sm
                   `}>
                     {String(activeStoryPoint + 1).padStart(2, '0')}
                   </div>
@@ -320,7 +320,7 @@ const StorySection = () => {
                 className={`
                   w-4 h-4 rounded-full transition-all duration-300
                   ${activeStoryPoint === index 
-                    ? `bg-[#C9A86A] scale-125` 
+                    ? `bg-[#EFBF04] scale-125` 
                     : 'bg-[#6F6F6F]/50 hover:bg-[#6F6F6F]'
                   }
                 `}
@@ -413,7 +413,7 @@ export default function AboutPage() {
           >
             <motion.div
               variants={fadeIn}
-              className="inline-flex items-center px-4 py-2 rounded-full bg-[#C9A86A]/10 text-[#C9A86A] text-sm font-medium mb-6 tracking-wide"
+              className="inline-flex items-center px-4 py-2 rounded-full bg-[#EFBF04]/10 text-[#EFBF04] text-sm font-medium mb-6 tracking-wide"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -426,7 +426,7 @@ export default function AboutPage() {
               className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-[#111111] tracking-tight"
             >
               <span className="block">Revolutionizing</span>
-              <span className="text-[#C9A86A]">
+              <span className="text-[#EFBF04]">
                 Electric Vehicle Charging
               </span>
             </motion.h1>
@@ -581,7 +581,7 @@ export default function AboutPage() {
                 onClick={() => setIsModalOpen(true)}
                 whileHover={{ scale: 1.05, backgroundColor: '#D1B47A' }}
                 whileTap={{ scale: 0.95 }}
-                className="px-8 py-3 rounded-full bg-[#C9A86A] text-[#111111] font-medium shadow-lg hover:shadow-xl transition-all"
+                className="px-8 py-3 rounded-full bg-[#EFBF04] text-[#111111] font-medium shadow-lg hover:shadow-xl transition-all"
               >
                 Order Yours
               </motion.button>

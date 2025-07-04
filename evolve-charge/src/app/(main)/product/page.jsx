@@ -282,7 +282,7 @@ export default function VideoViewer() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.6 }}
           >
-            <h1 className="text-3xl font-bold text-[#C9A86A] mb-2 tracking-tight">AMPEREON</h1>
+            <h1 className="text-3xl font-bold text-[#EFBF04] mb-2 tracking-tight">AMPEREON</h1>
             <p className="text-[#6F6F6F] text-lg leading-relaxed">Virtual Garage Experience</p>
           </motion.div>
 
@@ -303,7 +303,7 @@ export default function VideoViewer() {
             transition={{ delay: 0.5, duration: 0.6 }}
           >
             <motion.div
-              className="absolute top-0 left-0 h-full bg-[#C9A86A] rounded-full"
+              className="absolute top-0 left-0 h-full bg-[#EFBF04] rounded-full"
               style={{ width: `${fakeProgress}%` }}
               transition={{ duration: 0.3, ease: 'easeOut' }}
             />
@@ -382,7 +382,7 @@ export default function VideoViewer() {
                   whileTap={{ scale: 0.9 }}
                 >
                   <motion.div
-                    className="absolute inset-0 bg-[#C9A86A]/30 rounded-full"
+                    className="absolute inset-0 bg-[#EFBF04]/30 rounded-full"
                     animate={{
                       scale: [1, 1.3, 1],
                       opacity: [0.5, 0.2, 0.5],
@@ -394,7 +394,7 @@ export default function VideoViewer() {
                     }}
                     style={{ width: '50px', height: '50px', left: '-10px', top: '-10px' }}
                   />
-                  <div className="w-6 h-6 bg-[#C9A86A] rounded-full border border-white/20 flex items-center justify-center text-[#111111] font-medium text-xs">
+                  <div className="w-6 h-6 bg-[#EFBF04] rounded-full border border-white/20 flex items-center justify-center text-[#111111] font-medium text-xs">
                     {poi}
                   </div>
                   <motion.div
@@ -426,7 +426,7 @@ export default function VideoViewer() {
               whileHover={{ scale: 1.05, backgroundColor: '#D1B47A' }}
               whileTap={{ scale: 0.95 }}
               onClick={handleDemoClick}
-              className="px-6 py-3 rounded-full bg-[#C9A86A] text-[#111111] font-medium shadow-lg hover:shadow-xl transition-all"
+              className="px-6 py-3 rounded-full bg-[#EFBF04] text-[#111111] font-medium shadow-lg hover:shadow-xl transition-all"
             >
               Play Demo
             </motion.button>
@@ -494,7 +494,7 @@ export default function VideoViewer() {
                   whileHover={{ scale: 1.05, backgroundColor: '#D1B47A' }}
                   whileTap={{ scale: 0.95 }}
                   onClick={handleBackClick}
-                  className="flex-1 bg-[#C9A86A] text-[#111111] font-medium py-3 px-6 rounded-full transition-all duration-200 shadow-lg"
+                  className="flex-1 bg-[#EFBF04] text-[#111111] font-medium py-3 px-6 rounded-full transition-all duration-200 shadow-lg"
                 >
                   Return to Overview
                 </motion.button>

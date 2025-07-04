@@ -81,19 +81,19 @@ export default function OrderChoiceModal({ isOpen, onClose }) {
                           <div className="p-4">
                             <div className="space-y-3 text-sm">
                               <div className="flex items-center text-[#111111]/70">
-                                <svg className="w-4 h-4 mr-2 text-[#C9A86A]" fill="currentColor" viewBox="0 0 20 20">
+                                <svg className="w-4 h-4 mr-2 text-[#EFBF04]" fill="currentColor" viewBox="0 0 20 20">
                                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                 </svg>
                                 <span>Join the delivery queue</span>
                               </div>
                               <div className="flex items-center text-[#111111]/70">
-                                <svg className="w-4 h-4 mr-2 text-[#C9A86A]" fill="currentColor" viewBox="0 0 20 20">
+                                <svg className="w-4 h-4 mr-2 text-[#EFBF04]" fill="currentColor" viewBox="0 0 20 20">
                                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                 </svg>
                                 <span>Delivery based on queue position</span>
                               </div>
                               <div className="flex items-center text-[#111111]/70">
-                                <svg className="w-4 h-4 mr-2 text-[#C9A86A]" fill="currentColor" viewBox="0 0 20 20">
+                                <svg className="w-4 h-4 mr-2 text-[#EFBF04]" fill="currentColor" viewBox="0 0 20 20">
                                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                 </svg>
                                 <span>Pay balance when charger is ready</span>
@@ -103,7 +103,7 @@ export default function OrderChoiceModal({ isOpen, onClose }) {
                               Delivery timeline depends on production schedule.
                             </div>
                             <motion.button
-                              className="mt-4 w-full px-6 py-3 rounded-full bg-[#C9A86A] text-[#111111] font-medium text-center"
+                              className="mt-4 w-full px-6 py-3 rounded-full bg-[#EFBF04] text-[#111111] font-medium text-center"
                               whileHover={{ scale: 1.05, backgroundColor: '#D1B47A' }}
                               whileTap={{ scale: 0.95 }}
                               transition={{ duration: 0.2 }}
@@ -129,19 +129,19 @@ export default function OrderChoiceModal({ isOpen, onClose }) {
                       </div>
                       <div className="space-y-3 text-sm">
                         <div className="flex items-center text-[#111111]/70">
-                          <svg className="w-4 h-4 mr-2 text-[#C9A86A]" fill="currentColor" viewBox="0 0 20 20">
+                          <svg className="w-4 h-4 mr-2 text-[#EFBF04]" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                           </svg>
                           <span>Join the delivery queue</span>
                         </div>
                         <div className="flex items-center text-[#111111]/70">
-                          <svg className="w-4 h-4 mr-2 text-[#C9A86A]" fill="currentColor" viewBox="0 0 20 20">
+                          <svg className="w-4 h-4 mr-2 text-[#EFBF04]" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                           </svg>
                           <span>Delivery based on queue position</span>
                         </div>
                         <div className="flex items-center text-[#111111]/70">
-                          <svg className="w-4 h-4 mr-2 text-[#C9A86A]" fill="currentColor" viewBox="0 0 20 20">
+                          <svg className="w-4 h-4 mr-2 text-[#EFBF04]" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                           </svg>
                           <span>Pay balance when charger is ready</span>
@@ -151,7 +151,7 @@ export default function OrderChoiceModal({ isOpen, onClose }) {
                         Delivery timeline depends on production schedule.
                       </div>
                       <motion.button
-                        className="mt-4 w-full px-6 py-3 rounded-full bg-[#C9A86A] text-[#111111] font-medium text-center"
+                        className="mt-4 w-full px-6 py-3 rounded-full bg-[#EFBF04] text-[#111111] font-medium text-center"
                         whileHover={{ scale: 1.05, backgroundColor: '#D1B47A' }}
                         whileTap={{ scale: 0.95 }}
                         transition={{ duration: 0.2 }}
@@ -165,7 +165,7 @@ export default function OrderChoiceModal({ isOpen, onClose }) {
 
               {/* Priority Order Option */}
               <div className="relative">
-                <div className="absolute -top-3 left-4 bg-[#C9A86A] text-[#111111] text-xs font-medium px-2.5 py-1 rounded-full z-10">
+                <div className="absolute -top-3 left-4 bg-[#EFBF04] text-[#111111] text-xs font-medium px-2.5 py-1 rounded-full z-10">
                   Most Popular
                 </div>
                 <div className="sm:hidden">
@@ -207,19 +207,19 @@ export default function OrderChoiceModal({ isOpen, onClose }) {
                           <div className="p-4">
                             <div className="space-y-3 text-sm">
                               <div className="flex items-center text-[#111111]/70">
-                                <svg className="w-4 h-4 mr-2 text-[#C9A86A]" fill="currentColor" viewBox="0 0 20 20">
+                                <svg className="w-4 h-4 mr-2 text-[#EFBF04]" fill="currentColor" viewBox="0 0 20 20">
                                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                 </svg>
                                 <span className="font-medium">#1 in delivery queue</span>
                               </div>
                               <div className="flex items-center text-[#111111]/70">
-                                <svg className="w-4 h-4 mr-2 text-[#C9A86A]" fill="currentColor" viewBox="0 0 20 20">
+                                <svg className="w-4 h-4 mr-2 text-[#EFBF04]" fill="currentColor" viewBox="0 0 20 20">
                                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                 </svg>
                                 <span className="font-medium">Guaranteed delivery by Dec 1, 2025</span>
                               </div>
                               <div className="flex items-center text-[#111111]/70">
-                                <svg className="w-4 h-4 mr-2 text-[#C9A86A]" fill="currentColor" viewBox="0 0 20 20">
+                                <svg className="w-4 h-4 mr-2 text-[#EFBF04]" fill="currentColor" viewBox="0 0 20 20">
                                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                 </svg>
                                 <span>Pay in full now and secure priority</span>
@@ -229,7 +229,7 @@ export default function OrderChoiceModal({ isOpen, onClose }) {
                               Limited priority spots available! Ships upon production completion.
                             </div>
                             <motion.button
-                              className="mt-4 w-full px-6 py-3 rounded-full bg-[#C9A86A] text-[#111111] font-medium text-center"
+                              className="mt-4 w-full px-6 py-3 rounded-full bg-[#EFBF04] text-[#111111] font-medium text-center"
                               whileHover={{ scale: 1.05, backgroundColor: '#D1B47A' }}
                               whileTap={{ scale: 0.95 }}
                               transition={{ duration: 0.2 }}
@@ -258,19 +258,19 @@ export default function OrderChoiceModal({ isOpen, onClose }) {
                       </div>
                       <div className="space-y-3 text-sm">
                         <div className="flex items-center text-[#111111]/70">
-                          <svg className="w-4 h-4 mr-2 text-[#C9A86A]" fill="currentColor" viewBox="0 0 20 20">
+                          <svg className="w-4 h-4 mr-2 text-[#EFBF04]" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                           </svg>
                           <span className="font-medium">#1 in delivery queue</span>
                         </div>
                         <div className="flex items-center text-[#111111]/70">
-                          <svg className="w-4 h-4 mr-2 text-[#C9A86A]" fill="currentColor" viewBox="0 0 20 20">
+                          <svg className="w-4 h-4 mr-2 text-[#EFBF04]" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                           </svg>
                           <span className="font-medium">Guaranteed delivery by Dec 1, 2025</span>
                         </div>
                         <div className="flex items-center text-[#111111]/70">
-                          <svg className="w-4 h-4 mr-2 text-[#C9A86A]" fill="currentColor" viewBox="0 0 20 20">
+                          <svg className="w-4 h-4 mr-2 text-[#EFBF04]" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                           </svg>
                           <span>Pay in full now and secure priority</span>
@@ -280,7 +280,7 @@ export default function OrderChoiceModal({ isOpen, onClose }) {
                         Limited priority spots available! Ships upon production completion.
                       </div>
                       <motion.button
-                        className="mt-4 w-full px-6 py-3 rounded-full bg-[#C9A86A] text-[#111111] font-medium text-center"
+                        className="mt-4 w-full px-6 py-3 rounded-full bg-[#EFBF04] text-[#111111] font-medium text-center"
                         whileHover={{ scale: 1.05, backgroundColor: '#D1B47A' }}
                         whileTap={{ scale: 0.95 }}
                         transition={{ duration: 0.2 }}

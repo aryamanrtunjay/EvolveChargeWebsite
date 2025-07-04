@@ -61,7 +61,7 @@ function ChargingCableModal({ isOpen, onClose }) {
         </p>
         <button
           onClick={onClose}
-          className="mt-6 w-full py-3 bg-[#C9A86A] text-white font-semibold rounded-full hover:brightness-110 transition transform hover:scale-105 shadow-lg shadow-[#C9A86A]/30"
+          className="mt-6 w-full py-3 bg-[#EFBF04] text-white font-semibold rounded-full hover:brightness-110 transition transform hover:scale-105 shadow-lg shadow-[#EFBF04]/30"
         >
           Close
         </button>
@@ -128,7 +128,7 @@ function CheckoutForm({ onSuccess, total, isProcessing, setIsProcessing, setErro
         <button
           type="submit"
           disabled={!stripe || isProcessing}
-          className="w-2/3 py-3 bg-[#C9A86A] text-white font-semibold rounded-full hover:brightness-110 transition transform hover:scale-105 shadow-lg shadow-[#C9A86A]/30 flex justify-center items-center"
+          className="w-2/3 py-3 bg-[#EFBF04] text-white font-semibold rounded-full hover:brightness-110 transition transform hover:scale-105 shadow-lg shadow-[#EFBF04]/30 flex justify-center items-center"
         >
           {isProcessing ? (
             <>
@@ -459,7 +459,7 @@ export default function OrderPage() {
     appearance: {
       theme: 'stripe',
       variables: {
-        colorPrimary: '#C9A86A',
+        colorPrimary: '#EFBF04',
         colorBackground: '#F5F6F7',
         colorText: '#111111',
         colorDanger: '#ef4444',
@@ -501,9 +501,9 @@ export default function OrderPage() {
                 <motion.div
                   className={`w-12 h-12 rounded-full flex items-center justify-center border ${
                     step > index + 1
-                      ? 'bg-[#C9A86A] text-white border-[#C9A86A]'
+                      ? 'bg-[#EFBF04] text-white border-[#EFBF04]'
                       : step === index + 1
-                      ? 'bg-white text-[#C9A86A] border-[#C9A86A]'
+                      ? 'bg-white text-[#EFBF04] border-[#EFBF04]'
                       : 'bg-white text-[#6F6F6F] border-[#111111]/15'
                   }`}
                   whileHover={{ scale: 1.1 }}
@@ -519,9 +519,9 @@ export default function OrderPage() {
                 </span>
               </div>
             ))}
-            <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-[#C9A86A]/20 -z-10" />
+            <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-[#EFBF04]/20 -z-10" />
             <motion.div
-              className="absolute top-1/2 left-0 h-0.5 bg-[#C9A86A] -z-10"
+              className="absolute top-1/2 left-0 h-0.5 bg-[#EFBF04] -z-10"
               initial={{ width: '0%' }}
               animate={{ width: `${(step - 1) * 50}%` }}
               transition={{ duration: 0.7, ease: 'easeOut' }}
@@ -534,7 +534,7 @@ export default function OrderPage() {
           <motion.div className="max-w-6xl mx-auto" variants={staggerContainer}>
             <motion.div variants={fadeUpVariants} className="text-center mb-16">
               <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-[#111111]">
-                Customize Your <span className="text-[#C9A86A]">Order</span>
+                Customize Your <span className="text-[#EFBF04]">Order</span>
               </h1>
               <p className="text-lg text-[#6F6F6F] max-w-3xl mx-auto mt-4">
                 Enhance your Ampereon experience with add-ons designed for maximum efficiency and convenience.
@@ -544,7 +544,7 @@ export default function OrderPage() {
               <motion.div variants={fadeUpVariants} className="lg:col-span-2">
                 <div className="bg-[#F5F6F7] backdrop-blur-sm rounded-2xl p-8 border border-[#111111]/8 shadow-sm">
                   <div className="flex items-center mb-8">
-                    <div className="text-[#C9A86A] mr-4">
+                    <div className="text-[#EFBF04] mr-4">
                       <Zap className="w-8 h-8" />
                     </div>
                     <h2 className="text-3xl font-bold text-[#111111] tracking-tight">Available Add-Ons</h2>
@@ -553,7 +553,7 @@ export default function OrderPage() {
                     {addOnsList.map((addOn, i) => (
                       <motion.div
                         key={addOn.name}
-                        className="bg-[#F5F6F7] rounded-2xl p-6 border border-[#111111]/8 hover:border-[#C9A86A]/30 transition-all group"
+                        className="bg-[#F5F6F7] rounded-2xl p-6 border border-[#111111]/8 hover:border-[#EFBF04]/30 transition-all group"
                         variants={fadeUpVariants}
                         transition={{ delay: i * 0.1 }}
                         whileHover={{ y: -5, scale: 1.02 }}
@@ -566,14 +566,14 @@ export default function OrderPage() {
                             checked={addOns[addOn.name]}
                             onChange={handleAddOnChange}
                             disabled={addOn.name === 'professionalInstallation' && selectedPlan === 'basic'}
-                            className="h-5 w-5 text-[#C9A86A] border-[#111111]/15 rounded focus:ring-[#C9A86A]/40 mt-1"
+                            className="h-5 w-5 text-[#EFBF04] border-[#111111]/15 rounded focus:ring-[#EFBF04]/40 mt-1"
                           />
                           <div className="ml-4 flex-1">
                             <div className="flex justify-between items-center mb-2">
                               <label htmlFor={addOn.name} className="text-xl font-bold text-[#111111] cursor-pointer">
                                 {addOn.label}
                               </label>
-                              <span className="text-xl font-bold text-[#C9A86A]">${addOn.price}</span>
+                              <span className="text-xl font-bold text-[#EFBF04]">${addOn.price}</span>
                             </div>
                             <p className="text-[#6F6F6F]">{addOn.description}</p>
                             {addOn.additionalDescription}
@@ -614,7 +614,7 @@ export default function OrderPage() {
                     <div className="border-t border-[#111111]/15 pt-6">
                       <div className="flex justify-between items-center">
                         <span className="text-lg font-bold text-[#111111]">Total Due Today</span>
-                        <span className="text-2xl font-bold text-[#C9A86A]">${orderSummary.total.toFixed(2)}</span>
+                        <span className="text-2xl font-bold text-[#EFBF04]">${orderSummary.total.toFixed(2)}</span>
                       </div>
                     </div>
                     <div className="flex space-x-4 mt-8">
@@ -626,7 +626,7 @@ export default function OrderPage() {
                       </button>
                       <button
                         onClick={nextStep}
-                        className="w-1/2 py-3 bg-[#C9A86A] text-white font-semibold rounded-full hover:brightness-110 transition transform hover:scale-105 shadow-lg"
+                        className="w-1/2 py-3 bg-[#EFBF04] text-white font-semibold rounded-full hover:brightness-110 transition transform hover:scale-105 shadow-lg"
                       >
                         Continue
                       </button>
@@ -644,7 +644,7 @@ export default function OrderPage() {
           <motion.div className="max-w-6xl mx-auto" variants={staggerContainer}>
             <motion.div variants={fadeUpVariants} className="text-center mb-16">
               <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-[#111111]">
-                Your <span className="text-[#C9A86A]">Information</span>
+                Your <span className="text-[#EFBF04]">Information</span>
               </h1>
               <p className="text-lg text-[#6F6F6F] max-w-3xl mx-auto mt-4">
                 Provide your details and vehicle information to personalize your EVolve experience.
@@ -658,7 +658,7 @@ export default function OrderPage() {
                   variants={fadeUpVariants}
                 >
                   <div className="flex items-center mb-8">
-                    <div className="text-[#C9A86A] mr-4">
+                    <div className="text-[#EFBF04] mr-4">
                       <User className="w-8 h-8" />
                     </div>
                     <h2 className="text-3xl font-bold text-[#111111] tracking-tight">Contact Information</h2>
@@ -681,7 +681,7 @@ export default function OrderPage() {
                           value={formData[field.id]}
                           onChange={handleInputChange}
                           required
-                          className={`w-full px-4 py-3 bg-white/70 border border-[#111111]/15 rounded-xl focus:ring-2 focus:ring-[#C9A86A]/40 focus:border-[#C9A86A] transition ${
+                          className={`w-full px-4 py-3 bg-white/70 border border-[#111111]/15 rounded-xl focus:ring-2 focus:ring-[#EFBF04]/40 focus:border-[#EFBF04] transition ${
                             validationErrors[field.id] ? 'border-red-300 bg-red-50/50' : ''
                           }`}
                           placeholder={field.placeholder}
@@ -702,14 +702,14 @@ export default function OrderPage() {
                 >
                   <div className="flex md:justify-between items-center mb-8">
                     <div className="flex items-center">
-                      <div className="text-[#C9A86A] mr-4">
+                      <div className="text-[#EFBF04] mr-4">
                         <Car className="w-8 h-8" />
                       </div>
                       <h2 className="text-3xl font-bold text-[#111111] tracking-tight">Vehicle Information</h2>
                     </div>
                     <button
                       onClick={addVehicle}
-                      className="hidden md:flex items-center px-4 py-2 bg-[#C9A86A] text-white rounded-full hover:brightness-110 transition"
+                      className="hidden md:flex items-center px-4 py-2 bg-[#EFBF04] text-white rounded-full hover:brightness-110 transition"
                     >
                       <Check className="w-4 h-4 mr-2" /> Add Vehicle
                     </button>
@@ -750,7 +750,7 @@ export default function OrderPage() {
                               value={vehicle[field.field]}
                               onChange={(e) => handleVehicleChange(index, field.field, e.target.value)}
                               required={field.required !== false}
-                              className={`w-full px-4 py-3 bg-white/70 border border-[#111111]/15 rounded-xl focus:ring-2 focus:ring-[#C9A86A]/40 focus:border-[#C9A86A] transition ${
+                              className={`w-full px-4 py-3 bg-white/70 border border-[#111111]/15 rounded-xl focus:ring-2 focus:ring-[#EFBF04]/40 focus:border-[#EFBF04] transition ${
                                 validationErrors.vehicles?.[index]?.[field.field] ? 'border-red-300 bg-red-50/50' : ''
                               }`}
                               placeholder={field.placeholder}
@@ -768,7 +768,7 @@ export default function OrderPage() {
                   ))}
                   <button
                     onClick={addVehicle}
-                    className="md:hidden w-full py-3 bg-[#C9A86A] text-white rounded-full hover:brightness-110 transition mt-4"
+                    className="md:hidden w-full py-3 bg-[#EFBF04] text-white rounded-full hover:brightness-110 transition mt-4"
                   >
                     Add Vehicle
                   </button>
@@ -780,7 +780,7 @@ export default function OrderPage() {
                     variants={fadeUpVariants}
                   >
                     <div className="flex items-center mb-8">
-                      <div className="text-[#C9A86A] mr-4">
+                      <div className="text-[#EFBF04] mr-4">
                         <MapPin className="w-8 h-8" />
                       </div>
                       <h2 className="text-3xl font-bold text-[#111111] tracking-tight">Delivery Address</h2>
@@ -804,7 +804,7 @@ export default function OrderPage() {
                             onChange={handleInputChange}
                             required={field.required !== false}
                             maxLength={field.maxLength}
-                            className={`w-full px-4 py-3 bg-white/70 border border-[#111111]/15 rounded-xl focus:ring-2 focus:ring-[#C9A86A]/40 focus:border-[#C9A86A] transition ${
+                            className={`w-full px-4 py-3 bg-white/70 border border-[#111111]/15 rounded-xl focus:ring-2 focus:ring-[#EFBF04]/40 focus:border-[#EFBF04] transition ${
                               validationErrors[field.id] ? 'border-red-300 bg-red-50/50' : ''
                             }`}
                             placeholder={field.placeholder}
@@ -826,7 +826,7 @@ export default function OrderPage() {
                           value={formData.state}
                           onChange={handleInputChange}
                           required
-                          className={`w-full px-4 py-3 bg-white/70 border border-[#111111]/15 rounded-xl focus:ring-2 focus:ring-[#C9A86A]/40 focus:border-[#C9A86A] transition ${
+                          className={`w-full px-4 py-3 bg-white/70 border border-[#111111]/15 rounded-xl focus:ring-2 focus:ring-[#EFBF04]/40 focus:border-[#EFBF04] transition ${
                             validationErrors.state ? 'border-red-300 bg-red-50/50' : ''
                           }`}
                         >
@@ -854,7 +854,7 @@ export default function OrderPage() {
                   variants={fadeUpVariants}
                 >
                   <div className="flex items-center mb-8">
-                    <div className="text-[#C9A86A] mr-4">
+                    <div className="text-[#EFBF04] mr-4">
                       <Info className="w-8 h-8" />
                     </div>
                     <h2 className="text-3xl font-bold text-[#111111] tracking-tight">Additional Information</h2>
@@ -869,7 +869,7 @@ export default function OrderPage() {
                         name="referralSource"
                         value={formData.referralSource}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 bg-white/70 border border-[#111111]/15 rounded-xl focus:ring-2 focus:ring-[#C9A86A]/40 focus:border-[#C9A86A] transition"
+                        className="w-full px-4 py-3 bg-white/70 border border-[#111111]/15 rounded-xl focus:ring-2 focus:ring-[#EFBF04]/40 focus:border-[#EFBF04] transition"
                       >
                         <option value="">Select an option</option>
                         <option value="Google">Google</option>
@@ -889,7 +889,7 @@ export default function OrderPage() {
                           checked={formData.agreeTerms}
                           onChange={handleInputChange}
                           required
-                          className={`h-5 w-5 text-[#C9A86A] border-[#111111]/15 rounded focus:ring-[#C9A86A]/40 mt-1 ${
+                          className={`h-5 w-5 text-[#EFBF04] border-[#111111]/15 rounded focus:ring-[#EFBF04]/40 mt-1 ${
                             validationErrors.agreeTerms ? 'border-red-300' : ''
                           }`}
                         />
@@ -899,11 +899,11 @@ export default function OrderPage() {
                           </label>
                           <p className="text-[#6F6F6F] text-sm mt-1">
                             By checking this box, you consent to our{' '}
-                            <a href="#tos" className="text-[#C9A86A] hover:text-[#B48F55] underline">
+                            <a href="#tos" className="text-[#EFBF04] hover:text-[#B48F55] underline">
                               Terms of Service
                             </a>{' '}
                             and{' '}
-                            <a href="#privacypolicy" className="text-[#C9A86A] hover:text-[#B48F55] underline">
+                            <a href="#privacypolicy" className="text-[#EFBF04] hover:text-[#B48F55] underline">
                               Privacy Policy
                             </a>.
                           </p>
@@ -944,7 +944,7 @@ export default function OrderPage() {
                     <div className="border-t border-[#111111]/15 pt-6">
                       <div className="flex justify-between items-center">
                         <span className="text-lg font-bold text-[#111111]">Total Due Today</span>
-                        <span className="text-2xl font-bold text-[#C9A86A]">${orderSummary.total.toFixed(2)}</span>
+                        <span className="text-2xl font-bold text-[#EFBF04]">${orderSummary.total.toFixed(2)}</span>
                       </div>
                     </div>
                     <div className="flex space-x-4 mt-8">
@@ -956,24 +956,24 @@ export default function OrderPage() {
                       </button>
                       <button
                         onClick={nextStep}
-                        className="w-1/2 py-3 bg-[#C9A86A] text-white font-semibold rounded-full hover:brightness-110 transition transform hover:scale-105 shadow-lg"
+                        className="w-1/2 py-3 bg-[#EFBF04] text-white font-semibold rounded-full hover:brightness-110 transition transform hover:scale-105 shadow-lg"
                       >
                         Continue
                       </button>
                     </div>
                     <div className="mt-6 bg-white/50 rounded-xl p-6 border border-[#111111]/8">
                       <h3 className="font-bold text-[#111111] mb-4 flex items-center">
-                        <Info className="w-5 h-5 text-[#C9A86A] mr-2" /> What's Next?
+                        <Info className="w-5 h-5 text-[#EFBF04] mr-2" /> What's Next?
                       </h3>
                       <ul className="space-y-3 text-[#6F6F6F] text-sm">
                         <li className="flex items-center">
-                          <Check className="w-4 h-4 text-[#C9A86A] mr-2" /> Order confirmation email
+                          <Check className="w-4 h-4 text-[#EFBF04] mr-2" /> Order confirmation email
                         </li>
                         <li className="flex items-center">
-                          <Check className="w-4 h-4 text-[#C9A86A] mr-2" /> Access to EVolve app
+                          <Check className="w-4 h-4 text-[#EFBF04] mr-2" /> Access to EVolve app
                         </li>
                         <li className="flex items-center">
-                          <Check className="w-4 h-4 text-[#C9A86A] mr-2" /> Priority updates
+                          <Check className="w-4 h-4 text-[#EFBF04] mr-2" /> Priority updates
                         </li>
                       </ul>
                     </div>
@@ -989,7 +989,7 @@ export default function OrderPage() {
           <motion.div className="max-w-6xl mx-auto" variants={staggerContainer}>
             <motion.div variants={fadeUpVariants} className="text-center mb-16">
               <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-[#111111]">
-                Payment <span className="text-[#C9A86A]">Information</span>
+                Payment <span className="text-[#EFBF04]">Information</span>
               </h1>
               <p className="text-lg text-[#6F6F6F] max-w-3xl mx-auto mt-4">
                 Securely complete your Ampereon order with industry-leading encryption.
@@ -1003,7 +1003,7 @@ export default function OrderPage() {
                   variants={fadeUpVariants}
                 >
                   <div className="flex items-start">
-                    <div className="text-[#C9A86A] mr-4">
+                    <div className="text-[#EFBF04] mr-4">
                       <Leaf className="w-8 h-8" />
                     </div>
                     <div>
@@ -1020,7 +1020,7 @@ export default function OrderPage() {
                   variants={fadeUpVariants}
                 >
                   <div className="flex items-center mb-8">
-                    <div className="text-[#C9A86A] mr-4">
+                    <div className="text-[#EFBF04] mr-4">
                       <CreditCard className="w-8 h-8" />
                     </div>
                     <h2 className="text-3xl font-bold text-[#111111] tracking-tight">Payment Method</h2>
@@ -1046,7 +1046,7 @@ export default function OrderPage() {
                   ) : (
                     <div className="flex flex-col items-center py-12">
                       <div className="relative">
-                        <div className="animate-spin h-10 w-10 border-4 border-[#C9A86A] rounded-full border-t-transparent"></div>
+                        <div className="animate-spin h-10 w-10 border-4 border-[#EFBF04] rounded-full border-t-transparent"></div>
                       </div>
                       <p className="text-[#6F6F6F] mt-4">
                         {isProcessing ? 'Preparing your order...' : 'Loading payment form...'}
@@ -1060,7 +1060,7 @@ export default function OrderPage() {
                   variants={fadeUpVariants}
                 >
                   <div className="flex items-start">
-                    <div className="text-[#C9A86A] mr-4">
+                    <div className="text-[#EFBF04] mr-4">
                       <Lock className="w-8 h-8" />
                     </div>
                     <div>
@@ -1098,22 +1098,22 @@ export default function OrderPage() {
                     <div className="border-t border-[#111111]/15 pt-6">
                       <div className="flex justify-between items-center">
                         <span className="text-lg font-bold text-[#111111]">Total Due Today</span>
-                        <span className="text-2xl font-bold text-[#C9A86A]">${orderSummary.total.toFixed(2)}</span>
+                        <span className="text-2xl font-bold text-[#EFBF04]">${orderSummary.total.toFixed(2)}</span>
                       </div>
                     </div>
                     <div className="mt-6 bg-white/50 rounded-xl p-6 border border-[#111111]/8">
                       <h3 className="font-bold text-[#111111] mb-4 flex items-center">
-                        <Info className="w-5 h-5 text-[#C9A86A] mr-2" /> What's Next?
+                        <Info className="w-5 h-5 text-[#EFBF04] mr-2" /> What's Next?
                       </h3>
                       <ul className="space-y-3 text-[#6F6F6F] text-sm">
                         <li className="flex items-center">
-                          <Check className="w-4 h-4 text-[#C9A86A] mr-2" /> Order confirmation email
+                          <Check className="w-4 h-4 text-[#EFBF04] mr-2" /> Order confirmation email
                         </li>
                         <li className="flex items-center">
-                          <Check className="w-4 h-4 text-[#C9A86A] mr-2" /> Access to EVolve app
+                          <Check className="w-4 h-4 text-[#EFBF04] mr-2" /> Access to EVolve app
                         </li>
                         <li className="flex items-center">
-                          <Check className="w-4 h-4 text-[#C9A86A] mr-2" /> Priority updates
+                          <Check className="w-4 h-4 text-[#EFBF04] mr-2" /> Priority updates
                         </li>
                       </ul>
                     </div>

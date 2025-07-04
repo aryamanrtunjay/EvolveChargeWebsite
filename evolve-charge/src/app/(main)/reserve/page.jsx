@@ -126,7 +126,7 @@ function CheckoutForm({ onSuccess, isProcessing, setIsProcessing, setError, form
               color: '#111111',
               fontFamily: 'system-ui, -apple-system, sans-serif',
               '::placeholder': { color: '#6F6F6F' },
-              iconColor: '#C9A86A',
+              iconColor: '#EFBF04',
             },
           },
         }}
@@ -154,7 +154,7 @@ function CheckoutForm({ onSuccess, isProcessing, setIsProcessing, setError, form
         disabled={!stripe || isProcessing}
         whileHover={{ scale: isProcessing ? 1 : 1.05 }}
         whileTap={{ scale: isProcessing ? 1 : 0.95 }}
-        className="w-full py-4 px-8 bg-[#C9A86A] text-white font-semibold rounded-full hover:brightness-110 transition transform shadow-lg shadow-[#C9A86A]/30 disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
+        className="w-full py-4 px-8 bg-[#EFBF04] text-white font-semibold rounded-full hover:brightness-110 transition transform shadow-lg shadow-[#EFBF04]/30 disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
       >
         {isProcessing ? (
           <>
@@ -283,7 +283,7 @@ export default function ReservePage() {
     appearance: {
       theme: 'stripe',
       variables: {
-        colorPrimary: '#C9A86A',
+        colorPrimary: '#EFBF04',
         colorBackground: '#FFFFFF',
         colorText: '#111111',
         colorDanger: '#dc2626',
@@ -319,18 +319,18 @@ export default function ReservePage() {
           {/* Header Section */}
           <motion.div className="text-center mb-12" variants={fadeUpVariants}>
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-              Reserve Your <span className="text-[#C9A86A]">Spot</span>
+              Reserve Your <span className="text-[#EFBF04]">Spot</span>
             </h1>
             <p className="text-lg text-[#6F6F6F] max-w-md mx-auto">
               Become an early adopter of the next generation of EV charging for just $4.99.
             </p>
             <div className="flex flex-col items-center gap-2 mt-4 text-sm text-[#6F6F6F]">
               <div className="flex items-center gap-2">
-                <Star className="w-4 h-4 text-[#C9A86A]" />
+                <Star className="w-4 h-4 text-[#EFBF04]" />
                 <span>{reservationsToday} reserved today</span>
               </div>
               <div className="flex items-center gap-2">
-                <Shield className="w-4 h-4 text-[#C9A86A]" />
+                <Shield className="w-4 h-4 text-[#EFBF04]" />
                 <span>{localDrivers} drivers from {cityName}</span>
               </div>
             </div>
@@ -355,7 +355,7 @@ export default function ReservePage() {
                   onChange={handleInputChange}
                   autoComplete="name"
                   required
-                  className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#C9A86A] focus:border-[#C9A86A] transition-all text-[#111111] ${
+                  className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#EFBF04] focus:border-[#EFBF04] transition-all text-[#111111] ${
                     validationErrors.fullName ? 'border-red-300 bg-red-50' : 'border-[#111111]/15 bg-[#F5F6F7]'
                   }`}
                   placeholder="Full Name"
@@ -389,7 +389,7 @@ export default function ReservePage() {
                   onChange={handleInputChange}
                   autoComplete="email"
                   required
-                  className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#C9A86A] focus:border-[#C9A86A] transition-all text-[#111111] ${
+                  className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#EFBF04] focus:border-[#EFBF04] transition-all text-[#111111] ${
                     validationErrors.email ? 'border-red-300 bg-red-50' : 'border-[#111111]/15 bg-[#F5F6F7]'
                   }`}
                   placeholder="your@email.com"
@@ -416,7 +416,7 @@ export default function ReservePage() {
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-bold text-[#111111]">Secure Payment</h3>
                   <div className="flex items-center gap-2">
-                    <Lock className="w-4 h-4 text-[#C9A86A]" />
+                    <Lock className="w-4 h-4 text-[#EFBF04]" />
                     <span className="text-xs font-semibold text-[#6F6F6F]">256-bit SSL</span>
                   </div>
                 </div>
@@ -438,7 +438,7 @@ export default function ReservePage() {
                   </Elements>
                 ) : (
                   <div className="text-center py-8">
-                    <div className="animate-spin h-6 w-6 border-2 border-[#C9A86A] rounded-full border-t-transparent mx-auto"></div>
+                    <div className="animate-spin h-6 w-6 border-2 border-[#EFBF04] rounded-full border-t-transparent mx-auto"></div>
                     <p className="text-[#6F6F6F] text-sm mt-3">Initializing secure payment...</p>
                   </div>
                 )}
@@ -454,15 +454,15 @@ export default function ReservePage() {
                     checked={formData.agreeTerms}
                     onChange={handleInputChange}
                     required
-                    className={`h-4 w-4 text-[#C9A86A] border-[#111111]/15 rounded focus:ring-[#C9A86A] mt-0.5 ${
+                    className={`h-4 w-4 text-[#EFBF04] border-[#111111]/15 rounded focus:ring-[#EFBF04] mt-0.5 ${
                       validationErrors.agreeTerms ? 'border-red-300' : ''
                     }`}
                   />
                   <label htmlFor="agreeTerms" className="text-xs text-[#6F6F6F] leading-relaxed">
                     I agree to the{' '}
-                    <a href="/terms" className="text-[#C9A86A] hover:text-[#B48F55] underline">Terms of Service</a>{' '}
+                    <a href="/terms" className="text-[#EFBF04] hover:text-[#B48F55] underline">Terms of Service</a>{' '}
                     and{' '}
-                    <a href="/privacy" className="text-[#C9A86A] hover:text-[#B48F55] underline">Privacy Policy</a>.
+                    <a href="/privacy" className="text-[#EFBF04] hover:text-[#B48F55] underline">Privacy Policy</a>.
                   </label>
                 </div>
                 <AnimatePresence>
@@ -498,15 +498,15 @@ export default function ReservePage() {
             <div className="bg-[#F5F6F7] px-6 py-4 mt-6 rounded-xl">
               <div className="flex flex-wrap justify-center gap-4 text-xs text-[#6F6F6F]">
                 <div className="flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-[#C9A86A]" />
+                  <Shield className="w-4 h-4 text-[#EFBF04]" />
                   <span>Priority access guaranteed</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Lock className="w-4 h-4 text-[#C9A86A]" />
+                  <Lock className="w-4 h-4 text-[#EFBF04]" />
                   <span>100% refundable</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Star className="w-4 h-4 text-[#C9A86A]" />
+                  <Star className="w-4 h-4 text-[#EFBF04]" />
                   <span>Secured by Stripe</span>
                 </div>
               </div>
@@ -520,15 +520,15 @@ export default function ReservePage() {
           <motion.div className="mt-6 text-center" variants={fadeUpVariants}>
             <div className="inline-flex flex-wrap gap-4 text-xs text-[#6F6F6F]">
               <div className="flex items-center gap-2">
-                <Lock className="w-3 h-3 text-[#C9A86A]" />
+                <Lock className="w-3 h-3 text-[#EFBF04]" />
                 <span>HTTPS Secured</span>
               </div>
               <div className="flex items-center gap-2">
-                <Shield className="w-3 h-3 text-[#C9A86A]" />
+                <Shield className="w-3 h-3 text-[#EFBF04]" />
                 <span>SOC 2 Compliant</span>
               </div>
               <div className="flex items-center gap-2">
-                <Star className="w-3 h-3 text-[#C9A86A]" />
+                <Star className="w-3 h-3 text-[#EFBF04]" />
                 <span>Privacy Protected</span>
               </div>
             </div>

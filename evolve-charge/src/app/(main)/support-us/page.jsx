@@ -81,7 +81,7 @@ function CheckoutForm({ onSuccess, amount, isProcessing, setIsProcessing, setErr
       <motion.button
         type="submit"
         disabled={!stripe || isProcessing}
-        className="w-full py-3 rounded-full bg-[#C9A86A] text-[#111111] font-medium shadow-lg hover:shadow-xl transition-all flex justify-center items-center disabled:opacity-50"
+        className="w-full py-3 rounded-full bg-[#EFBF04] text-[#111111] font-medium shadow-lg hover:shadow-xl transition-all flex justify-center items-center disabled:opacity-50"
         whileHover={{ scale: 1.05, backgroundColor: '#D1B47A' }}
         whileTap={{ scale: 0.95 }}
       >
@@ -150,8 +150,8 @@ function SuccessModal({ isOpen, onClose, donationAmount, donationDetails }) {
         className="bg-white/70 backdrop-blur-md rounded-xl p-8 max-w-md w-full mx-4 border border-black/10 shadow-lg"
       >
         <div className="text-center">
-          <div className="w-16 h-16 bg-[#C9A86A]/10 rounded-full flex items-center justify-center mx-auto mb-4">
-            <CheckCircle className="h-8 w-8 text-[#C9A86A]" />
+          <div className="w-16 h-16 bg-[#EFBF04]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <CheckCircle className="h-8 w-8 text-[#EFBF04]" />
           </div>
           <h3 className="text-2xl font-bold text-[#111111] mb-2 tracking-wide">Thank You!</h3>
           <p className="text-[#6F6F6F] mb-6 leading-relaxed">
@@ -165,7 +165,7 @@ function SuccessModal({ isOpen, onClose, donationAmount, donationDetails }) {
           <div className="flex flex-col space-y-4">
             <motion.button
               onClick={generatePDF}
-              className="w-full py-2 rounded-full bg-[#C9A86A] text-[#111111] font-medium shadow-lg hover:shadow-xl transition-all"
+              className="w-full py-2 rounded-full bg-[#EFBF04] text-[#111111] font-medium shadow-lg hover:shadow-xl transition-all"
               whileHover={{ scale: 1.05, backgroundColor: '#D1B47A' }}
               whileTap={{ scale: 0.95 }}
             >
@@ -174,7 +174,7 @@ function SuccessModal({ isOpen, onClose, donationAmount, donationDetails }) {
             <div className="flex space-x-4">
               <motion.button
                 onClick={() => window.location.href = '/'}
-                className="w-1/2 py-2 rounded-full bg-[#F5F6F7] text-[#111111]/70 font-medium hover:bg-[#C9A86A]/10 transition-all"
+                className="w-1/2 py-2 rounded-full bg-[#F5F6F7] text-[#111111]/70 font-medium hover:bg-[#EFBF04]/10 transition-all"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -182,7 +182,7 @@ function SuccessModal({ isOpen, onClose, donationAmount, donationDetails }) {
               </motion.button>
               <motion.button
                 onClick={onClose}
-                className="w-1/2 py-2 rounded-full bg-[#C9A86A] text-[#111111] font-medium shadow-lg hover:shadow-xl transition-all"
+                className="w-1/2 py-2 rounded-full bg-[#EFBF04] text-[#111111] font-medium shadow-lg hover:shadow-xl transition-all"
                 whileHover={{ scale: 1.05, backgroundColor: '#D1B47A' }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -496,7 +496,7 @@ export default function SupportUsPage() {
     appearance: {
       theme: 'flat',
       variables: {
-        colorPrimary: '#C9A86A',
+        colorPrimary: '#EFBF04',
         colorBackground: '#FFFFFF',
         colorText: '#111111',
         colorDanger: '#EF4444',
@@ -527,14 +527,14 @@ export default function SupportUsPage() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div initial="hidden" animate="visible" variants={fadeIn} className="text-center mb-16">
-            <div className="inline-flex items-center px-4 py-2 bg-[#C9A86A]/10 rounded-full text-sm font-medium text-[#C9A86A] mb-6 tracking-wide">
+            <div className="inline-flex items-center px-4 py-2 bg-[#EFBF04]/10 rounded-full text-sm font-medium text-[#EFBF04] mb-6 tracking-wide">
               <Heart className="w-4 h-4 mr-2" />
               Join Our Mission
             </div>
             <h1 className="text-5xl md:text-7xl font-bold text-[#111111] mb-8 tracking-tight">
               Support the Future of
               <br />
-              <span className="text-[#C9A86A]">
+              <span className="text-[#EFBF04]">
                 Smart EV Charging
               </span>
             </h1>
@@ -544,15 +544,15 @@ export default function SupportUsPage() {
             
             <div className="flex flex-wrap justify-center gap-8 text-sm text-[#6F6F6F] mb-8">
               <div className="flex items-center">
-                <Shield className="w-5 h-5 mr-2 text-[#C9A86A]" />
+                <Shield className="w-5 h-5 mr-2 text-[#EFBF04]" />
                 Secure payments via Stripe
               </div>
               <div className="flex items-center">
-                <Award className="w-5 h-5 mr-2 text-[#C9A86A]" />
+                <Award className="w-5 h-5 mr-2 text-[#EFBF04]" />
                 100% goes to EV innovation
               </div>
               <div className="flex items-center">
-                <Globe className="w-5 h-5 mr-2 text-[#C9A86A]" />
+                <Globe className="w-5 h-5 mr-2 text-[#EFBF04]" />
                 Global impact initiative
               </div>
             </div>
@@ -561,10 +561,10 @@ export default function SupportUsPage() {
           {/* Stats Cards */}
           <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
             {[
-              { icon: DollarSign, value: `$${totalAmount.toFixed(0)}`, label: "Total Raised", color: "text-[#C9A86A]" },
-              { icon: Target, value: "$10,000", label: "Goal", color: "text-[#C9A86A]" },
-              { icon: Users, value: donorsWithAmounts.length, label: "Supporters", color: "text-[#C9A86A]" },
-              { icon: TrendingUp, value: `${progress.toFixed(1)}%`, label: "Complete", color: "text-[#C9A86A]" }
+              { icon: DollarSign, value: `$${totalAmount.toFixed(0)}`, label: "Total Raised", color: "text-[#EFBF04]" },
+              { icon: Target, value: "$10,000", label: "Goal", color: "text-[#EFBF04]" },
+              { icon: Users, value: donorsWithAmounts.length, label: "Supporters", color: "text-[#EFBF04]" },
+              { icon: TrendingUp, value: `${progress.toFixed(1)}%`, label: "Complete", color: "text-[#EFBF04]" }
             ].map(({ icon: Icon, value, label, color }) => (
               <motion.div key={label} variants={fadeIn} className="bg-white/70 backdrop-blur-md rounded-2xl p-6 border border-black/10 shadow-lg hover:scale-105 transition-all duration-300">
                 <Icon className={`w-8 h-8 ${color} mx-auto mb-3`} />
@@ -587,7 +587,7 @@ export default function SupportUsPage() {
                   initial={{ width: 0 }}
                   animate={{ width: `${progress}%` }}
                   transition={{ duration: 1.5, ease: "easeOut" }}
-                  className="absolute left-0 top-0 h-full bg-[#C9A86A] rounded-full"
+                  className="absolute left-0 top-0 h-full bg-[#EFBF04] rounded-full"
                 />
               </div>
               <div className="text-center text-[#6F6F6F] font-medium">
@@ -607,12 +607,12 @@ export default function SupportUsPage() {
               {[1, 2, 3].map((stepNum) => (
                 <React.Fragment key={stepNum}>
                   <div className={`flex items-center justify-center w-10 h-10 rounded-full ${
-                    step >= stepNum ? 'bg-[#C9A86A] text-[#111111]' : 'bg-[#F5F6F7] text-[#6F6F6F]'
+                    step >= stepNum ? 'bg-[#EFBF04] text-[#111111]' : 'bg-[#F5F6F7] text-[#6F6F6F]'
                   }`}>
                     {stepNum}
                   </div>
                   {stepNum < 3 && (
-                    <div className={`h-1 w-16 ${step > stepNum ? 'bg-[#C9A86A]' : 'bg-[#F5F6F7]'}`} />
+                    <div className={`h-1 w-16 ${step > stepNum ? 'bg-[#EFBF04]' : 'bg-[#F5F6F7]'}`} />
                   )}
                 </React.Fragment>
               ))}
@@ -643,8 +643,8 @@ export default function SupportUsPage() {
                           onClick={() => handleAmountSelect(amount)}
                           className={`p-6 rounded-xl border-2 transition-all transform hover:scale-105 ${
                             selectedAmount === amount && !customAmount
-                              ? 'border-[#C9A86A] bg-[#C9A86A]/10 text-[#111111] shadow-lg'
-                              : 'border-black/10 hover:border-[#C9A86A]/30 text-[#111111] hover:shadow-md'
+                              ? 'border-[#EFBF04] bg-[#EFBF04]/10 text-[#111111] shadow-lg'
+                              : 'border-black/10 hover:border-[#EFBF04]/30 text-[#111111] hover:shadow-md'
                           }`}
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
@@ -665,14 +665,14 @@ export default function SupportUsPage() {
                           value={customAmount}
                           onChange={handleCustomAmountChange}
                           placeholder="Enter amount"
-                          className="w-full text-[#111111] pl-10 pr-4 py-4 text-xl border border-black/10 rounded-xl bg-white/70 backdrop-blur-md focus:ring-2 focus:ring-[#C9A86A]/50 focus:border-transparent transition-all"
+                          className="w-full text-[#111111] pl-10 pr-4 py-4 text-xl border border-black/10 rounded-xl bg-white/70 backdrop-blur-md focus:ring-2 focus:ring-[#EFBF04]/50 focus:border-transparent transition-all"
                         />
                       </div>
                     </div>
 
                     <motion.button
                       onClick={nextStep}
-                      className="w-full py-4 rounded-full bg-[#C9A86A] text-[#111111] font-medium shadow-lg hover:shadow-xl transition-all flex items-center justify-center"
+                      className="w-full py-4 rounded-full bg-[#EFBF04] text-[#111111] font-medium shadow-lg hover:shadow-xl transition-all flex items-center justify-center"
                       whileHover={{ scale: 1.05, backgroundColor: '#D1B47A' }}
                       whileTap={{ scale: 0.95 }}
                     >
@@ -701,19 +701,19 @@ export default function SupportUsPage() {
                       <h3 className="text-lg font-bold text-[#111111] mb-4 tracking-wide">Our Mission</h3>
                       <div className="space-y-3 text-sm text-[#6F6F6F]">
                         <div className="flex items-start">
-                          <Zap className="w-4 h-4 text-[#C9A86A] mt-1 mr-3 flex-shrink-0" />
+                          <Zap className="w-4 h-4 text-[#EFBF04] mt-1 mr-3 flex-shrink-0" />
                           <p>Develop innovative smart EV charging solutions</p>
                         </div>
                         <div className="flex items-start">
-                          <Globe className="w-4 h-4 text-[#C9A86A] mt-1 mr-3 flex-shrink-0" />
+                          <Globe className="w-4 h-4 text-[#EFBF04] mt-1 mr-3 flex-shrink-0" />
                           <p>Make electric vehicle ownership more accessible</p>
                         </div>
                         <div className="flex items-start">
-                          <Heart className="w-4 h-4 text-[#C9A86A] mt-1 mr-3 flex-shrink-0" />
+                          <Heart className="w-4 h-4 text-[#EFBF04] mt-1 mr-3 flex-shrink-0" />
                           <p>Reduce carbon emissions through sustainable technology</p>
                         </div>
                         <div className="flex items-start">
-                          <Target className="w-4 h-4 text-[#C9A86A] mt-1 mr-3 flex-shrink-0" />
+                          <Target className="w-4 h-4 text-[#EFBF04] mt-1 mr-3 flex-shrink-0" />
                           <p>Ensure you never run out of charge again</p>
                         </div>
                       </div>
@@ -747,7 +747,7 @@ export default function SupportUsPage() {
                           name="firstName"
                           value={formData.firstName}
                           onChange={handleInputChange}
-                          className={`w-full text-[#111111] px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#C9A86A]/50 focus:border-transparent transition-all bg-white/70 backdrop-blur-md ${
+                          className={`w-full text-[#111111] px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#EFBF04]/50 focus:border-transparent transition-all bg-white/70 backdrop-blur-md ${
                             validationErrors.firstName ? 'border-red-300 bg-red-50' : 'border-black/10'
                           }`}
                         />
@@ -765,7 +765,7 @@ export default function SupportUsPage() {
                           name="lastName"
                           value={formData.lastName}
                           onChange={handleInputChange}
-                          className={`w-full text-[#111111] px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#C9A86A]/50 focus:border-transparent transition-all bg-white/70 backdrop-blur-md ${
+                          className={`w-full text-[#111111] px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#EFBF04]/50 focus:border-transparent transition-all bg-white/70 backdrop-blur-md ${
                             validationErrors.lastName ? 'border-red-300 bg-red-50' : 'border-black/10'
                           }`}
                         />
@@ -785,7 +785,7 @@ export default function SupportUsPage() {
                         name="email"
                         value={formData.email}
                         onChange={handleInputChange}
-                        className={`w-full text-[#111111] px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#C9A86A]/50 focus:border-transparent transition-all bg-white/70 backdrop-blur-md ${
+                        className={`w-full text-[#111111] px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#EFBF04]/50 focus:border-transparent transition-all bg-white/70 backdrop-blur-md ${
                           validationErrors.email ? 'border-red-300 bg-red-50' : 'border-black/10'
                         }`}
                       />
@@ -805,7 +805,7 @@ export default function SupportUsPage() {
                             type="checkbox"
                             checked={formData.dedicateGift}
                             onChange={handleInputChange}
-                            className="h-4 w-4 text-[#C9A86A] border-black/10 rounded focus:ring-[#C9A86A]/50 mt-1"
+                            className="h-4 w-4 text-[#EFBF04] border-black/10 rounded focus:ring-[#EFBF04]/50 mt-1"
                           />
                           <div className="ml-3">
                             <label htmlFor="dedicateGift" className="font-medium text-[#111111] tracking-wide">
@@ -826,7 +826,7 @@ export default function SupportUsPage() {
                               value={formData.dedicateTo}
                               onChange={handleInputChange}
                               placeholder="Enter name"
-                              className="w-full text-[#111111] px-4 py-3 border border-black/10 rounded-lg focus:ring-2 focus:ring-[#C9A86A]/50 focus:border-transparent transition-all bg-white/70 backdrop-blur-md"
+                              className="w-full text-[#111111] px-4 py-3 border border-black/10 rounded-lg focus:ring-2 focus:ring-[#EFBF04]/50 focus:border-transparent transition-all bg-white/70 backdrop-blur-md"
                             />
                           </div>
                         )}
@@ -838,7 +838,7 @@ export default function SupportUsPage() {
                             type="checkbox"
                             checked={formData.anonymous}
                             onChange={handleInputChange}
-                            className="h-4 w-4 text-[#C9A86A] border-black/10 rounded focus:ring-[#C9A86A]/50 mt-1"
+                            className="h-4 w-4 text-[#EFBF04] border-black/10 rounded focus:ring-[#EFBF04]/50 mt-1"
                           />
                           <div className="ml-3">
                             <label htmlFor="anonymous" className="font-medium text-[#111111] tracking-wide">
@@ -854,7 +854,7 @@ export default function SupportUsPage() {
                             type="checkbox"
                             checked={formData.updates}
                             onChange={handleInputChange}
-                            className="h-4 w-4 text-[#C9A86A] border-black/10 rounded focus:ring-[#C9A86A]/50 mt-1"
+                            className="h-4 w-4 text-[#EFBF04] border-black/10 rounded focus:ring-[#EFBF04]/50 mt-1"
                           />
                           <div className="ml-3">
                             <label htmlFor="updates" className="font-medium text-[#111111] tracking-wide">
@@ -873,7 +873,7 @@ export default function SupportUsPage() {
                             type="checkbox"
                             checked={formData.agreeTerms}
                             onChange={handleInputChange}
-                            className={`h-4 w-4 text-[#C9A86A] border rounded focus:ring-[#C9A86A]/50 mt-1 ${
+                            className={`h-4 w-4 text-[#EFBF04] border rounded focus:ring-[#EFBF04]/50 mt-1 ${
                               validationErrors.agreeTerms ? 'border-red-300' : 'border-black/10'
                             }`}
                           />
@@ -901,7 +901,7 @@ export default function SupportUsPage() {
                       </motion.button>
                       <motion.button
                         onClick={nextStep}
-                        className="w-2/3 py-3 rounded-full bg-[#C9A86A] text-[#111111] font-medium shadow-lg hover:shadow-xl transition-all flex items-center justify-center"
+                        className="w-2/3 py-3 rounded-full bg-[#EFBF04] text-[#111111] font-medium shadow-lg hover:shadow-xl transition-all flex items-center justify-center"
                         whileHover={{ scale: 1.05, backgroundColor: '#D1B47A' }}
                         whileTap={{ scale: 0.95 }}
                       >
@@ -952,7 +952,7 @@ export default function SupportUsPage() {
                           <span>5%</span>
                         </div>
                       </div>
-                      <div className="mt-4 p-3 bg-[#C9A86A]/10 rounded-lg border border-[#C9A86A]/30">
+                      <div className="mt-4 p-3 bg-[#EFBF04]/10 rounded-lg border border-[#EFBF04]/30">
                         <p className="text-xs text-[#6F6F6F]">
                           <strong>Total funding includes:</strong> Direct donations (${totalDonations.toFixed(0)}) + Pre-orders (${totalPreOrders.toFixed(0)})
                         </p>
@@ -975,7 +975,7 @@ export default function SupportUsPage() {
                 <div className="lg:col-span-2">
                   <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-lg p-8 border border-black/10">
                     <div className="flex items-center bg-[#F5F6F7] p-6 rounded-lg border border-black/10 mb-6">
-                      <Shield className="h-8 w-8 text-[#C9A86A] mr-4" />
+                      <Shield className="h-8 w-8 text-[#EFBF04] mr-4" />
                       <div>
                         <p className="text-base font-semibold text-[#111111] tracking-wide">
                           Your Payment is Safe and Secure
@@ -1007,7 +1007,7 @@ export default function SupportUsPage() {
                       </Elements>
                     ) : (
                       <div className="flex flex-col items-center justify-center py-8">
-                        <div className="animate-spin h-8 w-8 border-4 border-[#C9A86A] rounded-full border-t-transparent mb-4"></div>
+                        <div className="animate-spin h-8 w-8 border-4 border-[#EFBF04] rounded-full border-t-transparent mb-4"></div>
                         <p className="text-[#6F6F6F]">
                           {isProcessing ? 'Preparing your donation...' : 'Loading payment form...'}
                         </p>
@@ -1045,7 +1045,7 @@ export default function SupportUsPage() {
                       </div>
                     </div>
 
-                    <div className="bg-[#C9A86A]/10 p-4 rounded-lg border border-[#C9A86A]/30">
+                    <div className="bg-[#EFBF04]/10 p-4 rounded-lg border border-[#EFBF04]/30">
                       <h4 className="font-medium text-[#111111] mb-2 tracking-wide">Thank You!</h4>
                       <p className="text-sm text-[#6F6F6F]">
                         Your contribution helps accelerate sustainable transportation technology
@@ -1080,8 +1080,8 @@ export default function SupportUsPage() {
                         onClick={() => setFilter(value)}
                         className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${
                           filter === value
-                            ? 'bg-[#C9A86A] text-[#111111] shadow-md'
-                            : 'bg-[#F5F6F7] text-[#111111]/70 hover:bg-[#C9A86A]/10'
+                            ? 'bg-[#EFBF04] text-[#111111] shadow-md'
+                            : 'bg-[#F5F6F7] text-[#111111]/70 hover:bg-[#EFBF04]/10'
                         }`}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
@@ -1091,7 +1091,7 @@ export default function SupportUsPage() {
                     ))}
                   </div>
                   <h3 className="text-xl font-semibold text-[#111111] flex items-center tracking-wide">
-                    <Users className="w-5 h-5 mr-2 text-[#C9A86A]" />
+                    <Users className="w-5 h-5 mr-2 text-[#EFBF04]" />
                     Our Donors
                   </h3>
                 </div>
@@ -1099,7 +1099,7 @@ export default function SupportUsPage() {
                 <div className="p-6 overflow-x-auto">
                   {isLoading ? (
                     <div className="flex items-center justify-center py-8">
-                      <div className="animate-spin h-6 w-6 border-2 border-[#C9A86A] rounded-full border-t-transparent mr-2"></div>
+                      <div className="animate-spin h-6 w-6 border-2 border-[#EFBF04] rounded-full border-t-transparent mr-2"></div>
                       <p className="text-[#6F6F6F] text-sm">Loading supporters...</p>
                     </div>
                   ) : donorsWithAmounts.length === 0 ? (
@@ -1118,14 +1118,14 @@ export default function SupportUsPage() {
                           className="bg-white/70 backdrop-blur-md rounded-lg p-4 flex-shrink-0 w-64 hover:bg-white/80 transition-all border border-black/10"
                         >
                           <div className="flex items-start">
-                            <div className="w-8 h-8 bg-[#C9A86A]/10 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-                              <Users className="w-4 h-4 text-[#C9A86A]" />
+                            <div className="w-8 h-8 bg-[#EFBF04]/10 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                              <Users className="w-4 h-4 text-[#EFBF04]" />
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="font-medium text-[#111111] truncate text-sm tracking-wide">
                                 {donor.anonymous ? 'Anonymous Supporter' : `${donor.firstName} ${donor.lastName}`}
                               </p>
-                              <p className="text-[#C9A86A] font-semibold text-xs">Donated ${donor.amount.toFixed(2)}</p>
+                              <p className="text-[#EFBF04] font-semibold text-xs">Donated ${donor.amount.toFixed(2)}</p>
                               {donor.dedicateTo && (
                                 <p className="text-[#6F6F6F] italic text-xs truncate">In honor of: {donor.dedicateTo}</p>
                               )}
