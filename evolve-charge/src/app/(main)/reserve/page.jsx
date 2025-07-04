@@ -11,7 +11,7 @@ import Script from 'next/script';
 import { Lock, Shield, Star, ChevronDown } from 'lucide-react';
 
 // Initialize Stripe
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_TEST_KEY);
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
 // Animation variants
 const fadeUpVariants = {

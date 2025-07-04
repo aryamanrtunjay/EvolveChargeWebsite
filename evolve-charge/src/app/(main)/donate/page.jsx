@@ -11,7 +11,7 @@ import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { CheckCircle, ArrowRight, Shield, ArrowLeft } from 'lucide-react';
 
 // Initialize Stripe
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_TEST_KEY);
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
 // Animation variants
 const fadeIn = {
