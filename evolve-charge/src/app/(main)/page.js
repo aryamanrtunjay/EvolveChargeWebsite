@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform, useInView, AnimatePresence } from 'framer-motion';
 import { ChevronDown, Zap, Wifi, DollarSign, Battery, Clock, ChevronRight, ArrowRight, Star } from 'lucide-react';
 import OrderChoiceModal from '@/components/OrderChoiceModal';
+import Link from "next/link";
 
 const AmpereonLanding = () => {
   const [activeAccordion, setActiveAccordion] = useState(null);
@@ -139,12 +140,14 @@ const AmpereonLanding = () => {
                 Order now | $5
               </button>
 
-              <button
-                className="pl-6 pr-8 py-4 border border-black/15 rounded-full text-black/70
-                          hover:bg-white/40 flex items-center gap-2"
-              >
+              <Link href="/product">
+                <button
+                  className="pl-6 pr-8 py-4 border border-black/15 rounded-full text-black/70
+                            hover:bg-white/40 flex items-center gap-2"
+                >
                 <ChevronRight className="w-5 h-5" /> See Ampereon in Action
               </button>
+            </Link>
             </div>
           </div>
         </motion.div>

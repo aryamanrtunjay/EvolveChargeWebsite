@@ -96,7 +96,7 @@ const AmpereonNavbar = () => {
               onClick={()=>setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="md:hidden rounded-lg p-2 hover:bg-[#F5F6F7]"
             >
-              {isMobileMenuOpen ? <X className="h-6 w-6"/> : <Menu className="h-6 w-6"/>}
+              {isMobileMenuOpen ? <X className="h-6 w-6 fill-[#111111]"/> : <Menu className="h-6 w-6 fill-[#111111]"/>}
             </motion.button>
           </div>
         </div>
