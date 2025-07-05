@@ -2,10 +2,27 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform, useInView, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Zap, Wifi, DollarSign, Battery, Clock, ChevronRight, ArrowRight, Star, Users, Heart } from 'lucide-react';
+import { ChevronDown, Zap, Wifi, DollarSign, Battery, Clock, ChevronRight, ArrowRight, Star, Users, Heart, Globe, Shield } from 'lucide-react';
 import OrderChoiceModal from '@/components/OrderChoiceModal';
 import Link from "next/link";
+import db from "../firebaseConfig.js"
 import { getFirestore, collection, getDocs, query, orderBy, limit, where } from 'firebase/firestore';
+
+// Modern tech pattern overlay
+const TechPattern = ({ opacity = 0.05 }) => (
+  <div className="absolute inset-0 pointer-events-none" style={{ opacity }}>
+    <svg width="100%" height="100%" className="text-[#D4AF37]">
+      <defs>
+        <pattern id="techGrid" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+          <circle cx="30" cy="30" r="1.5" fill="currentColor" />
+          <circle cx="0" cy="0" r="1" fill="currentColor" />
+          <circle cx="60" cy="60" r="1" fill="currentColor" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#techGrid)" />
+    </svg>
+  </div>
+);
 
 const AmpereonLanding = () => {
   const [activeAccordion, setActiveAccordion] = useState(null);
@@ -72,28 +89,28 @@ const AmpereonLanding = () => {
       num: "01", 
       title: "Easy DIY Mount", 
       desc: "Mount in 30 min", 
-      icon: <Zap className="w-6 h-6" />,
+      icon: Zap,
       detail: "No electrician needed - uses your existing charger"
     },
     { 
       num: "02", 
       title: "Pair in the App", 
       desc: "Tap to pair", 
-      icon: <Wifi className="w-6 h-6" />,
+      icon: Wifi,
       detail: "One-time setup with guided walkthrough"
     },
     { 
       num: "03", 
       title: "Auto-Connect Every Park", 
       desc: "Charging starts itself", 
-      icon: <Battery className="w-6 h-6" />,
+      icon: Battery,
       detail: "AI learns your schedule for optimal timing"
     },
     { 
       num: "04", 
       title: "24/7 Smart Monitoring", 
       desc: "Insights on your phone", 
-      icon: <Clock className="w-6 h-6" />,
+      icon: Clock,
       detail: "Real-time energy usage and savings tracking"
     }
   ];
@@ -101,7 +118,7 @@ const AmpereonLanding = () => {
   const stepContent = [
     {
       title: "Quick Installation",
-      icon: <Zap className="w-6 h-6" />,
+      icon: Zap,
       description: "Most installations take under 30 minutes. Our mounting system works with any J1772 or Tesla wall charger.",
       stats: [
         { value: "30min", label: "Average install time" },
@@ -116,7 +133,7 @@ const AmpereonLanding = () => {
     },
     {
       title: "Smart Connection",
-      icon: <Wifi className="w-6 h-6" />,
+      icon: Wifi,
       description: "Connect Ampereon to your home WiFi and pair with your vehicle in minutes using our intuitive mobile app.",
       stats: [
         { value: "2min", label: "Setup time" },
@@ -131,7 +148,7 @@ const AmpereonLanding = () => {
     },
     {
       title: "Intelligent Automation",
-      icon: <Battery className="w-6 h-6" />,
+      icon: Battery,
       description: "Ampereon's AI learns your daily routine and optimizes charging to save money while ensuring your car is ready when you need it.",
       stats: [
         { value: "32%", label: "Average savings" },
@@ -146,7 +163,7 @@ const AmpereonLanding = () => {
     },
     {
       title: "Complete Insights",
-      icon: <Clock className="w-6 h-6" />,
+      icon: Clock,
       description: "Track your energy usage, savings, and environmental impact with detailed analytics and real-time monitoring.",
       stats: [
         { value: "$325", label: "Yearly savings" },
@@ -165,7 +182,7 @@ const AmpereonLanding = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       setActiveStep((prev) => (prev + 1) % steps.length);
-    }, 5000); // Advance every 5 seconds
+    }, 5000);
     
     return () => clearInterval(timer);
   }, [steps.length]);
@@ -187,8 +204,6 @@ const AmpereonLanding = () => {
     const loadData = async () => {
       setIsLoading(true);
       try {
-        const db = getFirestore();
-        
         const [ordersSnapshot, donationsSnapshot] = await Promise.all([
           getDocs(collection(db, "orders")),
           getDocs(collection(db, "donations"))
@@ -267,16 +282,14 @@ const AmpereonLanding = () => {
   }, [donorFilter]);
 
   return (
-    <div className="bg-[#FAFAFA] text-[#1A1A1A] overflow-x-hidden">
-      {/* Hero Section - Cinematic with subtle luxury */}
+    <div className="bg-[#0A0A0A] text-white overflow-x-hidden">
+      {/* Hero Section - Enhanced glassmorphism with floating elements */}
       <section
-        className="relative min-h-screen flex items-center justify-center"
+        className="relative min-h-screen flex items-center justify-center overflow-hidden"
         ref={heroRef}
       >
-        {/* Sophisticated video background */}
-        <motion.div
-          className="absolute inset-0 z-0 pointer-events-none"
-        >
+        {/* Advanced video background with geometric overlay */}
+        <motion.div className="absolute inset-0 z-0 pointer-events-none">
           <video
             autoPlay muted loop playsInline controls={false} preload="auto"
             className="w-full h-full object-cover"
@@ -287,106 +300,181 @@ const AmpereonLanding = () => {
           </video>
         </motion.div>
 
-        {/* Refined overlays */}
-        <div className="absolute inset-0 bg-black/25" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-[#FAFAFA]/90" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/40" />
 
-        {/* Hero content with glass morphism */}
+        {/* Hero content with advanced glassmorphism */}
         <motion.div
           className="relative z-10 px-6"
+          style={{ y: heroParallax }}
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: [0.25, 0.1, 0.25, 1] }}
         >
-          <div className="backdrop-blur-md bg-white/80 border border-white/20 rounded-3xl p-12 max-w-4xl mx-auto shadow-2xl shadow-black/10">
-            <h1
-              className="font-light tracking-tight leading-[1.1] mb-6 text-center text-[#1A1A1A]"
-              style={{ fontSize: 'clamp(3rem,7vw,5rem)' }}
-            >
-              The Charger of <span className="font-medium text-[#D4AF37] bg-gradient-to-r from-[#D4AF37] to-[#B8860B] bg-clip-text text-transparent">Tomorrow</span>
-            </h1>
-
-            <p className="text-xl sm:text-2xl text-[#4A4A4A] mb-10 text-center max-w-3xl mx-auto font-light leading-relaxed">
-              A smart, fully automatic home Electric Vehicle charger that works on top of the charging unit you already own.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <button
-                className="px-10 py-5 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white font-medium rounded-full
-                          hover:shadow-2xl hover:shadow-[#D4AF37]/30 transition-all duration-300 transform hover:scale-105
-                          focus:ring-2 focus:ring-[#D4AF37]/40 shadow-xl"
-                onClick={openModal}
+          <div className="backdrop-blur-md bg-black/40 border border-white/10 rounded-[2.5rem] p-16 max-w-5xl mx-auto 
+                        shadow-[0_8px_32px_rgba(0,0,0,0.3)] relative overflow-hidden">
+            
+            {/* Subtle animated background pattern */}
+            <div className="absolute inset-0 opacity-3">
+              <div className="w-full h-full bg-gradient-to-br from-[#D4AF37]/20 to-[#B8860B]/20" />
+            </div>
+            
+            <div className="relative z-10">
+              {/* <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.3, duration: 0.8 }}
+                className="inline-flex items-center gap-3 text-sm font-semibold text-[#D4AF37] 
+                         bg-gradient-to-r from-[#D4AF37]/15 to-[#B8860B]/10 backdrop-blur-sm 
+                         px-8 py-4 rounded-full mb-8 border border-[#D4AF37]/20"
               >
-                Order now | $5
-              </button>
+                <Globe className="w-4 h-4" />
+                <span className="tracking-wide">The Future of EV Charging</span>
+              </motion.div> */}
 
-              <Link href="/product">
-                <button
-                  className="pl-8 pr-10 py-5 border border-white/30 backdrop-blur-sm rounded-full text-[#1A1A1A] font-medium
-                            hover:bg-white/50 hover:border-white/50 flex items-center gap-3 transition-all duration-300"
+              <h1 className="font-light tracking-tighter leading-[0.95] mb-8 text-center text-white"
+                  style={{ fontSize: 'clamp(3.5rem,8vw,6rem)' }}>
+                The Charger of{' '}
+                <span className="font-bold bg-gradient-to-r from-[#D4AF37] to-[#B8860B] bg-clip-text text-transparent">
+                  Tomorrow
+                </span>
+              </h1>
+
+              <p className="text-xl sm:text-2xl text-gray-300 mb-12 text-center max-w-4xl mx-auto font-light leading-relaxed">
+                A smart, fully automatic home Electric Vehicle charger that works on top of the charging unit you already own.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-6 justify-center">
+                <motion.button
+                  className="group px-12 py-6 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white font-semibold rounded-2xl
+                            shadow-2xl hover:shadow-[#D4AF37]/30 transition-all duration-300
+                            focus:ring-2 focus:ring-[#D4AF37]/40 relative overflow-hidden"
+                  onClick={openModal}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <ChevronRight className="w-5 h-5" /> See Ampereon in Action
-                </button>
-              </Link>
+                  <span className="relative z-10 flex items-center gap-2">
+                    Order now | $5
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </span>
+                  
+                  {/* Button shine effect */}
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                    animate={{ x: ['-100%', '100%'] }}
+                    transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
+                  />
+                </motion.button>
+
+                <Link href="/product">
+                  <motion.button
+                    className="group px-10 py-6 border-2 border-[#D4AF37]/40 backdrop-blur-sm rounded-2xl text-white font-semibold
+                              hover:bg-[#D4AF37]/20 hover:border-[#D4AF37]/60 flex items-center gap-3 transition-all duration-300"
+                    whileHover={{ scale: 1.02 }}
+                  >
+                    <ChevronRight className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
+                    See Ampereon in Action
+                  </motion.button>
+                </Link>
+              </div>
             </div>
           </div>
         </motion.div>
 
         <OrderChoiceModal isOpen={isModalOpen} onClose={()=>setIsModalOpen(false)} />
 
-        {/* Elegant scroll indicator */}
+        {/* Modern scroll indicator */}
         <motion.div
           className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center"
           animate={{ y: [0, 10, 0] }}
           transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
         >
-          <div className="w-px h-8 bg-gradient-to-b from-transparent to-[#D4AF37] mb-2" />
-          <ChevronDown className="w-6 h-6 text-[#D4AF37]" />
+          <div className="w-px h-12 bg-gradient-to-b from-transparent via-[#D4AF37] to-transparent mb-3" />
+          <motion.div
+            className="w-8 h-8 border-2 border-[#D4AF37]/50 rounded-full flex items-center justify-center"
+            whileHover={{ scale: 1.2 }}
+          >
+            <ChevronDown className="w-4 h-4 text-[#D4AF37]" />
+          </motion.div>
         </motion.div>
       </section>
 
-      {/* Features Grid - Asymmetric luxury layout */}
+      {/* Features Grid - Dark asymmetric luxury layout with 3D effects */}
       <motion.section 
-        className="py-32 px-6 bg-white relative"
+        className="py-32 px-6 bg-gradient-to-br from-[#1A1A1A] via-[#0F0F0F] to-[#1A1A1A] relative overflow-hidden"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true }}
         variants={fadeUpVariants}
       >
-        {/* Subtle background pattern */}
-        <div className="absolute inset-0 opacity-[0.01]" 
-             style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #1A1A1A 1px, transparent 0)', backgroundSize: '40px 40px' }} />
+        <TechPattern />
         
-        <div className="max-w-7xl mx-auto relative">
+        {/* Geometric background elements */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-[#D4AF37]/10 rotate-45 translate-x-32 -translate-y-32" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#D4AF37]/5 rounded-full -translate-x-48 translate-y-48" />
+        
+        <div className="max-w-7xl mx-auto relative z-10">
           <motion.div className="text-center mb-20">
-            <h2 className="text-5xl md:text-6xl font-light mb-6 tracking-tight text-[#1A1A1A]">
-              Effortless <span className="font-medium text-[#D4AF37]">Innovation</span>
+            <motion.div
+              className="inline-block text-[#D4AF37] text-sm font-semibold tracking-[0.3em] uppercase mb-6"
+              initial={{ width: 0, opacity: 0 }}
+              whileInView={{ width: "auto", opacity: 1 }}
+              transition={{ duration: 1 }}
+            >
+              Core Features
+            </motion.div>
+            
+            <h2 className="text-6xl md:text-7xl font-extralight mb-8 tracking-tighter text-white">
+              Effortless <span className="font-bold text-[#D4AF37] italic">Innovation</span>
             </h2>
-            <div className="w-16 h-px bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent mx-auto" />
+            
+            <div className="flex justify-center mb-8">
+              <motion.div 
+                className="h-1 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent rounded-full"
+                initial={{ width: 0 }}
+                whileInView={{ width: "8rem" }}
+                transition={{ duration: 1.5 }}
+              />
+            </div>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+          {/* Simplified feature grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16">
             {features.map((feature, i) => (
               <motion.div
                 key={i}
-                className={`group relative ${i % 2 === 0 ? 'lg:mt-8' : 'lg:mb-8'}`}
+                className="group relative"
                 variants={fadeUpVariants}
                 transition={{ delay: i * 0.15 }}
-                whileHover={{ y: -8 }}
+                whileInView="visible"
+                viewport={{ once: true }}
+                whileHover={{ y: -8, scale: 1.02 }}
               >
-                <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-10 border border-[#1A1A1A]/5 
-                              hover:border-[#D4AF37]/20 transition-all duration-500 shadow-lg hover:shadow-2xl
-                              hover:shadow-[#D4AF37]/10 relative overflow-hidden">
+                <div className="bg-gradient-to-br from-[#2A2A2A] to-[#1A1A1A] 
+                             rounded-3xl border-l-4 border-[#D4AF37] shadow-xl hover:shadow-2xl p-12
+                             transition-all duration-500 overflow-hidden relative group">
                   
-                  {/* Subtle gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  {/* Diagonal accent */}
+                  <div className="absolute top-0 right-0 w-24 h-24 
+                                bg-gradient-to-bl from-[#D4AF37]/20 to-transparent 
+                                rounded-bl-full" />
                   
                   <div className="relative z-10">
-                    <div className="text-[#D4AF37] mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <motion.div 
+                      className="inline-flex items-center justify-center w-20 h-20 mb-8
+                               bg-gradient-to-br from-[#D4AF37] to-[#B8860B] 
+                               rounded-tr-2xl rounded-bl-2xl
+                               shadow-lg text-white"
+                      whileHover={{ rotate: 15, scale: 1.1 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                    >
                       {feature.icon}
-                    </div>
-                    <h3 className="text-2xl font-medium mb-4 tracking-tight text-[#1A1A1A]">{feature.title}</h3>
-                    <p className="text-[#6A6A6A] leading-relaxed text-lg">{feature.desc}</p>
+                    </motion.div>
+                    
+                    <h3 className="text-3xl font-bold mb-6 tracking-tight text-white">{feature.title}</h3>
+                    <p className="text-gray-300 leading-relaxed text-xl font-light">{feature.desc}</p>
+                    
+                    {/* Modern accent element */}
+                    <div className="mt-8 w-20 h-1 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] rounded-r-full" />
                   </div>
                 </div>
               </motion.div>
@@ -395,293 +483,253 @@ const AmpereonLanding = () => {
         </div>
       </motion.section>
 
-      {/* Timeline - Enhanced design with more content */}
+      {/* Timeline - Enhanced futuristic split-screen design */}
       <motion.section 
-        className="py-32 px-6 bg-gradient-to-br from-[#F8F8F8] to-white relative overflow-hidden"
+        className="py-32 px-6 bg-[#0F0F0F] text-white relative overflow-hidden"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true }}
         variants={fadeUpVariants}
       >
-        {/* Enhanced decorative elements */}
-        <div className="absolute top-20 right-20 w-64 h-64 bg-gradient-to-br from-[#D4AF37]/10 to-transparent rounded-full blur-3xl" />
-        <div className="absolute bottom-20 left-20 w-96 h-96 bg-gradient-to-tr from-[#D4AF37]/5 to-transparent rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-[#D4AF37]/3 to-transparent rounded-full blur-3xl" />
+        {/* Futuristic grid background */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-to-br from-[#1A1A1A] via-[#0F0F0F] to-[#0A0A0A]" />
+          <div className="absolute inset-0 opacity-10">
+            <svg width="100%" height="100%">
+              <defs>
+                <pattern id="futuristicGrid" width="80" height="80" patternUnits="userSpaceOnUse">
+                  <path d="M 80 0 L 0 0 0 80" fill="none" stroke="#D4AF37" strokeWidth="0.5"/>
+                  <circle cx="0" cy="0" r="2" fill="#D4AF37" opacity="0.3" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#futuristicGrid)" />
+            </svg>
+          </div>
+        </div>
+
+        {/* Animated orbs */}
+        <motion.div 
+          className="absolute top-20 right-20 w-64 h-64 bg-[#D4AF37]/15 rounded-full blur-3xl"
+          animate={{ scale: [1, 1.2, 1], opacity: [0.15, 0.25, 0.15] }}
+          transition={{ duration: 8, repeat: Infinity }}
+        />
+        <motion.div 
+          className="absolute bottom-20 left-20 w-96 h-96 bg-[#D4AF37]/10 rounded-full blur-3xl"
+          animate={{ scale: [1, 1.1, 1], opacity: [0.1, 0.2, 0.1] }}
+          transition={{ duration: 10, repeat: Infinity, delay: 2 }}
+        />
         
         <div className="max-w-7xl mx-auto relative z-10">
           <motion.div className="text-center mb-20">
-            <h2 className="text-5xl md:text-6xl font-light mb-6 tracking-tight text-[#1A1A1A]">
-              Your Journey to <span className="font-medium text-[#D4AF37]">Effortless</span> Charging
+            <motion.div
+              className="inline-block text-[#D4AF37] text-sm font-medium tracking-[0.2em] uppercase mb-6"
+              initial={{ width: 0 }}
+              whileInView={{ width: "auto" }}
+              transition={{ duration: 1 }}
+            >
+              Your Journey
+            </motion.div>
+            
+            <h2 className="text-6xl md:text-8xl font-extralight mb-8 tracking-tighter text-white">
+              Your Journey to <span className="font-bold text-[#D4AF37] italic">Effortless</span> Charging
             </h2>
-            <div className="w-16 h-px bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent mx-auto mb-4" />
-            <p className="text-xl text-[#6A6A6A] max-w-3xl mx-auto font-light leading-relaxed">
+            
+            <div className="flex justify-center mb-8">
+              <div className="w-24 h-px bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent" />
+            </div>
+            
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
               From installation to daily use, Ampereon transforms your charging experience in four simple steps
             </p>
           </motion.div>
 
-          <div className="space-y-16">
-            {/* Horizontal Timeline */}
-            <div className="relative">
-              {/* Horizontal timeline line */}
-              <div className="absolute top-1/2 left-0 right-0 h-px bg-gradient-to-r from-[#D4AF37] via-[#D4AF37]/50 to-[#D4AF37] transform -translate-y-1/2" />
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
-                {steps.map((step, i) => (
-                  <motion.div
-                    key={i}
-                    className="relative cursor-pointer group"
-                    variants={fadeUpVariants}
-                    transition={{ delay: i * 0.1 }}
-                    onClick={() => setActiveStep(i)}
+          {/* Split screen layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-stretch min-h-[800px]">
+            {/* Left: Interactive timeline */}
+            <div className="space-y-6">
+              {steps.map((step, index) => {
+                const IconComponent = step.icon;
+                const isActive = activeStep === index;
+                
+                return (
+                  <motion.div 
+                    key={index}
+                    className={`relative cursor-pointer transition-all duration-700 ${
+                      isActive ? 'scale-105' : 'hover:scale-102'
+                    }`}
+                    onMouseEnter={() => setActiveStep(index)}
+                    onClick={() => setActiveStep(index)}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    variants={{
+                      hidden: { opacity: 0, x: -30 },
+                      visible: { 
+                        opacity: 1, 
+                        x: 0,
+                        transition: { delay: index * 0.2, duration: 0.6 }
+                      }
+                    }}
                   >
-                    {/* Timeline dot */}
-                    <div className="flex justify-center mb-6">
-                      <div className={`w-8 h-8 rounded-full border-4 border-white shadow-lg transition-all duration-300 ${
-                        activeStep === i 
-                          ? 'bg-gradient-to-br from-[#D4AF37] to-[#B8860B] shadow-[#D4AF37]/30 scale-125' 
-                          : 'bg-[#D4AF37]/30 shadow-[#D4AF37]/10 hover:bg-[#D4AF37]/50 hover:scale-110'
-                      }`} />
-                    </div>
-                    
-                    {/* Step card */}
-                    <div className={`backdrop-blur-sm rounded-2xl p-6 border shadow-lg transition-all duration-300 ${
-                      activeStep === i
-                        ? 'bg-white/95 border-[#D4AF37]/30 shadow-xl scale-105 shadow-[#D4AF37]/10'
-                        : 'bg-white/80 border-[#1A1A1A]/5 hover:bg-white/90 hover:shadow-xl hover:scale-102'
-                    }`}>
-                      <div className="text-center">
-                        <span className={`text-4xl font-light mb-4 block transition-colors duration-300 ${
-                          activeStep === i ? 'text-[#D4AF37]' : 'text-[#D4AF37]/70'
-                        }`}>{step.num}</span>
-                        
-                        <div className={`inline-flex items-center justify-center mb-4 transition-all duration-300 p-3 rounded-xl ${
-                          activeStep === i 
-                            ? 'text-[#D4AF37] bg-[#D4AF37]/10 scale-110' 
-                            : 'text-[#D4AF37]/70 bg-[#D4AF37]/5 group-hover:scale-110'
-                        }`}>
-                          {step.icon}
+                    <div className={`relative p-8 rounded-2xl border transition-all duration-500
+                                   ${isActive 
+                                     ? 'bg-gradient-to-r from-[#D4AF37]/20 to-[#B8860B]/15 border-[#D4AF37]/40 shadow-2xl shadow-[#D4AF37]/20' 
+                                     : 'bg-[#1A1A1A]/80 border-white/10 hover:border-[#D4AF37]/20 backdrop-blur-sm'
+                                   }`}>
+                      
+                      <div className="flex items-center gap-6">
+                        <div className={`relative flex items-center justify-center w-16 h-16 rounded-xl
+                                       transition-all duration-500 ${
+                                         isActive 
+                                           ? 'bg-gradient-to-br from-[#D4AF37] to-[#B8860B] shadow-lg shadow-[#D4AF37]/30' 
+                                           : 'bg-[#2A2A2A] border border-[#D4AF37]/20'
+                                       }`}>
+                          {(() => {
+                            const IconComponent = step.icon;
+                            return <IconComponent className={`w-8 h-8 ${isActive ? 'text-white' : 'text-[#D4AF37]'}`} />;
+                          })()}
                         </div>
                         
-                        <h3 className="text-xl font-medium mb-2 text-[#1A1A1A]">{step.title}</h3>
-                        <p className="text-[#6A6A6A] leading-relaxed text-sm">{step.desc}</p>
+                        <div className="flex-1">
+                          <h3 className={`text-2xl font-semibold mb-2 transition-colors duration-300 ${
+                            isActive ? 'text-white' : 'text-gray-300'
+                          }`}>
+                            {step.title}
+                          </h3>
+                          <div className="text-[#D4AF37] font-medium text-sm tracking-wider">
+                            STEP {step.num}
+                          </div>
+                          <p className="text-gray-400 text-sm mt-2">{step.desc}</p>
+                        </div>
+
+                        <div className={`w-2 h-16 rounded-full transition-all duration-500 ${
+                          isActive 
+                            ? 'bg-gradient-to-b from-[#D4AF37] to-[#B8860B] shadow-lg shadow-[#D4AF37]/50' 
+                            : 'bg-gray-600'
+                        }`} />
                       </div>
                     </div>
-
-                    {/* Connection line to next step (hidden on last item) */}
-                    {i < steps.length - 1 && (
-                      <div className="hidden lg:block absolute top-1/2 -right-4 w-8 h-px bg-[#D4AF37]/30 transform -translate-y-1/2 z-0" />
-                    )}
                   </motion.div>
-                ))}
-              </div>
-
-              {/* Progress indicator for mobile */}
-              <div className="flex items-center justify-center gap-2 mt-8 lg:hidden">
-                {steps.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setActiveStep(i)}
-                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                      activeStep === i ? 'bg-[#D4AF37] w-8' : 'bg-[#D4AF37]/30 hover:bg-[#D4AF37]/50'
-                    }`}
-                  />
-                ))}
-              </div>
+                );
+              })}
             </div>
 
-            {/* Dynamic content below timeline */}
-            <div className="min-h-[600px]">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeStep}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-                  className="grid grid-cols-1 lg:grid-cols-2 gap-8"
-                >
-                  {/* Main content card */}
-                  <div className="bg-gradient-to-br from-white to-[#F8F8F8] rounded-3xl p-8 border border-[#1A1A1A]/5 shadow-lg">
-                    <div className="flex items-center gap-4 mb-6">
-                      <div className="w-12 h-12 bg-gradient-to-br from-[#D4AF37] to-[#B8860B] rounded-full flex items-center justify-center">
-                        {stepContent[activeStep].icon}
-                      </div>
-                      <h3 className="text-2xl font-medium text-[#1A1A1A]">{stepContent[activeStep].title}</h3>
-                    </div>
-                    <p className="text-[#6A6A6A] mb-6 leading-relaxed text-lg">
-                      {stepContent[activeStep].description}
-                    </p>
-                    <div className="grid grid-cols-2 gap-4 mb-6">
-                      {stepContent[activeStep].stats.map((stat, i) => (
-                        <div key={i} className="bg-white rounded-xl p-4 border border-[#1A1A1A]/5">
-                          <div className="text-2xl font-bold text-[#D4AF37] mb-1">{stat.value}</div>
-                          <div className="text-sm text-[#6A6A6A]">{stat.label}</div>
-                        </div>
-                      ))}
-                    </div>
-                    
-                    {/* Features list */}
-                    <div className="space-y-3">
-                      <h4 className="font-medium text-[#1A1A1A] mb-3">Key Features:</h4>
-                      {stepContent[activeStep].features.map((feature, i) => (
-                        <motion.div
-                          key={i}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: i * 0.1 + 0.2 }}
-                          className="flex items-center gap-3"
-                        >
-                          <div className="w-2 h-2 bg-[#D4AF37] rounded-full flex-shrink-0" />
-                          <span className="text-[#6A6A6A]">{feature}</span>
-                        </motion.div>
-                      ))}
-                    </div>
+            {/* Right: Content display */}
+            <div className="relative">
+              <div className="sticky top-8">
+                <div className="relative bg-gradient-to-br from-[#1A1A1A]/90 to-[#0F0F0F]/80 backdrop-blur-xl 
+                              border border-[#D4AF37]/20 rounded-3xl p-12 min-h-[600px] 
+                              shadow-2xl overflow-hidden">
+                  
+                  {/* Animated background pattern */}
+                  <div className="absolute inset-0 opacity-5">
+                    <div className="w-full h-full bg-gradient-to-br from-[#D4AF37]/30 to-[#B8860B]/30" />
                   </div>
+                  
+                  <div className="relative z-10 h-full flex flex-col justify-center">
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={activeStep}
+                        initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -30, scale: 0.95 }}
+                        transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+                        className="space-y-8"
+                      >
+                        {/* Header */}
+                        <div className="flex items-center gap-4">
+                          <motion.div 
+                            className="w-20 h-20 bg-gradient-to-br from-[#D4AF37] to-[#B8860B] 
+                                      rounded-2xl flex items-center justify-center shadow-xl"
+                            whileHover={{ rotate: 5, scale: 1.05 }}
+                          >
+                            {(() => {
+                              const IconComponent = stepContent[activeStep].icon;
+                              return <IconComponent className="w-10 h-10 text-white" />;
+                            })()}
+                          </motion.div>
+                          <h3 className="text-4xl font-bold text-white tracking-tight">
+                            {stepContent[activeStep].title}
+                          </h3>
+                        </div>
 
-                  {/* Secondary content based on step */}
-                  <div className="space-y-6">
-                    {activeStep === 0 && (
-                      <>
-                        <div className="bg-gradient-to-br from-[#1A1A1A] to-[#2A2A2A] rounded-3xl p-8 text-white relative overflow-hidden">
-                          <div className="absolute top-0 right-0 w-32 h-32 bg-[#D4AF37]/10 rounded-full blur-2xl" />
-                          <div className="relative z-10">
-                            <h4 className="text-xl font-medium mb-4">Installation Package</h4>
-                            <div className="grid grid-cols-2 gap-4 mb-4">
-                              <div className="text-sm">• Mounting bracket</div>
-                              <div className="text-sm">• Installation tools</div>
-                              <div className="text-sm">• Cable management</div>
-                              <div className="text-sm">• Quick start guide</div>
-                            </div>
-                            <p className="text-sm text-[#B0B0B0]">
-                              Everything you need for a professional installation in under 30 minutes.
-                            </p>
-                          </div>
+                        <p className="text-xl leading-relaxed text-gray-300 font-light">
+                          {stepContent[activeStep].description}
+                        </p>
+
+                        {/* Stats grid */}
+                        <div className="grid grid-cols-2 gap-4">
+                          {stepContent[activeStep].stats.map((stat, i) => (
+                            <motion.div
+                              key={i}
+                              initial={{ opacity: 0, scale: 0.8 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              transition={{ delay: i * 0.1 + 0.3 }}
+                              className="bg-[#2A2A2A]/80 rounded-xl p-4 border border-[#D4AF37]/20 backdrop-blur-sm"
+                            >
+                              <div className="text-2xl font-bold text-[#D4AF37] mb-1">{stat.value}</div>
+                              <div className="text-sm text-gray-300">{stat.label}</div>
+                            </motion.div>
+                          ))}
                         </div>
                         
-                        <div className="bg-white rounded-2xl p-6 border border-[#1A1A1A]/5 shadow-md">
-                          <h4 className="font-medium text-[#1A1A1A] mb-3">Compatibility</h4>
-                          <div className="space-y-2 text-sm text-[#6A6A6A]">
-                            <div>✓ Tesla Wall Connector (Gen 2 & 3)</div>
-                            <div>✓ J1772 Standard Chargers</div>
-                            <div>✓ ChargePoint Home Flex</div>
-                            <div>✓ JuiceBox Pro Series</div>
-                          </div>
+                        {/* Features list */}
+                        <div className="space-y-3">
+                          <h4 className="font-medium text-white mb-3">Key Features:</h4>
+                          {stepContent[activeStep].features.map((feature, i) => (
+                            <motion.div
+                              key={i}
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: i * 0.1 + 0.4 }}
+                              className="flex items-center gap-3"
+                            >
+                              <div className="w-2 h-2 bg-[#D4AF37] rounded-full flex-shrink-0" />
+                              <span className="text-gray-300">{feature}</span>
+                            </motion.div>
+                          ))}
                         </div>
-                      </>
-                    )}
 
-                    {activeStep === 1 && (
-                      <>
-                        <div className="bg-gradient-to-br from-[#1A1A1A] to-[#2A2A2A] rounded-3xl p-8 text-white relative overflow-hidden">
-                          <div className="absolute top-0 right-0 w-32 h-32 bg-[#D4AF37]/10 rounded-full blur-2xl" />
-                          <div className="relative z-10">
-                            <h4 className="text-xl font-medium mb-4">Mobile App Features</h4>
-                            <div className="space-y-3">
-                              <div className="flex items-center gap-3">
-                                <Wifi className="w-4 h-4 text-[#D4AF37]" />
-                                <span className="text-sm">Real-time connection status</span>
-                              </div>
-                              <div className="flex items-center gap-3">
-                                <Battery className="w-4 h-4 text-[#D4AF37]" />
-                                <span className="text-sm">Battery level monitoring</span>
-                              </div>
-                              <div className="flex items-center gap-3">
-                                <Clock className="w-4 h-4 text-[#D4AF37]" />
-                                <span className="text-sm">Charging schedule management</span>
-                              </div>
-                            </div>
+                        {/* Progress indicator */}
+                        <div className="flex items-center gap-4 pt-6">
+                          <div className="px-6 py-3 bg-gradient-to-r from-[#D4AF37]/20 to-[#B8860B]/20 
+                                        text-[#D4AF37] font-bold rounded-full border border-[#D4AF37]/30
+                                        backdrop-blur-sm text-sm tracking-wider">
+                            STEP {steps[activeStep].num}
                           </div>
+                          <div className="flex-1 h-px bg-gradient-to-r from-[#D4AF37]/30 to-transparent" />
                         </div>
-                        
-                        <div className="bg-white rounded-2xl p-6 border border-[#1A1A1A]/5 shadow-md">
-                          <h4 className="font-medium text-[#1A1A1A] mb-3">Setup Process</h4>
-                          <div className="space-y-2 text-sm text-[#6A6A6A]">
-                            <div>1. Download Ampereon app</div>
-                            <div>2. Create your account</div>
-                            <div>3. Scan QR code on device</div>
-                            <div>4. Connect to home WiFi</div>
-                            <div>5. Pair with your vehicle</div>
-                          </div>
-                        </div>
-                      </>
-                    )}
-
-                    {activeStep === 2 && (
-                      <>
-                        <div className="bg-gradient-to-br from-[#1A1A1A] to-[#2A2A2A] rounded-3xl p-8 text-white relative overflow-hidden">
-                          <div className="absolute top-0 right-0 w-32 h-32 bg-[#D4AF37]/10 rounded-full blur-2xl" />
-                          <div className="relative z-10">
-                            <h4 className="text-xl font-medium mb-4">AI Learning Process</h4>
-                            <p className="text-sm text-[#B0B0B0] mb-4">
-                              Ampereon's AI adapts to your lifestyle, learning when you typically drive and optimizing charging accordingly.
-                            </p>
-                            <div className="grid grid-cols-2 gap-4">
-                              <div>
-                                <div className="text-2xl font-bold text-[#D4AF37]">7 days</div>
-                                <div className="text-xs text-[#B0B0B0]">to learn patterns</div>
-                              </div>
-                              <div>
-                                <div className="text-2xl font-bold text-[#D4AF37]">24/7</div>
-                                <div className="text-xs text-[#B0B0B0]">optimization</div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        <div className="bg-white rounded-2xl p-6 border border-[#1A1A1A]/5 shadow-md">
-                          <h4 className="font-medium text-[#1A1A1A] mb-3">Smart Features</h4>
-                          <div className="space-y-2 text-sm text-[#6A6A6A]">
-                            <div>🧠 Learns your daily routine</div>
-                            <div>⚡ Optimizes for off-peak rates</div>
-                            <div>🌤️ Weather-aware charging</div>
-                            <div>🔋 Battery health protection</div>
-                            <div>📅 Calendar integration</div>
-                          </div>
-                        </div>
-                      </>
-                    )}
-
-                    {activeStep === 3 && (
-                      <>
-                        <div className="bg-gradient-to-br from-[#1A1A1A] to-[#2A2A2A] rounded-3xl p-8 text-white relative overflow-hidden">
-                          <div className="absolute top-0 right-0 w-32 h-32 bg-[#D4AF37]/10 rounded-full blur-2xl" />
-                          <div className="relative z-10">
-                            <h4 className="text-xl font-medium mb-4">Live Analytics</h4>
-                            <div className="grid grid-cols-2 gap-4 mb-4">
-                              <div>
-                                <div className="text-lg font-bold text-[#D4AF37]">$27</div>
-                                <div className="text-xs text-[#B0B0B0]">Saved this month</div>
-                              </div>
-                              <div>
-                                <div className="text-lg font-bold text-[#D4AF37]">156 kWh</div>
-                                <div className="text-xs text-[#B0B0B0]">Energy consumed</div>
-                              </div>
-                            </div>
-                            <p className="text-sm text-[#B0B0B0]">
-                              Track your savings and energy usage in real-time with detailed monthly reports.
-                            </p>
-                          </div>
-                        </div>
-                        
-                        <div className="bg-white rounded-2xl p-6 border border-[#1A1A1A]/5 shadow-md">
-                          <h4 className="font-medium text-[#1A1A1A] mb-3">Insights & Reports</h4>
-                          <div className="space-y-2 text-sm text-[#6A6A6A]">
-                            <div>📊 Energy usage tracking</div>
-                            <div>💰 Cost savings analysis</div>
-                            <div>🌱 Carbon footprint reduction</div>
-                            <div>📈 Monthly efficiency reports</div>
-                            <div>⏰ Peak vs off-peak usage</div>
-                          </div>
-                        </div>
-                      </>
-                    )}
+                      </motion.div>
+                    </AnimatePresence>
                   </div>
-                </motion.div>
-              </AnimatePresence>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Bottom CTA */}
+          {/* Modern progress indicator */}
+          <div className="flex justify-center mt-20">
+            <div className="flex gap-4">
+              {steps.map((_, index) => (
+                <motion.button
+                  key={index}
+                  onClick={() => setActiveStep(index)}
+                  className={`relative h-3 rounded-full transition-all duration-500 overflow-hidden ${
+                    activeStep === index ? 'w-16' : 'w-3 hover:w-6'
+                  }`}
+                  whileHover={{ scale: 1.1 }}
+                >
+                  <div className={`h-full transition-all duration-500 ${
+                    activeStep === index 
+                      ? 'bg-gradient-to-r from-[#D4AF37] to-[#B8860B]' 
+                      : 'bg-gray-500 hover:bg-[#D4AF37]/50'
+                  }`} />
+                </motion.button>
+              ))}
+            </div>
+          </div>
+
+          {/* CTA */}
           <motion.div 
             className="text-center mt-20"
             variants={fadeUpVariants}
@@ -691,36 +739,50 @@ const AmpereonLanding = () => {
               onClick={openModal}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="inline-flex items-center gap-3 text-sm font-medium text-[#D4AF37] bg-[#D4AF37]/10 px-6 py-3 rounded-full mb-6"
+              className="inline-flex items-center gap-3 text-sm font-medium text-[#D4AF37] bg-[#D4AF37]/15 px-8 py-4 rounded-full mb-6 
+                       border border-[#D4AF37]/30 backdrop-blur-sm hover:bg-[#D4AF37]/20 transition-all duration-300"
             >
               <ArrowRight className="w-4 h-4" />
               <span>Ready to get started?</span>
             </motion.button>
-            <p className="text-[#6A6A6A] max-w-2xl mx-auto">
+            <p className="text-gray-400 max-w-2xl mx-auto">
               Join thousands of EV owners who've made the switch to effortless charging with Ampereon
             </p>
           </motion.div>
         </div>
       </motion.section>
 
-      {/* Metrics Section - Sophisticated cards */}
+      {/* Metrics Section - Enhanced with modern styling */}
       <motion.section 
-        className="py-32 px-6 bg-[#1A1A1A] text-white relative overflow-hidden"
+        className="py-32 px-6 bg-gradient-to-br from-[#0A0A0A] via-[#1A1A1A] to-[#2A2A2A] text-white relative overflow-hidden"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true }}
         variants={fadeUpVariants}
       >
-        {/* Elegant background pattern */}
-        <div className="absolute inset-0 opacity-5" 
-             style={{ backgroundImage: 'linear-gradient(45deg, #D4AF37 25%, transparent 25%), linear-gradient(-45deg, #D4AF37 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #D4AF37 75%), linear-gradient(-45deg, transparent 75%, #D4AF37 75%)', backgroundSize: '60px 60px' }} />
+        {/* Advanced background effects */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-radial from-[#D4AF37]/10 via-transparent to-transparent" />
+        </div>
         
         <div className="max-w-7xl mx-auto relative z-20">
           <motion.div className="text-center mb-20">
-            <h2 className="text-5xl md:text-6xl font-light mb-6 tracking-tight text-white relative z-20">
-              Your Impact, <span className="font-medium text-[#D4AF37]">Quantified</span>
+            <motion.div
+              className="inline-block text-[#D4AF37] text-sm font-medium tracking-[0.2em] uppercase mb-6"
+              initial={{ width: 0 }}
+              whileInView={{ width: "auto" }}
+              transition={{ duration: 1 }}
+            >
+              Impact Metrics
+            </motion.div>
+            
+            <h2 className="text-6xl md:text-8xl font-extralight mb-8 tracking-tighter text-white relative z-20">
+              Your Impact, <span className="font-bold text-[#D4AF37] italic">Quantified</span>
             </h2>
-            <div className="w-16 h-px bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent mx-auto" />
+            
+            <div className="flex justify-center">
+              <div className="w-24 h-px bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent" />
+            </div>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -736,33 +798,51 @@ const AmpereonLanding = () => {
                   variants={fadeUpVariants}
                   transition={{ delay: i * 0.15 }}
                 >
-                  <div className="bg-white/15 backdrop-blur-sm rounded-3xl p-10 border border-white/20 shadow-2xl 
-                                hover:border-[#D4AF37]/30 transition-all duration-500 hover:shadow-[#D4AF37]/20 relative z-20">
+                  <motion.div 
+                    className="bg-white/10 backdrop-blur-sm rounded-3xl p-10 border border-white/20 shadow-2xl 
+                              hover:border-[#D4AF37]/30 transition-all duration-500 hover:shadow-[#D4AF37]/20 relative z-20"
+                    whileHover={{ scale: 1.02, rotateY: 5 }}
+                    style={{ transformStyle: 'preserve-3d' }}
+                  >
                     
-                    {/* Subtle glow effect */}
+                    {/* Enhanced glow effect */}
                     <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl" />
                     
                     <div className="relative z-30">
                       <div className="flex items-center justify-between mb-6">
-                        <div className="text-6xl md:text-7xl font-light text-[#D4AF37] relative z-30">
+                        <motion.div 
+                          className="text-6xl md:text-7xl font-extralight text-[#D4AF37] relative z-30"
+                          animate={{ scale: [1, 1.05, 1] }}
+                          transition={{ duration: 2, repeat: Infinity, delay: i * 0.5 }}
+                        >
                           {metric.prefix}{displayCount}{metric.suffix}
-                        </div>
-                        <div className="text-[#D4AF37] group-hover:scale-110 transition-transform duration-300">
+                        </motion.div>
+                        <motion.div 
+                          className="text-[#D4AF37] group-hover:scale-110 transition-transform duration-300"
+                          whileHover={{ rotate: 15 }}
+                        >
                           {metric.icon}
-                        </div>
+                        </motion.div>
                       </div>
                       
                       <h3 className="text-xl font-medium mb-6 text-white relative z-30">{metric.label}</h3>
                       
-                      <button
+                      <motion.button
                         onClick={() => setActiveAccordion(activeAccordion === i ? null : i)}
                         className="flex items-center gap-3 text-[#D4AF37] hover:text-white transition-colors duration-300 
                                  focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:ring-offset-2 
                                  focus:ring-offset-[#1A1A1A] rounded-lg px-3 py-2 -ml-3 relative z-30"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                       >
                         <span className="text-sm font-medium tracking-wide">HOW?</span>
-                        <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${activeAccordion === i ? 'rotate-180' : ''}`} />
-                      </button>
+                        <motion.div
+                          animate={{ rotate: activeAccordion === i ? 180 : 0 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          <ChevronDown className="w-4 h-4" />
+                        </motion.div>
+                      </motion.button>
                       
                       <AnimatePresence>
                         {activeAccordion === i && (
@@ -779,7 +859,7 @@ const AmpereonLanding = () => {
                         )}
                       </AnimatePresence>
                     </div>
-                  </div>
+                  </motion.div>
                 </motion.div>
               );
             })}
@@ -787,43 +867,75 @@ const AmpereonLanding = () => {
         </div>
       </motion.section>
 
-      {/* Community Support - Our Supporters */}
+      {/* Community Support - Dark glassmorphism design */}
       <motion.section 
-        className="py-24 px-6 bg-white relative"
+        className="py-32 px-6 bg-gradient-to-br from-[#1A1A1A] via-[#0F0F0F] to-[#1A1A1A] relative overflow-hidden"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true }}
         variants={fadeUpVariants}
       >
-        <div className="max-w-7xl mx-auto">
+        <TechPattern />
+        
+        {/* Geometric background elements */}
+        <div className="absolute top-0 left-0 w-64 h-64 bg-[#D4AF37]/10 rotate-45 -translate-x-32 -translate-y-32" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#D4AF37]/5 rounded-full translate-x-48 translate-y-48" />
+        
+        <div className="max-w-7xl mx-auto relative z-10">
           {/* Header */}
           <motion.div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-light mb-6 tracking-tight text-[#1A1A1A]">
-              Our Amazing <span className="font-medium text-[#D4AF37]">Community</span>
+            <motion.div
+              className="inline-block text-[#D4AF37] text-sm font-semibold tracking-[0.3em] uppercase mb-6"
+              initial={{ width: 0, opacity: 0 }}
+              whileInView={{ width: "auto", opacity: 1 }}
+              transition={{ duration: 1 }}
+            >
+              Community
+            </motion.div>
+            
+            <h2 className="text-6xl md:text-7xl font-extralight mb-8 tracking-tighter text-white">
+              Our Amazing <span className="font-bold text-[#D4AF37] italic">Community</span>
             </h2>
-            <div className="w-16 h-px bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent mx-auto mb-6" />
-            <p className="text-xl text-[#6A6A6A] max-w-3xl mx-auto font-light leading-relaxed mb-8">
+            
+            <div className="flex justify-center mb-8">
+              <motion.div 
+                className="h-1 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent rounded-full"
+                initial={{ width: 0 }}
+                whileInView={{ width: "8rem" }}
+                transition={{ duration: 1.5 }}
+              />
+            </div>
+            
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light leading-relaxed mb-8">
               Meet the incredible supporters who are helping bring the future of EV charging to life
             </p>
             
-            {/* Total support amount */}
-            <div className="inline-flex items-center gap-3 bg-gradient-to-r from-[#D4AF37]/10 to-[#B8860B]/10 
-                          backdrop-blur-sm px-8 py-4 rounded-2xl border border-[#D4AF37]/20">
-              <Heart className="w-6 h-6 text-[#D4AF37]" />
-              <span className="text-2xl font-light text-[#1A1A1A]">
-                <span className="font-medium text-[#D4AF37]">${totalAmount.toLocaleString()}</span> raised by our community
+            {/* Total support amount with enhanced styling */}
+            <motion.div 
+              className="inline-flex items-center gap-4 bg-gradient-to-r from-[#1A1A1A]/80 to-[#2A2A2A]/60 
+                        backdrop-blur-xl px-10 py-6 rounded-3xl border border-[#D4AF37]/20 shadow-xl"
+              whileHover={{ scale: 1.02 }}
+            >
+              <motion.div
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                <Heart className="w-8 h-8 text-[#D4AF37]" />
+              </motion.div>
+              <span className="text-3xl font-extralight text-white">
+                <span className="font-bold text-[#D4AF37]">${totalAmount.toLocaleString()}</span> raised by our community
               </span>
-            </div>
+            </motion.div>
           </motion.div>
 
-          {/* Filter buttons */}
+          {/* Filter buttons with modern styling */}
           <motion.div 
             className="flex justify-center mb-12"
             variants={fadeUpVariants}
             transition={{ delay: 0.2 }}
           >
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-2 border border-[#1A1A1A]/10 shadow-lg">
-              <div className="flex gap-2">
+            <div className="bg-[#1A1A1A]/80 backdrop-blur-xl rounded-3xl p-3 border border-[#D4AF37]/20 shadow-xl">
+              <div className="flex gap-3">
                 {[
                   { label: 'Recent', value: 'recent' },
                   { label: 'Top Month', value: 'top-month' },
@@ -832,10 +944,10 @@ const AmpereonLanding = () => {
                   <motion.button
                     key={value}
                     onClick={() => setDonorFilter(value)}
-                    className={`px-6 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${
+                    className={`px-8 py-4 rounded-2xl text-sm font-semibold transition-all duration-300 ${
                       donorFilter === value
                         ? 'bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white shadow-lg shadow-[#D4AF37]/25'
-                        : 'text-[#6A6A6A] hover:bg-[#D4AF37]/10 hover:text-[#D4AF37]'
+                        : 'text-gray-400 hover:bg-[#D4AF37]/10 hover:text-[#D4AF37]'
                     }`}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -847,84 +959,109 @@ const AmpereonLanding = () => {
             </div>
           </motion.div>
 
-          {/* Supporters list */}
+          {/* Supporters list with enhanced styling */}
           <motion.div 
-            className="bg-gradient-to-br from-white to-[#F8F8F8] rounded-3xl p-8 border border-[#1A1A1A]/5 shadow-lg"
+            className="bg-gradient-to-br from-[#1A1A1A]/90 to-[#2A2A2A]/70 backdrop-blur-xl rounded-3xl p-12 
+                     border border-[#D4AF37]/20 shadow-2xl relative overflow-hidden"
             variants={fadeUpVariants}
             transition={{ delay: 0.3 }}
           >
-            <div className="flex items-center gap-4 mb-8">
-              <div className="w-12 h-12 bg-gradient-to-br from-[#D4AF37] to-[#B8860B] rounded-full flex items-center justify-center">
-                <Users className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-2xl font-medium text-[#1A1A1A] tracking-tight">Our Supporters</h3>
+            {/* Animated background pattern */}
+            <div className="absolute inset-0 opacity-5">
+              <div className="w-full h-full bg-gradient-to-br from-[#D4AF37]/30 to-[#B8860B]/30" />
             </div>
+            
+            <div className="relative z-10">
+              <div className="flex items-center gap-6 mb-12">
+                <motion.div 
+                  className="w-16 h-16 bg-gradient-to-br from-[#D4AF37] to-[#B8860B] rounded-2xl 
+                           flex items-center justify-center shadow-xl"
+                  whileHover={{ rotate: 15, scale: 1.1 }}
+                >
+                  <Users className="w-8 h-8 text-white" />
+                </motion.div>
+                <h3 className="text-3xl font-bold text-white tracking-tight">Our Supporters</h3>
+              </div>
 
-            {isLoading ? (
-              <div className="flex items-center justify-center py-16">
-                <div className="animate-spin h-8 w-8 border-3 border-[#D4AF37] rounded-full border-t-transparent mr-4"></div>
-                <p className="text-[#6A6A6A] font-light">Loading our awesome supporters...</p>
-              </div>
-            ) : donorsWithAmounts.length === 0 ? (
-              <div className="text-center py-16">
-                <Heart className="w-16 h-16 text-[#D4AF37]/50 mx-auto mb-6" />
-                <h4 className="text-xl font-medium text-[#1A1A1A] mb-3">Be the First to Support</h4>
-                <p className="text-[#6A6A6A] font-light max-w-md mx-auto">
-                  Join our mission to revolutionize EV charging. Be among the first supporters of this groundbreaking technology.
-                </p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {donorsWithAmounts.slice(0, 12).map((donor, index) => (
+              {isLoading ? (
+                <div className="flex items-center justify-center py-20">
                   <motion.div
-                    key={donor.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: index * 0.05 }}
-                    className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 hover:bg-white transition-all duration-300 
-                             border border-[#1A1A1A]/5 hover:border-[#D4AF37]/20 hover:shadow-md group"
+                    className="w-12 h-12 border-4 border-[#D4AF37] rounded-full border-t-transparent"
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  />
+                  <p className="text-gray-400 font-light ml-6 text-lg">Loading our awesome supporters...</p>
+                </div>
+              ) : donorsWithAmounts.length === 0 ? (
+                <div className="text-center py-20">
+                  <motion.div
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}
                   >
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 bg-gradient-to-br from-[#D4AF37]/20 to-[#B8860B]/20 rounded-full 
-                                    flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                        <span className="text-[#D4AF37] font-medium text-lg">
-                          {donor.anonymous ? '?' : (donor.firstName?.[0] || '?')}
-                        </span>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-[#1A1A1A] truncate mb-1 tracking-wide">
-                          {donor.anonymous ? 'Anonymous Supporter' : `${donor.firstName || ''} ${donor.lastName || ''}`.trim()}
-                        </p>
-                        <p className="text-[#D4AF37] font-semibold text-sm mb-2">
-                          ${donor.amount?.toFixed(2) || '0.00'}
-                        </p>
-                        {donor.dedicateTo && (
-                          <p className="text-[#6A6A6A] italic text-sm truncate mb-2">
-                            In honor of: {donor.dedicateTo}
-                          </p>
-                        )}
-                        <p className="text-[#8A8A8A] text-xs font-light">
-                          {donor.createdAt?.toDate?.()?.toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric',
-                          }) || 'Recently'}
-                        </p>
-                      </div>
-                    </div>
+                    <Heart className="w-20 h-20 text-[#D4AF37]/50 mx-auto mb-8" />
                   </motion.div>
-                ))}
-              </div>
-            )}
+                  <h4 className="text-2xl font-medium text-white mb-4">Be the First to Support</h4>
+                  <p className="text-gray-400 font-light max-w-md mx-auto text-lg">
+                    Join our mission to revolutionize EV charging. Be among the first supporters of this groundbreaking technology.
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {donorsWithAmounts.slice(0, 12).map((donor, index) => (
+                    <motion.div
+                      key={donor.id}
+                      initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      transition={{ duration: 0.4, delay: index * 0.05 }}
+                      className="bg-[#2A2A2A]/80 backdrop-blur-sm rounded-2xl p-6 hover:bg-[#2A2A2A]/90 transition-all duration-300 
+                               border border-[#D4AF37]/10 hover:border-[#D4AF37]/30 hover:shadow-lg group"
+                      whileHover={{ y: -4, scale: 1.02 }}
+                    >
+                      <div className="flex items-start gap-4">
+                        <motion.div 
+                          className="w-12 h-12 bg-gradient-to-br from-[#D4AF37]/30 to-[#B8860B]/30 rounded-full 
+                                    flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300"
+                          whileHover={{ rotate: 15 }}
+                        >
+                          <span className="text-[#D4AF37] font-medium text-lg">
+                            {donor.anonymous ? '?' : (donor.firstName?.[0] || '?')}
+                          </span>
+                        </motion.div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-white truncate mb-1 tracking-wide">
+                            {donor.anonymous ? 'Anonymous Supporter' : `${donor.firstName || ''} ${donor.lastName || ''}`.trim()}
+                          </p>
+                          <p className="text-[#D4AF37] font-semibold text-sm mb-2">
+                            ${donor.amount?.toFixed(2) || '0.00'}
+                          </p>
+                          {donor.dedicateTo && (
+                            <p className="text-gray-400 italic text-sm truncate mb-2">
+                              In honor of: {donor.dedicateTo}
+                            </p>
+                          )}
+                          <p className="text-gray-500 text-xs font-light">
+                            {donor.createdAt?.toDate?.()?.toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric',
+                            }) || 'Recently'}
+                          </p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
 
-            {/* Show more supporters indicator */}
-            {donorsWithAmounts.length > 12 && (
-              <div className="text-center mt-8">
-                <p className="text-[#6A6A6A] font-light">
-                  And <span className="font-medium text-[#D4AF37]">{donorsWithAmounts.length - 12} more</span> amazing supporters!
-                </p>
-              </div>
-            )}
+              {/* Show more supporters indicator */}
+              {donorsWithAmounts.length > 12 && (
+                <div className="text-center mt-12">
+                  <p className="text-gray-400 font-light text-lg">
+                    And <span className="font-bold text-[#D4AF37]">{donorsWithAmounts.length - 12} more</span> amazing supporters!
+                  </p>
+                </div>
+              )}
+            </div>
           </motion.div>
 
           {/* Call to action */}
@@ -937,80 +1074,137 @@ const AmpereonLanding = () => {
               onClick={openModal}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="inline-flex items-center gap-3 text-sm font-medium text-[#D4AF37] bg-[#D4AF37]/10 px-6 py-3 rounded-full mb-6"
+              className="inline-flex items-center gap-3 text-sm font-medium text-[#D4AF37] bg-[#D4AF37]/10 
+                       px-8 py-4 rounded-full mb-6 border border-[#D4AF37]/30 backdrop-blur-sm 
+                       hover:bg-[#D4AF37]/20 transition-all duration-300"
             >
               <Heart className="w-4 h-4" />
               <span>Join our community</span>
             </motion.button>
-            <p className="text-[#6A6A6A] max-w-2xl mx-auto font-light leading-relaxed">
+            <p className="text-gray-400 max-w-2xl mx-auto font-light leading-relaxed text-lg">
               Every supporter brings us closer to revolutionizing EV charging. Join this incredible community of forward-thinking individuals.
             </p>
           </motion.div>
         </div>
       </motion.section>
 
-      {/* CTA Section - Premium finish */}
+      {/* CTA Section - Enhanced futuristic design */}
       <motion.section 
-        className="py-32 px-6 bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] text-white relative overflow-hidden"
+        className="py-32 px-6 bg-gradient-to-br from-[#0A0A0A] via-[#1A1A1A] to-[#2A2A2A] text-white relative overflow-hidden"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true }}
         variants={fadeUpVariants}
       >
-        {/* Luxurious background effects */}
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#D4AF37]/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#D4AF37]/10 rounded-full blur-3xl" />
+        {/* Advanced background effects */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-radial from-[#D4AF37]/15 via-transparent to-transparent" />
+          <div className="absolute inset-0">
+            <motion.div
+              className="w-full h-full opacity-10"
+              style={{
+                backgroundImage: `conic-gradient(from 0deg at 50% 50%, transparent 0deg, #D4AF37 90deg, transparent 180deg, #B8860B 270deg, transparent 360deg)`
+              }}
+              animate={{ rotate: 360 }}
+              transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+            />
+          </div>
+        </div>
         
-        <div className="max-w-5xl mx-auto text-center relative z-10">
+        {/* Static geometric shapes */}
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#D4AF37]/20 rounded-full blur-3xl opacity-50" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#D4AF37]/10 rounded-full blur-3xl opacity-30" />
+        
+        <div className="max-w-6xl mx-auto text-center relative z-10">
           <motion.div
-            className="inline-flex items-center gap-3 text-sm font-medium text-[#D4AF37] 
-                       bg-[#D4AF37]/15 backdrop-blur-sm px-6 py-3 rounded-full mb-8 border border-[#D4AF37]/30"
+            className="inline-flex items-center gap-3 text-sm font-semibold text-[#D4AF37] 
+                       bg-gradient-to-r from-[#D4AF37]/15 to-[#B8860B]/10 backdrop-blur-sm 
+                       px-8 py-4 rounded-full mb-8 border border-[#D4AF37]/30"
             initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            viewport={{ once: true }}
             transition={{ delay: 0.2, duration: 0.6 }}
           >
             <Clock className="w-4 h-4" />
             <span className="tracking-wide text-[#D4AF37]">LIMITED TIME OFFER</span>
           </motion.div>
           
-          <h2 className="text-5xl md:text-7xl font-light mb-8 tracking-tight text-white leading-tight relative z-10">
-            First 100 Reservations Get <span className="font-medium text-[#D4AF37]">Exclusive Benefits</span>
-          </h2>
+          <motion.h2 
+            className="text-6xl md:text-8xl font-extralight mb-8 tracking-tighter text-white leading-tight relative z-10"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3, duration: 0.8 }}
+          >
+            First 100 Reservations Get{' '}
+            <span className="font-bold text-[#D4AF37] italic">Exclusive Benefits</span>
+          </motion.h2>
           
-          <p className="text-xl md:text-2xl mb-12 text-[#E0E0E0] max-w-4xl mx-auto font-light leading-relaxed relative z-10">
+          <motion.p 
+            className="text-xl md:text-2xl mb-12 text-gray-300 max-w-5xl mx-auto font-light leading-relaxed relative z-10"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+          >
             Save 20% on your Ampereon system. Get priority shipping, beta-tester updates, and lifetime perks. 
             Your future of effortless charging starts today.
-          </p>
+          </motion.p>
           
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+          <motion.div 
+            className="flex flex-col sm:flex-row gap-8 justify-center items-center"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.6, duration: 0.6 }}
+          >
             <Link href="/order">
-              <button 
-                className="px-12 py-6 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white font-medium text-xl rounded-full 
-                           hover:shadow-2xl hover:shadow-[#D4AF37]/40 transition-all duration-300 transform hover:scale-105
-                           focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:ring-offset-2 focus:ring-offset-[#1A1A1A]"
+              <motion.button 
+                className="group relative px-12 py-6 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white font-bold text-xl rounded-2xl 
+                           shadow-2xl hover:shadow-[#D4AF37]/40 transition-all duration-300
+                           focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:ring-offset-2 focus:ring-offset-[#1A1A1A]
+                           overflow-hidden"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                Order for $99
-              </button>
+                <span className="relative z-10">Order for $99</span>
+                
+                {/* Animated background shine */}
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                  animate={{ x: ['-100%', '100%'] }}
+                  transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
+                />
+              </motion.button>
             </Link>
             
-            <div className="flex items-center gap-4 text-[#E0E0E0]">
+            <div className="flex items-center gap-4 text-gray-400">
+              <div className="h-px w-8 bg-gradient-to-r from-transparent to-gray-600" />
               <span className="text-sm font-light">or</span>
+              <div className="h-px w-8 bg-gradient-to-l from-transparent to-gray-600" />
             </div>
 
             <Link href="/reserve">
-              <button 
-                className="px-10 py-5 bg-white/10 backdrop-blur-sm border border-[#D4AF37]/30 text-white font-medium text-lg rounded-full 
-                           hover:bg-[#D4AF37]/20 hover:border-[#D4AF37]/50 transition-all duration-300 transform hover:scale-105
+              <motion.button 
+                className="px-10 py-5 bg-white/5 backdrop-blur-sm border-2 border-[#D4AF37]/30 text-white font-semibold text-lg rounded-2xl 
+                           hover:bg-[#D4AF37]/10 hover:border-[#D4AF37]/50 transition-all duration-300
                            focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:ring-offset-2 focus:ring-offset-[#1A1A1A]"
+                whileHover={{ scale: 1.02 }}
               >
                 Reserve for $5
-              </button>
+              </motion.button>
             </Link>
-          </div>
+          </motion.div>
           
-          <p className="mt-8 text-sm text-[#B0B0B0] font-medium tracking-wide relative z-10">
+          <motion.p 
+            className="mt-12 text-sm text-gray-500 font-medium tracking-wide relative z-10"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.8, duration: 0.6 }}
+          >
             Only 23 spots remaining
-          </p>
+          </motion.p>
         </div>
       </motion.section>
     </div>

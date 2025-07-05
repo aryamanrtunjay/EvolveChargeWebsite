@@ -1,38 +1,17 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronRight, Zap, Clock, Target, Lightbulb, Users, Award } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronRight, Zap, Clock, Target, Lightbulb, Users, Award, ChevronDown, ArrowRight, Star, Heart, Battery, Wifi, Globe, Shield, TrendingUp } from 'lucide-react';
+import { motion, AnimatePresence, useScroll, useTransform, useInView } from 'framer-motion';
 import { FaXTwitter } from "react-icons/fa6";
-import Script from 'next/script';
-import Head from 'next/head';
-import OrderChoiceModal from '@/components/OrderChoiceModal';
 
-// Animation variants
-const fadeIn = {
-  hidden: { opacity: 0, y: 20 },
+// Enhanced animation variants
+const fadeUpVariants = {
+  hidden: { opacity: 0, y: 40 },
   visible: { 
     opacity: 1, 
     y: 0,
-    transition: { duration: 0.6, ease: 'easeOut' }
-  }
-};
-
-const slideIn = {
-  hidden: { opacity: 0, x: -30 },
-  visible: { 
-    opacity: 1, 
-    x: 0,
-    transition: { duration: 0.6, ease: 'easeOut' }
-  }
-};
-
-const slideInRight = {
-  hidden: { opacity: 0, x: 30 },
-  visible: { 
-    opacity: 1, 
-    x: 0,
-    transition: { duration: 0.6, ease: 'easeOut' }
+    transition: { duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }
   }
 };
 
@@ -41,144 +20,248 @@ const staggerContainer = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.2
+      staggerChildren: 0.15,
+      delayChildren: 0.1
     }
   }
 };
 
-// Team Member Component
+// Floating geometric shapes for modern feel
+const FloatingShapes = () => {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {[...Array(8)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute opacity-5"
+          initial={{
+            x: Math.random() * window.innerWidth,
+            y: Math.random() * window.innerHeight,
+            rotate: 0
+          }}
+          animate={{
+            x: Math.random() * window.innerWidth,
+            y: Math.random() * window.innerHeight,
+            rotate: 360
+          }}
+          transition={{
+            duration: Math.random() * 20 + 15,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+        >
+          <div className={`w-${4 + i % 4} h-${4 + i % 4} ${i % 2 === 0 ? 'bg-[#D4AF37]' : 'border-2 border-[#D4AF37]'} ${i % 3 === 0 ? 'rounded-full' : 'rounded-lg rotate-45'}`} />
+        </motion.div>
+      ))}
+    </div>
+  );
+};
+
+// Modern glassmorphism team member cards
 function TeamMember({ name, role1, role2, bio, image, linkedin, x, delay = 0 }) {
+  const [isHovered, setIsHovered] = useState(false);
+  
   return (
     <motion.div
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.3 }}
       variants={{
-        hidden: { opacity: 0, y: 20 },
+        hidden: { opacity: 0, scale: 0.8, rotateY: -15 },
         visible: { 
           opacity: 1, 
-          y: 0,
-          transition: { delay, duration: 0.6 }
+          scale: 1,
+          rotateY: 0,
+          transition: { delay, duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }
         }
       }}
-      className="bg-white/70 backdrop-blur-md rounded-2xl p-8 border border-black/10 shadow-lg hover:shadow-xl transition-all"
+      onHoverStart={() => setIsHovered(true)}
+      onHoverEnd={() => setIsHovered(false)}
+      className="group relative perspective-1000"
     >
-      <div className="text-center">
-        <div className="relative mb-6">
-          <div className="w-32 h-32 mx-auto rounded-full bg-[#F5F6F7] flex items-center justify-center border border-black/10">
-            {image ? (
-              <img 
-                src={image.src} 
-                alt={image.alt || name}
-                className="w-full h-full rounded-full object-cover"
-              />
-            ) : (
-              <div className="w-20 h-20 bg-[#EFBF04]/20 rounded-full flex items-center justify-center">
-                <span className="text-2xl font-bold text-[#EFBF04]">
-                  {name.split(' ').map(n => n[0]).join('')}
-                </span>
+      {/* Modern gradient card with glassmorphism */}
+      <motion.div 
+        className="relative bg-gradient-to-br from-white/90 via-white/80 to-white/70 backdrop-blur-xl 
+                   rounded-3xl p-8 border border-white/30 shadow-2xl overflow-hidden
+                   hover:shadow-[#D4AF37]/20 hover:shadow-3xl transition-all duration-700"
+        whileHover={{ rotateY: 5, z: 50 }}
+        style={{ transformStyle: 'preserve-3d' }}
+      >
+        {/* Animated background gradient */}
+        <motion.div 
+          className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/5 via-transparent to-[#B8860B]/5"
+          animate={{ rotate: isHovered ? 180 : 0 }}
+          transition={{ duration: 0.8 }}
+        />
+        
+        {/* Modern mesh pattern overlay */}
+        <div className="absolute inset-0 opacity-5">
+          <svg width="100%" height="100%" className="text-[#D4AF37]">
+            <defs>
+              <pattern id="mesh" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                <circle cx="20" cy="20" r="1" fill="currentColor" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#mesh)" />
+          </svg>
+        </div>
+
+        <div className="relative z-10">
+          {/* Hexagonal image container */}
+          <div className="relative mb-8 flex justify-center">
+            <motion.div 
+              className="relative w-32 h-32"
+              whileHover={{ scale: 1.1, rotate: 5 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <div className="w-full h-full rounded-3xl bg-gradient-to-br from-[#D4AF37]/20 to-[#B8860B]/20 
+                            shadow-2xl border-2 border-[#D4AF37]/30 overflow-hidden backdrop-blur-sm">
+                {image ? (
+                  <img 
+                    src={image.src} 
+                    alt={image.alt || name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-[#D4AF37] to-[#B8860B] 
+                                flex items-center justify-center text-white text-2xl font-light">
+                    {name.split(' ').map(n => n[0]).join('')}
+                  </div>
+                )}
               </div>
-            )}
+              
+              {/* Floating ring animation */}
+              <motion.div
+                className="absolute inset-0 rounded-3xl border-2 border-[#D4AF37]/40"
+                animate={{ 
+                  scale: isHovered ? [1, 1.2, 1] : 1,
+                  opacity: isHovered ? [0.4, 0.8, 0.4] : 0
+                }}
+                transition={{ duration: 2, repeat: isHovered ? Infinity : 0 }}
+              />
+            </motion.div>
+          </div>
+          
+          {/* Content with modern typography */}
+          <div className="text-center space-y-4">
+            <motion.h3 
+              className="text-2xl font-semibold text-[#1A1A1A] tracking-tight"
+              whileHover={{ scale: 1.05 }}
+            >
+              {name}
+            </motion.h3>
+            
+            <div className="space-y-1">
+              <p className="text-[#D4AF37] font-medium text-sm uppercase tracking-wider">{role1}</p>
+              {role2 && <p className="text-[#D4AF37] font-medium text-sm uppercase tracking-wider">{role2}</p>}
+            </div>
+            
+            <div className="h-px bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent my-6" />
+            
+            <p className="text-[#6A6A6A] leading-relaxed text-base">{bio}</p>
+            
+            {/* Modern social links */}
+            <div className="flex justify-center gap-4 pt-6">
+              {linkedin && (
+                <motion.a 
+                  href={linkedin}
+                  whileHover={{ scale: 1.2, rotate: 5 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="w-12 h-12 bg-gradient-to-br from-[#D4AF37]/20 to-[#B8860B]/20 
+                           text-[#D4AF37] rounded-2xl flex items-center justify-center 
+                           hover:from-[#D4AF37]/30 hover:to-[#B8860B]/30 transition-all duration-300 
+                           backdrop-blur-sm border border-[#D4AF37]/20"
+                >
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                  </svg>
+                </motion.a>
+              )}
+              {x && (
+                <motion.a 
+                  href={x}
+                  whileHover={{ scale: 1.2, rotate: -5 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="w-12 h-12 bg-gradient-to-br from-[#D4AF37]/20 to-[#B8860B]/20 
+                           text-[#D4AF37] rounded-2xl flex items-center justify-center 
+                           hover:from-[#D4AF37]/30 hover:to-[#B8860B]/30 transition-all duration-300 
+                           backdrop-blur-sm border border-[#D4AF37]/20"
+                >
+                  <FaXTwitter className="w-6 h-6" />
+                </motion.a>
+              )}
+            </div>
           </div>
         </div>
-        
-        <h3 className="text-xl font-semibold text-[#111111] mb-2 tracking-wide">{name}</h3>
-        <p className="text-[#6F6F6F] font-medium">{role1}</p>
-        {role2 && <p className="text-[#6F6F6F] font-medium">{role2}</p>}
-        <p className="text-[#6F6F6F] text-sm leading-relaxed mt-4 mb-6">{bio}</p>
-        
-        <div className="flex justify-center space-x-3">
-          {linkedin && (
-            <a 
-              href={linkedin}
-              className="w-10 h-10 bg-[#F5F6F7] text-[#111111]/70 rounded-full flex items-center justify-center hover:bg-[#EFBF04]/20 hover:text-[#EFBF04] transition-colors"
-            >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-              </svg>
-            </a>
-          )}
-          {x && (
-            <a 
-              href={x}
-              className="w-10 h-10 bg-[#F5F6F7] text-[#111111]/70 rounded-full flex items-center justify-center hover:bg-[#EFBF04]/20 hover:text-[#EFBF04] transition-colors"
-            >
-              <FaXTwitter className="w-5 h-5" />
-            </a>
-          )}
-        </div>
-      </div>
+      </motion.div>
     </motion.div>
   );
 }
 
-// Value Card Component
+// Minimalist value cards with unique layouts
 function ValueCard({ icon, title, description, index }) {
+  const isEven = index % 2 === 0;
+  
   return (
     <motion.div
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.3 }}
       variants={{
-        hidden: { opacity: 0, y: 20 },
-        visible: { 
-          opacity: 1, 
-          y: 0,
-          transition: { delay: index * 0.2, duration: 0.6 }
-        }
-      }}
-      className="bg-white/70 backdrop-blur-md rounded-xl p-8 border border-black/10 shadow-lg hover:shadow-xl transition-all text-center"
-    >
-      <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 bg-[#EFBF04]/10">
-        <div className="text-[#EFBF04]">
-          {icon}
-        </div>
-      </div>
-      <h3 className="text-xl font-semibold text-[#111111] mb-4 tracking-wide">{title}</h3>
-      <p className="text-[#6F6F6F] leading-relaxed">{description}</p>
-    </motion.div>
-  );
-}
-
-// Milestone Component
-function Milestone({ year, title, description, index }) {
-  return (
-    <motion.div
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.3 }}
-      variants={{
-        hidden: { opacity: 0, x: index % 2 === 0 ? -20 : 20 },
+        hidden: { opacity: 0, x: isEven ? -50 : 50 },
         visible: { 
           opacity: 1, 
           x: 0,
-          transition: { delay: index * 0.2, duration: 0.6 }
+          transition: { delay: index * 0.2, duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }
         }
       }}
-      className="flex items-center space-x-6"
+      className="group relative"
     >
-      <div className="flex-shrink-0">
-        <div className="w-16 h-16 bg-[#EFBF04]/20 rounded-full flex items-center justify-center border border-[#EFBF04]/30 shadow-sm">
-          <span className="text-[#EFBF04] font-semibold text-sm">{year}</span>
+      {/* Asymmetric card design */}
+      <div className={`relative ${isEven ? 'ml-8' : 'mr-8'} p-12 
+                      bg-gradient-to-${isEven ? 'br' : 'bl'} from-white to-[#F8F8F8] 
+                      ${isEven ? 'rounded-tl-3xl rounded-br-3xl rounded-tr-lg rounded-bl-lg' : 'rounded-tr-3xl rounded-bl-3xl rounded-tl-lg rounded-br-lg'}
+                      border-l-4 border-[#D4AF37] shadow-xl hover:shadow-2xl
+                      transition-all duration-500 overflow-hidden`}>
+        
+        {/* Diagonal accent line */}
+        <div className={`absolute ${isEven ? 'top-0 right-0' : 'top-0 left-0'} w-24 h-24 
+                        bg-gradient-to-${isEven ? 'bl' : 'br'} from-[#D4AF37]/10 to-transparent 
+                        ${isEven ? 'rounded-bl-full' : 'rounded-br-full'}`} />
+        
+        <div className="relative z-10">
+          {/* Icon with modern treatment */}
+          <motion.div 
+            className={`inline-flex items-center justify-center w-16 h-16 mb-8
+                       bg-gradient-to-br from-[#D4AF37] to-[#B8860B] 
+                       ${isEven ? 'rounded-tr-2xl rounded-bl-2xl' : 'rounded-tl-2xl rounded-br-2xl'}
+                       shadow-lg text-white`}
+            whileHover={{ rotate: isEven ? 15 : -15, scale: 1.1 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            {icon}
+          </motion.div>
+          
+          <h3 className="text-2xl font-bold text-[#1A1A1A] mb-6 tracking-tight">{title}</h3>
+          <p className="text-[#6A6A6A] leading-relaxed text-lg font-light">{description}</p>
+          
+          {/* Modern accent element */}
+          <div className={`mt-8 w-16 h-1 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] 
+                          ${isEven ? 'rounded-r-full' : 'rounded-l-full ml-auto'}`} />
         </div>
-      </div>
-      <div className="flex-1 bg-white/70 backdrop-blur-md rounded-xl p-6 border border-black/10 shadow-sm">
-        <h3 className="text-lg font-semibold text-[#111111] mb-2 tracking-wide">{title}</h3>
-        <p className="text-[#6F6F6F]">{description}</p>
       </div>
     </motion.div>
   );
 }
 
+// Advanced story section with split-screen design
 const StorySection = () => {
   const [activeStoryPoint, setActiveStoryPoint] = useState(0);
-  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    setIsVisible(true);
     const interval = setInterval(() => {
       setActiveStoryPoint((prev) => (prev + 1) % 3);
-    }, 5000);
+    }, 6000);
     return () => clearInterval(interval);
   }, []);
 
@@ -187,144 +270,223 @@ const StorySection = () => {
       icon: Clock,
       title: "The Problem",
       description: "Ampereon was born from a simple frustration: why should charging your electric vehicle be any more complicated than parking in your garage? Our founders, both EV owners and engineers, experienced the daily hassle of manually plugging and unplugging their vehicles.",
-      color: "#EFBF04",
-      bgColor: "bg-[#EFBF04]/10",
-      borderColor: "border-[#EFBF04]/30",
-      glowColor: "shadow-[#EFBF04]/20"
+      number: "01"
     },
     {
       icon: Target,
       title: "The Vision", 
       description: "After researching the market, we discovered that while EVs had advanced tremendously, charging infrastructure remained stuck in the past. We envisioned a world where your vehicle charges automatically, intelligently, and cost-effectively without any manual intervention.",
-      color: "#EFBF04",
-      bgColor: "bg-[#EFBF04]/10",
-      borderColor: "border-[#EFBF04]/30",
-      glowColor: "shadow-[#EFBF04]/20"
+      number: "02"
     },
     {
       icon: Zap,
       title: "The Solution",
       description: "What started as a weekend project in a garage has grown into a dedicated team of engineers, designers, and EV enthusiasts working to make this vision a reality. Today, we're proud to introduce the world's first truly automatic EV charger.",
-      color: "#EFBF04",
-      bgColor: "bg-[#EFBF04]/10",
-      borderColor: "border-[#EFBF04]/30",
-      glowColor: "shadow-[#EFBF04]/20"
+      number: "03"
     }
   ];
 
   return (
-    <section className="py-24 relative overflow-hidden">
-      <div className="absolute inset-0 bg-[#F5F6F7]"></div>
+    <section className="py-32 px-6 bg-[#1A1A1A] text-white relative overflow-hidden">
+      {/* Futuristic grid background */}
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#2A2A2A] via-[#1A1A1A] to-[#0A0A0A]" />
+        <div className="absolute inset-0 opacity-10">
+          <svg width="100%" height="100%">
+            <defs>
+              <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+                <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#D4AF37" strokeWidth="1"/>
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grid)" />
+          </svg>
+        </div>
+      </div>
+
+      {/* Floating orbs */}
+      <div className="absolute top-20 right-20 w-64 h-64 bg-[#D4AF37]/10 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute bottom-20 left-20 w-96 h-96 bg-[#D4AF37]/5 rounded-full blur-3xl" />
       
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div className="max-w-7xl mx-auto relative z-10">
+        <motion.div 
+          className="text-center mb-20"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeUpVariants}
+        >
+          <motion.div
+            className="inline-block text-[#D4AF37] text-sm font-medium tracking-[0.2em] uppercase mb-6"
+            initial={{ width: 0 }}
+            whileInView={{ width: "auto" }}
+            transition={{ duration: 1 }}
+          >
+            Our Journey
+          </motion.div>
+          
+          <h2 className="text-6xl md:text-8xl font-extralight mb-8 tracking-tighter text-white">
+            Our <span className="font-medium text-[#D4AF37] italic">Story</span>
+          </h2>
+          
+          <div className="flex justify-center mb-8">
+            <div className="w-24 h-px bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent" />
+          </div>
+          
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
+            From a simple frustration to a revolutionary solution
+          </p>
+        </motion.div>
+
+        {/* Split screen layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-stretch min-h-[600px]">
+          {/* Left: Interactive timeline */}
           <div className="space-y-6">
             {storyPoints.map((point, index) => {
               const IconComponent = point.icon;
               const isActive = activeStoryPoint === index;
               
               return (
-                <div 
+                <motion.div 
                   key={index}
-                  className={`group cursor-pointer transition-all duration-300 ease-out transform ${
-                    isActive ? 'scale-[1.02]' : 'hover:scale-[1.01]'
+                  className={`relative cursor-pointer transition-all duration-700 ${
+                    isActive ? 'scale-105' : 'hover:scale-102'
                   }`}
                   onMouseEnter={() => setActiveStoryPoint(index)}
                   onClick={() => setActiveStoryPoint(index)}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  variants={{
+                    hidden: { opacity: 0, x: -30 },
+                    visible: { 
+                      opacity: 1, 
+                      x: 0,
+                      transition: { delay: index * 0.2, duration: 0.6 }
+                    }
+                  }}
                 >
-                  <div className={`
-                    relative bg-white/70 backdrop-blur-md border border-black/10 rounded-2xl p-6
-                    shadow-lg transition-all duration-300
-                    ${isActive ? `${point.glowColor} shadow-xl` : 'hover:shadow-xl'}
-                  `}>
-                    {isActive && (
-                      <div className={`absolute inset-0 ${point.bgColor} rounded-2xl opacity-60 transition-opacity duration-300`}></div>
-                    )}
+                  {/* Modern timeline item */}
+                  <div className={`relative p-8 rounded-2xl border transition-all duration-500
+                                 ${isActive 
+                                   ? 'bg-gradient-to-r from-[#D4AF37]/10 to-[#B8860B]/5 border-[#D4AF37]/40 shadow-2xl shadow-[#D4AF37]/20' 
+                                   : 'bg-white/5 border-white/10 hover:border-[#D4AF37]/20 backdrop-blur-sm'
+                                 }`}>
                     
-                    <div className="relative z-10 flex items-center gap-6">
-                      <div className="flex-shrink-0">
-                        <div className={`
-                          w-16 h-16 bg-[#EFBF04]/20 rounded-xl 
-                          flex items-center justify-center transform transition-all duration-300
-                          shadow-sm backdrop-blur-sm
-                          ${isActive ? 'rotate-3 scale-110 shadow-md' : 'group-hover:rotate-1 group-hover:scale-105'}
-                        `}>
-                          <IconComponent className="w-8 h-8 text-[#EFBF04]" />
+                    <div className="flex items-center gap-6">
+                      {/* Modern step indicator */}
+                      <div className={`relative flex items-center justify-center w-16 h-16 rounded-xl
+                                     transition-all duration-500 ${
+                                       isActive 
+                                         ? 'bg-gradient-to-br from-[#D4AF37] to-[#B8860B] shadow-lg shadow-[#D4AF37]/30' 
+                                         : 'bg-white/10 border border-white/20'
+                                     }`}>
+                        <IconComponent className={`w-8 h-8 ${isActive ? 'text-white' : 'text-[#D4AF37]'}`} />
+                      </div>
+                      
+                      <div className="flex-1">
+                        <h3 className={`text-2xl font-semibold mb-2 transition-colors duration-300 ${
+                          isActive ? 'text-white' : 'text-gray-300'
+                        }`}>
+                          {point.title}
+                        </h3>
+                        <div className="text-[#D4AF37] font-medium text-sm tracking-wider">
+                          STEP {point.number}
                         </div>
                       </div>
 
-                      <div className="flex-1">
-                        <h3 className={`
-                          text-xl font-semibold transition-colors duration-300 mb-2 tracking-wide text-[#111111]
-                          ${isActive ? 'text-[#111111]' : 'text-[#111111]/80'}
-                        `}>
-                          {point.title}
-                        </h3>
-                      </div>
-
-                      <div className="flex-shrink-0">
-                        <div className={`
-                          w-1 h-8 rounded-full transition-all duration-300
-                          ${isActive ? `bg-[#EFBF04] opacity-100` : 'bg-[#6F6F6F]/50 opacity-50'}
-                        `}></div>
-                      </div>
+                      {/* Active indicator */}
+                      <div className={`w-2 h-16 rounded-full transition-all duration-500 ${
+                        isActive 
+                          ? 'bg-gradient-to-b from-[#D4AF37] to-[#B8860B] shadow-lg shadow-[#D4AF37]/50' 
+                          : 'bg-gray-600'
+                      }`} />
                     </div>
                   </div>
-                </div>
+                </motion.div>
               );
             })}
           </div>
 
-          <div className="lg:pl-8">
-            <div className="relative backdrop-blur-md bg-white/70 border border-black/10 rounded-3xl p-8 shadow-lg min-h-[400px] flex flex-col justify-center">
-              <div className={`absolute inset-0 ${storyPoints[activeStoryPoint].bgColor} rounded-3xl opacity-40 transition-all duration-300`}></div>
-              
-              <div className="relative z-10">
-                <div className={`
-                  w-20 h-20 bg-[#EFBF04]/20 rounded-2xl 
-                  flex items-center justify-center mb-6 shadow-sm transform transition-all duration-300
-                  ${isVisible ? 'rotate-3 scale-110' : ''}
-                `}>
-                  {React.createElement(storyPoints[activeStoryPoint].icon, { 
-                    className: "w-10 h-10 text-[#EFBF04]" 
-                  })}
-                </div>
-
-                <h3 className="text-3xl font-semibold text-[#111111] mb-6 tracking-wide transition-all duration-300">
-                  {storyPoints[activeStoryPoint].title}
-                </h3>
+          {/* Right: Content display with modern styling */}
+          <div className="relative">
+            <div className="sticky top-8">
+              <div className="relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl 
+                            border border-white/20 rounded-3xl p-12 min-h-[500px] 
+                            shadow-2xl overflow-hidden">
                 
-                <p className="text-lg leading-relaxed text-[#6F6F6F] transition-all duration-300">
-                  {storyPoints[activeStoryPoint].description}
-                </p>
+                {/* Animated background pattern */}
+                <div className="absolute inset-0 opacity-5">
+                  <motion.div
+                    className="w-full h-full bg-gradient-to-br from-[#D4AF37] to-[#B8860B]"
+                    animate={{ rotate: [0, 90, 180, 270, 360] }}
+                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                    style={{ clipPath: "polygon(0 0, 100% 0, 50% 100%)" }}
+                  />
+                </div>
+                
+                <div className="relative z-10 h-full flex flex-col justify-center">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={activeStoryPoint}
+                      initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -30, scale: 0.95 }}
+                      transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+                    >
+                      {/* Modern icon container */}
+                      <motion.div 
+                        className="w-20 h-20 bg-gradient-to-br from-[#D4AF37] to-[#B8860B] 
+                                  rounded-2xl flex items-center justify-center mb-8 shadow-xl"
+                        whileHover={{ rotate: 5, scale: 1.05 }}
+                      >
+                        {React.createElement(storyPoints[activeStoryPoint].icon, { 
+                          className: "w-10 h-10 text-white" 
+                        })}
+                      </motion.div>
 
-                <div className="mt-8 flex items-center gap-4">
-                  <div className={`
-                    px-4 py-2 rounded-full bg-[#EFBF04]/20 
-                    text-[#EFBF04] font-semibold text-sm shadow-sm
-                  `}>
-                    {String(activeStoryPoint + 1).padStart(2, '0')}
-                  </div>
+                      <h3 className="text-4xl font-bold text-white mb-6 tracking-tight">
+                        {storyPoints[activeStoryPoint].title}
+                      </h3>
+                      
+                      <p className="text-xl leading-relaxed text-gray-300 mb-8 font-light">
+                        {storyPoints[activeStoryPoint].description}
+                      </p>
+
+                      {/* Modern step indicator */}
+                      <div className="flex items-center gap-4">
+                        <div className="px-6 py-3 bg-gradient-to-r from-[#D4AF37]/20 to-[#B8860B]/20 
+                                      text-[#D4AF37] font-bold rounded-full border border-[#D4AF37]/30
+                                      backdrop-blur-sm text-sm tracking-wider">
+                          STEP {storyPoints[activeStoryPoint].number}
+                        </div>
+                        <div className="flex-1 h-px bg-gradient-to-r from-[#D4AF37]/30 to-transparent" />
+                      </div>
+                    </motion.div>
+                  </AnimatePresence>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="flex justify-center mt-12 lg:hidden">
-          <div className="flex gap-3">
-            {storyPoints.map((point, index) => (
-              <button
+        {/* Modern progress indicator */}
+        <div className="flex justify-center mt-20">
+          <div className="flex gap-4">
+            {storyPoints.map((_, index) => (
+              <motion.button
                 key={index}
                 onClick={() => setActiveStoryPoint(index)}
-                className={`
-                  w-4 h-4 rounded-full transition-all duration-300
-                  ${activeStoryPoint === index 
-                    ? `bg-[#EFBF04] scale-125` 
-                    : 'bg-[#6F6F6F]/50 hover:bg-[#6F6F6F]'
-                  }
-                `}
-              />
+                className={`relative h-3 rounded-full transition-all duration-500 overflow-hidden ${
+                  activeStoryPoint === index ? 'w-16' : 'w-3 hover:w-6'
+                }`}
+                whileHover={{ scale: 1.1 }}
+              >
+                <div className={`h-full transition-all duration-500 ${
+                  activeStoryPoint === index 
+                    ? 'bg-gradient-to-r from-[#D4AF37] to-[#B8860B]' 
+                    : 'bg-gray-600 hover:bg-[#D4AF37]/50'
+                }`} />
+              </motion.button>
             ))}
           </div>
         </div>
@@ -335,212 +497,271 @@ const StorySection = () => {
 
 export default function AboutPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { scrollY } = useScroll();
+  const heroParallax = useTransform(scrollY, [0, 500], [0, 20]);
 
   const teamMembers = [
     {
       name: "Aryaman Rtunjay",
       role1: "Co-Chief Executive Officer",
       role2: "Co-Founder",
-      bio: "Aryaman shapes Ampereon’s vision and strategy, leading with unparalleled expertise in end-to-end engineering. He designs and implements the core technology behind the company’s innovative chargers, driving transformative impact. He also develops and builds liquid-fueled sub-orbital rockets and develops AI tools for environmental policy in developing nations and early detection of Parkinson's Disease",
+      bio: "Aryaman shapes Ampereon's vision and strategy, leading with unparalleled expertise in end-to-end engineering. He designs and implements the core technology behind the company's innovative chargers, driving transformative impact.",
       linkedin: "https://linkedin.com/in/aryaman-rtunjay",
       x: "https://x.com/aryamanrtunjay",
-      img: { src: "/images/aryaman.jpeg", alt: "AR" }
+      image: { src: "/images/aryaman.jpeg", alt: "AR" }
     },
     {
       name: "Bhanu Atmakuri",
       role1: "Co-Chief Executive Officer",
       role2: "Co-Founder",
-      bio: "Bhanu fuels Ampereon’s innovation, leading product development with expertise in Python, JavaScript, C, and PCB design. He is instrumental in bringing the company’s patent-pending smart chargers from concept to reality, ensuring technical excellence. Through his hackathon, Hackabyte, Bhanu inspires young coders, blending cutting-edge technology with community impact.",
+      bio: "Bhanu fuels Ampereon's innovation, leading product development with expertise in Python, JavaScript, C, and PCB design. He is instrumental in bringing the company's patent-pending smart chargers from concept to reality.",
       linkedin: "https://www.linkedin.com/in/bhanu-atmakuri-9499752b3/",
-      img: { src: "/images/bhanu.jpeg", alt: "BA" }
+      image: { src: "/images/bhanu.jpeg", alt: "BA" }
     },
     {
       name: "Shruthika Balasubramanian",
       role1: "Chief Marketing Officer",
       role2: "Co-Founder",
-      bio: "Shruthika spearheads Ampereon’s marketing strategy, leveraging her passion for computer science and sustainability. As CMO, she designs targeted campaigns and compelling brand stories that highlight the company’s eco-friendly mission. Her data-driven approach to customer engagement and advocacy for environmental justice amplify EVolve’s impact in the EV charging space.",
+      bio: "Shruthika spearheads Ampereon's marketing strategy, leveraging her passion for computer science and sustainability. As CMO, she designs targeted campaigns and compelling brand stories that highlight the company's eco-friendly mission.",
       linkedin: "https://www.linkedin.com/in/shruthika-balasubramanian-233634369/",
-      img: { src: "/images/shruthika.jpeg", alt: "SB" }
+      image: { src: "/images/shruthika.jpeg", alt: "SB" }
     }
   ];
 
-  const milestones = [
+  const values = [
     {
-      year: "2022",
-      title: "Company Founded",
-      description: "Started with a vision to eliminate the hassle of manual EV charging and make electric vehicle ownership seamless."
+      icon: <Lightbulb className="w-10 h-10" />,
+      title: "Innovation First",
+      description: "We believe in pushing boundaries and challenging the status quo. Every product we create represents a leap forward in EV charging technology, built with cutting-edge AI and sustainable practices."
     },
     {
-      year: "2023",
-      title: "Prototype Development",
-      description: "Completed first working prototype of automatic charging system. Filed 12 patents for magnetic connection technology."
+      icon: <Heart className="w-10 h-10" />,
+      title: "Customer Obsession",
+      description: "Our customers drive everything we do. We listen, iterate, and continuously improve based on real user feedback and experiences, ensuring every interaction exceeds expectations."
     },
     {
-      year: "2024",
-      title: "Funding & Team Growth",
-      description: "Raised $15M Series A funding. Grew team to 25 engineers and began pilot testing with early customers."
-    },
-    {
-      year: "2025",
-      title: "Product Launch",
-      description: "Launched Ampereon with orders exceeding expectations. Preparing for mass production and nationwide rollout."
+      icon: <Battery className="w-10 h-10" />,
+      title: "Sustainability",
+      description: "We're committed to accelerating the world's transition to sustainable transportation through intelligent, efficient charging solutions that reduce environmental impact."
     }
   ];
 
   return (
-    <div className="min-h-screen bg-white">
-      <Script
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            !function(e,t,n,s,u,a){e.twq||(s=e.twq=function(){s.exe?s.exe.apply(s,arguments):s.queue.push(arguments);
-            },s.version='1.1',s.queue=[],u=t.createElement(n),u.async=!0,u.src='https://static.ads-twitter.com/uwt.js',
-            a=t.getElementsByTagName(n)[0],a.parentNode.insertBefore(u,a))}(window,document,'script');
-            twq('config','q1blv');
-          `,
-        }}
-      />
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-16 overflow-hidden bg-white">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#F5F6F7] to-white"></div>
+    <div className="bg-[#FAFAFA] text-[#1A1A1A] overflow-x-hidden">
+      {/* Hero Section - Cinematic with floating elements */}
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        <FloatingShapes />
         
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={staggerContainer}
-            className="text-center"
-          >
-            <motion.div
-              variants={fadeIn}
-              className="inline-flex items-center px-4 py-2 rounded-full bg-[#EFBF04]/10 text-[#EFBF04] text-sm font-medium mb-6 tracking-wide"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
-              About Ampereon
-            </motion.div>
-            
-            <motion.h1 
-              variants={fadeIn}
-              className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-[#111111] tracking-tight"
-            >
-              <span className="block">Revolutionizing</span>
-              <span className="text-[#EFBF04]">
-                Electric Vehicle Charging
-              </span>
-            </motion.h1>
-            
-            <motion.p 
-              variants={fadeIn}
-              className="text-xl text-[#6F6F6F] mb-12 max-w-3xl mx-auto leading-relaxed"
-            >
-              We're building the future of EV charging through intelligent automation, 
-              making electric vehicle ownership effortless and accessible for everyone.
-            </motion.p>
-          </motion.div>
+        {/* Sophisticated layered background */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-to-br from-[#F8F8F8] via-white to-[#F8F8F8]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#D4AF37]/5 via-transparent to-transparent" />
         </div>
+        
+        {/* Animated orbs */}
+        <motion.div 
+          className="absolute top-20 right-20 w-96 h-96 bg-gradient-to-br from-[#D4AF37]/10 to-transparent rounded-full blur-3xl"
+          animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.6, 0.3] }}
+          transition={{ duration: 8, repeat: Infinity }}
+        />
+        <motion.div 
+          className="absolute bottom-20 left-20 w-96 h-96 bg-gradient-to-tr from-[#D4AF37]/5 to-transparent rounded-full blur-3xl"
+          animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.4, 0.2] }}
+          transition={{ duration: 10, repeat: Infinity, delay: 2 }}
+        />
+        
+        <motion.div
+          className="relative z-10 px-6 text-center"
+          style={{ y: heroParallax }}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, ease: [0.25, 0.1, 0.25, 1] }}
+        >
+          {/* Modern glassmorphism hero card */}
+          <div className="backdrop-blur-2xl bg-white/70 border border-white/30 rounded-[2rem] p-16 max-w-6xl mx-auto 
+                        shadow-[0_8px_32px_rgba(0,0,0,0.1)] relative overflow-hidden">
+            
+            {/* Subtle animated background pattern */}
+            <div className="absolute inset-0 opacity-5">
+              <motion.div
+                className="w-full h-full bg-gradient-to-br from-[#D4AF37] to-[#B8860B]"
+                animate={{ rotate: [0, 360] }}
+                transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
+                style={{ clipPath: "polygon(50% 0%, 0% 100%, 100% 100%)" }}
+              />
+            </div>
+            
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2, duration: 0.8 }}
+              className="relative z-10"
+            >
+              {/* Modern badge */}
+              <div className="inline-flex items-center gap-3 text-sm font-medium text-[#D4AF37] 
+                           bg-gradient-to-r from-[#D4AF37]/10 to-[#B8860B]/10 backdrop-blur-sm 
+                           px-8 py-4 rounded-full mb-8 border border-[#D4AF37]/20">
+                <Users className="w-4 h-4" />
+                <span className="tracking-wide">About Ampereon</span>
+              </div>
+              
+              {/* Modern typography treatment */}
+              <h1 className="font-extralight tracking-tighter leading-[0.9] mb-8 text-[#1A1A1A]"
+                  style={{ fontSize: 'clamp(3.5rem,7vw,5.5rem)' }}>
+                Pioneering the{' '}
+                <span className="font-bold bg-gradient-to-r from-[#D4AF37] to-[#B8860B] bg-clip-text text-transparent">
+                  Future
+                </span>
+                <br />
+                of EV Charging
+              </h1>
+
+              <p className="text-xl sm:text-2xl text-[#6A6A6A] mb-12 max-w-4xl mx-auto font-light leading-relaxed">
+                We're building intelligent automation that makes electric vehicle ownership effortless, 
+                accessible, and truly sustainable for everyone.
+              </p>
+
+              {/* Modern CTA buttons */}
+              <div className="flex flex-col sm:flex-row gap-6 justify-center">
+                <motion.button
+                  className="group px-12 py-5 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white font-semibold rounded-2xl
+                            shadow-xl hover:shadow-2xl hover:shadow-[#D4AF37]/30 transition-all duration-300
+                            focus:ring-2 focus:ring-[#D4AF37]/40 relative overflow-hidden"
+                  onClick={() => setIsModalOpen(true)}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <span className="relative z-10 flex items-center gap-2">
+                    Join Our Mission
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </span>
+                  
+                  {/* Button shine effect */}
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                    animate={{ x: ['-100%', '100%'] }}
+                    transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+                  />
+                </motion.button>
+
+                <motion.button
+                  className="group px-10 py-5 border-2 border-[#D4AF37]/30 backdrop-blur-sm rounded-2xl text-[#1A1A1A] font-semibold
+                            hover:bg-[#D4AF37]/10 hover:border-[#D4AF37]/50 flex items-center gap-3 transition-all duration-300"
+                  whileHover={{ scale: 1.02 }}
+                >
+                  <ChevronRight className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
+                  Learn More
+                </motion.button>
+              </div>
+            </motion.div>
+          </div>
+        </motion.div>
       </section>
 
+      {/* Story Section */}
       <StorySection />
 
-      {/* Mission & Values Section */}
-      <section className="py-20 bg-[#F5F6F7] relative overflow-hidden">
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
+      {/* Mission & Values Section - Asymmetric design */}
+      <section className="py-32 px-6 bg-gradient-to-br from-white via-[#F8F8F8] to-white relative overflow-hidden">
+        {/* Geometric background elements */}
+        <div className="absolute top-0 left-0 w-64 h-64 bg-[#D4AF37]/5 rotate-45 -translate-x-32 -translate-y-32" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#D4AF37]/3 rounded-full translate-x-48 translate-y-48" />
+        
+        <div className="max-w-7xl mx-auto relative z-10">
+          <motion.div 
+            className="text-center mb-20"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={staggerContainer}
-            className="text-center mb-16"
+            viewport={{ once: true }}
+            variants={fadeUpVariants}
           >
-            <motion.h2 variants={fadeIn} className="text-3xl md:text-4xl font-bold mb-6 text-[#111111] tracking-tight">
-              Our Mission & Values
-            </motion.h2>
-            <motion.p variants={fadeIn} className="text-lg text-[#6F6F6F] max-w-2xl mx-auto mb-12 leading-relaxed">
-              We're driven by the belief that technology should simplify life, not complicate it. 
+            {/* Modern section header */}
+            <motion.div
+              className="inline-block text-[#D4AF37] text-sm font-semibold tracking-[0.3em] uppercase mb-6"
+              initial={{ width: 0, opacity: 0 }}
+              whileInView={{ width: "auto", opacity: 1 }}
+              transition={{ duration: 1 }}
+            >
+              Our Foundation
+            </motion.div>
+            
+            <h2 className="text-6xl md:text-7xl font-extralight mb-8 tracking-tighter text-[#1A1A1A]">
+              Our <span className="font-bold text-[#D4AF37] italic">Mission</span> & Values
+            </h2>
+            
+            <div className="flex justify-center mb-8">
+              <motion.div 
+                className="h-1 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent rounded-full"
+                initial={{ width: 0 }}
+                whileInView={{ width: "8rem" }}
+                transition={{ duration: 1.5 }}
+              />
+            </div>
+            
+            <p className="text-xl text-[#6A6A6A] max-w-4xl mx-auto font-light leading-relaxed">
+              Driven by the belief that technology should simplify life, not complicate it. 
               Our mission is to accelerate EV adoption by removing barriers and creating seamless experiences.
-            </motion.p>
+            </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <ValueCard
-              index={0}
-              icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>}
-              title="Innovation First"
-              description="We believe in pushing boundaries and challenging the status quo. Every product we create represents a leap forward in EV charging technology."
-            />
-            <ValueCard
-              index={1}
-              icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>}
-              title="Customer Obsession"
-              description="Our customers drive everything we do. We listen, iterate, and continuously improve based on real user feedback and experiences."
-            />
-            <ValueCard
-              index={2}
-              icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9" /></svg>}
-              title="Sustainability"
-              description="We're committed to accelerating the world's transition to sustainable transportation through intelligent, efficient charging solutions."
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Order Choice Modal */}
-      <OrderChoiceModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-
-      {/* Timeline Section */}
-      {/* <section className="py-20 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={staggerContainer}
-            className="text-center mb-16"
-          >
-            <motion.h2 variants={fadeIn} className="text-3xl md:text-4xl font-bold mb-4 text-[#111111] tracking-tight">
-              Our Journey
-            </motion.h2>
-            <motion.p variants={fadeIn} className="text-lg text-[#6F6F6F] max-w-2xl mx-auto leading-relaxed">
-              From a simple idea to revolutionizing EV charging - here are the key milestones in our journey.
-            </motion.p>
-          </motion.div>
-
-          <div className="space-y-8">
-            {milestones.map((milestone, index) => (
-              <Milestone
-                key={index}
-                year={milestone.year}
-                title={milestone.title}
-                description={milestone.description}
-                index={index}
+          {/* Asymmetric value cards layout */}
+          <div className="space-y-16">
+            {values.map((value, i) => (
+              <ValueCard
+                key={i}
+                index={i}
+                icon={value.icon}
+                title={value.title}
+                description={value.description}
               />
             ))}
           </div>
         </div>
-      </section> */}
+      </section>
 
-      {/* Team Section */}
-      <section className="py-20 bg-[#F5F6F7]">
-        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
+      {/* Team Section - Modern card grid */}
+      <section className="py-32 px-6 bg-gradient-to-br from-[#F8F8F8] via-white to-[#F0F0F0] relative overflow-hidden">
+        {/* Subtle pattern overlay */}
+        <div className="absolute inset-0 opacity-5">
+          <svg width="100%" height="100%">
+            <defs>
+              <pattern id="hexagons" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+                <polygon points="30,5 50,20 50,40 30,55 10,40 10,20" fill="none" stroke="#D4AF37" strokeWidth="1"/>
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#hexagons)" />
+          </svg>
+        </div>
+        
+        <div className="max-w-7xl mx-auto relative z-10">
+          <motion.div 
+            className="text-center mb-20"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={staggerContainer}
-            className="text-center mb-16"
+            viewport={{ once: true }}
+            variants={fadeUpVariants}
           >
-            <motion.h2 variants={fadeIn} className="text-3xl md:text-4xl font-bold mb-4 text-[#111111] tracking-tight">
-              Meet Our Team
-            </motion.h2>
-            <motion.p variants={fadeIn} className="text-lg text-[#6F6F6F] max-w-2xl mx-auto leading-relaxed">
+            <motion.div
+              className="inline-block text-[#D4AF37] text-sm font-semibold tracking-[0.3em] uppercase mb-6"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              Leadership Team
+            </motion.div>
+            
+            <h2 className="text-6xl md:text-7xl font-extralight mb-8 tracking-tighter text-[#1A1A1A]">
+              Meet Our <span className="font-bold text-[#D4AF37] italic">Founding</span> Team
+            </h2>
+            
+            <p className="text-xl text-[#6A6A6A] max-w-3xl mx-auto font-light leading-relaxed">
               Our founding team of engineers, designers, and innovators share a passion for 
               creating technology that makes a real difference in people's lives.
-            </motion.p>
+            </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 px-40 gap-4">
+          {/* Modern team grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-7xl mx-auto">
             {teamMembers.map((member, index) => (
               <TeamMember
                 key={index}
@@ -548,54 +769,169 @@ export default function AboutPage() {
                 role1={member.role1}
                 role2={member.role2}
                 bio={member.bio}
-                image={member.img}
+                image={member.image}
                 linkedin={member.linkedin}
                 x={member.x}
-                delay={index * 0.1}
+                delay={index * 0.15}
               />
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-white relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+      {/* CTA Section - Futuristic design */}
+      <section className="py-32 px-6 bg-gradient-to-br from-[#0A0A0A] via-[#1A1A1A] to-[#2A2A2A] text-white relative overflow-hidden">
+        {/* Advanced background effects */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-radial from-[#D4AF37]/10 via-transparent to-transparent" />
+          <div className="absolute inset-0">
+            <motion.div
+              className="w-full h-full"
+              style={{
+                backgroundImage: `conic-gradient(from 0deg at 50% 50%, transparent 0deg, #D4AF37 90deg, transparent 180deg, #B8860B 270deg, transparent 360deg)`,
+                opacity: 0.05
+              }}
+              animate={{ rotate: 360 }}
+              transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+            />
+          </div>
+        </div>
+        
+        {/* Floating geometric shapes */}
+        <motion.div 
+          className="absolute top-0 left-1/4 w-96 h-96 bg-[#D4AF37]/10 rounded-full blur-3xl"
+          animate={{ y: [0, -50, 0], opacity: [0.1, 0.2, 0.1] }}
+          transition={{ duration: 8, repeat: Infinity }}
+        />
+        <motion.div 
+          className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#D4AF37]/5 rounded-full blur-3xl"
+          animate={{ y: [0, 50, 0], opacity: [0.05, 0.15, 0.05] }}
+          transition={{ duration: 10, repeat: Infinity, delay: 2 }}
+        />
+        
+        <div className="max-w-6xl mx-auto text-center relative z-10">
           <motion.div
+            className="inline-flex items-center gap-3 text-sm font-semibold text-[#D4AF37] 
+                       bg-gradient-to-r from-[#D4AF37]/15 to-[#B8860B]/10 backdrop-blur-sm 
+                       px-8 py-4 rounded-full mb-8 border border-[#D4AF37]/30"
+            initial={{ scale: 0.8, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2, duration: 0.6 }}
+          >
+            <Zap className="w-4 h-4" />
+            <span className="tracking-wide text-[#D4AF37]">Join the Revolution</span>
+          </motion.div>
+          
+          <motion.h2 
+            className="text-6xl md:text-8xl font-extralight mb-8 tracking-tighter text-white leading-tight relative z-10"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3, duration: 0.8 }}
+          >
+            Ready to Experience the{' '}
+            <span className="font-bold text-[#D4AF37] italic">Future</span>?
+          </motion.h2>
+          
+          <motion.p 
+            className="text-xl md:text-2xl mb-12 text-gray-300 max-w-5xl mx-auto font-light leading-relaxed relative z-10"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.8 }}
-            className="bg-white/70 backdrop-blur-md rounded-3xl p-10 md:p-16 text-center border border-black/10 shadow-lg"
+            viewport={{ once: true }}
+            transition={{ delay: 0.4, duration: 0.6 }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-[#111111] tracking-tight">
-              Join the EV Revolution
-            </h2>
-            <p className="text-lg md:text-xl mb-8 max-w-3xl mx-auto text-[#6F6F6F] leading-relaxed">
-              Ready to experience the future of EV charging? Join the customers who have already 
-              made the switch to intelligent, automatic charging with EVolve.
-            </p>
+            Join thousands of forward-thinking individuals who are already part of the EV charging revolution. 
+            Together, we're building a more sustainable tomorrow.
+          </motion.p>
+          
+          <motion.div 
+            className="flex flex-col sm:flex-row gap-8 justify-center items-center"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.6, duration: 0.6 }}
+          >
+            <motion.button 
+              className="group relative px-12 py-6 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white font-bold text-xl rounded-2xl 
+                         shadow-2xl hover:shadow-[#D4AF37]/40 transition-all duration-300
+                         focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:ring-offset-2 focus:ring-offset-[#1A1A1A]
+                         overflow-hidden"
+              onClick={() => setIsModalOpen(true)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <span className="relative z-10 flex items-center gap-2">
+                Get Started Today
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </span>
+              
+              {/* Animated background shine */}
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                animate={{ x: ['-100%', '100%'] }}
+                transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
+              />
+            </motion.button>
             
-            <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-lg mx-auto">
-              <motion.button
-                onClick={() => setIsModalOpen(true)}
-                whileHover={{ scale: 1.05, backgroundColor: '#D1B47A' }}
-                whileTap={{ scale: 0.95 }}
-                className="px-8 py-3 rounded-full bg-[#EFBF04] text-[#111111] font-medium shadow-lg hover:shadow-xl transition-all"
+            <div className="flex items-center gap-4 text-gray-400">
+              <div className="h-px w-8 bg-gradient-to-r from-transparent to-gray-600" />
+              <span className="text-sm font-light">or</span>
+              <div className="h-px w-8 bg-gradient-to-l from-transparent to-gray-600" />
+            </div>
+
+            <motion.button 
+              className="group px-10 py-5 bg-white/5 backdrop-blur-sm border-2 border-[#D4AF37]/30 text-white font-semibold text-lg rounded-2xl 
+                         hover:bg-[#D4AF37]/10 hover:border-[#D4AF37]/50 transition-all duration-300
+                         focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:ring-offset-2 focus:ring-offset-[#1A1A1A]
+                         flex items-center gap-3"
+              whileHover={{ scale: 1.02 }}
+            >
+              <ArrowRight className="w-5 h-5 group-hover:rotate-45 transition-transform duration-300" />
+              Learn More
+            </motion.button>
+          </motion.div>
+          
+          <motion.p 
+            className="mt-12 text-sm text-gray-500 font-light tracking-wide relative z-10"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.8, duration: 0.6 }}
+          >
+            Thousands of EV owners are already making the switch
+          </motion.p>
+        </div>
+      </section>
+
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
+          <motion.div
+            className="bg-white rounded-3xl p-8 max-w-md w-full"
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.8, opacity: 0 }}
+          >
+            <h3 className="text-2xl font-medium text-[#1A1A1A] mb-4">Get Started Today</h3>
+            <p className="text-[#6A6A6A] mb-6">Join thousands of families enjoying effortless EV charging.</p>
+            <div className="space-y-4">
+              <button className="w-full py-3 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white rounded-xl font-medium">
+                Schedule Free Consultation
+              </button>
+              <button className="w-full py-3 border border-[#D4AF37]/30 text-[#D4AF37] rounded-xl font-medium">
+                Download Brochure
+              </button>
+              <button 
+                className="w-full py-3 text-[#6A6A6A] font-medium"
+                onClick={() => setIsModalOpen(false)}
               >
-                Order Yours
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-8 py-3 rounded-full border border-[#111111]/20 text-[#111111]/70 font-medium hover:bg-[#F5F6F7] transition-all flex items-center justify-center gap-2"
-              >
-                Learn More <ChevronRight className="w-5 h-5" />
-              </motion.button>
+                Maybe Later
+              </button>
             </div>
           </motion.div>
         </div>
-      </section>
+      )}
     </div>
   );
 }
