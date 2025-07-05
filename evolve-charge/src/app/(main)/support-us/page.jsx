@@ -6,22 +6,38 @@ import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-
 import { loadStripe } from '@stripe/stripe-js';
 import { db } from '../../firebaseConfig.js';
 import { collection, addDoc, doc, serverTimestamp, query, orderBy, limit, getDocs, where, getFirestore } from 'firebase/firestore';
-import { Heart, Users, Zap, Target, TrendingUp, Award, Gift, Shield, CheckCircle, ArrowRight, DollarSign, Globe, ArrowLeft } from 'lucide-react';
+import { Heart, Users, Zap, Target, TrendingUp, Award, Gift, Shield, CheckCircle, ArrowRight, DollarSign, Globe, ArrowLeft, Clock } from 'lucide-react';
 import Head from 'next/head';
 import Script from 'next/script';
 
 // Initialize Stripe
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
+// Modern tech pattern overlay
+const TechPattern = ({ opacity = 0.05 }) => (
+  <div className="absolute inset-0 pointer-events-none" style={{ opacity }}>
+    <svg width="100%" height="100%" className="text-[#D4AF37]">
+      <defs>
+        <pattern id="techGrid" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+          <circle cx="30" cy="30" r="1.5" fill="currentColor" />
+          <circle cx="0" cy="0" r="1" fill="currentColor" />
+          <circle cx="60" cy="60" r="1" fill="currentColor" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#techGrid)" />
+    </svg>
+  </div>
+);
+
 // Animation variants
 const fadeIn = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } }
+  hidden: { opacity: 0, y: 40 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.25, 0.1, 0.25, 1] } }
 };
 
 const staggerContainer = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+  visible: { opacity: 1, transition: { staggerChildren: 0.15, delayChildren: 0.1 } }
 };
 
 // Checkout Form Component
@@ -66,14 +82,14 @@ function CheckoutForm({ onSuccess, amount, isProcessing, setIsProcessing, setErr
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
-        <label className="block text-sm font-medium text-[#111111] mb-2 tracking-wide">
+        <label className="block text-sm font-medium text-gray-300 mb-2 tracking-wide">
           Card Information
         </label>
         <PaymentElement />
       </div>
       
       {errorMessage && (
-        <div className="p-3 bg-red-50 text-red-700 rounded-lg text-sm border border-red-200">
+        <div className="p-4 bg-red-500/10 text-red-300 rounded-xl text-sm border border-red-500/20 backdrop-blur-sm">
           {errorMessage}
         </div>
       )}
@@ -81,21 +97,34 @@ function CheckoutForm({ onSuccess, amount, isProcessing, setIsProcessing, setErr
       <motion.button
         type="submit"
         disabled={!stripe || isProcessing}
-        className="w-full py-3 rounded-full bg-[#EFBF04] text-[#111111] font-medium shadow-lg hover:shadow-xl transition-all flex justify-center items-center disabled:opacity-50"
-        whileHover={{ scale: 1.05, backgroundColor: '#D1B47A' }}
-        whileTap={{ scale: 0.95 }}
+        className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white font-semibold 
+                 shadow-2xl hover:shadow-[#D4AF37]/30 transition-all flex justify-center items-center disabled:opacity-50
+                 focus:ring-2 focus:ring-[#D4AF37]/40 relative overflow-hidden"
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
       >
         {isProcessing ? (
           <>
-            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-[#111111]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
+            <motion.div
+              className="w-5 h-5 border-2 border-white rounded-full border-t-transparent mr-3"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+            />
             Processing...
           </>
         ) : (
-          `Donate $${amount.toFixed(2)}`
+          <>
+            Donate ${amount.toFixed(2)}
+            <ArrowRight className="w-5 h-5 ml-2" />
+          </>
         )}
+        
+        {/* Button shine effect */}
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+          animate={{ x: ['-100%', '100%'] }}
+          transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
+        />
       </motion.button>
     </form>
   );
@@ -143,48 +172,61 @@ function SuccessModal({ isOpen, onClose, donationAmount, donationDetails }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-6">
       <motion.div 
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-white/70 backdrop-blur-md rounded-xl p-8 max-w-md w-full mx-4 border border-black/10 shadow-lg"
+        className="bg-gradient-to-br from-[#1A1A1A]/95 to-[#2A2A2A]/90 backdrop-blur-xl rounded-3xl p-8 max-w-md w-full 
+                 border border-[#D4AF37]/20 shadow-2xl relative overflow-hidden"
       >
-        <div className="text-center">
-          <div className="w-16 h-16 bg-[#EFBF04]/10 rounded-full flex items-center justify-center mx-auto mb-4">
-            <CheckCircle className="h-8 w-8 text-[#EFBF04]" />
-          </div>
-          <h3 className="text-2xl font-bold text-[#111111] mb-2 tracking-wide">Thank You!</h3>
-          <p className="text-[#6F6F6F] mb-6 leading-relaxed">
+        {/* Animated background pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="w-full h-full bg-gradient-to-br from-[#D4AF37]/30 to-[#B8860B]/30" />
+        </div>
+        
+        <div className="text-center relative z-10">
+          <motion.div 
+            className="w-20 h-20 bg-gradient-to-br from-[#D4AF37] to-[#B8860B] rounded-3xl flex items-center justify-center mx-auto mb-6
+                     shadow-xl shadow-[#D4AF37]/30"
+            whileHover={{ rotate: 5, scale: 1.05 }}
+          >
+            <CheckCircle className="h-10 w-10 text-white" />
+          </motion.div>
+          <h3 className="text-3xl font-bold text-white mb-4 tracking-tight">Thank You!</h3>
+          <p className="text-gray-300 mb-8 leading-relaxed text-lg">
             Your donation of ${donationAmount ? donationAmount.toFixed(2) : '0.00'} will help advance smart, automatic EV charging and sustainable transportation.
           </p>
-          <div className="bg-[#F5F6F7] p-4 rounded-lg mb-6">
-            <p className="text-sm text-[#6F6F6F]">
+          <div className="bg-white/5 backdrop-blur-sm p-6 rounded-2xl mb-8 border border-white/10">
+            <p className="text-sm text-gray-400">
               You'll receive a receipt via email shortly. Download your receipt below for your records.
             </p>
           </div>
           <div className="flex flex-col space-y-4">
             <motion.button
               onClick={generatePDF}
-              className="w-full py-2 rounded-full bg-[#EFBF04] text-[#111111] font-medium shadow-lg hover:shadow-xl transition-all"
-              whileHover={{ scale: 1.05, backgroundColor: '#D1B47A' }}
-              whileTap={{ scale: 0.95 }}
+              className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white font-semibold 
+                       shadow-xl hover:shadow-[#D4AF37]/30 transition-all"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
               Download Receipt
             </motion.button>
             <div className="flex space-x-4">
               <motion.button
                 onClick={() => window.location.href = '/'}
-                className="w-1/2 py-2 rounded-full bg-[#F5F6F7] text-[#111111]/70 font-medium hover:bg-[#EFBF04]/10 transition-all"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                className="w-1/2 py-3 rounded-2xl bg-white/10 backdrop-blur-sm text-gray-300 font-medium 
+                         hover:bg-[#D4AF37]/10 border border-white/20 transition-all"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
                 Back to Home
               </motion.button>
               <motion.button
                 onClick={onClose}
-                className="w-1/2 py-2 rounded-full bg-[#EFBF04] text-[#111111] font-medium shadow-lg hover:shadow-xl transition-all"
-                whileHover={{ scale: 1.05, backgroundColor: '#D1B47A' }}
-                whileTap={{ scale: 0.95 }}
+                className="w-1/2 py-3 rounded-2xl bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white font-medium 
+                         shadow-lg hover:shadow-[#D4AF37]/30 transition-all"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
                 Close
               </motion.button>
@@ -494,21 +536,21 @@ export default function SupportUsPage() {
   const stripeOptions = {
     clientSecret,
     appearance: {
-      theme: 'flat',
+      theme: 'night',
       variables: {
-        colorPrimary: '#EFBF04',
-        colorBackground: '#FFFFFF',
-        colorText: '#111111',
+        colorPrimary: '#D4AF37',
+        colorBackground: '#1A1A1A',
+        colorText: '#ffffff',
         colorDanger: '#EF4444',
         fontFamily: 'system-ui, -apple-system, sans-serif',
         spacingUnit: '4px',
-        borderRadius: '8px',
+        borderRadius: '12px',
       },
     },
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#0A0A0A] text-white overflow-x-hidden">
       <Script
         strategy="afterInteractive"
         dangerouslySetInnerHTML={{
@@ -522,76 +564,123 @@ export default function SupportUsPage() {
       />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden pt-32 pb-20 bg-white">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#F5F6F7] to-white"></div>
+      <section className="relative overflow-hidden pt-32 pb-20 bg-gradient-to-br from-[#1A1A1A] via-[#0A0A0A] to-[#1A1A1A]">
+        <TechPattern />
+        
+        {/* Animated orbs */}
+        <motion.div 
+          className="absolute top-20 right-20 w-96 h-96 bg-gradient-to-br from-[#D4AF37]/10 to-transparent rounded-full blur-3xl"
+          animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.6, 0.3] }}
+          transition={{ duration: 8, repeat: Infinity }}
+        />
+        <motion.div 
+          className="absolute bottom-20 left-20 w-96 h-96 bg-gradient-to-tr from-[#D4AF37]/5 to-transparent rounded-full blur-3xl"
+          animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.4, 0.2] }}
+          transition={{ duration: 10, repeat: Infinity, delay: 2 }}
+        />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div initial="hidden" animate="visible" variants={fadeIn} className="text-center mb-16">
-            <div className="inline-flex items-center px-4 py-2 bg-[#EFBF04]/10 rounded-full text-sm font-medium text-[#EFBF04] mb-6 tracking-wide">
-              <Heart className="w-4 h-4 mr-2" />
-              Join Our Mission
-            </div>
-            <h1 className="text-5xl md:text-7xl font-bold text-[#111111] mb-8 tracking-tight">
-              Support the Future of
-              <br />
-              <span className="text-[#EFBF04]">
+            <motion.div
+              className="inline-flex items-center gap-3 text-sm font-semibold text-[#D4AF37] 
+                         bg-gradient-to-r from-[#D4AF37]/15 to-[#B8860B]/10 backdrop-blur-sm 
+                         px-8 py-4 rounded-full mb-8 border border-[#D4AF37]/30"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2, duration: 0.6 }}
+            >
+              <Heart className="w-4 h-4" />
+              <span className="tracking-wide">Join Our Mission</span>
+            </motion.div>
+            
+            <h1 className="text-6xl md:text-8xl font-extralight mb-8 tracking-tighter text-white leading-tight">
+              Support the Future of{' '}
+              <span className="font-bold bg-gradient-to-r from-[#D4AF37] to-[#B8860B] bg-clip-text text-transparent">
                 Smart EV Charging
               </span>
             </h1>
-            <p className="text-xl text-[#6F6F6F] max-w-4xl mx-auto mb-12 leading-relaxed">
-              Your donation powers Ampereon's mission to develop cutting-edge smart, automatic charging technology, making electric vehicles more accessible and sustainable for everyone.
+            
+            <p className="text-xl md:text-2xl text-gray-300 max-w-5xl mx-auto mb-12 font-light leading-relaxed">
+              Your donation powers Ampereon's mission to develop cutting-edge smart, automatic charging technology, 
+              making electric vehicles more accessible and sustainable for everyone.
             </p>
             
-            <div className="flex flex-wrap justify-center gap-8 text-sm text-[#6F6F6F] mb-8">
-              <div className="flex items-center">
-                <Shield className="w-5 h-5 mr-2 text-[#EFBF04]" />
+            <div className="flex flex-wrap justify-center gap-8 text-sm text-gray-400 mb-8">
+              <div className="flex items-center gap-3">
+                <Shield className="w-5 h-5 text-[#D4AF37]" />
                 Secure payments via Stripe
               </div>
-              <div className="flex items-center">
-                <Award className="w-5 h-5 mr-2 text-[#EFBF04]" />
+              <div className="flex items-center gap-3">
+                <Award className="w-5 h-5 text-[#D4AF37]" />
                 100% goes to EV innovation
               </div>
-              <div className="flex items-center">
-                <Globe className="w-5 h-5 mr-2 text-[#EFBF04]" />
+              <div className="flex items-center gap-3">
+                <Globe className="w-5 h-5 text-[#D4AF37]" />
                 Global impact initiative
               </div>
             </div>
           </motion.div>
 
           {/* Stats Cards */}
-          <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+          <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
             {[
-              { icon: DollarSign, value: `$${totalAmount.toFixed(0)}`, label: "Total Raised", color: "text-[#EFBF04]" },
-              { icon: Target, value: "$10,000", label: "Goal", color: "text-[#EFBF04]" },
-              { icon: Users, value: donorsWithAmounts.length, label: "Supporters", color: "text-[#EFBF04]" },
-              { icon: TrendingUp, value: `${progress.toFixed(1)}%`, label: "Complete", color: "text-[#EFBF04]" }
+              { icon: DollarSign, value: `$${totalAmount.toFixed(0)}`, label: "Total Raised", color: "text-[#D4AF37]" },
+              { icon: Target, value: "$10,000", label: "Goal", color: "text-[#D4AF37]" },
+              { icon: Users, value: donorsWithAmounts.length, label: "Supporters", color: "text-[#D4AF37]" },
+              { icon: TrendingUp, value: `${progress.toFixed(1)}%`, label: "Complete", color: "text-[#D4AF37]" }
             ].map(({ icon: Icon, value, label, color }) => (
-              <motion.div key={label} variants={fadeIn} className="bg-white/70 backdrop-blur-md rounded-2xl p-6 border border-black/10 shadow-lg hover:scale-105 transition-all duration-300">
-                <Icon className={`w-8 h-8 ${color} mx-auto mb-3`} />
-                <div className="text-2xl font-bold text-[#111111]">{value}</div>
-                <div className="text-sm text-[#6F6F6F]">{label}</div>
-                {label === "Total Raised" && (
-                  <div className="text-xs text-[#6F6F6F] mt-1">
-                    Donations: ${totalDonations.toFixed(0)} • Orders: ${totalPreOrders.toFixed(0)}
-                  </div>
-                )}
+              <motion.div 
+                key={label} 
+                variants={fadeIn} 
+                className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-3xl p-8 
+                         border border-white/20 shadow-2xl hover:shadow-[#D4AF37]/20 hover:scale-105 transition-all duration-500
+                         relative overflow-hidden group"
+                whileHover={{ y: -8 }}
+              >
+                {/* Glow effect */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl" />
+                
+                <div className="relative z-10">
+                  <Icon className={`w-10 h-10 ${color} mx-auto mb-4`} />
+                  <div className="text-3xl font-bold text-white mb-2">{value}</div>
+                  <div className="text-sm text-gray-300 font-medium tracking-wider">{label}</div>
+                  {label === "Total Raised" && (
+                    <div className="text-xs text-gray-400 mt-2">
+                      Donations: ${totalDonations.toFixed(0)} • Orders: ${totalPreOrders.toFixed(0)}
+                    </div>
+                  )}
+                </div>
               </motion.div>
             ))}
           </motion.div>
 
           {/* Progress Bar */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }} className="max-w-2xl mx-auto mb-16">
-            <div className="bg-white/70 backdrop-blur-md rounded-2xl p-8 border border-black/10 shadow-lg">
-              <div className="relative h-2 bg-[#F5F6F7] rounded-full overflow-hidden mb-4">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${progress}%` }}
-                  transition={{ duration: 1.5, ease: "easeOut" }}
-                  className="absolute left-0 top-0 h-full bg-[#EFBF04] rounded-full"
-                />
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            transition={{ delay: 0.8 }} 
+            className="max-w-3xl mx-auto mb-16"
+          >
+            <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-3xl p-10 
+                          border border-white/20 shadow-2xl relative overflow-hidden">
+              {/* Background pattern */}
+              <div className="absolute inset-0 opacity-5">
+                <div className="w-full h-full bg-gradient-to-br from-[#D4AF37]/30 to-[#B8860B]/30" />
               </div>
-              <div className="text-center text-[#6F6F6F] font-medium">
-                {progress.toFixed(1)}% of our $10,000 goal • ${Math.max(10000 - totalAmount, 0).toFixed(0)} remaining
+              
+              <div className="relative z-10">
+                <div className="relative h-3 bg-white/10 rounded-full overflow-hidden mb-6">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${progress}%` }}
+                    transition={{ duration: 2, ease: "easeOut" }}
+                    className="absolute left-0 top-0 h-full bg-gradient-to-r from-[#D4AF37] to-[#B8860B] rounded-full
+                             shadow-lg shadow-[#D4AF37]/50"
+                  />
+                </div>
+                <div className="text-center text-gray-300 font-medium text-lg">
+                  {progress.toFixed(1)}% of our $10,000 goal • ${Math.max(10000 - totalAmount, 0).toFixed(0)} remaining
+                </div>
               </div>
             </div>
           </motion.div>
@@ -599,121 +688,164 @@ export default function SupportUsPage() {
       </section>
 
       {/* Main Content */}
-      <section className="py-20 bg-[#F5F6F7]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 bg-gradient-to-br from-[#0F0F0F] via-[#1A1A1A] to-[#0F0F0F] relative overflow-hidden">
+        <TechPattern opacity={0.03} />
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           {/* Step Navigation */}
-          <div className="max-w-4xl mx-auto mb-12">
-            <div className="flex items-center justify-center space-x-4 mb-8">
+          <div className="max-w-4xl mx-auto mb-16">
+            <div className="flex items-center justify-center space-x-6 mb-12">
               {[1, 2, 3].map((stepNum) => (
                 <React.Fragment key={stepNum}>
-                  <div className={`flex items-center justify-center w-10 h-10 rounded-full ${
-                    step >= stepNum ? 'bg-[#EFBF04] text-[#111111]' : 'bg-[#F5F6F7] text-[#6F6F6F]'
-                  }`}>
+                  <motion.div 
+                    className={`flex items-center justify-center w-16 h-16 rounded-2xl text-lg font-bold transition-all duration-500 ${
+                      step >= stepNum 
+                        ? 'bg-gradient-to-br from-[#D4AF37] to-[#B8860B] text-white shadow-lg shadow-[#D4AF37]/30' 
+                        : 'bg-white/10 text-gray-400 backdrop-blur-sm border border-white/20'
+                    }`}
+                    whileHover={{ scale: 1.05 }}
+                  >
                     {stepNum}
-                  </div>
+                  </motion.div>
                   {stepNum < 3 && (
-                    <div className={`h-1 w-16 ${step > stepNum ? 'bg-[#EFBF04]' : 'bg-[#F5F6F7]'}`} />
+                    <div className={`h-1 w-20 rounded-full transition-all duration-500 ${
+                      step > stepNum ? 'bg-gradient-to-r from-[#D4AF37] to-[#B8860B]' : 'bg-white/20'
+                    }`} />
                   )}
                 </React.Fragment>
               ))}
             </div>
-            <div className="flex justify-center space-x-16 text-sm text-[#6F6F6F]">
-              <span className={step >= 1 ? 'text-[#111111] font-medium' : ''}>Choose Amount</span>
-              <span className={step >= 2 ? 'text-[#111111] font-medium' : ''}>Your Info</span>
-              <span className={step >= 3 ? 'text-[#111111] font-medium' : ''}>Payment</span>
+            <div className="flex justify-center space-x-20 text-sm text-gray-400">
+              <span className={`transition-all duration-300 ${step >= 1 ? 'text-white font-semibold' : ''}`}>Choose Amount</span>
+              <span className={`transition-all duration-300 ${step >= 2 ? 'text-white font-semibold' : ''}`}>Your Info</span>
+              <span className={`transition-all duration-300 ${step >= 3 ? 'text-white font-semibold' : ''}`}>Payment</span>
             </div>
           </div>
 
           {step === 1 && (
-            <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-6xl mx-auto">
-              <div className="text-center mb-12">
-                <h2 className="text-4xl font-bold text-[#111111] mb-4 tracking-tight">Choose Your Impact</h2>
-                <p className="text-xl text-[#6F6F6F] leading-relaxed">Every contribution accelerates the future of smart, automatic EV charging</p>
+            <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-7xl mx-auto">
+              <div className="text-center mb-16">
+                <h2 className="text-5xl md:text-6xl font-extralight text-white mb-6 tracking-tight">
+                  Choose Your <span className="font-bold text-[#D4AF37] italic">Impact</span>
+                </h2>
+                <p className="text-xl text-gray-300 leading-relaxed font-light max-w-3xl mx-auto">
+                  Every contribution accelerates the future of smart, automatic EV charging
+                </p>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
                 <div className="lg:col-span-2">
-                  <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-lg p-8 border border-black/10">
-                    <h3 className="text-2xl font-bold text-[#111111] mb-6 tracking-wide">Suggested Amounts</h3>
+                  <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-3xl shadow-2xl p-12 
+                                border border-white/20 relative overflow-hidden">
+                    {/* Background pattern */}
+                    <div className="absolute inset-0 opacity-5">
+                      <div className="w-full h-full bg-gradient-to-br from-[#D4AF37]/30 to-[#B8860B]/30" />
+                    </div>
                     
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
-                      {predefinedAmounts.map((amount) => (
-                        <motion.button
-                          key={amount}
-                          onClick={() => handleAmountSelect(amount)}
-                          className={`p-6 rounded-xl border-2 transition-all transform hover:scale-105 ${
-                            selectedAmount === amount && !customAmount
-                              ? 'border-[#EFBF04] bg-[#EFBF04]/10 text-[#111111] shadow-lg'
-                              : 'border-black/10 hover:border-[#EFBF04]/30 text-[#111111] hover:shadow-md'
-                          }`}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          <div className="text-3xl font-bold">${amount}</div>
-                        </motion.button>
-                      ))}
-                    </div>
-
-                    <div className="mb-8">
-                      <h3 className="text-xl font-semibold text-[#111111] mb-4 tracking-wide">Custom Amount</h3>
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                          <span className="text-[#6F6F6F] text-xl">$</span>
-                        </div>
-                        <input
-                          type="text"
-                          value={customAmount}
-                          onChange={handleCustomAmountChange}
-                          placeholder="Enter amount"
-                          className="w-full text-[#111111] pl-10 pr-4 py-4 text-xl border border-black/10 rounded-xl bg-white/70 backdrop-blur-md focus:ring-2 focus:ring-[#EFBF04]/50 focus:border-transparent transition-all"
-                        />
+                    <div className="relative z-10">
+                      <h3 className="text-3xl font-bold text-white mb-8 tracking-tight">Suggested Amounts</h3>
+                      
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-10">
+                        {predefinedAmounts.map((amount) => (
+                          <motion.button
+                            key={amount}
+                            onClick={() => handleAmountSelect(amount)}
+                            className={`p-8 rounded-2xl border-2 transition-all transform relative overflow-hidden ${
+                              selectedAmount === amount && !customAmount
+                                ? 'border-[#D4AF37] bg-gradient-to-br from-[#D4AF37]/20 to-[#B8860B]/10 text-white shadow-xl shadow-[#D4AF37]/30'
+                                : 'border-white/20 hover:border-[#D4AF37]/50 text-gray-300 hover:shadow-xl backdrop-blur-sm bg-white/5'
+                            }`}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                          >
+                            <div className="text-4xl font-bold">${amount}</div>
+                          </motion.button>
+                        ))}
                       </div>
-                    </div>
 
-                    <motion.button
-                      onClick={nextStep}
-                      className="w-full py-4 rounded-full bg-[#EFBF04] text-[#111111] font-medium shadow-lg hover:shadow-xl transition-all flex items-center justify-center"
-                      whileHover={{ scale: 1.05, backgroundColor: '#D1B47A' }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      Continue with ${getCurrentAmount().toFixed(2)}
-                      <ArrowRight className="w-5 h-5 ml-2" />
-                    </motion.button>
+                      <div className="mb-10">
+                        <h3 className="text-2xl font-semibold text-white mb-6 tracking-wide">Custom Amount</h3>
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
+                            <span className="text-gray-400 text-2xl">$</span>
+                          </div>
+                          <input
+                            type="text"
+                            value={customAmount}
+                            onChange={handleCustomAmountChange}
+                            placeholder="Enter amount"
+                            className="w-full text-white pl-12 pr-6 py-6 text-2xl border border-white/20 rounded-2xl 
+                                     bg-white/5 backdrop-blur-sm focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37] 
+                                     transition-all placeholder-gray-500"
+                          />
+                        </div>
+                      </div>
+
+                      <motion.button
+                        onClick={nextStep}
+                        className="w-full py-6 rounded-2xl bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white font-semibold text-xl
+                                 shadow-2xl hover:shadow-[#D4AF37]/30 transition-all flex items-center justify-center
+                                 focus:ring-2 focus:ring-[#D4AF37]/40 relative overflow-hidden"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <span className="relative z-10">
+                          Continue with ${getCurrentAmount().toFixed(2)}
+                        </span>
+                        <ArrowRight className="w-6 h-6 ml-3 relative z-10" />
+                        
+                        {/* Button shine effect */}
+                        <motion.div
+                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                          animate={{ x: ['-100%', '100%'] }}
+                          transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
+                        />
+                      </motion.button>
+                    </div>
                   </div>
                 </div>
 
                 <div className="lg:col-span-1">
-                  <div className="sticky top-8 space-y-6">
-                    <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-lg p-6 border border-black/10">
-                      <h3 className="text-xl font-bold text-[#111111] mb-4 tracking-wide">Your Impact</h3>
-                      <div className="text-center">
-                        <div className="text-5xl mb-3">{getCurrentImpact().icon}</div>
-                        <div className="text-3xl font-bold text-[#111111] mb-3">
-                          ${getCurrentAmount().toFixed(2)}
+                  <div className="sticky top-8 space-y-8">
+                    <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-3xl shadow-2xl p-8 
+                                  border border-white/20 relative overflow-hidden">
+                      {/* Background pattern */}
+                      <div className="absolute inset-0 opacity-5">
+                        <div className="w-full h-full bg-gradient-to-br from-[#D4AF37]/30 to-[#B8860B]/30" />
+                      </div>
+                      
+                      <div className="relative z-10">
+                        <h3 className="text-2xl font-bold text-white mb-6 tracking-wide">Your Impact</h3>
+                        <div className="text-center">
+                          <div className="text-6xl mb-4">{getCurrentImpact().icon}</div>
+                          <div className="text-4xl font-bold text-[#D4AF37] mb-4">
+                            ${getCurrentAmount().toFixed(2)}
+                          </div>
+                          <p className="text-gray-300 text-base leading-relaxed">
+                            {getCurrentImpact().impact}
+                          </p>
                         </div>
-                        <p className="text-[#6F6F6F] text-sm leading-relaxed">
-                          {getCurrentImpact().impact}
-                        </p>
                       </div>
                     </div>
 
-                    <div className="bg-white/70 backdrop-blur-md rounded-2xl p-6 border border-black/10">
-                      <h3 className="text-lg font-bold text-[#111111] mb-4 tracking-wide">Our Mission</h3>
-                      <div className="space-y-3 text-sm text-[#6F6F6F]">
-                        <div className="flex items-start">
-                          <Zap className="w-4 h-4 text-[#EFBF04] mt-1 mr-3 flex-shrink-0" />
+                    <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-3xl p-8 
+                                  border border-white/20 shadow-2xl">
+                      <h3 className="text-xl font-bold text-white mb-6 tracking-wide">Our Mission</h3>
+                      <div className="space-y-4 text-base text-gray-300">
+                        <div className="flex items-start gap-4">
+                          <Zap className="w-5 h-5 text-[#D4AF37] mt-1 flex-shrink-0" />
                           <p>Develop innovative smart EV charging solutions</p>
                         </div>
-                        <div className="flex items-start">
-                          <Globe className="w-4 h-4 text-[#EFBF04] mt-1 mr-3 flex-shrink-0" />
+                        <div className="flex items-start gap-4">
+                          <Globe className="w-5 h-5 text-[#D4AF37] mt-1 flex-shrink-0" />
                           <p>Make electric vehicle ownership more accessible</p>
                         </div>
-                        <div className="flex items-start">
-                          <Heart className="w-4 h-4 text-[#EFBF04] mt-1 mr-3 flex-shrink-0" />
+                        <div className="flex items-start gap-4">
+                          <Heart className="w-5 h-5 text-[#D4AF37] mt-1 flex-shrink-0" />
                           <p>Reduce carbon emissions through sustainable technology</p>
                         </div>
-                        <div className="flex items-start">
-                          <Target className="w-4 h-4 text-[#EFBF04] mt-1 mr-3 flex-shrink-0" />
+                        <div className="flex items-start gap-4">
+                          <Target className="w-5 h-5 text-[#D4AF37] mt-1 flex-shrink-0" />
                           <p>Ensure you never run out of charge again</p>
                         </div>
                       </div>
@@ -725,237 +857,280 @@ export default function SupportUsPage() {
           )}
 
           {step === 2 && (
-            <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-4xl mx-auto">
-              <div className="text-center mb-10">
-                <h2 className="text-3xl font-bold text-[#111111] mb-4 tracking-tight">Your Information</h2>
-                <p className="text-lg text-[#6F6F6F] leading-relaxed">Help us send your receipt and keep you updated on our progress</p>
+            <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-5xl mx-auto">
+              <div className="text-center mb-12">
+                <h2 className="text-4xl md:text-5xl font-extralight text-white mb-6 tracking-tight">
+                  Your <span className="font-bold text-[#D4AF37] italic">Information</span>
+                </h2>
+                <p className="text-xl text-gray-300 leading-relaxed font-light">
+                  Help us send your receipt and keep you updated on our progress
+                </p>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
                 <div className="lg:col-span-2">
-                  <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-lg p-8 border border-black/10">
-                    <h3 className="text-xl font-bold text-[#111111] mb-6 tracking-wide">Contact Information</h3>
+                  <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-3xl shadow-2xl p-10 
+                                border border-white/20 relative overflow-hidden">
+                    {/* Background pattern */}
+                    <div className="absolute inset-0 opacity-5">
+                      <div className="w-full h-full bg-gradient-to-br from-[#D4AF37]/30 to-[#B8860B]/30" />
+                    </div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                      <div>
-                        <label htmlFor="firstName" className="block text-sm font-medium text-[#111111] mb-2 tracking-wide">
-                          First Name *
-                        </label>
-                        <input
-                          type="text"
-                          id="firstName"
-                          name="firstName"
-                          value={formData.firstName}
-                          onChange={handleInputChange}
-                          className={`w-full text-[#111111] px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#EFBF04]/50 focus:border-transparent transition-all bg-white/70 backdrop-blur-md ${
-                            validationErrors.firstName ? 'border-red-300 bg-red-50' : 'border-black/10'
-                          }`}
-                        />
-                        {validationErrors.firstName && (
-                          <p className="mt-1 text-sm text-red-600">{validationErrors.firstName}</p>
-                        )}
-                      </div>
-                      <div>
-                        <label htmlFor="lastName" className="block text-sm font-medium text-[#111111] mb-2 tracking-wide">
-                          Last Name *
-                        </label>
-                        <input
-                          type="text"
-                          id="lastName"
-                          name="lastName"
-                          value={formData.lastName}
-                          onChange={handleInputChange}
-                          className={`w-full text-[#111111] px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#EFBF04]/50 focus:border-transparent transition-all bg-white/70 backdrop-blur-md ${
-                            validationErrors.lastName ? 'border-red-300 bg-red-50' : 'border-black/10'
-                          }`}
-                        />
-                        {validationErrors.lastName && (
-                          <p className="mt-1 text-sm text-red-600">{validationErrors.lastName}</p>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="mb-6">
-                      <label htmlFor="email" className="block text-sm font-medium text-[#111111] mb-2 tracking-wide">
-                        Email Address *
-                      </label>
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        className={`w-full text-[#111111] px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#EFBF04]/50 focus:border-transparent transition-all bg-white/70 backdrop-blur-md ${
-                          validationErrors.email ? 'border-red-300 bg-red-50' : 'border-black/10'
-                        }`}
-                      />
-                      {validationErrors.email && (
-                        <p className="mt-1 text-sm text-red-600">{validationErrors.email}</p>
-                      )}
-                    </div>
-
-                    <div className="border-t border-black/10 pt-6 mb-6">
-                      <h4 className="text-lg font-semibold text-[#111111] mb-4 tracking-wide">Gift Options</h4>
+                    <div className="relative z-10">
+                      <h3 className="text-2xl font-bold text-white mb-8 tracking-wide">Contact Information</h3>
                       
-                      <div className="space-y-4">
-                        <div className="flex items-start">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div>
+                          <label htmlFor="firstName" className="block text-sm font-medium text-gray-300 mb-3 tracking-wide">
+                            First Name *
+                          </label>
                           <input
-                            id="dedicateGift"
-                            name="dedicateGift"
-                            type="checkbox"
-                            checked={formData.dedicateGift}
+                            type="text"
+                            id="firstName"
+                            name="firstName"
+                            value={formData.firstName}
                             onChange={handleInputChange}
-                            className="h-4 w-4 text-[#EFBF04] border-black/10 rounded focus:ring-[#EFBF04]/50 mt-1"
-                          />
-                          <div className="ml-3">
-                            <label htmlFor="dedicateGift" className="font-medium text-[#111111] tracking-wide">
-                              Dedicate this gift in honor or memory of someone
-                            </label>
-                          </div>
-                        </div>
-
-                        {formData.dedicateGift && (
-                          <div className="ml-7">
-                            <label htmlFor="dedicateTo" className="block text-sm font-medium text-[#111111] mb-2 tracking-wide">
-                              In honor/memory of
-                            </label>
-                            <input
-                              type="text"
-                              id="dedicateTo"
-                              name="dedicateTo"
-                              value={formData.dedicateTo}
-                              onChange={handleInputChange}
-                              placeholder="Enter name"
-                              className="w-full text-[#111111] px-4 py-3 border border-black/10 rounded-lg focus:ring-2 focus:ring-[#EFBF04]/50 focus:border-transparent transition-all bg-white/70 backdrop-blur-md"
-                            />
-                          </div>
-                        )}
-
-                        <div className="flex items-start">
-                          <input
-                            id="anonymous"
-                            name="anonymous"
-                            type="checkbox"
-                            checked={formData.anonymous}
-                            onChange={handleInputChange}
-                            className="h-4 w-4 text-[#EFBF04] border-black/10 rounded focus:ring-[#EFBF04]/50 mt-1"
-                          />
-                          <div className="ml-3">
-                            <label htmlFor="anonymous" className="font-medium text-[#111111] tracking-wide">
-                              Make this donation anonymous
-                            </label>
-                          </div>
-                        </div>
-
-                        <div className="flex items-start">
-                          <input
-                            id="updates"
-                            name="updates"
-                            type="checkbox"
-                            checked={formData.updates}
-                            onChange={handleInputChange}
-                            className="h-4 w-4 text-[#EFBF04] border-black/10 rounded focus:ring-[#EFBF04]/50 mt-1"
-                          />
-                          <div className="ml-3">
-                            <label htmlFor="updates" className="font-medium text-[#111111] tracking-wide">
-                              Send me updates about Ampereon's progress
-                            </label>
-                            <p className="text-sm text-[#6F6F6F] mt-1">
-                              Stay informed about our smart EV charging innovations
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="flex items-start">
-                          <input
-                            id="agreeTerms"
-                            name="agreeTerms"
-                            type="checkbox"
-                            checked={formData.agreeTerms}
-                            onChange={handleInputChange}
-                            className={`h-4 w-4 text-[#EFBF04] border rounded focus:ring-[#EFBF04]/50 mt-1 ${
-                              validationErrors.agreeTerms ? 'border-red-300' : 'border-black/10'
+                            className={`w-full text-white px-5 py-4 border rounded-xl transition-all bg-white/5 backdrop-blur-sm ${
+                              validationErrors.firstName 
+                                ? 'border-red-400 bg-red-500/10' 
+                                : 'border-white/20 focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]'
                             }`}
                           />
-                          <div className="ml-3">
-                            <label htmlFor="agreeTerms" className="font-medium text-[#111111] tracking-wide">
-                              I agree to the Terms of Service and Privacy Policy *
-                            </label>
-                            {validationErrors.agreeTerms && (
-                              <p className="mt-1 text-red-600 text-sm">{validationErrors.agreeTerms}</p>
-                            )}
+                          {validationErrors.firstName && (
+                            <p className="mt-2 text-sm text-red-300">{validationErrors.firstName}</p>
+                          )}
+                        </div>
+                        <div>
+                          <label htmlFor="lastName" className="block text-sm font-medium text-gray-300 mb-3 tracking-wide">
+                            Last Name *
+                          </label>
+                          <input
+                            type="text"
+                            id="lastName"
+                            name="lastName"
+                            value={formData.lastName}
+                            onChange={handleInputChange}
+                            className={`w-full text-white px-5 py-4 border rounded-xl transition-all bg-white/5 backdrop-blur-sm ${
+                              validationErrors.lastName 
+                                ? 'border-red-400 bg-red-500/10' 
+                                : 'border-white/20 focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]'
+                            }`}
+                          />
+                          {validationErrors.lastName && (
+                            <p className="mt-2 text-sm text-red-300">{validationErrors.lastName}</p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="mb-8">
+                        <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-3 tracking-wide">
+                          Email Address *
+                        </label>
+                        <input
+                          type="email"
+                          id="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleInputChange}
+                          className={`w-full text-white px-5 py-4 border rounded-xl transition-all bg-white/5 backdrop-blur-sm ${
+                            validationErrors.email 
+                              ? 'border-red-400 bg-red-500/10' 
+                              : 'border-white/20 focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]'
+                          }`}
+                        />
+                        {validationErrors.email && (
+                          <p className="mt-2 text-sm text-red-300">{validationErrors.email}</p>
+                        )}
+                      </div>
+
+                      <div className="border-t border-white/20 pt-8 mb-8">
+                        <h4 className="text-xl font-semibold text-white mb-6 tracking-wide">Gift Options</h4>
+                        
+                        <div className="space-y-6">
+                          <div className="flex items-start gap-4">
+                            <input
+                              id="dedicateGift"
+                              name="dedicateGift"
+                              type="checkbox"
+                              checked={formData.dedicateGift}
+                              onChange={handleInputChange}
+                              className="h-5 w-5 text-[#D4AF37] border-white/30 rounded focus:ring-[#D4AF37]/50 mt-1 bg-white/10"
+                            />
+                            <div>
+                              <label htmlFor="dedicateGift" className="font-medium text-white tracking-wide">
+                                Dedicate this gift in honor or memory of someone
+                              </label>
+                            </div>
+                          </div>
+
+                          {formData.dedicateGift && (
+                            <motion.div 
+                              className="ml-9"
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: 'auto' }}
+                              transition={{ duration: 0.3 }}
+                            >
+                              <label htmlFor="dedicateTo" className="block text-sm font-medium text-gray-300 mb-3 tracking-wide">
+                                In honor/memory of
+                              </label>
+                              <input
+                                type="text"
+                                id="dedicateTo"
+                                name="dedicateTo"
+                                value={formData.dedicateTo}
+                                onChange={handleInputChange}
+                                placeholder="Enter name"
+                                className="w-full text-white px-5 py-4 border border-white/20 rounded-xl 
+                                         focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37] transition-all 
+                                         bg-white/5 backdrop-blur-sm placeholder-gray-500"
+                              />
+                            </motion.div>
+                          )}
+
+                          <div className="flex items-start gap-4">
+                            <input
+                              id="anonymous"
+                              name="anonymous"
+                              type="checkbox"
+                              checked={formData.anonymous}
+                              onChange={handleInputChange}
+                              className="h-5 w-5 text-[#D4AF37] border-white/30 rounded focus:ring-[#D4AF37]/50 mt-1 bg-white/10"
+                            />
+                            <div>
+                              <label htmlFor="anonymous" className="font-medium text-white tracking-wide">
+                                Make this donation anonymous
+                              </label>
+                            </div>
+                          </div>
+
+                          <div className="flex items-start gap-4">
+                            <input
+                              id="updates"
+                              name="updates"
+                              type="checkbox"
+                              checked={formData.updates}
+                              onChange={handleInputChange}
+                              className="h-5 w-5 text-[#D4AF37] border-white/30 rounded focus:ring-[#D4AF37]/50 mt-1 bg-white/10"
+                            />
+                            <div>
+                              <label htmlFor="updates" className="font-medium text-white tracking-wide">
+                                Send me updates about Ampereon's progress
+                              </label>
+                              <p className="text-sm text-gray-400 mt-1">
+                                Stay informed about our smart EV charging innovations
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-start gap-4">
+                            <input
+                              id="agreeTerms"
+                              name="agreeTerms"
+                              type="checkbox"
+                              checked={formData.agreeTerms}
+                              onChange={handleInputChange}
+                              className={`h-5 w-5 text-[#D4AF37] border rounded focus:ring-[#D4AF37]/50 mt-1 bg-white/10 ${
+                                validationErrors.agreeTerms ? 'border-red-400' : 'border-white/30'
+                              }`}
+                            />
+                            <div>
+                              <label htmlFor="agreeTerms" className="font-medium text-white tracking-wide">
+                                I agree to the Terms of Service and Privacy Policy *
+                              </label>
+                              {validationErrors.agreeTerms && (
+                                <p className="mt-1 text-red-300 text-sm">{validationErrors.agreeTerms}</p>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
 
-                    <div className="flex space-x-4">
-                      <motion.button
-                        onClick={prevStep}
-                        className="w-1/3 py-3 rounded-full border border-black/10 text-[#111111]/70 font-medium hover:bg-[#F5F6F7] transition-all flex items-center justify-center"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        <ArrowLeft className="w-4 h-4 mr-2" />
-                        Back
-                      </motion.button>
-                      <motion.button
-                        onClick={nextStep}
-                        className="w-2/3 py-3 rounded-full bg-[#EFBF04] text-[#111111] font-medium shadow-lg hover:shadow-xl transition-all flex items-center justify-center"
-                        whileHover={{ scale: 1.05, backgroundColor: '#D1B47A' }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        Continue to Payment
-                        <ArrowRight className="w-5 h-5 ml-2" />
-                      </motion.button>
+                      <div className="flex space-x-6">
+                        <motion.button
+                          onClick={prevStep}
+                          className="w-1/3 py-4 rounded-2xl border border-white/30 text-gray-300 font-medium 
+                                   hover:bg-white/10 transition-all flex items-center justify-center backdrop-blur-sm"
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          <ArrowLeft className="w-5 h-5 mr-2" />
+                          Back
+                        </motion.button>
+                        <motion.button
+                          onClick={nextStep}
+                          className="w-2/3 py-4 rounded-2xl bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white font-semibold 
+                                   shadow-xl hover:shadow-[#D4AF37]/30 transition-all flex items-center justify-center
+                                   relative overflow-hidden"
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          <span className="relative z-10">Continue to Payment</span>
+                          <ArrowRight className="w-5 h-5 ml-2 relative z-10" />
+                          
+                          {/* Button shine effect */}
+                          <motion.div
+                            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                            animate={{ x: ['-100%', '100%'] }}
+                            transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
+                          />
+                        </motion.button>
+                      </div>
                     </div>
                   </div>
                 </div>
 
                 <div className="lg:col-span-1">
-                  <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-lg p-6 sticky top-28 border border-black/10">
-                    <h3 className="text-xl font-bold text-[#111111] mb-6 tracking-wide">Donation Summary</h3>
+                  <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-3xl shadow-2xl p-8 
+                                sticky top-28 border border-white/20 relative overflow-hidden">
+                    {/* Background pattern */}
+                    <div className="absolute inset-0 opacity-5">
+                      <div className="w-full h-full bg-gradient-to-br from-[#D4AF37]/30 to-[#B8860B]/30" />
+                    </div>
                     
-                    <div className="mb-6">
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="text-[#6F6F6F]">Donation Amount</span>
-                        <span className="text-xl font-semibold text-[#111111]">
-                          ${getCurrentAmount().toFixed(2)}
-                        </span>
+                    <div className="relative z-10">
+                      <h3 className="text-xl font-bold text-white mb-8 tracking-wide">Donation Summary</h3>
+                      
+                      <div className="mb-8">
+                        <div className="flex justify-between items-center mb-3">
+                          <span className="text-gray-300">Donation Amount</span>
+                          <span className="text-2xl font-semibold text-white">
+                            ${getCurrentAmount().toFixed(2)}
+                          </span>
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="border-t border-black/10 pt-4 mb-6">
-                      <div className="flex justify-between items-center font-bold text-xl">
-                        <span className="text-[#111111]">Total</span>
-                        <span className="text-[#111111]">${getCurrentAmount().toFixed(2)}</span>
+                      <div className="border-t border-white/20 pt-6 mb-8">
+                        <div className="flex justify-between items-center font-bold text-2xl">
+                          <span className="text-white">Total</span>
+                          <span className="text-[#D4AF37]">${getCurrentAmount().toFixed(2)}</span>
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="bg-[#F5F6F7] p-4 rounded-lg">
-                      <h4 className="font-medium text-[#111111] mb-3 tracking-wide">Where Your Money Goes</h4>
-                      <div className="space-y-2 text-sm text-[#6F6F6F]">
-                        <div className="flex justify-between">
-                          <span>Research & Development</span>
-                          <span>70%</span>
+                      <div className="bg-[#D4AF37]/10 p-6 rounded-2xl border border-[#D4AF37]/30 backdrop-blur-sm">
+                        <h4 className="font-medium text-white mb-4 tracking-wide">Where Your Money Goes</h4>
+                        <div className="space-y-3 text-sm text-gray-300">
+                          <div className="flex justify-between">
+                            <span>Research & Development</span>
+                            <span className="text-[#D4AF37] font-semibold">70%</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Manufacturing</span>
+                            <span className="text-[#D4AF37] font-semibold">20%</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Community Outreach</span>
+                            <span className="text-[#D4AF37] font-semibold">5%</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Administrative</span>
+                            <span className="text-[#D4AF37] font-semibold">5%</span>
+                          </div>
                         </div>
-                        <div className="flex justify-between">
-                          <span>Manufacturing</span>
-                          <span>20%</span>
+                        <div className="mt-6 p-4 bg-white/5 rounded-xl border border-white/10">
+                          <p className="text-xs text-gray-400">
+                            <strong>Total funding includes:</strong> Direct donations (${totalDonations.toFixed(0)}) + Pre-orders (${totalPreOrders.toFixed(0)})
+                          </p>
                         </div>
-                        <div className="flex justify-between">
-                          <span>Community Outreach</span>
-                          <span>5%</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Administrative</span>
-                          <span>5%</span>
-                        </div>
-                      </div>
-                      <div className="mt-4 p-3 bg-[#EFBF04]/10 rounded-lg border border-[#EFBF04]/30">
-                        <p className="text-xs text-[#6F6F6F]">
-                          <strong>Total funding includes:</strong> Direct donations (${totalDonations.toFixed(0)}) + Pre-orders (${totalPreOrders.toFixed(0)})
-                        </p>
                       </div>
                     </div>
                   </div>
@@ -965,91 +1140,116 @@ export default function SupportUsPage() {
           )}
 
           {step === 3 && (
-            <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-4xl mx-auto">
-              <div className="text-center mb-10">
-                <h2 className="text-3xl font-bold text-[#111111] mb-4 tracking-tight">Complete Your Donation</h2>
-                <p className="text-lg text-[#6F6F6F] leading-relaxed">Your support drives the future of smart, automatic EV charging</p>
+            <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-5xl mx-auto">
+              <div className="text-center mb-12">
+                <h2 className="text-4xl md:text-5xl font-extralight text-white mb-6 tracking-tight">
+                  Complete Your <span className="font-bold text-[#D4AF37] italic">Donation</span>
+                </h2>
+                <p className="text-xl text-gray-300 leading-relaxed font-light">
+                  Your support drives the future of smart, automatic EV charging
+                </p>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
                 <div className="lg:col-span-2">
-                  <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-lg p-8 border border-black/10">
-                    <div className="flex items-center bg-[#F5F6F7] p-6 rounded-lg border border-black/10 mb-6">
-                      <Shield className="h-8 w-8 text-[#EFBF04] mr-4" />
-                      <div>
-                        <p className="text-base font-semibold text-[#111111] tracking-wide">
-                          Your Payment is Safe and Secure
-                        </p>
-                        <p className="text-sm text-[#6F6F6F] mt-1">
-                          We use Stripe for secure payment processing with 256-bit SSL encryption
-                        </p>
-                      </div>
+                  <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-3xl shadow-2xl p-10 
+                                border border-white/20 relative overflow-hidden">
+                    {/* Background pattern */}
+                    <div className="absolute inset-0 opacity-5">
+                      <div className="w-full h-full bg-gradient-to-br from-[#D4AF37]/30 to-[#B8860B]/30" />
                     </div>
-
-                    <h3 className="text-xl font-bold text-[#111111] mb-6 tracking-wide">Payment Information</h3>
                     
-                    {error && (
-                      <div className="mb-6 p-4 bg-red-50 text-red-700 rounded-lg border border-red-200">
-                        <div className="font-medium">Error:</div>
-                        <div>{error}</div>
+                    <div className="relative z-10">
+                      <div className="flex items-center bg-white/5 backdrop-blur-sm p-8 rounded-2xl border border-white/20 mb-8">
+                        <Shield className="h-10 w-10 text-[#D4AF37] mr-6" />
+                        <div>
+                          <p className="text-lg font-semibold text-white tracking-wide">
+                            Your Payment is Safe and Secure
+                          </p>
+                          <p className="text-sm text-gray-300 mt-1">
+                            We use Stripe for secure payment processing with 256-bit SSL encryption
+                          </p>
+                        </div>
                       </div>
-                    )}
 
-                    {clientSecret ? (
-                      <Elements options={stripeOptions} stripe={stripePromise}>
-                        <CheckoutForm
-                          onSuccess={handlePaymentSuccess}
-                          amount={getCurrentAmount()}
-                          isProcessing={isProcessing}
-                          setIsProcessing={setIsProcessing}
-                          setError={setError}
-                        />
-                      </Elements>
-                    ) : (
-                      <div className="flex flex-col items-center justify-center py-8">
-                        <div className="animate-spin h-8 w-8 border-4 border-[#EFBF04] rounded-full border-t-transparent mb-4"></div>
-                        <p className="text-[#6F6F6F]">
-                          {isProcessing ? 'Preparing your donation...' : 'Loading payment form...'}
-                        </p>
-                      </div>
-                    )}
+                      <h3 className="text-2xl font-bold text-white mb-8 tracking-wide">Payment Information</h3>
+                      
+                      {error && (
+                        <div className="mb-8 p-6 bg-red-500/10 text-red-300 rounded-2xl border border-red-500/20 backdrop-blur-sm">
+                          <div className="font-medium">Error:</div>
+                          <div>{error}</div>
+                        </div>
+                      )}
 
-                    <motion.button
-                      onClick={prevStep}
-                      className="mt-6 px-6 py-2 rounded-full border border-black/10 text-[#111111]/70 font-medium hover:bg-[#F5F6F7] transition-all flex items-center"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <ArrowLeft className="w-4 h-4 mr-2" />
-                      Back to Information
-                    </motion.button>
+                      {clientSecret ? (
+                        <Elements options={stripeOptions} stripe={stripePromise}>
+                          <CheckoutForm
+                            onSuccess={handlePaymentSuccess}
+                            amount={getCurrentAmount()}
+                            isProcessing={isProcessing}
+                            setIsProcessing={setIsProcessing}
+                            setError={setError}
+                          />
+                        </Elements>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center py-12">
+                          <motion.div
+                            className="w-12 h-12 border-4 border-[#D4AF37] rounded-full border-t-transparent mb-6"
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                          />
+                          <p className="text-gray-300 text-lg">
+                            {isProcessing ? 'Preparing your donation...' : 'Loading payment form...'}
+                          </p>
+                        </div>
+                      )}
+
+                      <motion.button
+                        onClick={prevStep}
+                        className="mt-8 px-8 py-3 rounded-2xl border border-white/30 text-gray-300 font-medium 
+                                 hover:bg-white/10 transition-all flex items-center backdrop-blur-sm"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <ArrowLeft className="w-5 h-5 mr-2" />
+                        Back to Information
+                      </motion.button>
+                    </div>
                   </div>
                 </div>
 
                 <div className="lg:col-span-1">
-                  <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-lg p-6 sticky top-28 border border-black/10">
-                    <h3 className="text-xl font-bold text-[#111111] mb-6 tracking-wide">Final Summary</h3>
+                  <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-3xl shadow-2xl p-8 
+                                sticky top-28 border border-white/20 relative overflow-hidden">
+                    {/* Background pattern */}
+                    <div className="absolute inset-0 opacity-5">
+                      <div className="w-full h-full bg-gradient-to-br from-[#D4AF37]/30 to-[#B8860B]/30" />
+                    </div>
                     
-                    <div className="space-y-4 mb-6">
-                      <div className="flex justify-between">
-                        <span className="text-[#6F6F6F]">Donation Amount</span>
-                        <span className="font-semibold text-[#111111]">
-                          ${getCurrentAmount().toFixed(2)}
-                        </span>
-                      </div>
-                      <div className="border-t border-black/10 pt-4">
-                        <div className="flex justify-between font-bold text-xl">
-                          <span className="text-[#111111]">Total</span>
-                          <span className="text-[#111111]">${getCurrentAmount().toFixed(2)}</span>
+                    <div className="relative z-10">
+                      <h3 className="text-xl font-bold text-white mb-8 tracking-wide">Final Summary</h3>
+                      
+                      <div className="space-y-6 mb-8">
+                        <div className="flex justify-between">
+                          <span className="text-gray-300">Donation Amount</span>
+                          <span className="font-semibold text-white text-lg">
+                            ${getCurrentAmount().toFixed(2)}
+                          </span>
+                        </div>
+                        <div className="border-t border-white/20 pt-6">
+                          <div className="flex justify-between font-bold text-2xl">
+                            <span className="text-white">Total</span>
+                            <span className="text-[#D4AF37]">${getCurrentAmount().toFixed(2)}</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    <div className="bg-[#EFBF04]/10 p-4 rounded-lg border border-[#EFBF04]/30">
-                      <h4 className="font-medium text-[#111111] mb-2 tracking-wide">Thank You!</h4>
-                      <p className="text-sm text-[#6F6F6F]">
-                        Your contribution helps accelerate sustainable transportation technology
-                      </p>
+                      <div className="bg-[#D4AF37]/10 p-6 rounded-2xl border border-[#D4AF37]/30 backdrop-blur-sm">
+                        <h4 className="font-medium text-white mb-3 tracking-wide">Thank You!</h4>
+                        <p className="text-sm text-gray-300">
+                          Your contribution helps accelerate sustainable transportation technology
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1063,12 +1263,18 @@ export default function SupportUsPage() {
             whileInView="visible"
             viewport={{ once: true, amount: 0.3 }}
             variants={staggerContainer}
-            className="mt-20"
+            className="mt-24"
           >
-            <div className="flex flex-col gap-6">
-              <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-lg border border-black/10">
-                <div className="p-6 border-b border-black/10">
-                  <div className="flex flex-wrap gap-2 mb-4">
+            <div className="flex flex-col gap-8">
+              <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-3xl shadow-2xl 
+                            border border-white/20 relative overflow-hidden">
+                {/* Background pattern */}
+                <div className="absolute inset-0 opacity-5">
+                  <div className="w-full h-full bg-gradient-to-br from-[#D4AF37]/30 to-[#B8860B]/30" />
+                </div>
+                
+                <div className="p-8 border-b border-white/20 relative z-10">
+                  <div className="flex flex-wrap gap-3 mb-6">
                     {[
                       { label: 'Recent', value: 'recent' },
                       { label: 'Top Day', value: 'top-day' },
@@ -1078,10 +1284,10 @@ export default function SupportUsPage() {
                       <motion.button
                         key={value}
                         onClick={() => setFilter(value)}
-                        className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${
+                        className={`px-6 py-3 rounded-2xl text-sm font-semibold transition-all ${
                           filter === value
-                            ? 'bg-[#EFBF04] text-[#111111] shadow-md'
-                            : 'bg-[#F5F6F7] text-[#111111]/70 hover:bg-[#EFBF04]/10'
+                            ? 'bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white shadow-lg shadow-[#D4AF37]/25'
+                            : 'bg-white/10 text-gray-300 hover:bg-[#D4AF37]/10 border border-white/20'
                         }`}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
@@ -1090,46 +1296,67 @@ export default function SupportUsPage() {
                       </motion.button>
                     ))}
                   </div>
-                  <h3 className="text-xl font-semibold text-[#111111] flex items-center tracking-wide">
-                    <Users className="w-5 h-5 mr-2 text-[#EFBF04]" />
-                    Our Donors
+                  <h3 className="text-2xl font-semibold text-white flex items-center tracking-wide">
+                    <Users className="w-6 h-6 mr-3 text-[#D4AF37]" />
+                    Our Supporters
                   </h3>
                 </div>
 
-                <div className="p-6 overflow-x-auto">
+                <div className="p-8 overflow-x-auto relative z-10">
                   {isLoading ? (
-                    <div className="flex items-center justify-center py-8">
-                      <div className="animate-spin h-6 w-6 border-2 border-[#EFBF04] rounded-full border-t-transparent mr-2"></div>
-                      <p className="text-[#6F6F6F] text-sm">Loading supporters...</p>
+                    <div className="flex items-center justify-center py-12">
+                      <motion.div
+                        className="w-8 h-8 border-2 border-[#D4AF37] rounded-full border-t-transparent mr-4"
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      />
+                      <p className="text-gray-300 text-lg">Loading our amazing supporters...</p>
                     </div>
                   ) : donorsWithAmounts.length === 0 ? (
-                    <div className="text-center py-8">
-                      <Heart className="w-12 h-12 text-[#6F6F6F] mx-auto mb-3" />
-                      <p className="text-[#6F6F6F] text-sm">No supporters yet. Be the first to join our mission!</p>
+                    <div className="text-center py-12">
+                      <motion.div
+                        animate={{ scale: [1, 1.1, 1] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                      >
+                        <Heart className="w-16 h-16 text-[#D4AF37]/50 mx-auto mb-6" />
+                      </motion.div>
+                      <h4 className="text-xl font-medium text-white mb-3">Be the First to Support</h4>
+                      <p className="text-gray-400 text-lg max-w-md mx-auto">
+                        Join our mission to revolutionize EV charging. Be among the first supporters of this groundbreaking technology.
+                      </p>
                     </div>
                   ) : (
-                    <div className="flex gap-4">
-                      {donorsWithAmounts.slice(0, 10).map((donor) => (
+                    <div className="flex gap-6 overflow-x-auto pb-4">
+                      {donorsWithAmounts.slice(0, 10).map((donor, index) => (
                         <motion.div
                           key={donor.id}
                           initial={{ opacity: 0, x: 20 }}
                           animate={{ opacity: 1, x: 0 }}
-                          transition={{ duration: 0.3 }}
-                          className="bg-white/70 backdrop-blur-md rounded-lg p-4 flex-shrink-0 w-64 hover:bg-white/80 transition-all border border-black/10"
+                          transition={{ duration: 0.4, delay: index * 0.1 }}
+                          className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 flex-shrink-0 w-80 
+                                   hover:bg-white/10 transition-all border border-white/10 hover:border-[#D4AF37]/30
+                                   hover:shadow-lg group"
+                          whileHover={{ y: -4, scale: 1.02 }}
                         >
-                          <div className="flex items-start">
-                            <div className="w-8 h-8 bg-[#EFBF04]/10 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-                              <Users className="w-4 h-4 text-[#EFBF04]" />
-                            </div>
+                          <div className="flex items-start gap-4">
+                            <motion.div 
+                              className="w-12 h-12 bg-gradient-to-br from-[#D4AF37]/30 to-[#B8860B]/30 rounded-2xl 
+                                        flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300"
+                              whileHover={{ rotate: 15 }}
+                            >
+                              <span className="text-[#D4AF37] font-semibold text-lg">
+                                {donor.anonymous ? '?' : (donor.firstName?.[0] || '?')}
+                              </span>
+                            </motion.div>
                             <div className="flex-1 min-w-0">
-                              <p className="font-medium text-[#111111] truncate text-sm tracking-wide">
+                              <p className="font-semibold text-white truncate text-lg tracking-wide">
                                 {donor.anonymous ? 'Anonymous Supporter' : `${donor.firstName} ${donor.lastName}`}
                               </p>
-                              <p className="text-[#EFBF04] font-semibold text-xs">Donated ${donor.amount.toFixed(2)}</p>
+                              <p className="text-[#D4AF37] font-bold text-base">Donated ${donor.amount.toFixed(2)}</p>
                               {donor.dedicateTo && (
-                                <p className="text-[#6F6F6F] italic text-xs truncate">In honor of: {donor.dedicateTo}</p>
+                                <p className="text-gray-400 italic text-sm truncate mt-1">In honor of: {donor.dedicateTo}</p>
                               )}
-                              <p className="text-[#6F6F6F] text-xs">
+                              <p className="text-gray-500 text-sm mt-2">
                                 {donor.createdAt?.toDate?.()?.toLocaleDateString('en-US', {
                                   month: 'short',
                                   day: 'numeric',

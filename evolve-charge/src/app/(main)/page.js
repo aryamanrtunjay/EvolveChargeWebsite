@@ -306,7 +306,7 @@ const AmpereonLanding = () => {
 
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/40" />
 
-        {/* Hero content with advanced glassmorphism */}
+        {/* Hero content*/}
         <motion.div
           className="relative z-10 px-6"
           style={{ y: heroParallax }}
@@ -316,12 +316,6 @@ const AmpereonLanding = () => {
         >
           <div className="backdrop-blur-md bg-black/40 border border-white/10 rounded-[2.5rem] p-16 max-w-5xl mx-auto 
                         shadow-[0_8px_32px_rgba(0,0,0,0.3)] relative overflow-hidden">
-            
-            {/* Subtle animated background pattern */}
-            <div className="absolute inset-0 opacity-3">
-              <div className="w-full h-full bg-gradient-to-br from-[#D4AF37]/20 to-[#B8860B]/20" />
-            </div>
-            
             <div className="relative z-10">
               {/* <motion.div
                 initial={{ scale: 0.8, opacity: 0 }}

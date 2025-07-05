@@ -142,7 +142,7 @@ function OrderSuccessContent() {
               </svg>
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-[#111111] mb-4 tracking-tight">Your Order is Confirmed!</h1>
-            <p className="text-lg text-[#6F6F6F] mb-2 leading-relaxed">Thank you for your purchase. We're excited to welcome you to EVolve Charge!</p>
+            <p className="text-lg text-[#6F6F6F] mb-2 leading-relaxed">Thank you for your purchase. We're excited to welcome you to Ampereon!</p>
             <p className="text-md text-[#6F6F6F] tracking-wide">Order #: <span className="font-medium">{orderNumber}</span></p>
             <div className="mt-4 inline-block text-sm bg-[#F5F6F7] text-[#6F6F6F] px-4 py-2 rounded-full">
               <span>An email confirmation has been sent to {customer['email-address']}</span>
@@ -158,7 +158,7 @@ function OrderSuccessContent() {
                 </svg>
               </div>
               <div>
-                <h3 className="font-bold text-[#111111] text-lg tracking-wide">EVolve Charge Smart Charger</h3>
+                <h3 className="font-bold text-[#111111] text-lg tracking-wide">Ampereon Smart Charger</h3>
                 <p className="text-[#6F6F6F] leading-relaxed">Advanced EV charging solution for your home</p>
               </div>
             </div>
@@ -225,7 +225,7 @@ function OrderSuccessContent() {
                   <span className="bg-[#EFBF04] text-[#111111] w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">1</span>
                   <div>
                     <p className="font-medium text-[#111111] tracking-wide">Production & Preparation</p>
-                    <p className="text-[#6F6F6F] text-sm leading-relaxed">Your EVolve Charger will now enter production. We'll keep you updated on its progress.</p>
+                    <p className="text-[#6F6F6F] text-sm leading-relaxed">Your Ampereon will now enter production. We'll keep you updated on its progress.</p>
                   </div>
                 </li>
                 <li className="flex">
@@ -239,7 +239,7 @@ function OrderSuccessContent() {
                   <span className="bg-[#EFBF04] text-[#111111] w-6 h-6 rounded-full flex items-center justify-center mr-3 flex-shrink-0">3</span>
                   <div>
                     <p className="font-medium text-[#111111] tracking-wide">App Access</p>
-                    <p className="text-[#6F6F6F] text-sm leading-relaxed">We'll get your account ready on our app so you can monitor and customize your EVolve Charger</p>
+                    <p className="text-[#6F6F6F] text-sm leading-relaxed">We'll get your account ready on our app so you can monitor and customize your Ampereon</p>
                   </div>
                 </li>
               </ol>
