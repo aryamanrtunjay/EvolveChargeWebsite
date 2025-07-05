@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ChevronRight, Zap, Clock, Target, Lightbulb, Users, Award, ChevronDown, ArrowRight, Star, Heart, Battery, Wifi, Globe, Shield, TrendingUp } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useTransform, useInView } from 'framer-motion';
 import { FaXTwitter } from "react-icons/fa6";
+import OrderChoiceModal from '@/components/OrderChoiceModal';
 
 // Enhanced animation variants
 const fadeUpVariants = {
@@ -26,37 +27,6 @@ const staggerContainer = {
   }
 };
 
-// Floating geometric shapes for modern feel
-const FloatingShapes = () => {
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {[...Array(8)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute opacity-5"
-          initial={{
-            x: Math.random() * window.innerWidth,
-            y: Math.random() * window.innerHeight,
-            rotate: 0
-          }}
-          animate={{
-            x: Math.random() * window.innerWidth,
-            y: Math.random() * window.innerHeight,
-            rotate: 360
-          }}
-          transition={{
-            duration: Math.random() * 20 + 15,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-        >
-          <div className={`w-${4 + i % 4} h-${4 + i % 4} ${i % 2 === 0 ? 'bg-[#D4AF37]' : 'border-2 border-[#D4AF37]'} ${i % 3 === 0 ? 'rounded-full' : 'rounded-lg rotate-45'}`} />
-        </motion.div>
-      ))}
-    </div>
-  );
-};
-
 // Modern glassmorphism team member cards
 function TeamMember({ name, role1, role2, bio, image, linkedin, x, delay = 0 }) {
   const [isHovered, setIsHovered] = useState(false);
@@ -75,14 +45,12 @@ function TeamMember({ name, role1, role2, bio, image, linkedin, x, delay = 0 }) 
           transition: { delay, duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }
         }
       }}
-      onHoverStart={() => setIsHovered(true)}
-      onHoverEnd={() => setIsHovered(false)}
       className="group relative perspective-1000"
     >
       {/* Modern gradient card with glassmorphism */}
       <motion.div 
-        className="relative bg-gradient-to-br from-white/90 via-white/80 to-white/70 backdrop-blur-xl 
-                   rounded-3xl p-8 border border-white/30 shadow-2xl overflow-hidden
+        className="relative bg-gradient-to-br from-[#2A2A2A]/90 via-[#1A1A1A]/80 to-[#2A2A2A]/70 backdrop-blur-xl 
+                   rounded-3xl p-8 border border-white/10 shadow-2xl overflow-hidden
                    hover:shadow-[#D4AF37]/20 hover:shadow-3xl transition-all duration-700"
         whileHover={{ rotateY: 5, z: 50 }}
         style={{ transformStyle: 'preserve-3d' }}
@@ -145,7 +113,7 @@ function TeamMember({ name, role1, role2, bio, image, linkedin, x, delay = 0 }) 
           {/* Content with modern typography */}
           <div className="text-center space-y-4">
             <motion.h3 
-              className="text-2xl font-semibold text-[#1A1A1A] tracking-tight"
+              className="text-2xl font-semibold text-white tracking-tight"
               whileHover={{ scale: 1.05 }}
             >
               {name}
@@ -158,13 +126,15 @@ function TeamMember({ name, role1, role2, bio, image, linkedin, x, delay = 0 }) 
             
             <div className="h-px bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent my-6" />
             
-            <p className="text-[#6A6A6A] leading-relaxed text-base">{bio}</p>
+            <p className="text-gray-300 leading-relaxed text-base">{bio}</p>
             
             {/* Modern social links */}
             <div className="flex justify-center gap-4 pt-6">
               {linkedin && (
                 <motion.a 
                   href={linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   whileHover={{ scale: 1.2, rotate: 5 }}
                   whileTap={{ scale: 0.9 }}
                   className="w-12 h-12 bg-gradient-to-br from-[#D4AF37]/20 to-[#B8860B]/20 
@@ -180,6 +150,8 @@ function TeamMember({ name, role1, role2, bio, image, linkedin, x, delay = 0 }) 
               {x && (
                 <motion.a 
                   href={x}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   whileHover={{ scale: 1.2, rotate: -5 }}
                   whileTap={{ scale: 0.9 }}
                   className="w-12 h-12 bg-gradient-to-br from-[#D4AF37]/20 to-[#B8860B]/20 
@@ -219,7 +191,7 @@ function ValueCard({ icon, title, description, index }) {
     >
       {/* Asymmetric card design */}
       <div className={`relative ${isEven ? 'ml-8' : 'mr-8'} p-12 
-                      bg-gradient-to-${isEven ? 'br' : 'bl'} from-white to-[#F8F8F8] 
+                      bg-gradient-to-${isEven ? 'br' : 'bl'} from-[#2A2A2A] to-[#1A1A1A] 
                       ${isEven ? 'rounded-tl-3xl rounded-br-3xl rounded-tr-lg rounded-bl-lg' : 'rounded-tr-3xl rounded-bl-3xl rounded-tl-lg rounded-br-lg'}
                       border-l-4 border-[#D4AF37] shadow-xl hover:shadow-2xl
                       transition-all duration-500 overflow-hidden`}>
@@ -242,8 +214,8 @@ function ValueCard({ icon, title, description, index }) {
             {icon}
           </motion.div>
           
-          <h3 className="text-2xl font-bold text-[#1A1A1A] mb-6 tracking-tight">{title}</h3>
-          <p className="text-[#6A6A6A] leading-relaxed text-lg font-light">{description}</p>
+          <h3 className="text-2xl font-bold text-white mb-6 tracking-tight">{title}</h3>
+          <p className="text-gray-300 leading-relaxed text-lg font-light">{description}</p>
           
           {/* Modern accent element */}
           <div className={`mt-8 w-16 h-1 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] 
@@ -315,15 +287,6 @@ const StorySection = () => {
           viewport={{ once: true }}
           variants={fadeUpVariants}
         >
-          <motion.div
-            className="inline-block text-[#D4AF37] text-sm font-medium tracking-[0.2em] uppercase mb-6"
-            initial={{ width: 0 }}
-            whileInView={{ width: "auto" }}
-            transition={{ duration: 1 }}
-          >
-            Our Journey
-          </motion.div>
-          
           <h2 className="text-6xl md:text-8xl font-extralight mb-8 tracking-tighter text-white">
             Our <span className="font-medium text-[#D4AF37] italic">Story</span>
           </h2>
@@ -414,16 +377,6 @@ const StorySection = () => {
                             border border-white/20 rounded-3xl p-12 min-h-[500px] 
                             shadow-2xl overflow-hidden">
                 
-                {/* Animated background pattern */}
-                <div className="absolute inset-0 opacity-5">
-                  <motion.div
-                    className="w-full h-full bg-gradient-to-br from-[#D4AF37] to-[#B8860B]"
-                    animate={{ rotate: [0, 90, 180, 270, 360] }}
-                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                    style={{ clipPath: "polygon(0 0, 100% 0, 50% 100%)" }}
-                  />
-                </div>
-                
                 <div className="relative z-10 h-full flex flex-col justify-center">
                   <AnimatePresence mode="wait">
                     <motion.div
@@ -452,7 +405,7 @@ const StorySection = () => {
                         {storyPoints[activeStoryPoint].description}
                       </p>
 
-                      {/* Modern step indicator */}
+                      {/*Modern step indicator */}
                       <div className="flex items-center gap-4">
                         <div className="px-6 py-3 bg-gradient-to-r from-[#D4AF37]/20 to-[#B8860B]/20 
                                       text-[#D4AF37] font-bold rounded-full border border-[#D4AF37]/30
@@ -547,14 +500,12 @@ export default function AboutPage() {
   ];
 
   return (
-    <div className="bg-[#FAFAFA] text-[#1A1A1A] overflow-x-hidden">
+    <div className="bg-[#0A0A0A] text-white overflow-x-hidden">
       {/* Hero Section - Cinematic with floating elements */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <FloatingShapes />
-        
         {/* Sophisticated layered background */}
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#F8F8F8] via-white to-[#F8F8F8]" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#1A1A1A] via-[#0A0A0A] to-[#1A1A1A]" />
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#D4AF37]/5 via-transparent to-transparent" />
         </div>
         
@@ -578,18 +529,8 @@ export default function AboutPage() {
           transition={{ duration: 1, ease: [0.25, 0.1, 0.25, 1] }}
         >
           {/* Modern glassmorphism hero card */}
-          <div className="backdrop-blur-2xl bg-white/70 border border-white/30 rounded-[2rem] p-16 max-w-6xl mx-auto 
+          <div className="backdrop-blur-2xl bg-[#0A0A0A]/70 border border-white/10 rounded-[2rem] p-16 max-w-6xl mx-auto 
                         shadow-[0_8px_32px_rgba(0,0,0,0.1)] relative overflow-hidden">
-            
-            {/* Subtle animated background pattern */}
-            <div className="absolute inset-0 opacity-5">
-              <motion.div
-                className="w-full h-full bg-gradient-to-br from-[#D4AF37] to-[#B8860B]"
-                animate={{ rotate: [0, 360] }}
-                transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
-                style={{ clipPath: "polygon(50% 0%, 0% 100%, 100% 100%)" }}
-              />
-            </div>
             
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
@@ -599,14 +540,14 @@ export default function AboutPage() {
             >
               {/* Modern badge */}
               <div className="inline-flex items-center gap-3 text-sm font-medium text-[#D4AF37] 
-                           bg-gradient-to-r from-[#D4AF37]/10 to-[#B8860B]/10 backdrop-blur-sm 
+                           bg-gradient-to-r from-[#D4AF37]/20 to-[#B8860B]/20 backdrop-blur-sm 
                            px-8 py-4 rounded-full mb-8 border border-[#D4AF37]/20">
                 <Users className="w-4 h-4" />
                 <span className="tracking-wide">About Ampereon</span>
               </div>
               
               {/* Modern typography treatment */}
-              <h1 className="font-extralight tracking-tighter leading-[0.9] mb-8 text-[#1A1A1A]"
+              <h1 className="font-extralight tracking-tighter leading-[0.9] mb-8 text-white"
                   style={{ fontSize: 'clamp(3.5rem,7vw,5.5rem)' }}>
                 Pioneering the{' '}
                 <span className="font-bold bg-gradient-to-r from-[#D4AF37] to-[#B8860B] bg-clip-text text-transparent">
@@ -616,7 +557,7 @@ export default function AboutPage() {
                 of EV Charging
               </h1>
 
-              <p className="text-xl sm:text-2xl text-[#6A6A6A] mb-12 max-w-4xl mx-auto font-light leading-relaxed">
+              <p className="text-xl sm:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto font-light leading-relaxed">
                 We're building intelligent automation that makes electric vehicle ownership effortless, 
                 accessible, and truly sustainable for everyone.
               </p>
@@ -643,15 +584,6 @@ export default function AboutPage() {
                     transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
                   />
                 </motion.button>
-
-                <motion.button
-                  className="group px-10 py-5 border-2 border-[#D4AF37]/30 backdrop-blur-sm rounded-2xl text-[#1A1A1A] font-semibold
-                            hover:bg-[#D4AF37]/10 hover:border-[#D4AF37]/50 flex items-center gap-3 transition-all duration-300"
-                  whileHover={{ scale: 1.02 }}
-                >
-                  <ChevronRight className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
-                  Learn More
-                </motion.button>
               </div>
             </motion.div>
           </div>
@@ -662,7 +594,7 @@ export default function AboutPage() {
       <StorySection />
 
       {/* Mission & Values Section - Asymmetric design */}
-      <section className="py-32 px-6 bg-gradient-to-br from-white via-[#F8F8F8] to-white relative overflow-hidden">
+      <section className="py-32 px-6 bg-gradient-to-br from-[#1A1A1A] via-[#0A0A0A] to-[#1A1A1A] relative overflow-hidden">
         {/* Geometric background elements */}
         <div className="absolute top-0 left-0 w-64 h-64 bg-[#D4AF37]/5 rotate-45 -translate-x-32 -translate-y-32" />
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#D4AF37]/3 rounded-full translate-x-48 translate-y-48" />
@@ -685,7 +617,7 @@ export default function AboutPage() {
               Our Foundation
             </motion.div>
             
-            <h2 className="text-6xl md:text-7xl font-extralight mb-8 tracking-tighter text-[#1A1A1A]">
+            <h2 className="text-6xl md:text-7xl font-extralight mb-8 tracking-tighter text-white">
               Our <span className="font-bold text-[#D4AF37] italic">Mission</span> & Values
             </h2>
             
@@ -698,7 +630,7 @@ export default function AboutPage() {
               />
             </div>
             
-            <p className="text-xl text-[#6A6A6A] max-w-4xl mx-auto font-light leading-relaxed">
+            <p className="text-xl text-gray-300 max-w-4xl mx-auto font-light leading-relaxed">
               Driven by the belief that technology should simplify life, not complicate it. 
               Our mission is to accelerate EV adoption by removing barriers and creating seamless experiences.
             </p>
@@ -720,7 +652,7 @@ export default function AboutPage() {
       </section>
 
       {/* Team Section - Modern card grid */}
-      <section className="py-32 px-6 bg-gradient-to-br from-[#F8F8F8] via-white to-[#F0F0F0] relative overflow-hidden">
+      <section className="py-32 px-6 bg-gradient-to-br from-[#1A1A1A] via-[#0A0A0A] to-[#1A1A1A] relative overflow-hidden">
         {/* Subtle pattern overlay */}
         <div className="absolute inset-0 opacity-5">
           <svg width="100%" height="100%">
@@ -750,11 +682,11 @@ export default function AboutPage() {
               Leadership Team
             </motion.div>
             
-            <h2 className="text-6xl md:text-7xl font-extralight mb-8 tracking-tighter text-[#1A1A1A]">
+            <h2 className="text-6xl md:text-7xl font-extralight mb-8 tracking-tighter text-white">
               Meet Our <span className="font-bold text-[#D4AF37] italic">Founding</span> Team
             </h2>
             
-            <p className="text-xl text-[#6A6A6A] max-w-3xl mx-auto font-light leading-relaxed">
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
               Our founding team of engineers, designers, and innovators share a passion for 
               creating technology that makes a real difference in people's lives.
             </p>
@@ -791,23 +723,9 @@ export default function AboutPage() {
                 backgroundImage: `conic-gradient(from 0deg at 50% 50%, transparent 0deg, #D4AF37 90deg, transparent 180deg, #B8860B 270deg, transparent 360deg)`,
                 opacity: 0.05
               }}
-              animate={{ rotate: 360 }}
-              transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
             />
           </div>
         </div>
-        
-        {/* Floating geometric shapes */}
-        <motion.div 
-          className="absolute top-0 left-1/4 w-96 h-96 bg-[#D4AF37]/10 rounded-full blur-3xl"
-          animate={{ y: [0, -50, 0], opacity: [0.1, 0.2, 0.1] }}
-          transition={{ duration: 8, repeat: Infinity }}
-        />
-        <motion.div 
-          className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#D4AF37]/5 rounded-full blur-3xl"
-          animate={{ y: [0, 50, 0], opacity: [0.05, 0.15, 0.05] }}
-          transition={{ duration: 10, repeat: Infinity, delay: 2 }}
-        />
         
         <div className="max-w-6xl mx-auto text-center relative z-10">
           <motion.div
@@ -820,7 +738,7 @@ export default function AboutPage() {
             transition={{ delay: 0.2, duration: 0.6 }}
           >
             <Zap className="w-4 h-4" />
-            <span className="tracking-wide text-[#D4AF37]">Join the Revolution</span>
+            <span className="tracking-wide text-[#D4AF37]">Join the EVolution</span>
           </motion.div>
           
           <motion.h2 
@@ -879,17 +797,6 @@ export default function AboutPage() {
               <span className="text-sm font-light">or</span>
               <div className="h-px w-8 bg-gradient-to-l from-transparent to-gray-600" />
             </div>
-
-            <motion.button 
-              className="group px-10 py-5 bg-white/5 backdrop-blur-sm border-2 border-[#D4AF37]/30 text-white font-semibold text-lg rounded-2xl 
-                         hover:bg-[#D4AF37]/10 hover:border-[#D4AF37]/50 transition-all duration-300
-                         focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:ring-offset-2 focus:ring-offset-[#1A1A1A]
-                         flex items-center gap-3"
-              whileHover={{ scale: 1.02 }}
-            >
-              <ArrowRight className="w-5 h-5 group-hover:rotate-45 transition-transform duration-300" />
-              Learn More
-            </motion.button>
           </motion.div>
           
           <motion.p 
@@ -905,33 +812,7 @@ export default function AboutPage() {
       </section>
 
       {/* Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
-          <motion.div
-            className="bg-white rounded-3xl p-8 max-w-md w-full"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.8, opacity: 0 }}
-          >
-            <h3 className="text-2xl font-medium text-[#1A1A1A] mb-4">Get Started Today</h3>
-            <p className="text-[#6A6A6A] mb-6">Join thousands of families enjoying effortless EV charging.</p>
-            <div className="space-y-4">
-              <button className="w-full py-3 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white rounded-xl font-medium">
-                Schedule Free Consultation
-              </button>
-              <button className="w-full py-3 border border-[#D4AF37]/30 text-[#D4AF37] rounded-xl font-medium">
-                Download Brochure
-              </button>
-              <button 
-                className="w-full py-3 text-[#6A6A6A] font-medium"
-                onClick={() => setIsModalOpen(false)}
-              >
-                Maybe Later
-              </button>
-            </div>
-          </motion.div>
-        </div>
-      )}
+      <OrderChoiceModal isOpen={isModalOpen} onClose={()=>setIsModalOpen(false)} />
     </div>
   );
 }

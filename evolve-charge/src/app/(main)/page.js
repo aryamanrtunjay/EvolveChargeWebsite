@@ -1112,8 +1112,6 @@ const AmpereonLanding = () => {
               style={{
                 backgroundImage: `conic-gradient(from 0deg at 50% 50%, transparent 0deg, #D4AF37 90deg, transparent 180deg, #B8860B 270deg, transparent 360deg)`
               }}
-              animate={{ rotate: 360 }}
-              transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
             />
           </div>
         </div>
