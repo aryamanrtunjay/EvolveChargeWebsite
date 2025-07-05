@@ -5,8 +5,8 @@ import { motion, useScroll, useTransform, useInView, AnimatePresence } from 'fra
 import { ChevronDown, Zap, Wifi, DollarSign, Battery, Clock, ChevronRight, ArrowRight, Star, Users, Heart, Globe, Shield } from 'lucide-react';
 import OrderChoiceModal from '@/components/OrderChoiceModal';
 import Link from "next/link";
-import db from "../firebaseConfig.js"
-import { getFirestore, collection, getDocs, query, orderBy, limit, where } from 'firebase/firestore';
+import { db } from "../firebaseConfig.js";
+import { collection, getDocs, query, orderBy, limit, where } from 'firebase/firestore';
 
 // Modern tech pattern overlay
 const TechPattern = ({ opacity = 0.05 }) => (
@@ -244,6 +244,9 @@ const AmpereonLanding = () => {
             monthAgo.setMonth(monthAgo.getMonth() - 1);
             donorsQuery = query(donorsRef, where('createdAt', '>=', monthAgo), orderBy('createdAt', 'desc'));
             break;
+          case 'top-all':
+            donorsQuery = query(donorsRef, orderBy('createdAt', 'desc'));
+            break;
           default:
             donorsQuery = query(donorsRef, orderBy('createdAt', 'desc'), limit(50));
         }
@@ -280,6 +283,7 @@ const AmpereonLanding = () => {
 
     loadData();
   }, [donorFilter]);
+
 
   return (
     <div className="bg-[#0A0A0A] text-white overflow-x-hidden">
@@ -934,27 +938,30 @@ const AmpereonLanding = () => {
             variants={fadeUpVariants}
             transition={{ delay: 0.2 }}
           >
-            <div className="bg-[#1A1A1A]/80 backdrop-blur-xl rounded-3xl p-3 border border-[#D4AF37]/20 shadow-xl">
-              <div className="flex gap-3">
-                {[
-                  { label: 'Recent', value: 'recent' },
-                  { label: 'Top Month', value: 'top-month' },
-                  { label: 'All Time', value: 'top-all' },
-                ].map(({ label, value }) => (
-                  <motion.button
-                    key={value}
-                    onClick={() => setDonorFilter(value)}
-                    className={`px-8 py-4 rounded-2xl text-sm font-semibold transition-all duration-300 ${
-                      donorFilter === value
-                        ? 'bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white shadow-lg shadow-[#D4AF37]/25'
-                        : 'text-gray-400 hover:bg-[#D4AF37]/10 hover:text-[#D4AF37]'
-                    }`}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {label}
-                  </motion.button>
-                ))}
+            <div className="flex justify-center mb-12">
+              <div className="bg-[#1A1A1A]/80 backdrop-blur-xl rounded-3xl p-3 border border-[#D4AF37]/20 shadow-xl">
+                <div className="flex gap-3">
+                  {[
+                    { label: 'Recent', value: 'recent' },
+                    { label: 'Top Day', value: 'top-day' },
+                    { label: 'Top Month', value: 'top-month' },
+                    { label: 'All Time', value: 'top-all' },
+                  ].map(({ label, value }) => (
+                    <motion.button
+                      key={value}
+                      onClick={() => setDonorFilter(value)}
+                      className={`px-8 py-4 rounded-2xl text-sm font-semibold transition-all duration-300 ${
+                        donorFilter === value
+                          ? 'bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white shadow-lg shadow-[#D4AF37]/25'
+                          : 'text-gray-400 hover:bg-[#D4AF37]/10 hover:text-[#D4AF37]'
+                      }`}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      {label}
+                    </motion.button>
+                  ))}
+                </div>
               </div>
             </div>
           </motion.div>
