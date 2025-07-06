@@ -10,20 +10,27 @@ import { db } from '../../firebaseConfig.js';
 import { collection, addDoc, updateDoc, doc, serverTimestamp } from 'firebase/firestore';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-import { ChevronDown, ChevronRight, Zap, User, Car, MapPin, CreditCard, Lock, Leaf, Info, Check, X } from 'lucide-react';
+import { ChevronDown, ChevronRight, Zap, User, Car, MapPin, CreditCard, Lock, Leaf, Info, Check, X, Shield, Star } from 'lucide-react';
 
 // Initialize Stripe
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
 // Animation variants
 const fadeUpVariants = {
-  hidden: { opacity: 0, y: 40 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } }
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] } 
+  }
 };
 
 const staggerContainer = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.2 } }
+  visible: { 
+    opacity: 1, 
+    transition: { staggerChildren: 0.1 } 
+  }
 };
 
 // Modal Component for Charging Cable Info
@@ -31,42 +38,48 @@ function ChargingCableModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <motion.div
-      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
+    <AnimatePresence>
       <motion.div
-        className="bg-[#F5F6F7] rounded-2xl p-8 max-w-md w-full mx-4 border border-[#111111]/8 shadow-xl"
-        initial={{ scale: 0.95, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.95, opacity: 0 }}
+        className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
       >
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="text-2xl font-bold text-[#111111] tracking-tight">Tesla Wall Connector Plug</h3>
-          <button onClick={onClose} className="text-[#6F6F6F] hover:text-[#111111]">
-            <X className="w-6 h-6" />
-          </button>
-        </div>
-        <div className="mb-6">
-          <img
-            src="/images/tesla-wall-connector.png"
-            alt="Tesla Wall Connector Plug"
-            className="w-full h-48 object-contain rounded-lg"
-          />
-        </div>
-        <p className="text-[#6F6F6F] text-sm leading-relaxed">
-          If you already own a cable that you use to charge your vehicle, DO NOT PURCHASE this add-on. Ampereon integrates with your existing charger. If you need a cable, we’ll provide one compatible with your vehicle (specify vehicle in the next section).
-        </p>
-        <button
-          onClick={onClose}
-          className="mt-6 w-full py-3 bg-[#EFBF04] text-white font-semibold rounded-full hover:brightness-110 transition transform hover:scale-105 shadow-lg shadow-[#EFBF04]/30"
+        <motion.div
+          className="bg-[#1A1A1A] border border-[#D4AF37]/20 rounded-lg p-6 max-w-md w-full mx-4"
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.95, opacity: 0 }}
         >
-          Close
-        </button>
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-medium text-white">Tesla Wall Connector</h3>
+            <button 
+              onClick={onClose} 
+              className="text-gray-400 hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+          <div className="mb-4">
+            <img
+              src="/images/tesla-wall-connector.png"
+              alt="Tesla Wall Connector"
+              className="w-full h-32 object-contain rounded bg-[#0A0A0A]"
+            />
+          </div>
+          <p className="text-gray-300 text-sm leading-relaxed mb-6">
+            If you already own a charging cable, do not purchase this add-on. 
+            Ampereon integrates with your existing charger.
+          </p>
+          <button
+            onClick={onClose}
+            className="w-full py-3 bg-[#D4AF37] text-black rounded hover:bg-[#B8860B] transition-colors"
+          >
+            Close
+          </button>
+        </motion.div>
       </motion.div>
-    </motion.div>
+    </AnimatePresence>
   );
 }
 
@@ -108,34 +121,32 @@ function CheckoutForm({ onSuccess, total, isProcessing, setIsProcessing, setErro
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="mb-6">
-        <PaymentElement />
-      </div>
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <PaymentElement />
+      
       {errorMessage && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl text-red-700">
+        <div className="p-4 bg-red-900/20 border border-red-500/30 rounded text-sm text-red-300">
           {errorMessage}
         </div>
       )}
+      
       <div className="flex space-x-4">
         <button
           type="button"
           onClick={() => window.history.back()}
-          className="w-1/3 py-3 rounded-full border border-[#111111]/15 text-[#111111]/70 hover:bg-[#F5F6F7] transition"
+          className="flex-1 py-3 border border-[#D4AF37]/30 rounded text-white hover:bg-[#D4AF37]/10 transition-colors"
         >
           Back
         </button>
         <button
           type="submit"
           disabled={!stripe || isProcessing}
-          className="w-2/3 py-3 bg-[#EFBF04] text-white font-semibold rounded-full hover:brightness-110 transition transform hover:scale-105 shadow-lg shadow-[#EFBF04]/30 flex justify-center items-center"
+          className="flex-2 py-3 bg-[#D4AF37] text-black rounded hover:bg-[#B8860B] transition-colors 
+                   disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
         >
           {isProcessing ? (
             <>
-              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
+              <div className="animate-spin w-4 h-4 border-2 border-black rounded-full border-t-transparent mr-2" />
               Processing...
             </>
           ) : (
@@ -202,35 +213,32 @@ export default function OrderPage() {
       name: 'professionalInstallation',
       label: 'Professional Installation',
       price: 40,
-      description: 'Expert installation at your location.',
-      icon: <Zap className="w-6 h-6" />,
+      description: 'Expert installation at your location',
     },
     {
       name: 'chargingCable',
       label: 'Charging Cable',
       price: 320,
-      description: 'High-quality, durable charging cable.',
+      description: 'High-quality charging cable',
       additionalDescription: (
-        <div className="mt-4 bg-amber-50 border border-amber-200 rounded-lg p-4">
-          <p className="text-amber-800 text-sm font-semibold mb-3">
-            ⚠️ DO NOT PURCHASE if you already have a charging cable
+        <div className="mt-3 p-3 bg-amber-900/20 border border-amber-600/30 rounded text-sm">
+          <p className="text-amber-300 font-medium mb-2">
+            Only purchase if you don't have a charging cable
           </p>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="inline-flex items-center px-4 py-2 bg-amber-100 hover:bg-amber-200 border border-amber-300 rounded-lg text-amber-800 text-sm font-semibold"
+            className="text-amber-300 hover:text-amber-200 underline"
           >
-            <Info className="w-4 h-4 mr-2" /> Check if you need this
+            Check compatibility
           </button>
         </div>
       ),
-      icon: <Car className="w-6 h-6" />,
     },
     {
       name: 'extendedWarranty',
       label: 'Extended Warranty',
       price: 50,
-      description: 'Additional 2 years of coverage.',
-      icon: <Check className="w-6 h-6" />,
+      description: 'Additional 2 years of coverage',
     },
   ];
 
@@ -457,21 +465,21 @@ export default function OrderPage() {
   const options = {
     clientSecret,
     appearance: {
-      theme: 'stripe',
+      theme: 'night',
       variables: {
-        colorPrimary: '#EFBF04',
-        colorBackground: '#F5F6F7',
-        colorText: '#111111',
+        colorPrimary: '#D4AF37',
+        colorBackground: '#1A1A1A',
+        colorText: '#FFFFFF',
         colorDanger: '#ef4444',
         fontFamily: 'system-ui, -apple-system, sans-serif',
         spacingUnit: '4px',
-        borderRadius: '8px',
+        borderRadius: '6px',
       },
     },
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F6F7] text-[#111111] pt-24 pb-20">
+    <div className="min-h-screen bg-[#0A0A0A] text-white py-16">
       <Script
         strategy="afterInteractive"
         dangerouslySetInnerHTML={{
@@ -483,8 +491,9 @@ export default function OrderPage() {
           `,
         }}
       />
+      
       <motion.div
-        className="max-w-7xl mx-auto px-6"
+        className="max-w-4xl mx-auto px-6"
         initial="hidden"
         animate={isInView ? "visible" : "hidden"}
         variants={staggerContainer}
@@ -492,186 +501,159 @@ export default function OrderPage() {
         {/* Progress Indicator */}
         <motion.div
           ref={stepRef}
-          className="mb-16 max-w-4xl mx-auto"
+          className="mb-16"
           variants={fadeUpVariants}
         >
-          <div className="flex items-center justify-between mb-6 relative">
-            {['Add-Ons', 'Your Information', 'Payment'].map((label, index) => (
-              <div key={index} className="flex flex-col items-center relative z-10">
-                <motion.div
-                  className={`w-12 h-12 rounded-full flex items-center justify-center border ${
-                    step > index + 1
-                      ? 'bg-[#EFBF04] text-white border-[#EFBF04]'
-                      : step === index + 1
-                      ? 'bg-white text-[#EFBF04] border-[#EFBF04]'
-                      : 'bg-white text-[#6F6F6F] border-[#111111]/15'
-                  }`}
-                  whileHover={{ scale: 1.1 }}
-                >
-                  {step > index + 1 ? (
-                    <Check className="w-6 h-6" />
-                  ) : (
-                    <span className="text-lg font-bold">{index + 1}</span>
-                  )}
-                </motion.div>
-                <span className={`mt-3 text-sm font-semibold ${step >= index + 1 ? 'text-[#111111]' : 'text-[#6F6F6F]'}`}>
+          <div className="flex items-center justify-between mb-8">
+            {['Add-Ons', 'Information', 'Payment'].map((label, index) => (
+              <div key={index} className="flex flex-col items-center">
+                <div className={`w-8 h-8 rounded-full border flex items-center justify-center text-sm font-medium ${
+                  step > index + 1
+                    ? 'bg-[#D4AF37] border-[#D4AF37] text-black'
+                    : step === index + 1
+                    ? 'border-[#D4AF37] text-[#D4AF37]'
+                    : 'border-gray-600 text-gray-400'
+                }`}>
+                  {step > index + 1 ? <Check className="w-4 h-4" /> : index + 1}
+                </div>
+                <span className={`mt-2 text-sm ${step >= index + 1 ? 'text-white' : 'text-gray-400'}`}>
                   {label}
                 </span>
               </div>
             ))}
-            <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-[#EFBF04]/20 -z-10" />
-            <motion.div
-              className="absolute top-1/2 left-0 h-0.5 bg-[#EFBF04] -z-10"
-              initial={{ width: '0%' }}
-              animate={{ width: `${(step - 1) * 50}%` }}
-              transition={{ duration: 0.7, ease: 'easeOut' }}
+          </div>
+          <div className="h-px bg-gray-800 relative">
+            <div 
+              className="h-px bg-[#D4AF37] transition-all duration-500"
+              style={{ width: `${(step - 1) * 50}%` }}
             />
           </div>
         </motion.div>
 
         {/* Step 1: Add-Ons */}
         {step === 1 && (
-          <motion.div className="max-w-6xl mx-auto" variants={staggerContainer}>
-            <motion.div variants={fadeUpVariants} className="text-center mb-16">
-              <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-[#111111]">
-                Customize Your <span className="text-[#EFBF04]">Order</span>
-              </h1>
-              <p className="text-lg text-[#6F6F6F] max-w-3xl mx-auto mt-4">
-                Enhance your Ampereon experience with add-ons designed for maximum efficiency and convenience.
+          <motion.div variants={staggerContainer} className="space-y-8">
+            <motion.div variants={fadeUpVariants} className="text-center">
+              <h1 className="text-3xl font-light mb-4">Customize Your Order</h1>
+              <p className="text-gray-400 max-w-2xl mx-auto">
+                Select add-ons to enhance your Ampereon experience.
               </p>
             </motion.div>
+            
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <motion.div variants={fadeUpVariants} className="lg:col-span-2">
-                <div className="bg-[#F5F6F7] backdrop-blur-sm rounded-2xl p-8 border border-[#111111]/8 shadow-sm">
-                  <div className="flex items-center mb-8">
-                    <div className="text-[#EFBF04] mr-4">
-                      <Zap className="w-8 h-8" />
-                    </div>
-                    <h2 className="text-3xl font-bold text-[#111111] tracking-tight">Available Add-Ons</h2>
-                  </div>
-                  <div className="space-y-6">
+                <div className="bg-[#1A1A1A] border border-[#D4AF37]/20 rounded-lg p-6">
+                  <h2 className="text-xl font-medium mb-6">Available Add-Ons</h2>
+                  
+                  <div className="space-y-4">
                     {addOnsList.map((addOn, i) => (
                       <motion.div
                         key={addOn.name}
-                        className="bg-[#F5F6F7] rounded-2xl p-6 border border-[#111111]/8 hover:border-[#EFBF04]/30 transition-all group"
+                        className="border border-gray-700 rounded-lg p-4 hover:border-[#D4AF37]/30 transition-colors"
                         variants={fadeUpVariants}
                         transition={{ delay: i * 0.1 }}
-                        whileHover={{ y: -5, scale: 1.02 }}
                       >
-                        <div className="flex items-start">
-                          <input
-                            id={addOn.name}
-                            name={addOn.name}
-                            type="checkbox"
-                            checked={addOns[addOn.name]}
-                            onChange={handleAddOnChange}
-                            disabled={addOn.name === 'professionalInstallation' && selectedPlan === 'basic'}
-                            className="h-5 w-5 text-[#EFBF04] border-[#111111]/15 rounded focus:ring-[#EFBF04]/40 mt-1"
-                          />
-                          <div className="ml-4 flex-1">
-                            <div className="flex justify-between items-center mb-2">
-                              <label htmlFor={addOn.name} className="text-xl font-bold text-[#111111] cursor-pointer">
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-start space-x-3">
+                            <input
+                              id={addOn.name}
+                              name={addOn.name}
+                              type="checkbox"
+                              checked={addOns[addOn.name]}
+                              onChange={handleAddOnChange}
+                              disabled={addOn.name === 'professionalInstallation' && selectedPlan === 'basic'}
+                              className="mt-1 w-4 h-4 text-[#D4AF37] bg-[#0A0A0A] border-gray-600 rounded focus:ring-[#D4AF37]"
+                            />
+                            <div className="flex-1">
+                              <label htmlFor={addOn.name} className="font-medium text-white cursor-pointer">
                                 {addOn.label}
                               </label>
-                              <span className="text-xl font-bold text-[#EFBF04]">${addOn.price}</span>
+                              <p className="text-sm text-gray-400 mt-1">{addOn.description}</p>
+                              {addOn.additionalDescription}
+                              {addOn.name === 'professionalInstallation' && selectedPlan === 'basic' && (
+                                <div className="mt-2 text-sm text-gray-500">
+                                  Not available for Basic Plan
+                                </div>
+                              )}
                             </div>
-                            <p className="text-[#6F6F6F]">{addOn.description}</p>
-                            {addOn.additionalDescription}
-                            {addOn.name === 'professionalInstallation' && selectedPlan === 'basic' && (
-                              <div className="mt-3 inline-flex items-center px-3 py-1 rounded-full text-sm bg-[#111111]/5 text-[#6F6F6F]">
-                                <X className="w-4 h-4 mr-1" /> Not available for Basic Plan
-                              </div>
-                            )}
                           </div>
+                          <span className="font-medium text-[#D4AF37]">${addOn.price}</span>
                         </div>
                       </motion.div>
                     ))}
                   </div>
                 </div>
               </motion.div>
-              <motion.div variants={fadeUpVariants} className="lg:col-span-1">
-                <div className="sticky top-24">
-                  <div className="bg-[#F5F6F7] backdrop-blur-sm rounded-2xl p-8 border border-[#111111]/8 shadow-sm">
-                    <h2 className="text-2xl font-bold text-[#111111] text-center mb-6">Order Summary</h2>
-                    <div className="space-y-4 mb-8">
-                      {orderSummary.oneTimeFee > 0 && (
-                        <div className="flex justify-between text-[#6F6F6F]">
-                          <span>Hardware</span>
-                          <span className="font-semibold text-[#111111]">${orderSummary.oneTimeFee.toFixed(2)}</span>
-                        </div>
-                      )}
-                      {orderSummary.addOnCost > 0 && (
-                        <div className="flex justify-between text-[#6F6F6F]">
-                          <span>Add-Ons</span>
-                          <span className="font-semibold text-[#111111]">${orderSummary.addOnCost.toFixed(2)}</span>
-                        </div>
-                      )}
-                      <div className="flex justify-between text-[#6F6F6F]">
-                        <span>Tax</span>
-                        <span className="font-semibold text-[#111111]">${orderSummary.tax.toFixed(2)}</span>
+              
+              <motion.div variants={fadeUpVariants}>
+                <div className="bg-[#1A1A1A] border border-[#D4AF37]/20 rounded-lg p-6 sticky top-6">
+                  <h3 className="font-medium mb-4">Order Summary</h3>
+                  
+                  <div className="space-y-2 text-sm">
+                    {orderSummary.oneTimeFee > 0 && (
+                      <div className="flex justify-between text-gray-400">
+                        <span>Hardware</span>
+                        <span className="text-white">${orderSummary.oneTimeFee.toFixed(2)}</span>
                       </div>
-                    </div>
-                    <div className="border-t border-[#111111]/15 pt-6">
-                      <div className="flex justify-between items-center">
-                        <span className="text-lg font-bold text-[#111111]">Total Due Today</span>
-                        <span className="text-2xl font-bold text-[#EFBF04]">${orderSummary.total.toFixed(2)}</span>
+                    )}
+                    {orderSummary.addOnCost > 0 && (
+                      <div className="flex justify-between text-gray-400">
+                        <span>Add-Ons</span>
+                        <span className="text-white">${orderSummary.addOnCost.toFixed(2)}</span>
                       </div>
-                    </div>
-                    <div className="flex space-x-4 mt-8">
-                      <button
-                        onClick={prevStep}
-                        className="w-1/2 py-3 border border-[#111111]/15 rounded-full text-[#111111]/70 hover:bg-[#F5F6F7]"
-                      >
-                        Back
-                      </button>
-                      <button
-                        onClick={nextStep}
-                        className="w-1/2 py-3 bg-[#EFBF04] text-white font-semibold rounded-full hover:brightness-110 transition transform hover:scale-105 shadow-lg"
-                      >
-                        Continue
-                      </button>
+                    )}
+                    <div className="flex justify-between text-gray-400">
+                      <span>Tax</span>
+                      <span className="text-white">${orderSummary.tax.toFixed(2)}</span>
                     </div>
                   </div>
+                  
+                  <div className="border-t border-gray-700 mt-4 pt-4">
+                    <div className="flex justify-between font-medium">
+                      <span>Total</span>
+                      <span className="text-[#D4AF37]">${orderSummary.total.toFixed(2)}</span>
+                    </div>
+                  </div>
+                  
+                  <button
+                    onClick={nextStep}
+                    className="w-full mt-6 py-3 bg-[#D4AF37] text-black rounded hover:bg-[#B8860B] transition-colors"
+                  >
+                    Continue
+                  </button>
                 </div>
               </motion.div>
             </div>
+            
             <ChargingCableModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
           </motion.div>
         )}
 
         {/* Step 2: Customer Information */}
         {step === 2 && (
-          <motion.div className="max-w-6xl mx-auto" variants={staggerContainer}>
-            <motion.div variants={fadeUpVariants} className="text-center mb-16">
-              <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-[#111111]">
-                Your <span className="text-[#EFBF04]">Information</span>
-              </h1>
-              <p className="text-lg text-[#6F6F6F] max-w-3xl mx-auto mt-4">
-                Provide your details and vehicle information to personalize your EVolve experience.
+          <motion.div variants={staggerContainer} className="space-y-8">
+            <motion.div variants={fadeUpVariants} className="text-center">
+              <h1 className="text-3xl font-light mb-4">Your Information</h1>
+              <p className="text-gray-400 max-w-2xl mx-auto">
+                Please provide your details and vehicle information.
               </p>
             </motion.div>
+            
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <motion.div variants={fadeUpVariants} className="lg:col-span-2 space-y-8">
                 {/* Contact Information */}
-                <motion.div
-                  className="bg-[#F5F6F7] backdrop-blur-sm rounded-2xl p-8 border border-[#111111]/8 shadow-sm"
-                  variants={fadeUpVariants}
-                >
-                  <div className="flex items-center mb-8">
-                    <div className="text-[#EFBF04] mr-4">
-                      <User className="w-8 h-8" />
-                    </div>
-                    <h2 className="text-3xl font-bold text-[#111111] tracking-tight">Contact Information</h2>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-[#1A1A1A] border border-[#D4AF37]/20 rounded-lg p-6">
+                  <h2 className="text-xl font-medium mb-6">Contact Information</h2>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {[
-                      { id: 'firstName', label: 'First Name', type: 'text', placeholder: 'Enter your first name' },
-                      { id: 'lastName', label: 'Last Name', type: 'text', placeholder: 'Enter your last name' },
-                      { id: 'email', label: 'Email Address', type: 'email', placeholder: 'your@email.com' },
-                      { id: 'phone', label: 'Phone Number', type: 'tel', placeholder: '(555) 123-4567' },
+                      { id: 'firstName', label: 'First Name', type: 'text', placeholder: 'First name' },
+                      { id: 'lastName', label: 'Last Name', type: 'text', placeholder: 'Last name' },
+                      { id: 'email', label: 'Email', type: 'email', placeholder: 'your@email.com' },
+                      { id: 'phone', label: 'Phone', type: 'tel', placeholder: '(555) 123-4567' },
                     ].map(field => (
-                      <div key={field.id} className="space-y-2">
-                        <label htmlFor={field.id} className="text-sm font-semibold text-[#111111]">
+                      <div key={field.id}>
+                        <label htmlFor={field.id} className="block text-sm font-medium text-gray-300 mb-2">
                           {field.label}
                         </label>
                         <input
@@ -681,67 +663,54 @@ export default function OrderPage() {
                           value={formData[field.id]}
                           onChange={handleInputChange}
                           required
-                          className={`w-full px-4 py-3 bg-white/70 border border-[#111111]/15 rounded-xl focus:ring-2 focus:ring-[#EFBF04]/40 focus:border-[#EFBF04] transition ${
-                            validationErrors[field.id] ? 'border-red-300 bg-red-50/50' : ''
+                          className={`w-full px-3 py-2 bg-[#0A0A0A] border rounded text-white placeholder-gray-500 focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37] ${
+                            validationErrors[field.id] ? 'border-red-500' : 'border-gray-600'
                           }`}
                           placeholder={field.placeholder}
                         />
                         {validationErrors[field.id] && (
-                          <p className="text-sm text-red-600 flex items-center">
-                            <Info className="w-4 h-4 mr-1" /> {validationErrors[field.id]}
-                          </p>
+                          <p className="text-sm text-red-400 mt-1">{validationErrors[field.id]}</p>
                         )}
                       </div>
                     ))}
                   </div>
-                </motion.div>
+                </div>
+
                 {/* Vehicle Information */}
-                <motion.div
-                  className="bg-[#F5F6F7] backdrop-blur-sm rounded-2xl p-8 border border-[#111111]/8 shadow-sm"
-                  variants={fadeUpVariants}
-                >
-                  <div className="flex md:justify-between items-center mb-8">
-                    <div className="flex items-center">
-                      <div className="text-[#EFBF04] mr-4">
-                        <Car className="w-8 h-8" />
-                      </div>
-                      <h2 className="text-3xl font-bold text-[#111111] tracking-tight">Vehicle Information</h2>
-                    </div>
+                <div className="bg-[#1A1A1A] border border-[#D4AF37]/20 rounded-lg p-6">
+                  <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-xl font-medium">Vehicle Information</h2>
                     <button
                       onClick={addVehicle}
-                      className="hidden md:flex items-center px-4 py-2 bg-[#EFBF04] text-white rounded-full hover:brightness-110 transition"
+                      className="text-sm text-[#D4AF37] hover:text-[#B8860B]"
                     >
-                      <Check className="w-4 h-4 mr-2" /> Add Vehicle
+                      + Add Vehicle
                     </button>
                   </div>
+                  
                   {vehicles.map((vehicle, index) => (
-                    <motion.div
-                      key={index}
-                      className="mb-6 last:mb-0 bg-white/50 rounded-xl p-6 border border-[#111111]/8"
-                      variants={fadeUpVariants}
-                    >
+                    <div key={index} className="mb-6 last:mb-0 p-4 border border-gray-700 rounded">
                       <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-xl font-bold text-[#111111]">
-                          Vehicle {index + 1}
-                        </h3>
+                        <h3 className="font-medium">Vehicle {index + 1}</h3>
                         {vehicles.length > 1 && (
                           <button
                             onClick={() => removeVehicle(index)}
-                            className="text-red-500 hover:text-red-600 text-sm font-semibold"
+                            className="text-sm text-red-400 hover:text-red-300"
                           >
                             Remove
                           </button>
                         )}
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {[
                           { id: `make-${index}`, field: 'make', label: 'Make', placeholder: 'Tesla' },
                           { id: `model-${index}`, field: 'model', label: 'Model', placeholder: 'Model 3' },
                           { id: `year-${index}`, field: 'year', label: 'Year', placeholder: '2024', type: 'number' },
-                          { id: `vin-${index}`, field: 'vin', label: 'VIN (Optional)', placeholder: 'Enter VIN', required: false },
+                          { id: `vin-${index}`, field: 'vin', label: 'VIN (Optional)', placeholder: 'VIN', required: false },
                         ].map(field => (
-                          <div key={field.id} className="space-y-2">
-                            <label htmlFor={field.id} className="text-sm font-semibold text-[#111111]">
+                          <div key={field.id}>
+                            <label htmlFor={field.id} className="block text-sm font-medium text-gray-300 mb-2">
                               {field.label}
                             </label>
                             <input
@@ -750,50 +719,38 @@ export default function OrderPage() {
                               value={vehicle[field.field]}
                               onChange={(e) => handleVehicleChange(index, field.field, e.target.value)}
                               required={field.required !== false}
-                              className={`w-full px-4 py-3 bg-white/70 border border-[#111111]/15 rounded-xl focus:ring-2 focus:ring-[#EFBF04]/40 focus:border-[#EFBF04] transition ${
-                                validationErrors.vehicles?.[index]?.[field.field] ? 'border-red-300 bg-red-50/50' : ''
+                              className={`w-full px-3 py-2 bg-[#0A0A0A] border rounded text-white placeholder-gray-500 focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37] ${
+                                validationErrors.vehicles?.[index]?.[field.field] ? 'border-red-500' : 'border-gray-600'
                               }`}
                               placeholder={field.placeholder}
                               {...(field.type === 'number' && { min: 1900, max: new Date().getFullYear() + 1 })}
                             />
                             {validationErrors.vehicles?.[index]?.[field.field] && (
-                              <p className="text-sm text-red-600 flex items-center">
-                                <Info className="w-4 h-4 mr-1" /> {validationErrors.vehicles[index][field.field]}
+                              <p className="text-sm text-red-400 mt-1">
+                                {validationErrors.vehicles[index][field.field]}
                               </p>
                             )}
                           </div>
                         ))}
                       </div>
-                    </motion.div>
+                    </div>
                   ))}
-                  <button
-                    onClick={addVehicle}
-                    className="md:hidden w-full py-3 bg-[#EFBF04] text-white rounded-full hover:brightness-110 transition mt-4"
-                  >
-                    Add Vehicle
-                  </button>
-                </motion.div>
+                </div>
+
                 {/* Delivery Address */}
                 {selectedPlan !== 'basic' && (
-                  <motion.div
-                    className="bg-[#F5F6F7] backdrop-blur-sm rounded-2xl p-8 border border-[#111111]/8 shadow-sm"
-                    variants={fadeUpVariants}
-                  >
-                    <div className="flex items-center mb-8">
-                      <div className="text-[#EFBF04] mr-4">
-                        <MapPin className="w-8 h-8" />
-                      </div>
-                      <h2 className="text-3xl font-bold text-[#111111] tracking-tight">Delivery Address</h2>
-                    </div>
-                    <div className="space-y-6">
+                  <div className="bg-[#1A1A1A] border border-[#D4AF37]/20 rounded-lg p-6">
+                    <h2 className="text-xl font-medium mb-6">Delivery Address</h2>
+                    
+                    <div className="space-y-4">
                       {[
-                        { id: 'address1', label: 'Address Line 1', placeholder: '123 Main Street' },
+                        { id: 'address1', label: 'Address', placeholder: '123 Main Street' },
                         { id: 'address2', label: 'Address Line 2 (Optional)', placeholder: 'Apartment, suite, etc.', required: false },
                         { id: 'city', label: 'City', placeholder: 'San Francisco' },
-                        { id: 'zipCode', label: 'ZIP Code', placeholder: '94105', maxLength: 10 },
+                        { id: 'zipCode', label: 'ZIP Code', placeholder: '94105' },
                       ].map(field => (
-                        <div key={field.id} className="space-y-2">
-                          <label htmlFor={field.id} className="text-sm font-semibold text-[#111111]">
+                        <div key={field.id}>
+                          <label htmlFor={field.id} className="block text-sm font-medium text-gray-300 mb-2">
                             {field.label}
                           </label>
                           <input
@@ -803,21 +760,19 @@ export default function OrderPage() {
                             value={formData[field.id]}
                             onChange={handleInputChange}
                             required={field.required !== false}
-                            maxLength={field.maxLength}
-                            className={`w-full px-4 py-3 bg-white/70 border border-[#111111]/15 rounded-xl focus:ring-2 focus:ring-[#EFBF04]/40 focus:border-[#EFBF04] transition ${
-                              validationErrors[field.id] ? 'border-red-300 bg-red-50/50' : ''
+                            className={`w-full px-3 py-2 bg-[#0A0A0A] border rounded text-white placeholder-gray-500 focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37] ${
+                              validationErrors[field.id] ? 'border-red-500' : 'border-gray-600'
                             }`}
                             placeholder={field.placeholder}
                           />
                           {validationErrors[field.id] && (
-                            <p className="text-sm text-red-600 flex items-center">
-                              <Info className="w-4 h-4 mr-1" /> {validationErrors[field.id]}
-                            </p>
+                            <p className="text-sm text-red-400 mt-1">{validationErrors[field.id]}</p>
                           )}
                         </div>
                       ))}
-                      <div className="space-y-2">
-                        <label htmlFor="state" className="text-sm font-semibold text-[#111111]">
+                      
+                      <div>
+                        <label htmlFor="state" className="block text-sm font-medium text-gray-300 mb-2">
                           State
                         </label>
                         <select
@@ -826,8 +781,8 @@ export default function OrderPage() {
                           value={formData.state}
                           onChange={handleInputChange}
                           required
-                          className={`w-full px-4 py-3 bg-white/70 border border-[#111111]/15 rounded-xl focus:ring-2 focus:ring-[#EFBF04]/40 focus:border-[#EFBF04] transition ${
-                            validationErrors.state ? 'border-red-300 bg-red-50/50' : ''
+                          className={`w-full px-3 py-2 bg-[#0A0A0A] border rounded text-white focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37] ${
+                            validationErrors.state ? 'border-red-500' : 'border-gray-600'
                           }`}
                         >
                           <option value="">Select State</option>
@@ -840,28 +795,20 @@ export default function OrderPage() {
                           ))}
                         </select>
                         {validationErrors.state && (
-                          <p className="text-sm text-red-600 flex items-center">
-                            <Info className="w-4 h-4 mr-1" /> {validationErrors.state}
-                          </p>
+                          <p className="text-sm text-red-400 mt-1">{validationErrors.state}</p>
                         )}
                       </div>
                     </div>
-                  </motion.div>
-                )}
-                {/* Additional Information */}
-                <motion.div
-                  className="bg-[#F5F6F7] backdrop-blur-sm rounded-2xl p-8 border border-[#111111]/8 shadow-sm"
-                  variants={fadeUpVariants}
-                >
-                  <div className="flex items-center mb-8">
-                    <div className="text-[#EFBF04] mr-4">
-                      <Info className="w-8 h-8" />
-                    </div>
-                    <h2 className="text-3xl font-bold text-[#111111] tracking-tight">Additional Information</h2>
                   </div>
-                  <div className="space-y-6">
-                    <div className="space-y-2">
-                      <label htmlFor="referralSource" className="text-sm font-semibold text-[#111111]">
+                )}
+
+                {/* Additional Information */}
+                <div className="bg-[#1A1A1A] border border-[#D4AF37]/20 rounded-lg p-6">
+                  <h2 className="text-xl font-medium mb-6">Additional Information</h2>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <label htmlFor="referralSource" className="block text-sm font-medium text-gray-300 mb-2">
                         How did you hear about us? (Optional)
                       </label>
                       <select
@@ -869,7 +816,7 @@ export default function OrderPage() {
                         name="referralSource"
                         value={formData.referralSource}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 bg-white/70 border border-[#111111]/15 rounded-xl focus:ring-2 focus:ring-[#EFBF04]/40 focus:border-[#EFBF04] transition"
+                        className="w-full px-3 py-2 bg-[#0A0A0A] border border-gray-600 rounded text-white focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37]"
                       >
                         <option value="">Select an option</option>
                         <option value="Google">Google</option>
@@ -880,103 +827,80 @@ export default function OrderPage() {
                         <option value="Other">Other</option>
                       </select>
                     </div>
-                    <div className="bg-white/50 rounded-xl p-6 border border-[#111111]/8">
-                      <div className="flex items-start">
-                        <input
-                          id="agreeTerms"
-                          name="agreeTerms"
-                          type="checkbox"
-                          checked={formData.agreeTerms}
-                          onChange={handleInputChange}
-                          required
-                          className={`h-5 w-5 text-[#EFBF04] border-[#111111]/15 rounded focus:ring-[#EFBF04]/40 mt-1 ${
-                            validationErrors.agreeTerms ? 'border-red-300' : ''
-                          }`}
-                        />
-                        <div className="ml-4">
-                          <label htmlFor="agreeTerms" className="font-semibold text-[#111111]">
-                            I agree to the Terms of Service and Privacy Policy
-                          </label>
-                          <p className="text-[#6F6F6F] text-sm mt-1">
-                            By checking this box, you consent to our{' '}
-                            <a href="#tos" className="text-[#EFBF04] hover:text-[#B48F55] underline">
-                              Terms of Service
-                            </a>{' '}
-                            and{' '}
-                            <a href="#privacypolicy" className="text-[#EFBF04] hover:text-[#B48F55] underline">
-                              Privacy Policy
-                            </a>.
-                          </p>
-                          {validationErrors.agreeTerms && (
-                            <p className="mt-2 text-sm text-red-600 flex items-center">
-                              <Info className="w-4 h-4 mr-1" /> {validationErrors.agreeTerms}
-                            </p>
-                          )}
-                        </div>
+                    
+                    <div className="flex items-start space-x-3">
+                      <input
+                        id="agreeTerms"
+                        name="agreeTerms"
+                        type="checkbox"
+                        checked={formData.agreeTerms}
+                        onChange={handleInputChange}
+                        required
+                        className="mt-1 w-4 h-4 text-[#D4AF37] bg-[#0A0A0A] border-gray-600 rounded focus:ring-[#D4AF37]"
+                      />
+                      <div className="text-sm">
+                        <label htmlFor="agreeTerms" className="font-medium text-white">
+                          I agree to the Terms of Service and Privacy Policy
+                        </label>
+                        <p className="text-gray-400 mt-1">
+                          By checking this box, you consent to our{' '}
+                          <a href="#" className="text-[#D4AF37] hover:text-[#B8860B] underline">Terms of Service</a>{' '}
+                          and{' '}
+                          <a href="#" className="text-[#D4AF37] hover:text-[#B8860B] underline">Privacy Policy</a>.
+                        </p>
+                        {validationErrors.agreeTerms && (
+                          <p className="text-red-400 mt-1">{validationErrors.agreeTerms}</p>
+                        )}
                       </div>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               </motion.div>
+
               {/* Order Summary */}
-              <motion.div variants={fadeUpVariants} className="lg:col-span-1">
-                <div className="sticky top-24">
-                  <div className="bg-[#F5F6F7] backdrop-blur-sm rounded-2xl p-8 border border-[#111111]/8 shadow-sm">
-                    <h2 className="text-2xl font-bold text-[#111111] text-center mb-6">Order Summary</h2>
-                    <div className="space-y-4 mb-8">
-                      {orderSummary.oneTimeFee > 0 && (
-                        <div className="flex justify-between text-[#6F6F6F]">
-                          <span>Hardware</span>
-                          <span className="font-semibold text-[#111111]">${orderSummary.oneTimeFee.toFixed(2)}</span>
-                        </div>
-                      )}
-                      {orderSummary.addOnCost > 0 && (
-                        <div className="flex justify-between text-[#6F6F6F]">
-                          <span>Add-Ons</span>
-                          <span className="font-semibold text-[#111111]">${orderSummary.addOnCost.toFixed(2)}</span>
-                        </div>
-                      )}
-                      <div className="flex justify-between text-[#6F6F6F]">
-                        <span>Tax</span>
-                        <span className="font-semibold text-[#111111]">${orderSummary.tax.toFixed(2)}</span>
+              <motion.div variants={fadeUpVariants}>
+                <div className="bg-[#1A1A1A] border border-[#D4AF37]/20 rounded-lg p-6 sticky top-6">
+                  <h3 className="font-medium mb-4">Order Summary</h3>
+                  
+                  <div className="space-y-2 text-sm">
+                    {orderSummary.oneTimeFee > 0 && (
+                      <div className="flex justify-between text-gray-400">
+                        <span>Hardware</span>
+                        <span className="text-white">${orderSummary.oneTimeFee.toFixed(2)}</span>
                       </div>
-                    </div>
-                    <div className="border-t border-[#111111]/15 pt-6">
-                      <div className="flex justify-between items-center">
-                        <span className="text-lg font-bold text-[#111111]">Total Due Today</span>
-                        <span className="text-2xl font-bold text-[#EFBF04]">${orderSummary.total.toFixed(2)}</span>
+                    )}
+                    {orderSummary.addOnCost > 0 && (
+                      <div className="flex justify-between text-gray-400">
+                        <span>Add-Ons</span>
+                        <span className="text-white">${orderSummary.addOnCost.toFixed(2)}</span>
                       </div>
+                    )}
+                    <div className="flex justify-between text-gray-400">
+                      <span>Tax</span>
+                      <span className="text-white">${orderSummary.tax.toFixed(2)}</span>
                     </div>
-                    <div className="flex space-x-4 mt-8">
-                      <button
-                        onClick={prevStep}
-                        className="w-1/2 py-3 border border-[#111111]/15 rounded-full text-[#111111]/70 hover:bg-[#F5F6F7]"
-                      >
-                        Back
-                      </button>
-                      <button
-                        onClick={nextStep}
-                        className="w-1/2 py-3 bg-[#EFBF04] text-white font-semibold rounded-full hover:brightness-110 transition transform hover:scale-105 shadow-lg"
-                      >
-                        Continue
-                      </button>
+                  </div>
+                  
+                  <div className="border-t border-gray-700 mt-4 pt-4">
+                    <div className="flex justify-between font-medium">
+                      <span>Total</span>
+                      <span className="text-[#D4AF37]">${orderSummary.total.toFixed(2)}</span>
                     </div>
-                    <div className="mt-6 bg-white/50 rounded-xl p-6 border border-[#111111]/8">
-                      <h3 className="font-bold text-[#111111] mb-4 flex items-center">
-                        <Info className="w-5 h-5 text-[#EFBF04] mr-2" /> What's Next?
-                      </h3>
-                      <ul className="space-y-3 text-[#6F6F6F] text-sm">
-                        <li className="flex items-center">
-                          <Check className="w-4 h-4 text-[#EFBF04] mr-2" /> Order confirmation email
-                        </li>
-                        <li className="flex items-center">
-                          <Check className="w-4 h-4 text-[#EFBF04] mr-2" /> Access to EVolve app
-                        </li>
-                        <li className="flex items-center">
-                          <Check className="w-4 h-4 text-[#EFBF04] mr-2" /> Priority updates
-                        </li>
-                      </ul>
-                    </div>
+                  </div>
+                  
+                  <div className="flex space-x-2 mt-6">
+                    <button
+                      onClick={prevStep}
+                      className="flex-1 py-3 border border-[#D4AF37]/30 rounded text-white hover:bg-[#D4AF37]/10 transition-colors"
+                    >
+                      Back
+                    </button>
+                    <button
+                      onClick={nextStep}
+                      className="flex-1 py-3 bg-[#D4AF37] text-black rounded hover:bg-[#B8860B] transition-colors"
+                    >
+                      Continue
+                    </button>
                   </div>
                 </div>
               </motion.div>
@@ -986,53 +910,25 @@ export default function OrderPage() {
 
         {/* Step 3: Payment */}
         {step === 3 && (
-          <motion.div className="max-w-6xl mx-auto" variants={staggerContainer}>
-            <motion.div variants={fadeUpVariants} className="text-center mb-16">
-              <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-[#111111]">
-                Payment <span className="text-[#EFBF04]">Information</span>
-              </h1>
-              <p className="text-lg text-[#6F6F6F] max-w-3xl mx-auto mt-4">
-                Securely complete your Ampereon order with industry-leading encryption.
+          <motion.div variants={staggerContainer} className="space-y-8">
+            <motion.div variants={fadeUpVariants} className="text-center">
+              <h1 className="text-3xl font-light mb-4">Payment</h1>
+              <p className="text-gray-400 max-w-2xl mx-auto">
+                Complete your order with secure payment processing.
               </p>
             </motion.div>
+            
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <motion.div variants={fadeUpVariants} className="lg:col-span-2">
-                {/* Climate Impact Notice */}
-                <motion.div
-                  className="bg-white/50 rounded-2xl p-6 border border-[#111111]/8 mb-8"
-                  variants={fadeUpVariants}
-                >
-                  <div className="flex items-start">
-                    <div className="text-[#EFBF04] mr-4">
-                      <Leaf className="w-8 h-8" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-bold text-[#111111] mb-2">Climate Impact Commitment</h3>
-                      <p className="text-[#6F6F6F] text-sm">
-                        A portion of your payment supports carbon removal initiatives, contributing to a sustainable future.
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
-                {/* Payment Form */}
-                <motion.div
-                  className="bg-[#F5F6F7] backdrop-blur-sm rounded-2xl p-8 border border-[#111111]/8 shadow-sm"
-                  variants={fadeUpVariants}
-                >
-                  <div className="flex items-center mb-8">
-                    <div className="text-[#EFBF04] mr-4">
-                      <CreditCard className="w-8 h-8" />
-                    </div>
-                    <h2 className="text-3xl font-bold text-[#111111] tracking-tight">Payment Method</h2>
-                  </div>
+                <div className="bg-[#1A1A1A] border border-[#D4AF37]/20 rounded-lg p-6">
+                  <h2 className="text-xl font-medium mb-6">Payment Information</h2>
+                  
                   {error && (
-                    <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl text-red-700">
-                      <div className="flex items-center">
-                        <Info className="w-5 h-5 mr-2" /> <span className="font-semibold">Error:</span>
-                      </div>
-                      <div className="mt-1">{error}</div>
+                    <div className="mb-6 p-4 bg-red-900/20 border border-red-500/30 rounded text-red-300">
+                      {error}
                     </div>
                   )}
+                  
                   {clientSecret ? (
                     <Elements options={options} stripe={stripePromise}>
                       <CheckoutForm
@@ -1044,78 +940,53 @@ export default function OrderPage() {
                       />
                     </Elements>
                   ) : (
-                    <div className="flex flex-col items-center py-12">
-                      <div className="relative">
-                        <div className="animate-spin h-10 w-10 border-4 border-[#EFBF04] rounded-full border-t-transparent"></div>
-                      </div>
-                      <p className="text-[#6F6F6F] mt-4">
+                    <div className="text-center py-8">
+                      <div className="animate-spin w-6 h-6 border-2 border-[#D4AF37] rounded-full border-t-transparent mx-auto mb-4" />
+                      <p className="text-gray-400">
                         {isProcessing ? 'Preparing your order...' : 'Loading payment form...'}
                       </p>
                     </div>
                   )}
-                </motion.div>
-                {/* Security Notice */}
-                <motion.div
-                  className="bg-white/50 rounded-2xl p-6 border border-[#111111]/8"
-                  variants={fadeUpVariants}
-                >
-                  <div className="flex items-start">
-                    <div className="text-[#EFBF04] mr-4">
-                      <Lock className="w-8 h-8" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-bold text-[#111111] mb-2">Secure Payment Processing</h3>
-                      <p className="text-[#6F6F6F] text-sm">
-                        Your payment is securely processed by Stripe with industry-leading encryption. We never store your credit card details.
-                      </p>
+                </div>
+                
+                <div className="mt-6 bg-[#0A0A0A] border border-[#D4AF37]/20 rounded-lg p-4">
+                  <div className="flex items-center space-x-2">
+                    <Lock className="w-4 h-4 text-[#D4AF37]" />
+                    <span className="text-sm text-gray-400">
+                      Secured by 256-bit SSL encryption
+                    </span>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Order Summary */}
+              <motion.div variants={fadeUpVariants}>
+                <div className="bg-[#1A1A1A] border border-[#D4AF37]/20 rounded-lg p-6 sticky top-6">
+                  <h3 className="font-medium mb-4">Order Summary</h3>
+                  
+                  <div className="space-y-2 text-sm">
+                    {orderSummary.oneTimeFee > 0 && (
+                      <div className="flex justify-between text-gray-400">
+                        <span>Hardware</span>
+                        <span className="text-white">${orderSummary.oneTimeFee.toFixed(2)}</span>
+                      </div>
+                    )}
+                    {orderSummary.addOnCost > 0 && (
+                      <div className="flex justify-between text-gray-400">
+                        <span>Add-Ons</span>
+                        <span className="text-white">${orderSummary.addOnCost.toFixed(2)}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between text-gray-400">
+                      <span>Tax</span>
+                      <span className="text-white">${orderSummary.tax.toFixed(2)}</span>
                     </div>
                   </div>
-                </motion.div>
-              </motion.div>
-              {/* Order Summary */}
-              <motion.div variants={fadeUpVariants} className="lg:col-span-1">
-                <div className="sticky top-24">
-                  <div className="bg-[#F5F6F7] backdrop-blur-sm rounded-2xl p-8 border border-[#111111]/8 shadow-sm">
-                    <h2 className="text-2xl font-bold text-[#111111] text-center mb-6">Order Summary</h2>
-                    <div className="space-y-4 mb-8">
-                      {orderSummary.oneTimeFee > 0 && (
-                        <div className="flex justify-between text-[#6F6F6F]">
-                          <span>Hardware</span>
-                          <span className="font-semibold text-[#111111]">${orderSummary.oneTimeFee.toFixed(2)}</span>
-                        </div>
-                      )}
-                      {orderSummary.addOnCost > 0 && (
-                        <div className="flex justify-between text-[#6F6F6F]">
-                          <span>Add-Ons</span>
-                          <span className="font-semibold text-[#111111]">${orderSummary.addOnCost.toFixed(2)}</span>
-                        </div>
-                      )}
-                      <div className="flex justify-between text-[#6F6F6F]">
-                        <span>Tax</span>
-                        <span className="font-semibold text-[#111111]">${orderSummary.tax.toFixed(2)}</span>
-                      </div>
-                    </div>
-                    <div className="border-t border-[#111111]/15 pt-6">
-                      <div className="flex justify-between items-center">
-                        <span className="text-lg font-bold text-[#111111]">Total Due Today</span>
-                        <span className="text-2xl font-bold text-[#EFBF04]">${orderSummary.total.toFixed(2)}</span>
-                      </div>
-                    </div>
-                    <div className="mt-6 bg-white/50 rounded-xl p-6 border border-[#111111]/8">
-                      <h3 className="font-bold text-[#111111] mb-4 flex items-center">
-                        <Info className="w-5 h-5 text-[#EFBF04] mr-2" /> What's Next?
-                      </h3>
-                      <ul className="space-y-3 text-[#6F6F6F] text-sm">
-                        <li className="flex items-center">
-                          <Check className="w-4 h-4 text-[#EFBF04] mr-2" /> Order confirmation email
-                        </li>
-                        <li className="flex items-center">
-                          <Check className="w-4 h-4 text-[#EFBF04] mr-2" /> Access to EVolve app
-                        </li>
-                        <li className="flex items-center">
-                          <Check className="w-4 h-4 text-[#EFBF04] mr-2" /> Priority updates
-                        </li>
-                      </ul>
+                  
+                  <div className="border-t border-gray-700 mt-4 pt-4">
+                    <div className="flex justify-between font-medium">
+                      <span>Total</span>
+                      <span className="text-[#D4AF37]">${orderSummary.total.toFixed(2)}</span>
                     </div>
                   </div>
                 </div>

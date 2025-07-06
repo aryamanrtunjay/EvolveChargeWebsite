@@ -190,7 +190,7 @@ const StorySection = () => {
     {
       icon: Zap,
       title: "The Innovation",
-      description: "Today, Ampereon represents the culmination of years of engineering and design work: the first truly automatic EV charging system that learns your routine and optimizes every charge.",
+      description: "Today, Ampereon represents the culmination of months of engineering and design work: the first truly automatic EV charging system that learns your routine and optimizes every charge.",
       number: "03"
     }
   ];

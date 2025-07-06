@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Mail, MapPin, Phone, ChevronRight, Youtube, Instagram, Linkedin, ArrowUp } from 'lucide-react';
+import Image from 'next/image';
+import Logo from '../images/Logo.png'
 
 const AmpereonFooter = () => {
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
@@ -121,13 +123,11 @@ const AmpereonFooter = () => {
                 transition={{ duration: 0.6 }}
                 viewport={{ once: true }}
               >
-                <h3 className="text-3xl font-light tracking-[0.2em] text-white mb-2">
-                  AMPER
-                  <span className="font-medium bg-gradient-to-r from-[#D4AF37] to-[#B8860B] bg-clip-text text-transparent">
-                    EON
-                  </span>
-                </h3>
-                <div className="w-12 h-px bg-gradient-to-r from-[#D4AF37] to-transparent mb-6" />
+                <Image 
+                  src={Logo}
+                  alt="Ampereon Logo" 
+                  className="h-10 w-auto mb-6"
+                />
                 <p className="text-gray-300 mb-8 leading-relaxed font-light">
                   The future of EV charging. Hands-free, automatic, and intelligent charging solutions for the modern world.
                 </p>
