@@ -4,6 +4,8 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Head from 'next/head';
 import Script from 'next/script';
+import Logo from "../../../images/Logo.png"
+import Image from 'next/image';
 
 // Video file mapping with full URLs
 const videos = {
@@ -15,24 +17,24 @@ const videos = {
 
 // Interactive points configuration
 const interactivePoints = {
-  1: { x: '56%', y: '35%', label: 'Charger' },
-  2: { x: '90%', y: '40%', label: 'Holder' },
-  3: { x: '6%', y: '50%', label: 'Hook' },
+  1: { x: '56%', y: '35%', label: 'Charging Module' },
+  2: { x: '90%', y: '40%', label: 'Wire Holder' },
+  3: { x: '6%', y: '50%', label: 'Hook Assembly' },
 };
 
-// Descriptions for each POI
+// Professional descriptions for each component
 const descriptions = {
   1: {
-    title: 'The Charger',
-    content: 'The heart and soul of Ampereon. A compact, efficient, lightweight, and stylish module that is hooked safely onto the guide wires of the Ampereon system and traverses to any car inside your garage automatically at the optimal time to charge.'
+    title: 'Automatic Charging Module',
+    content: 'The core of the Ampereon system. This intelligent module travels along guide wires to connect with your vehicle automatically. Featuring advanced positioning technology and optimized charging algorithms, it ensures reliable, efficient charging every time.'
   },
   2: {
-    title: 'Wire Holder',
-    content: 'The component that contains the wire securely wrapped around it. It is designed to keep the wire as tight as possible to prevent the charger from sagging and has simple controls, just a knob to tighten the wires and a push-to-lock mechanism to make sure that once tightened, the wires never become loose. Just 4 easy screws to mount it onto your garage, all provided inside the package.'
+    title: 'Wire Management System',
+    content: 'Engineered for reliability and ease of installation. The wire holder maintains optimal tension and includes a secure locking mechanism. Mounts easily to any garage wall with the included hardware kit.'
   },
   3: {
-    title: 'Hook',
-    content: 'This hook holds the other end of the wires and is mounted securely with just 2 screws on the other side of your garage. All you need to do is hook the wires from the holder here and the "hard" part of the setup is done!'
+    title: 'Anchor Point',
+    content: 'The secure mounting point that completes the wire system. Designed for maximum stability and longevity, this component requires only two mounting screws and provides the foundation for reliable automated charging.'
   },
 };
 
@@ -58,26 +60,26 @@ export default function VideoViewer() {
     'from-demo',
   ];
 
-  // Minimalistic loading messages
+  // Professional loading messages
   const loadingMessages = [
-    { progress: 0, message: "Preparing Your Virtual Garage..." },
-    { progress: 50, message: "Optimizing Experience..." },
-    { progress: 90, message: "Ready to Launch..." }
+    { progress: 0, message: "Loading Interactive Experience..." },
+    { progress: 50, message: "Preparing Components..." },
+    { progress: 90, message: "Ready" }
   ];
 
   const totalVideos = allVideos.length;
   const isLoaded = allVideos.every(key => loadedVideos[key]);
 
-  // Initialize fake loading on component mount
+  // Initialize loading on component mount
   useEffect(() => {
     if (currentState === 'loading' && loadingDuration === null) {
-      const duration = 3000 + Math.random() * 2000;
+      const duration = 2500 + Math.random() * 1500;
       setLoadingDuration(duration);
       setLoadingStartTime(Date.now());
     }
   }, [currentState, loadingDuration]);
 
-  // Fake progress animation
+  // Progress animation
   useEffect(() => {
     if (currentState === 'loading' && loadingStartTime && loadingDuration) {
       const interval = setInterval(() => {
@@ -150,7 +152,7 @@ export default function VideoViewer() {
     };
 
     loadVideos().catch(err => {
-      setError('Failed to preload some videos. Please try again later.');
+      setError('Unable to load interactive content. Please refresh to try again.');
     });
   }, []);
 
@@ -261,7 +263,7 @@ export default function VideoViewer() {
     setShowDescription(false);
   };
 
-  // Minimalistic loading screen
+  // Professional loading screen
   if (currentState === 'loading') {
     const currentMsg = loadingMessages
       .slice()
@@ -269,9 +271,9 @@ export default function VideoViewer() {
       .find(msg => fakeProgress >= msg.progress) || loadingMessages[0];
 
     return (
-      <div className="flex items-center justify-center h-screen bg-white text-[#111111] overflow-hidden">
+      <div className="flex items-center justify-center h-screen bg-[#0A0A0A] text-white overflow-hidden">
         <motion.div
-          className="relative w-full max-w-md p-8 bg-white/70 backdrop-blur-md border border-black/10 rounded-2xl shadow-lg"
+          className="relative w-full max-w-md p-8 bg-[#1A1A1A]/90 backdrop-blur-lg border border-[#D4AF37]/20 rounded-2xl shadow-xl"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: 'easeOut' }}
@@ -282,8 +284,12 @@ export default function VideoViewer() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.6 }}
           >
-            <h1 className="text-3xl font-bold text-[#EFBF04] mb-2 tracking-tight">AMPEREON</h1>
-            <p className="text-[#6F6F6F] text-lg leading-relaxed">Virtual Garage Experience</p>
+            <Image 
+              src={Logo}
+              alt="Ampereon Logo" 
+              className="h-8 w-auto mx-auto"
+            />
+            <p className="text-gray-400 text-sm">Interactive Product Tour</p>
           </motion.div>
 
           <motion.div
@@ -293,17 +299,17 @@ export default function VideoViewer() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <p className="text-[#6F6F6F] text-base">{currentMsg.message}</p>
+            <p className="text-gray-300 text-sm">{currentMsg.message}</p>
           </motion.div>
 
           <motion.div
-            className="relative w-full h-1 bg-[#F5F6F7] rounded-full"
+            className="relative w-full h-1 bg-[#2A2A2A] rounded-full"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5, duration: 0.6 }}
           >
             <motion.div
-              className="absolute top-0 left-0 h-full bg-[#EFBF04] rounded-full"
+              className="absolute top-0 left-0 h-full bg-gradient-to-r from-[#D4AF37] to-[#B8860B] rounded-full"
               style={{ width: `${fakeProgress}%` }}
               transition={{ duration: 0.3, ease: 'easeOut' }}
             />
@@ -317,7 +323,7 @@ export default function VideoViewer() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
               >
-                <p className="text-red-500 text-sm text-center">{error}</p>
+                <p className="text-red-400 text-sm text-center">{error}</p>
               </motion.div>
             )}
           </AnimatePresence>
@@ -373,37 +379,24 @@ export default function VideoViewer() {
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0 }}
-                transition={{ duration: 0.5, delay: parseInt(poi) * 0.1 }}
+                transition={{ duration: 0.4, delay: parseInt(poi) * 0.1 }}
               >
                 <motion.button
                   onClick={() => handlePointClick(parseInt(poi))}
                   className="relative group"
-                  whileHover={{ scale: 1.2 }}
-                  whileTap={{ scale: 0.9 }}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <motion.div
-                    className="absolute inset-0 bg-[#EFBF04]/30 rounded-full"
-                    animate={{
-                      scale: [1, 1.3, 1],
-                      opacity: [0.5, 0.2, 0.5],
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                    style={{ width: '50px', height: '50px', left: '-10px', top: '-10px' }}
-                  />
-                  <div className="w-6 h-6 bg-[#EFBF04] rounded-full border border-white/20 flex items-center justify-center text-[#111111] font-medium text-xs">
+                  <div className="w-8 h-8 bg-gradient-to-br from-[#D4AF37] to-[#B8860B] rounded-full border-2 border-white/20 flex items-center justify-center text-white font-semibold text-sm shadow-lg">
                     {poi}
                   </div>
                   <motion.div
-                    className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-[#111111]/80 backdrop-blur-sm px-3 py-1 rounded-lg text-white text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                    initial={{ y: 10 }}
+                    className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-[#1A1A1A]/90 backdrop-blur-sm px-4 py-2 rounded-lg text-white text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 border border-[#D4AF37]/20"
+                    initial={{ y: 5 }}
                     whileHover={{ y: 0 }}
                   >
                     {point.label}
-                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-[#111111]/80"></div>
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-[#1A1A1A]/90"></div>
                   </motion.div>
                 </motion.button>
               </motion.div>
@@ -412,7 +405,7 @@ export default function VideoViewer() {
         )}
       </AnimatePresence>
 
-      {/* Play Demo Button */}
+      {/* View Demo Button */}
       <AnimatePresence>
         {currentState === 'start' && (
           <motion.div
@@ -423,12 +416,12 @@ export default function VideoViewer() {
             transition={{ duration: 0.3 }}
           >
             <motion.button
-              whileHover={{ scale: 1.05, backgroundColor: '#D1B47A' }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               onClick={handleDemoClick}
-              className="px-6 py-3 rounded-full bg-[#EFBF04] text-[#111111] font-medium shadow-lg hover:shadow-xl transition-all"
+              className="px-8 py-3 rounded-lg bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300"
             >
-              Play Demo
+              View Full Demo
             </motion.button>
           </motion.div>
         )}
@@ -445,67 +438,67 @@ export default function VideoViewer() {
             transition={{ duration: 0.3 }}
           >
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               onClick={handleBackClick}
-              className="bg-white/70 backdrop-blur-md border border-black/10 rounded-full px-6 py-3 shadow-lg hover:bg-white/80 transition-all text-[#111111] font-medium"
+              className="bg-[#1A1A1A]/80 backdrop-blur-sm border border-[#D4AF37]/30 rounded-lg px-6 py-3 shadow-lg hover:bg-[#1A1A1A]/90 transition-all text-white font-medium"
             >
-              ← Back to Overview
+              ← Return to Overview
             </motion.button>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Description Panel */}
+      {/* Professional Description Panel */}
       <AnimatePresence>
         {showDescription && currentPOI && (
           <motion.div
-            className="absolute inset-0 flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm"
+            className="absolute inset-0 flex items-center justify-center p-6 bg-black/40 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
           >
             <motion.div
-              className="w-full max-w-lg bg-white/70 backdrop-blur-md border border-black/10 rounded-2xl shadow-lg p-6 text-[#111111]"
-              initial={{ opacity: 0, scale: 0.8, y: 50 }}
+              className="w-full max-w-lg bg-[#1A1A1A]/95 backdrop-blur-xl border border-[#D4AF37]/20 rounded-2xl shadow-xl p-8 text-white"
+              initial={{ opacity: 0, scale: 0.9, y: 30 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.8, y: 50 }}
-              transition={{ duration: 0.4, ease: "easeOut" }}
+              exit={{ opacity: 0, scale: 0.9, y: 30 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
             >
-              <div className="flex justify-between items-start mb-4">
-                <h2 className="text-2xl font-semibold text-[#111111] tracking-wide">
+              <div className="flex justify-between items-start mb-6">
+                <h2 className="text-2xl font-semibold text-white">
                   {descriptions[currentPOI].title}
                 </h2>
                 <button
                   onClick={handleCloseDescription}
-                  className="text-[#6F6F6F] hover:text-[#111111] transition-colors duration-200 text-xl"
+                  className="text-gray-400 hover:text-white transition-colors duration-200 text-xl p-1"
                 >
-                  ✕
+                  ×
                 </button>
               </div>
               
-              <p className="text-[#6F6F6F] leading-relaxed mb-6">
+              <p className="text-gray-300 leading-relaxed mb-8 text-base">
                 {descriptions[currentPOI].content}
               </p>
               
-              <div className="flex space-x-3">
+              <div className="flex gap-3">
                 <motion.button
-                  whileHover={{ scale: 1.05, backgroundColor: '#D1B47A' }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={handleBackClick}
-                  className="flex-1 bg-[#EFBF04] text-[#111111] font-medium py-3 px-6 rounded-full transition-all duration-200 shadow-lg"
+                  className="flex-1 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white font-medium py-3 px-6 rounded-lg transition-all duration-200 shadow-lg"
                 >
                   Return to Overview
                 </motion.button>
                 
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={handleCloseDescription}
-                  className="bg-white/10 border border-[#111111]/20 text-[#111111]/70 font-medium py-3 px-6 rounded-full transition-all duration-200"
+                  className="bg-[#2A2A2A]/80 border border-[#D4AF37]/30 text-gray-300 font-medium py-3 px-6 rounded-lg transition-all duration-200 hover:bg-[#2A2A2A]"
                 >
-                  Stay Here
+                  Close
                 </motion.button>
               </div>
             </motion.div>
