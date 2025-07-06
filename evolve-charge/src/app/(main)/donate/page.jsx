@@ -242,7 +242,7 @@ export default function DonatePage() {
   const impactData = [
     {
       amount: 25,
-      impact: "Supports EVolve Charge's research and development to build innovative charging solutions",
+      impact: "Supports Ampereon's research and development to build innovative charging solutions",
       icon: "🔬"
     },
     {
@@ -704,7 +704,7 @@ export default function DonatePage() {
                         />
                         <div className="ml-3">
                           <label htmlFor="updates" className="font-medium text-gray-700">
-                            Send me updates about EVolve Charge's progress
+                            Send me updates about Ampereon's progress
                           </label>
                           <p className="text-sm text-gray-500 mt-1">
                             Stay informed about our smart EV charging innovations

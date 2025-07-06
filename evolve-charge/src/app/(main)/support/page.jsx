@@ -55,13 +55,13 @@ export default function Support() {
       ),
       articles: [
         {
-          title: 'Setting up your EVolve Charge for the first time',
-          content: "This guide will walk you through the initial setup process after your EVolve Charger has been professionally installed. You'll learn how to connect the EVolve Charger to WiFi, set up your account, and configure basic charging preferences.",
+          title: 'Setting up your Ampereon for the first time',
+          content: "This guide will walk you through the initial setup process after your Ampereon has been professionally installed. You'll learn how to connect Ampereon to WiFi, set up your account, and configure basic charging preferences.",
           popular: true
         },
         {
           title: 'Downloading and using the mobile app',
-          content: 'Learn how to download the EVolve Charge mobile app on iOS or Android, create an account, and connect it to your charging station. This guide covers all the basic features of the app and how to use them.'
+          content: 'Learn how to download Ampereon mobile app on iOS or Android, create an account, and connect it to your charging station. This guide covers all the basic features of the app and how to use them.'
         },
         {
           title: 'Understanding your charging dashboard',
@@ -89,11 +89,11 @@ export default function Support() {
         },
         {
           title: 'WiFi connection issues',
-          content: 'This guide provides detailed steps to troubleshoot WiFi connectivity problems with your EVolve Charge station, including how to check signal strength, reset network settings, and connect to a different network if needed.'
+          content: 'This guide provides detailed steps to troubleshoot WiFi connectivity problems with your Ampereon station, including how to check signal strength, reset network settings, and connect to a different network if needed.'
         },
         {
           title: 'App not displaying charging status',
-          content: "If your mobile app isn't showing current charging information, follow this troubleshooting guide to resolve synchronization issues between your charging station and the EVolve Charge cloud services."
+          content: "If your mobile app isn't showing current charging information, follow this troubleshooting guide to resolve synchronization issues between your charging station and Ampereon cloud services."
         },
         {
           title: 'Charging starts but stops unexpectedly',
@@ -110,7 +110,7 @@ export default function Support() {
       ),
       articles: [
         {
-          title: 'Cleaning your EVolve Charge station',
+          title: 'Cleaning your Ampereon station',
           content: 'Learn the proper way to clean and maintain your charging station to ensure optimal performance and longevity. Includes recommended cleaning products and techniques for different components.'
         },
         {
@@ -138,11 +138,11 @@ export default function Support() {
       articles: [
         {
           title: 'Understanding your billing cycle',
-          content: 'This article explains how billing works for your EVolve Charge subscription, including when charges are processed, how to view detailed billing history, and what happens if a payment fails.'
+          content: 'This article explains how billing works for your Ampereon subscription, including when charges are processed, how to view detailed billing history, and what happens if a payment fails.'
         },
         {
           title: 'Changing your payment method',
-          content: 'Learn how to update credit card information, add new payment methods, or switch between payment options for your EVolve Charge subscription.'
+          content: 'Learn how to update credit card information, add new payment methods, or switch between payment options for your Ampereon subscription.'
         },
         {
           title: 'Upgrading or downgrading your plan',
@@ -151,7 +151,7 @@ export default function Support() {
         },
         {
           title: 'Managing multiple charging stations',
-          content: 'Learn how to add additional EVolve Charge stations to your account, manage billing for multiple units, and set up different configurations for each location.'
+          content: 'Learn how to add additional Ampereon stations to your account, manage billing for multiple units, and set up different configurations for each location.'
         }
       ]
     }
@@ -473,14 +473,14 @@ export default function Support() {
               variants={fadeIn}
               className="text-lg text-gray-700 max-w-2xl mx-auto"
             >
-              Watch step-by-step guides for setting up and using your EVolve Charge system.
+              Watch step-by-step guides for setting up and using your Ampereon system.
             </motion.p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
-                title: "Getting Started with EVolve Charge",
+                title: "Getting Started with Ampereon",
                 duration: "4:32",
                 thumbnail: "getting-started-thumbnail.jpg",
                 views: "8.2K"
@@ -557,7 +557,7 @@ export default function Support() {
               variants={fadeIn}
               className="text-lg text-gray-700 max-w-2xl mx-auto"
             >
-              Connect with other EVolve Charge users, share experiences, and discover tips and tricks.
+              Connect with other Ampereon users, share experiences, and discover tips and tricks.
             </motion.p>
           </motion.div>
 
@@ -920,7 +920,7 @@ export default function Support() {
               variants={fadeIn}
               className="text-lg text-gray-700 max-w-2xl mx-auto"
             >
-              Access manuals, guides, and other helpful documents for your EVolve Charge system.
+              Access manuals, guides, and other helpful documents for your Ampereon system.
             </motion.p>
           </motion.div>
 
@@ -940,7 +940,7 @@ export default function Support() {
               },
               {
                 title: "Mobile App Guide",
-                description: "How to use all features of the EVolve Charge app",
+                description: "How to use all features of Ampereon app",
                 fileType: "PDF",
                 fileSize: "3.2 MB"
               },

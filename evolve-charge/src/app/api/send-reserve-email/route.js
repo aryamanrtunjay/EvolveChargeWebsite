@@ -21,7 +21,7 @@ export async function POST(request) {
     const displayName = fullName ? fullName : firstName;
 
     const mailOptions = {
-      from: `"EVolve Charge" <${process.env.EMAIL_USER}>`,
+      from: `"Ampereon" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: `Reservation Confirmation - ${reservationNumber}`,
       html: `
@@ -36,7 +36,7 @@ export async function POST(request) {
           <div style="max-width: 600px; margin: 20px auto; background-color: #ffffff; padding: 20px; border-radius: 8px;">
             <h1 style="font-size: 24px; color: #333333;">Thank You for Your Reservation, ${displayName}!</h1>
             <p style="font-size: 16px; color: #333333; line-height: 1.5;">
-              Your reservation for the EVolve Charger has been successfully confirmed. You're now one of the early adopters securing priority access to the world’s first automatic EV charger.
+              Your reservation for Ampereon has been successfully confirmed. You're now one of the early adopters securing priority access to the world’s first automatic EV charger.
             </p>
             <ul style="list-style: none; padding: 0; font-size: 16px; color: #333333;">
               <li><strong>Reservation Number:</strong> ${reservationNumber}</li>
@@ -54,7 +54,7 @@ export async function POST(request) {
               If you have any questions or would like to refund and cancel your reservation to be a part of the Next Generation of EV Charging, contact us at 
               <a href="mailto:support@evolve-charge.com" style="color: #0066cc; text-decoration: none;">support@evolve-charge.com</a> or call (425) 324-4529.
             </p>
-            <p style="font-size: 16px; color: #333333; margin-top: 20px;">Best regards,<br>The EVolve Charge Team</p>
+            <p style="font-size: 16px; color: #333333; margin-top: 20px;">Best regards,<br>The Ampereon Team</p>
           </div>
         </body>
         </html>

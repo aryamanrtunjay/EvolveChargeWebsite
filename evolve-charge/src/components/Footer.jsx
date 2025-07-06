@@ -1,56 +1,73 @@
-"use client";
+'use client';
 
-import { FaYoutube, FaInstagram, FaFacebookF, FaLinkedin } from 'react-icons/fa';
-import { FaXTwitter } from "react-icons/fa6";
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { X, Mail, MapPin, Phone, ChevronRight, Youtube, Instagram, Linkedin, ArrowUp } from 'lucide-react';
 import Image from 'next/image';
-import Logo from "@/images/Logo.svg";
-import { db } from '../app/firebaseConfig.js';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import Logo from '../images/Logo.png'
 
-// Modal animation variants (unchanged)
-const modalVariants = {
-  hidden: { opacity: 0, scale: 0.9 },
-  visible: { 
-    opacity: 1, 
-    scale: 1,
-    transition: { duration: 0.3 }
-  },
-  exit: {
-    opacity: 0,
-    scale: 0.9,
-    transition: { duration: 0.2 }
-  }
-};
-
-export default function Footer() {
+const AmpereonFooter = () => {
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
   const [showTermsOfService, setShowTermsOfService] = useState(false);
-  const [email, setEmail] = useState(''); // New state for email input
+  const [email, setEmail] = useState('');
+  const [subscribeStatus, setSubscribeStatus] = useState('');
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
-  const socialIcons = {
-    'X': FaXTwitter,
-    'youtube': FaYoutube,
-    'instagram': FaInstagram,
-    'facebook': FaFacebookF,
-    'linkedin': FaLinkedin,
+  const modalVariants = {
+    hidden: { opacity: 0, scale: 0.95 },
+    visible: { 
+      opacity: 1, 
+      scale: 1,
+      transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }
+    },
+    exit: {
+      opacity: 0,
+      scale: 0.95,
+      transition: { duration: 0.3 }
+    }
   };
-  
-  const socialUrls = {
-    'X': 'https://x.com/evolvecharge',
-    'youtube': 'https://youtube.com/@EVolveCharge',
-    'instagram': 'https://instagram.com/evolve.charge',
-    'linkedin': 'https://linkedin.com/in/evolve-charge-a374b7355/',
+
+  // Custom X icon component
+  const XIcon = ({ className }) => (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+    </svg>
+  );
+
+  const socialLinks = [
+    { name: 'X', icon: XIcon, url: 'https://x.com/ampereonenergy' },
+    { name: 'YouTube', icon: Youtube, url: 'https://youtube.com/@ampereonenergy' },
+    { name: 'Instagram', icon: Instagram, url: 'https://instagram.com/ampereonenergy' },
+    { name: 'LinkedIn', icon: Linkedin, url: 'https://linkedin.com/company/ampereonenergy' },
+  ];
+
+  const quickLinks = [
+    { name: 'Product', href: '/product' },
+    { name: 'About', href: '/about' },
+    { name: 'FAQ', href: '/faq' },
+    { name: 'Support Us', href: '/support' },
+  ];
+
+  // Scroll to top functionality
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 400);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   useEffect(() => {
     const checkHash = () => {
       const hash = window.location.hash;
-      if (hash === '#privacypolicy') {
+      if (hash === '#privacy') {
         setShowPrivacyPolicy(true);
         setShowTermsOfService(false);
-      } else if (hash === '#tos') {
+      } else if (hash === '#terms') {
         setShowTermsOfService(true);
         setShowPrivacyPolicy(false);
       }
@@ -60,256 +77,476 @@ export default function Footer() {
     return () => window.removeEventListener('hashchange', checkHash);
   }, []);
 
-  const closePrivacyPolicy = () => {
-    setShowPrivacyPolicy(false);
+  const closeModal = (type) => {
+    if (type === 'privacy') {
+      setShowPrivacyPolicy(false);
+    } else {
+      setShowTermsOfService(false);
+    }
     window.history.pushState(null, '', window.location.pathname);
   };
 
-  const closeTermsOfService = () => {
-    setShowTermsOfService(false);
-    window.history.pushState(null, '', window.location.pathname);
-  };
-
-  // New function to handle form submission
-  const handleSubscribe = async (e) => {
-    e.preventDefault();
+  const handleSubscribe = async () => {
+    if (!email || !email.includes('@')) return;
+    
+    setSubscribeStatus('loading');
     try {
-      await addDoc(collection(db, 'mailing-list'), {
-        email: email,
-        timestamp: serverTimestamp(),
-      });
-      setEmail(''); // Clear the input after successful submission
+      // Mock subscription - replace with actual Firebase logic
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setEmail('');
+      setSubscribeStatus('success');
+      setTimeout(() => setSubscribeStatus(''), 3000);
     } catch (error) {
       console.error('Error adding document: ', error);
+      setSubscribeStatus('error');
+      setTimeout(() => setSubscribeStatus(''), 3000);
     }
   };
 
   return (
-    <footer className="relative bg-gray-800 text-white pt-16 pb-8 z-20">
-      {/* Privacy Policy Modal (unchanged) */}
+    <>
+      <footer className="bg-gradient-to-br from-[#0A0A0A] via-[#1A1A1A] to-[#0F0F0F] relative overflow-hidden border-t border-[#D4AF37]/20">
+        {/* Dark elegant background patterns */}
+        <div className="absolute inset-0 opacity-[0.03]" 
+             style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #D4AF37 1px, transparent 0)', backgroundSize: '60px 60px' }} />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[#D4AF37]/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#D4AF37]/5 rounded-full blur-3xl" />
+        
+        <div className="max-w-7xl mx-auto px-6 py-20 relative z-10">
+          {/* Main footer content */}
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-12 mb-16">
+            {/* Brand Column - Dark Enhanced */}
+            <div className="lg:col-span-1">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                viewport={{ once: true }}
+              >
+                <Image 
+                  src={Logo}
+                  alt="Ampereon Logo" 
+                  className="h-10 w-auto mb-6"
+                />
+                <p className="text-gray-300 mb-8 leading-relaxed font-light">
+                  The future of EV charging. Hands-free, automatic, and intelligent charging solutions for the modern world.
+                </p>
+                
+                {/* Enhanced dark social links */}
+                <div className="flex gap-4">
+                  {socialLinks.map((social, index) => (
+                    <motion.a
+                      key={social.name}
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-12 h-12 bg-[#2A2A2A]/80 backdrop-blur-sm rounded-full flex items-center justify-center 
+                               border border-[#D4AF37]/20 hover:border-[#D4AF37]/40 hover:bg-[#D4AF37]/10 
+                               transition-all duration-300 group shadow-lg hover:shadow-[#D4AF37]/20"
+                      whileHover={{ scale: 1.1, y: -2 }}
+                      whileTap={{ scale: 0.95 }}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.6, delay: index * 0.1 }}
+                      viewport={{ once: true }}
+                      aria-label={social.name}
+                    >
+                      <social.icon className="w-5 h-5 text-gray-400 group-hover:text-[#D4AF37] transition-colors duration-300" />
+                    </motion.a>
+                  ))}
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Quick Links - Dark Refined */}
+            <div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                viewport={{ once: true }}
+              >
+                <h4 className="font-medium text-white mb-6 text-lg tracking-wide">Navigation</h4>
+                <ul className="space-y-4">
+                  {quickLinks.map((link, index) => (
+                    <motion.li 
+                      key={link.name}
+                      initial={{ opacity: 0, x: -10 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.4, delay: index * 0.1 }}
+                      viewport={{ once: true }}
+                    >
+                      <a
+                        href={link.href}
+                        className="text-gray-300 hover:text-[#D4AF37] transition-colors duration-300 
+                                 flex items-center gap-2 group font-light tracking-wide"
+                      >
+                        <span>{link.name}</span>
+                        <ChevronRight className="w-4 h-4 opacity-0 -ml-2 group-hover:opacity-100 
+                                               group-hover:ml-0 transition-all duration-300" />
+                      </a>
+                    </motion.li>
+                  ))}
+                </ul>
+              </motion.div>
+            </div>
+
+            {/* Contact Info - Dark Enhanced */}
+            <div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                viewport={{ once: true }}
+              >
+                <h4 className="font-medium text-white mb-6 text-lg tracking-wide">Get in Touch</h4>
+                <ul className="space-y-5">
+                  <motion.li 
+                    className="flex items-start gap-4 text-gray-300 group"
+                    whileHover={{ x: 5 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <div className="w-10 h-10 bg-[#D4AF37]/20 rounded-full flex items-center justify-center mt-0.5 flex-shrink-0">
+                      <Mail className="w-4 h-4 text-[#D4AF37]" />
+                    </div>
+                    <a href="mailto:support@ampereonenergy.com" 
+                       className="hover:text-[#D4AF37] transition-colors duration-300 font-light leading-relaxed">
+                      support@ampereonenergy.com
+                    </a>
+                  </motion.li>
+                  <motion.li 
+                    className="flex items-start gap-4 text-gray-300"
+                    whileHover={{ x: 5 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <div className="w-10 h-10 bg-[#D4AF37]/20 rounded-full flex items-center justify-center mt-0.5 flex-shrink-0">
+                      <Phone className="w-4 h-4 text-[#D4AF37]" />
+                    </div>
+                    <span className="font-light leading-relaxed">1-425-324-4529</span>
+                  </motion.li>
+                  <motion.li 
+                    className="flex items-start gap-4 text-gray-300"
+                    whileHover={{ x: 5 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <div className="w-10 h-10 bg-[#D4AF37]/20 rounded-full flex items-center justify-center mt-0.5 flex-shrink-0">
+                      <MapPin className="w-4 h-4 text-[#D4AF37]" />
+                    </div>
+                    <span className="font-light leading-relaxed">Sammamish, Washington</span>
+                  </motion.li>
+                </ul>
+              </motion.div>
+            </div>
+
+            {/* Newsletter - Dark Premium design */}
+            <div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                viewport={{ once: true }}
+              >
+                <h4 className="font-medium text-white mb-6 text-lg tracking-wide">Stay Connected</h4>
+                <p className="text-gray-300 mb-6 font-light leading-relaxed">
+                  Get exclusive updates on shipping, new features, and special offers for early supporters.
+                </p>
+                <div className="relative mb-4">
+                  <input
+                    type="email"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full px-6 py-4 pr-14 bg-[#2A2A2A]/80 backdrop-blur-sm border border-[#D4AF37]/20 
+                             rounded-2xl text-white placeholder-gray-400 focus:outline-none 
+                             focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] 
+                             transition-all duration-300 font-light shadow-lg hover:shadow-[#D4AF37]/20"
+                  />
+                  <motion.button
+                    onClick={handleSubscribe}
+                    disabled={subscribeStatus === 'loading'}
+                    className="absolute right-2 top-2 w-10 h-10 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] 
+                             rounded-xl flex items-center justify-center hover:shadow-lg hover:shadow-[#D4AF37]/25 
+                             transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] 
+                             focus:ring-offset-2 focus:ring-offset-[#2A2A2A] disabled:opacity-50 disabled:cursor-not-allowed"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <ChevronRight className="w-5 h-5 text-white" />
+                  </motion.button>
+                </div>
+                
+                <AnimatePresence>
+                  {subscribeStatus === 'success' && (
+                    <motion.p
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      className="text-sm text-[#4CAF8E] font-light"
+                    >
+                      ✓ Welcome to the Ampereon community!
+                    </motion.p>
+                  )}
+                  {subscribeStatus === 'error' && (
+                    <motion.p
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      className="text-sm text-red-400 font-light"
+                    >
+                      Something went wrong. Please try again.
+                    </motion.p>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            </div>
+          </div>
+
+          {/* Bottom Bar - Dark Enhanced */}
+          <motion.div 
+            className="pt-8 border-t border-[#D4AF37]/20"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+            viewport={{ once: true }}
+          >
+            <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+              <p className="text-sm text-gray-400 font-light tracking-wide">
+                © 2025 Ampereon Inc. All rights reserved. Crafted with precision in Washington.
+              </p>
+              <div className="flex gap-8">
+                <button
+                  onClick={() => setShowPrivacyPolicy(true)}
+                  className="text-sm text-gray-400 hover:text-[#D4AF37] transition-colors duration-300 font-light tracking-wide"
+                >
+                  Privacy Policy
+                </button>
+                <button
+                  onClick={() => setShowTermsOfService(true)}
+                  className="text-sm text-gray-400 hover:text-[#D4AF37] transition-colors duration-300 font-light tracking-wide"
+                >
+                  Terms of Service
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </footer>
+
+      {/* Scroll to top button */}
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            onClick={scrollToTop}
+            className="fixed bottom-8 right-8 w-12 h-12 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] 
+                     rounded-full flex items-center justify-center shadow-lg shadow-[#D4AF37]/25 
+                     hover:shadow-xl hover:shadow-[#D4AF37]/35 transition-all duration-300 z-40
+                     focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:ring-offset-2 focus:ring-offset-[#0A0A0A]"
+            whileHover={{ scale: 1.1, y: -2 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <ArrowUp className="w-5 h-5 text-white" />
+          </motion.button>
+        )}
+      </AnimatePresence>
+
+      {/* Enhanced Dark Privacy Policy Modal */}
       <AnimatePresence>
         {showPrivacyPolicy && (
           <motion.div 
-            className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            onClick={() => closeModal('privacy')}
           >
             <motion.div 
-              className="bg-white rounded-lg w-full max-w-2xl max-h-[80vh] overflow-y-auto p-6 relative"
+              className="bg-[#1A1A1A] rounded-3xl w-full max-w-3xl max-h-[85vh] overflow-y-auto p-10 relative 
+                       shadow-2xl shadow-black/40 border border-[#D4AF37]/20"
               variants={modalVariants}
               initial="hidden"
               animate="visible"
               exit="exit"
+              onClick={(e) => e.stopPropagation()}
             >
               <button 
-                onClick={closePrivacyPolicy}
-                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+                onClick={() => closeModal('privacy')}
+                className="absolute top-8 right-8 w-12 h-12 bg-[#2A2A2A] rounded-full flex items-center justify-center 
+                         hover:bg-[#D4AF37]/20 transition-colors duration-300 group"
                 aria-label="Close privacy policy"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <X className="w-5 h-5 text-gray-300 group-hover:text-[#D4AF37] transition-colors duration-300" />
               </button>
-              <h2 className="text-2xl text-center font-bold text-gray-900">Privacy Policy</h2>
-              <h2 className="text-lg text-center text-gray-900">Last Updated: February 26, 2025</h2>
-              <hr className="my-4 border-black mx-16"/>
-              <div className="prose prose-teal prose-sm max-w-none text-gray-700">
-                 <h3 className="font-bold">1. Information We Collect</h3>
-                 <p>
-                   We collect information about your EV charging habits, vehicle information, and app usage to provide you with the best charging experience. This includes charging times, energy usage, and preferences you set within the app.
-                 </p>
-                 
-                 <h3 className="font-bold">2. How We Use Your Information</h3>
-                 <p>
-                   We use your information to optimize your charging experience, provide insights about your energy usage, and improve our products and services. We may also use anonymized data for research and development purposes.
-                 </p>
-                 
-                 <h3 className="font-bold">3. Information Sharing</h3>
-                 <p>
-                   We do not sell your personal information to third parties. We may share anonymized, aggregated data with partners for research purposes. We may share your information with service providers who help us deliver our services.
-                 </p>
-                 
-                 <h3 className="font-bold">4. Data Security</h3>
-                 <p>
-                   We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.
-                 </p>
-                 
-                 <h3 className="font-bold">5. Your Rights</h3>
-                 <p>
-                   You have the right to access, correct, or delete your personal information. You can manage your privacy settings in the EVolve Charge app or contact our support team for assistance.
-                 </p>
-                 
-                 <h3 className="font-bold">6. Changes to This Policy</h3>
-                 <p>
-                   We may update this privacy policy from time to time. We will notify you of any changes by posting the new privacy policy on this page and updating the effective date.
-                 </p>
-                 
-                 <h3 className="font-bold">7. Contact Us</h3>
-                 <p>
-                   If you have any questions about this privacy policy, please contact us at privacy@evolve-charge.com.
-                 </p>
-               </div>
-              <div className="mt-6 flex justify-end">
-                <button 
-                  onClick={closePrivacyPolicy}
-                  className="px-4 py-2 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-md"
+              
+              <div className="mb-8">
+                <h2 className="text-4xl font-light text-white mb-3 tracking-tight">Privacy Policy</h2>
+                <div className="w-16 h-px bg-gradient-to-r from-[#D4AF37] to-transparent mb-4" />
+                <p className="text-gray-400 font-light">Last Updated: July 4, 2025</p>
+              </div>
+              
+              <div className="space-y-8 text-white">
+                <div>
+                  <h3 className="text-xl font-medium mb-4 text-white">1. Information We Collect</h3>
+                  <p className="text-gray-300 leading-relaxed font-light">
+                    We collect information about your EV charging habits, vehicle information, and app usage to provide you with the best charging experience. This includes charging times, energy usage, and preferences you set within the app.
+                  </p>
+                </div>
+                
+                <div>
+                  <h3 className="text-xl font-medium mb-4 text-white">2. How We Use Your Information</h3>
+                  <p className="text-gray-300 leading-relaxed font-light">
+                    We use your information to optimize your charging experience, provide insights about your energy usage, and improve our products and services. We may also use anonymized data for research and development purposes.
+                  </p>
+                </div>
+                
+                <div>
+                  <h3 className="text-xl font-medium mb-4 text-white">3. Information Sharing</h3>
+                  <p className="text-gray-300 leading-relaxed font-light">
+                    We do not sell your personal information to third parties. We may share anonymized, aggregated data with partners for research purposes. We may share your information with service providers who help us deliver our services.
+                  </p>
+                </div>
+                
+                <div>
+                  <h3 className="text-xl font-medium mb-4 text-white">4. Data Security</h3>
+                  <p className="text-gray-300 leading-relaxed font-light">
+                    We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.
+                  </p>
+                </div>
+                
+                <div>
+                  <h3 className="text-xl font-medium mb-4 text-white">5. Your Rights</h3>
+                  <p className="text-gray-300 leading-relaxed font-light">
+                    You have the right to access, correct, or delete your personal information. You can manage your privacy settings in the Ampereon app or contact our support team for assistance.
+                  </p>
+                </div>
+                
+                <div>
+                  <h3 className="text-xl font-medium mb-4 text-white">6. Contact Us</h3>
+                  <p className="text-gray-300 leading-relaxed font-light">
+                    If you have any questions about this privacy policy, please contact us at privacy@ampereonenergy.com.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="mt-10 flex justify-end">
+                <motion.button 
+                  onClick={() => closeModal('privacy')}
+                  className="px-8 py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white font-medium 
+                           rounded-2xl hover:shadow-lg hover:shadow-[#D4AF37]/25 transition-all duration-300
+                           focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:ring-offset-2 focus:ring-offset-[#1A1A1A]"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
                   Close
-                </button>
+                </motion.button>
               </div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Terms of Service Modal (unchanged) */}
+      {/* Enhanced Dark Terms of Service Modal */}
       <AnimatePresence>
         {showTermsOfService && (
           <motion.div 
-            className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            onClick={() => closeModal('terms')}
           >
             <motion.div 
-              className="bg-white rounded-lg w-full max-w-2xl max-h-[80vh] overflow-y-auto p-6 relative"
+              className="bg-[#1A1A1A] rounded-3xl w-full max-w-3xl max-h-[85vh] overflow-y-auto p-10 relative 
+                       shadow-2xl shadow-black/40 border border-[#D4AF37]/20"
               variants={modalVariants}
               initial="hidden"
               animate="visible"
               exit="exit"
+              onClick={(e) => e.stopPropagation()}
             >
               <button 
-                onClick={closeTermsOfService}
-                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+                onClick={() => closeModal('terms')}
+                className="absolute top-8 right-8 w-12 h-12 bg-[#2A2A2A] rounded-full flex items-center justify-center 
+                         hover:bg-[#D4AF37]/20 transition-colors duration-300 group"
                 aria-label="Close terms of service"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <X className="w-5 h-5 text-gray-300 group-hover:text-[#D4AF37] transition-colors duration-300" />
               </button>
-              <h2 className="text-2xl text-center font-bold text-gray-900">Terms of Service</h2>
-              <h2 className="text-lg text-center text-gray-900">Last Updated: February 26, 2025</h2>
-              <hr className="my-4 border-black mx-16"/>
-              <div className="prose prose-teal prose-sm max-w-none text-gray-700">
-                 <p className="mb-4">These Terms of Service ("Terms") govern your access to and use of the website located at evolve-charge.com (the "Website") and any order transactions conducted therein, operated by EVolve Charge Inc. ("EVolve Charge," "we," "us," or "our"), a corporation based in Washington State. By accessing the Website or placing a order, you agree to be bound by these Terms. If you do not agree, please refrain from using the Website.</p>
- 
-                 <h3 className="font-bold">1. Company Overview</h3>
-                 <p className="mb-3">EVolve Charge Inc. specializes in smart, automated charging solutions for electric vehicles (EVs). Our product features an automatic connection arm, off-peak charging scheduling, and battery health monitoring, all manageable via a proprietary mobile application. The charger is compatible with major EV models and includes professional installation services. orders are currently available with limited early-bird pricing.</p>
- 
-                 <h3 className="font-bold">2. Use of the Website</h3>
-                 <p className="mb-3">The Website is provided for informational purposes regarding our products and services and to facilitate orders of the EVolve Charger. You may use the Website solely for lawful purposes and in accordance with these Terms. Unauthorized use, including but not limited to attempts to interfere with the Website’s functionality, is strictly prohibited.</p>
- 
-                 <h3 className="font-bold">3. Orders and Payment</h3>
-                 <p className="mb-3">Orders for the EVolve Charger are subject to a one-time fee, payable at the time of order placement. No fees are charged for general Website access. Early-bird pricing is available on a limited basis. All payments are final upon processing, except in cases where EVolve Charge is unable to fulfill the order, in which event a refund may be issued at our discretion.</p>
- 
-                 <h3 className="font-bold">4. User Conduct</h3>
-                 <p className="mb-3">You agree to comply with the following obligations when using the Website or placing a order: (a) Provide accurate and truthful information during the order process; (b) Refrain from uploading malicious code, viruses, or other harmful materials; (c) Do not attempt to gain unauthorized access to the Website or its systems; (d) Do not resell or transfer order rights without prior written consent from EVolve Charge; (e) Refrain from engaging in harassing, abusive, or unlawful conduct toward EVolve Charge or its representatives. Violation of these obligations may result in termination of your order or access to the Website, at our sole discretion.</p>
- 
-                 <h3 className="font-bold">5. Intellectual Property</h3>
-                 <p className="mb-3">All content on the Website, including text, images, designs, and trademarks, is the exclusive property of EVolve Charge Inc. and is protected by United States copyright and intellectual property laws. You may not reproduce, distribute, or modify such content without our prior written permission.</p>
- 
-                 <h3 className="font-bold">6. Limitation of Liability</h3>
-                 <p className="mb-3">To the fullest extent permitted by law, EVolve Charge shall not be liable for any indirect, incidental, consequential, or punitive damages arising from your use of the Website or order process, including but not limited to service interruptions, data loss, or delays in product delivery. Our total liability shall not exceed the amount paid by you for a order. The Website and products are provided "as is," without warranties of any kind, express or implied, beyond those required by applicable law.</p>
- 
-                 <h3 className="font-bold">7. Termination</h3>
-                 <p className="mb-3">EVolve Charge reserves the right to terminate or suspend your access to the Website or cancel your order, without notice, if you breach these Terms or engage in conduct we deem detrimental to our operations or other users.</p>
- 
-                 <h3 className="font-bold">8. Governing Law and Jurisdiction</h3>
-                 <p className="mb-3">These Terms shall be governed by and construed in accordance with the laws of the State of Washington, without regard to its conflict of law principles. Any disputes arising under these Terms shall be resolved exclusively in the state or federal courts located in Washington State, and you consent to the jurisdiction of such courts.</p>
- 
-                 <h3 className="font-bold">9. Amendments</h3>
-                 <p className="mb-3">We may modify these Terms at our discretion. Updated Terms will be posted on the Website with the effective date indicated. Your continued use of the Website following such changes constitutes acceptance of the revised Terms.</p>
- 
-                 <h3 className="font-bold">10. Contact Information</h3>
-                 <p className="mb-3">For inquiries regarding these Terms, please contact us at: support@evolve-charge.com.</p>
-               </div>
-              <div className="mt-6 flex justify-end">
-                <button 
-                  onClick={closeTermsOfService}
-                  className="px-4 py-2 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-md"
+              
+              <div className="mb-8">
+                <h2 className="text-4xl font-light text-white mb-3 tracking-tight">Terms of Service</h2>
+                <div className="w-16 h-px bg-gradient-to-r from-[#D4AF37] to-transparent mb-4" />
+                <p className="text-gray-400 font-light">Last Updated: July 4, 2025</p>
+              </div>
+              
+              <div className="space-y-8 text-white">
+                <p className="text-gray-300 leading-relaxed font-light">
+                  These Terms of Service ("Terms") govern your access to and use of Ampereon products and services. By using our products or services, you agree to be bound by these Terms.
+                </p>
+                
+                <div>
+                  <h3 className="text-xl font-medium mb-4 text-white">1. Product Overview</h3>
+                  <p className="text-gray-300 leading-relaxed font-light">
+                    Ampereon provides automated EV charging solutions including hardware and software. Our products are designed to work with existing charging infrastructure and include features such as automatic connection, smart scheduling, and battery optimization.
+                  </p>
+                </div>
+                
+                <div>
+                  <h3 className="text-xl font-medium mb-4 text-white">2. Orders and Payments</h3>
+                  <p className="text-gray-300 leading-relaxed font-light">
+                    Reservations require a deposit which is fully refundable until your product ships. Final payment is due before shipping. We accept major credit cards and digital payment methods. Prices are subject to change for new orders.
+                  </p>
+                </div>
+                
+                <div>
+                  <h3 className="text-xl font-medium mb-4 text-white">3. Installation and Use</h3>
+                  <p className="text-gray-300 leading-relaxed font-light">
+                    Ampereon products must be installed according to provided instructions. While designed for DIY installation, professional installation is recommended for optimal performance. Improper installation may void warranty coverage.
+                  </p>
+                </div>
+                
+                <div>
+                  <h3 className="text-xl font-medium mb-4 text-white">4. Warranty and Support</h3>
+                  <p className="text-gray-300 leading-relaxed font-light">
+                    Ampereon products come with a 2-year limited warranty covering defects in materials and workmanship. Extended warranty options are available. Support is provided via email, phone, and in-app chat.
+                  </p>
+                </div>
+                
+                <div>
+                  <h3 className="text-xl font-medium mb-4 text-white">5. Limitation of Liability</h3>
+                  <p className="text-gray-300 leading-relaxed font-light">
+                    To the extent permitted by law, Ampereon's total liability shall not exceed the purchase price of the product. We are not liable for indirect, incidental, or consequential damages.
+                  </p>
+                </div>
+                
+                <div>
+                  <h3 className="text-xl font-medium mb-4 text-white">6. Contact Information</h3>
+                  <p className="text-gray-300 leading-relaxed font-light">
+                    For questions about these Terms, contact us at legal@ampereonenergy.com.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="mt-10 flex justify-end">
+                <motion.button 
+                  onClick={() => closeModal('terms')}
+                  className="px-8 py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white font-medium 
+                           rounded-2xl hover:shadow-lg hover:shadow-[#D4AF37]/25 transition-all duration-300
+                           focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:ring-offset-2 focus:ring-offset-[#1A1A1A]"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
                   Close
-                </button>
+                </motion.button>
               </div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 mb-12 ">
-          {/* First column (unchanged) */}
-          <div>
-            <Image src={Logo} alt="logo" height={25} className="mb-4"/>
-            <p className="text-gray-300 mb-4">Revolutionizing EV charging with smart, automated technology that makes charging easier and more efficient.</p>
-            <div className="flex space-x-4">
-              {['X', 'youtube', 'instagram', 'linkedin'].map((social) => {
-                const Icon = socialIcons[social];
-                return (
-                  <a
-                    key={social}
-                    href={socialUrls[social]}
-                    className="text-gray-300 hover:text-teal-500 transition-colors"
-                  >
-                    <span className="sr-only">{social}</span>
-                    <Icon className="h-6 w-6" />
-                  </a>
-                );
-              })}
-            </div>
-          </div>
-          
-          {/* Second column (unchanged) */}
-          {/* <div>
-            <h4 className="text-lg font-bold mb-4 text-white">Product</h4>
-            <ul className="space-y-2">
-              {['Features', 'Pricing', 'Support'].map((item) => (
-                <li key={item}>
-                  <a href={`/${item.toLowerCase()}`} className="text-gray-300 hover:text-teal-500 transition-colors">
-                    {item}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div> */}
-          
-          {/* Third column - Updated mailing list form */}
-          <div>
-            <h4 className="text-lg font-bold mb-4 text-white">Stay Updated</h4>
-            <p className="text-gray-300 mb-4">Subscribe to our newsletter for the latest updates and offers.</p>
-            <form className="flex" onSubmit={handleSubscribe}>
-              <input 
-                type="email" 
-                placeholder="Your email" 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="px-4 py-2 rounded-l-full text-gray-900 focus:outline-none flex-grow"
-              />
-              <button 
-                type="submit"
-                className="px-4 py-2 rounded-r-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium"
-              >
-                Subscribe
-              </button>
-            </form>
-          </div>
-        </div>
-        
-
-        <div className="border-t border-gray-700 mt-10 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-500 text-sm">© 2025 EVolve Charge Inc. All rights reserved.</p>
-            <div className="mt-4 md:mt-0 flex space-x-4">
-              <a href="#privacypolicy" className="text-gray-500 hover:text-teal-300 transition-colors text-sm">
-                Privacy Policy
-              </a>
-              <a href="#tos" className="text-gray-500 hover:text-teal-300 transition-colors text-sm">
-                Terms of Service
-              </a>
-            </div>
-          </div>
-      </div>
-    </footer>
+    </>
   );
-}
+};
+
+export default AmpereonFooter;

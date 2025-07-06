@@ -132,7 +132,7 @@ export default function Technology() {
               variants={fadeIn}
               className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-gray-900 mb-6"
             >
-              The <span className="bg-gradient-to-r from-teal-500 to-cyan-500 bg-clip-text text-transparent">Technology</span> Behind EVolve Charge
+              The <span className="bg-gradient-to-r from-teal-500 to-cyan-500 bg-clip-text text-transparent">Technology</span> Behind Ampereon
             </motion.h1>
             
             <motion.p 
@@ -372,7 +372,7 @@ export default function Technology() {
               {
                 year: "2019",
                 title: "Company Founded",
-                description: "EVolve Charge was founded with the mission to revolutionize how electric vehicles charge."
+                description: "Ampereon was founded with the mission to revolutionize how electric vehicles charge."
               },
               {
                 year: "2020",
@@ -397,7 +397,7 @@ export default function Technology() {
               {
                 year: "2024",
                 title: "Commercial Launch",
-                description: "Officially launched EVolve Charge to the consumer market after extensive beta testing."
+                description: "Officially launched Ampereon to the consumer market after extensive beta testing."
               },
             ].map((event, index) => (
               <motion.div
@@ -490,7 +490,7 @@ export default function Technology() {
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-6">Experience the Technology Yourself</h2>
             <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto opacity-90">
-              Join our community of forward-thinking EV owners who are already charging smarter with EVolve Charge.
+              Join our community of forward-thinking EV owners who are already charging smarter with Ampereon.
             </p>
             <motion.button
               whileHover={{ scale: 1.05 }}

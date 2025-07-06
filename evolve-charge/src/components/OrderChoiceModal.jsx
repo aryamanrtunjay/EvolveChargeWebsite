@@ -1,273 +1,346 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { ChevronDown, Zap, Crown, ArrowRight, Check, Clock, Shield } from 'lucide-react';
+
+// Simplified pattern overlay
+const SubtlePattern = ({ opacity = 0.02 }) => (
+  <div className="absolute inset-0 pointer-events-none" style={{ opacity }}>
+    <svg width="100%" height="100%" className="text-[#D4AF37]">
+      <defs>
+        <pattern id="modalGrid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+          <circle cx="20" cy="20" r="0.5" fill="currentColor" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#modalGrid)" />
+    </svg>
+  </div>
+);
+
+// Custom hook to detect mobile devices
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 768px)');
+    setIsMobile(mediaQuery.matches);
+
+    const handler = (e) => setIsMobile(e.matches);
+    mediaQuery.addListener(handler);
+    return () => mediaQuery.removeListener(handler);
+  }, []);
+
+  return isMobile;
+}
 
 export default function OrderChoiceModal({ isOpen, onClose }) {
-  const [reserveOpen, setReserveOpen] = useState(false);
-  const [priorityOpen, setPriorityOpen] = useState(false);
+  const isMobile = useIsMobile();
+  const [isReserveOpen, setIsReserveOpen] = useState(false);
+  const [isOrderOpen, setIsOrderOpen] = useState(false);
+
+  // Reserve content - professional and clear
+  const reserveContent = (
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <div>
+          <p className="text-sm font-semibold text-white">Reserve Your Unit</p>
+          <p className="text-xs text-gray-400">Pay remaining balance at delivery</p>
+        </div>
+        <div className="text-right">
+          <span className="text-2xl font-semibold text-white">$5</span>
+          <p className="text-xs text-gray-400">fully refundable</p>
+        </div>
+      </div>
+      
+      <div className="bg-white/5 rounded-lg p-4 border border-white/10">
+        <div className="flex items-start gap-2 mb-3">
+          <Clock className="w-4 h-4 text-[#D4AF37] mt-0.5" />
+          <div>
+            <span className="text-sm font-medium text-white block mb-2">How reservations work:</span>
+            <div className="space-y-1 text-xs text-gray-300">
+              <p>• Secure your spot with $5 deposit</p>
+              <p>• Receive shipping notification when ready</p>
+              <p>• Pay remaining $94 before delivery</p>
+              <p>• Full refund available anytime</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <Link href="/reserve">
+        <motion.div
+          className="inline-flex items-center gap-2 text-sm font-medium text-[#D4AF37] 
+                   hover:text-white transition-colors duration-200"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          <span>Reserve Now</span>
+          <ArrowRight className="w-4 h-4" />
+        </motion.div>
+      </Link>
+    </div>
+  );
+
+  // Order content - professional focus on benefits
+  const orderContent = (
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <div>
+          <p className="text-sm font-semibold text-white">Complete Purchase</p>
+          <p className="text-xs text-gray-400">Priority delivery and exclusive benefits</p>
+        </div>
+        <div className="text-right">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-sm text-gray-400 line-through">$124</span>
+            <div className="bg-[#D4AF37]/20 text-[#D4AF37] px-2 py-1 rounded text-xs font-medium">
+              20% OFF
+            </div>
+          </div>
+          <span className="text-2xl font-semibold text-white">$99</span>
+          <p className="text-xs text-gray-400">complete payment</p>
+        </div>
+      </div>
+      
+      <div className="bg-[#D4AF37]/10 rounded-lg p-4 border border-[#D4AF37]/20">
+        <div className="flex items-start gap-2 mb-3">
+          <Shield className="w-4 h-4 text-[#D4AF37] mt-0.5" />
+          <div>
+            <span className="text-sm font-medium text-white block mb-2">Premium benefits included:</span>
+            <div className="space-y-1 text-xs text-gray-300">
+              <p>• First production batch (estimated Q4 2025)</p>
+              <p>• Skip reservation queue entirely</p>
+              <p>• Beta features and priority support</p>
+              <p>• 30-day money-back guarantee</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <Link href="/order">
+        <motion.div
+          className="inline-flex items-center gap-2 text-sm font-medium text-white 
+                   bg-gradient-to-r from-[#D4AF37] to-[#B8860B] px-5 py-2.5 rounded-lg
+                   hover:shadow-md hover:shadow-[#D4AF37]/20 transition-all duration-200"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          <span>Purchase Now</span>
+          <ArrowRight className="w-4 h-4" />
+        </motion.div>
+      </Link>
+    </div>
+  );
 
   return (
     <AnimatePresence>
       {isOpen && (
-        <div
-          className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
+        <motion.div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6"
           onClick={onClose}
           role="dialog"
           aria-modal="true"
           aria-labelledby="modal-title"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
         >
-          <div
-            className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 max-w-xl w-full mx-4 border border-teal-500/40 shadow-2xl"
+          <motion.div
+            className="bg-[#1A1A1A] rounded-2xl p-6 max-w-lg w-full shadow-xl 
+                     border border-[#D4AF37]/20 relative overflow-hidden"
             onClick={(e) => e.stopPropagation()}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
           >
-            <div className="flex justify-between items-center mb-6 sticky top-0 z-10">
-              <h2 id="modal-title" className="text-2xl font-bold text-white">Secure Your EVolve Charger</h2>
-              <button
+            <SubtlePattern />
+
+            {/* Header - clean and professional */}
+            <div className="flex justify-between items-start mb-6 relative z-10">
+              <div>
+                <h2 id="modal-title" className="text-2xl font-semibold text-white mb-1">
+                  Get Your <span className="text-[#D4AF37]">Ampereon</span>
+                </h2>
+                <p className="text-gray-400 text-sm">Choose the option that works best for you</p>
+              </div>
+              <motion.button
                 onClick={onClose}
-                className="p-2 rounded-full bg-gray-300/30 text-white/80 hover:bg-gray-500/50 transition-colors"
-                aria-label="Close modal"
+                className="text-gray-400 hover:text-white transition-colors p-2 rounded-lg hover:bg-white/10"
+                aria-label="Close"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
                 </svg>
-              </button>
+              </motion.button>
             </div>
-            <p className="text-white/70 mb-8 text-center text-base">
-              Order now to lock in your spot for the world's first automatic EV charger.
-            </p>
 
-            <div className="space-y-6 max-h-[calc(100vh-200px)] overflow-y-auto">
-              {/* Reserve Option */}
-              <div>
-                <div className="sm:hidden">
-                  <button
-                    onClick={() => setReserveOpen(!reserveOpen)}
-                    className="w-full p-4 rounded-xl bg-white/5 border border-gray-500/50 flex justify-between items-center hover:bg-white/10 transition-colors"
-                    aria-expanded={reserveOpen}
-                    aria-controls="reserve-details"
-                  >
-                    <span className="text-lg font-semibold text-white/90">Reserve Your Spot</span>
-                    <div className="flex items-center">
-                      <span className="text-xl font-bold text-white/80 mr-2">$4.99</span>
-                      <motion.svg
-                        className="w-5 h-5 text-white/80"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        animate={{ rotate: reserveOpen ? 180 : 0 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </motion.svg>
-                    </div>
-                  </button>
-                  <AnimatePresence>
-                    {reserveOpen && (
-                      <motion.div
-                        id="reserve-details"
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="overflow-hidden"
-                      >
-                        <Link href="/reserve">
+            {/* Content - professional layout */}
+            <div className="space-y-4 relative z-10">
+              {/* Reserve Section */}
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+              >
+                {isMobile ? (
+                  <div className="dropdown">
+                    <motion.button
+                      onClick={() => setIsReserveOpen(!isReserveOpen)}
+                      className="flex justify-between items-center p-4 bg-[#2A2A2A]/60 
+                               rounded-xl hover:bg-[#2A2A2A]/80 transition-all w-full
+                               border border-[#D4AF37]/20 hover:border-[#D4AF37]/40"
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-[#D4AF37]/20 rounded-lg 
+                                      flex items-center justify-center border border-[#D4AF37]/30">
+                          <Zap className="w-5 h-5 text-[#D4AF37]" />
+                        </div>
+                        <div className="text-left">
+                          <h3 className="text-base font-semibold text-white">Reserve</h3>
+                          <p className="text-sm text-gray-400">$5 deposit</p>
+                        </div>
+                      </div>
+                      <ChevronDown className={`w-5 h-5 text-[#D4AF37] transform ${isReserveOpen ? 'rotate-180' : ''} 
+                                            transition-transform duration-200`} />
+                    </motion.button>
+                    <AnimatePresence>
+                      {isReserveOpen && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="bg-[#2A2A2A]/60 rounded-b-xl overflow-hidden 
+                                   border border-[#D4AF37]/20 border-t-0"
+                        >
                           <div className="p-4">
-                            <div className="space-y-3 text-sm">
-                              <div className="flex items-center text-white/70">
-                                <svg className="w-4 h-4 mr-2 text-white/40" fill="currentColor" viewBox="0 0 20 20">
-                                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                </svg>
-                                <span>Join the delivery queue</span>
-                              </div>
-                              <div className="flex items-center text-white/70">
-                                <svg className="w-4 h-4 mr-2 text-white/40" fill="currentColor" viewBox="0 0 20 20">
-                                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                </svg>
-                                <span>Delivery based on queue position</span>
-                              </div>
-                              <div className="flex items-center text-white/70">
-                                <svg className="w-4 h-4 mr-2 text-white/40" fill="currentColor" viewBox="0 0 20 20">
-                                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                </svg>
-                                <span>Pay balance when charger is ready</span>
-                              </div>
-                            </div>
-                            <div className="mt-4 text-xs text-white/50">
-                              Delivery timeline depends on production schedule.
-                            </div>
-                            <button
-                              className="mt-4 w-full px-6 py-3 rounded-full bg-teal-500/20 border border-teal-500/50 text-white font-medium text-center hover:bg-teal-500/30 transition-colors"
-                            >
-                              Reserve Now
-                            </button>
+                            {reserveContent}
                           </div>
-                        </Link>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-                <div className="hidden sm:block">
-                  <Link href="/reserve">
-                    <div className="w-full p-6 rounded-xl bg-white/5 border border-gray-500/50 cursor-pointer">
-                      <div className="flex justify-between items-start mb-4">
-                        <h3 className="text-lg font-semibold text-white/90">Reserve Your Spot</h3>
-                        <span className="text-xl font-bold text-white/80">$4.99</span>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                ) : (
+                  <div className="bg-[#2A2A2A]/60 border border-[#D4AF37]/20 
+                               rounded-xl p-5 hover:border-[#D4AF37]/40 transition-all duration-200">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="w-12 h-12 bg-[#D4AF37]/20 rounded-lg 
+                                    flex items-center justify-center border border-[#D4AF37]/30">
+                        <Zap className="w-6 h-6 text-[#D4AF37]" />
                       </div>
-                      <div className="space-y-3 text-sm">
-                        <div className="flex items-center text-white/70">
-                          <svg className="w-4 h-4 mr-2 text-white/40" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                          </svg>
-                          <span>Join the delivery queue</span>
-                        </div>
-                        <div className="flex items-center text-white/70">
-                          <svg className="w-4 h-4 mr-2 text-white/40" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                          </svg>
-                          <span>Delivery based on queue position</span>
-                        </div>
-                        <div className="flex items-center text-white/70">
-                          <svg className="w-4 h-4 mr-2 text-white/40" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                          </svg>
-                          <span>Pay balance when charger is ready</span>
-                        </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-white">Reserve Your Unit</h3>
+                        <p className="text-sm text-gray-400">$5 fully refundable deposit</p>
                       </div>
-                      <div className="mt-4 text-xs text-white/50">
-                        Delivery timeline depends on production schedule.
-                      </div>
-                      <button
-                        className="mt-4 w-full px-6 py-3 rounded-full bg-teal-500/20 border border-teal-500/50 text-white font-medium text-center hover:bg-teal-500/30 transition-colors"
-                      >
-                        Reserve Now
-                      </button>
                     </div>
-                  </Link>
+                    {reserveContent}
+                  </div>
+                )}
+              </motion.div>
+
+              {/* Order Section - with subtle "Recommended" badge */}
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                {isMobile ? (
+                  <div className="dropdown relative">
+                    <div className="absolute -top-2 right-4 bg-[#D4AF37] text-black 
+                                  text-xs font-medium px-3 py-1 rounded-full z-10">
+                      Recommended
+                    </div>
+                    
+                    <motion.button
+                      onClick={() => setIsOrderOpen(!isOrderOpen)}
+                      className="flex justify-between items-center p-4 bg-[#D4AF37]/10 
+                               rounded-xl hover:bg-[#D4AF37]/20 transition-all w-full
+                               border border-[#D4AF37] mt-3"
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gradient-to-br from-[#D4AF37] to-[#B8860B] rounded-lg 
+                                      flex items-center justify-center">
+                          <Crown className="w-5 h-5 text-white" />
+                        </div>
+                        <div className="text-left">
+                          <h3 className="text-base font-semibold text-white">Purchase</h3>
+                          <p className="text-sm text-gray-300">$99 complete</p>
+                        </div>
+                      </div>
+                      <ChevronDown className={`w-5 h-5 text-[#D4AF37] transform ${isOrderOpen ? 'rotate-180' : ''} 
+                                            transition-transform duration-200`} />
+                    </motion.button>
+                    
+                    <AnimatePresence>
+                      {isOrderOpen && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="bg-[#D4AF37]/10 rounded-b-xl overflow-hidden 
+                                   border border-[#D4AF37] border-t-0"
+                        >
+                          <div className="p-4">
+                            {orderContent}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                ) : (
+                  <div className="bg-[#D4AF37]/10 border border-[#D4AF37] 
+                               rounded-xl p-5 hover:bg-[#D4AF37]/15 transition-all duration-200 relative">
+                    <div className="absolute -top-2 right-4 bg-[#D4AF37] text-black 
+                                  text-xs font-medium px-3 py-1 rounded-full">
+                      Recommended
+                    </div>
+                    
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="w-12 h-12 bg-gradient-to-br from-[#D4AF37] to-[#B8860B] rounded-lg 
+                                    flex items-center justify-center">
+                        <Crown className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-white">Complete Purchase</h3>
+                        <p className="text-sm text-gray-300">$99 with priority benefits</p>
+                      </div>
+                    </div>
+                    {orderContent}
+                  </div>
+                )}
+              </motion.div>
+            </div>
+
+            {/* Footer - trust indicators */}
+            <motion.div 
+              className="mt-6 pt-4 border-t border-[#D4AF37]/20 relative z-10"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              <div className="flex items-center justify-center gap-4 text-xs text-gray-400">
+                <div className="flex items-center gap-1">
+                  <Check className="w-3 h-3 text-[#D4AF37]" />
+                  <span>Secure payment</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Check className="w-3 h-3 text-[#D4AF37]" />
+                  <span>Money-back guarantee</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Check className="w-3 h-3 text-[#D4AF37]" />
+                  <span>Expert support</span>
                 </div>
               </div>
-
-              {/* Priority Order Option */}
-              <div className="relative">
-                <div className="absolute -top-3 left-4 bg-teal-500 text-white text-xs font-bold px-2.5 py-1 rounded-full z-10">
-                  Most Popular
-                </div>
-                <div className="sm:hidden">
-                  <button
-                    onClick={() => setPriorityOpen(!priorityOpen)}
-                    className="w-full p-4 rounded-xl bg-gradient-to-r from-teal-600/30 to-teal-700/30 border-2 border-teal-400 flex justify-between items-center hover:bg-teal-600/40 transition-colors"
-                    aria-expanded={priorityOpen}
-                    aria-controls="priority-details"
-                  >
-                    <span className="text-lg font-semibold text-teal-300">Priority Order</span>
-                    <div className="flex items-center">
-                      <div className="flex flex-col items-end mr-2">
-                        <span className="text-sm text-gray-400 line-through">$124.99</span>
-                        <span className="text-xl font-bold text-teal-200">$99.99</span>
-                      </div>
-                      <motion.svg
-                        className="w-5 h-5 text-teal-200"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        animate={{ rotate: priorityOpen ? 180 : 0 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </motion.svg>
-                    </div>
-                  </button>
-                  <AnimatePresence>
-                    {priorityOpen && (
-                      <motion.div
-                        id="priority-details"
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="overflow-hidden"
-                      >
-                        <Link href="/order">
-                          <div className="p-4">
-                            <div className="space-y-3 text-sm">
-                              <div className="flex items-center text-green-300">
-                                <svg className="w-4 h-4 mr-2 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                </svg>
-                                <span className="font-medium">#1 in delivery queue</span>
-                              </div>
-                              <div className="flex items-center text-green-300">
-                                <svg className="w-4 h-4 mr-2 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                </svg>
-                                <span className="font-medium">Guaranteed delivery by Dec 1, 2025</span>
-                              </div>
-                              <div className="flex items-center text-green-300">
-                                <svg className="w-4 h-4 mr-2 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                </svg>
-                                <span>Pay in full now and secure priority</span>
-                              </div>
-                            </div>
-                            <div className="mt-4 text-xs text-teal-200 italic">
-                              Limited priority spots available! Ships upon production completion.
-                            </div>
-                            <button
-                              className="mt-4 w-full px-6 py-3 rounded-full bg-teal-500 text-white font-medium text-center hover:bg-teal-600 transition-colors"
-                            >
-                              Order Now
-                            </button>
-                          </div>
-                        </Link>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-                <div className="hidden sm:block">
-                  <Link href="/order">
-                    <div className="w-full p-6 rounded-xl bg-gradient-to-r from-teal-600/30 to-teal-700/30 border-2 border-teal-400 cursor-pointer">
-                      <div className="flex justify-between items-start mb-4">
-                        <h3 className="text-xl font-bold text-teal-300">Priority Order</h3>
-                        <div className="flex flex-col items-end">
-                          <span className="text-lg text-gray-400 line-through">$124.99</span>
-                          <span className="text-2xl font-bold text-teal-200">$99.99</span>
-                        </div>
-                      </div>
-                      <div className="space-y-3 text-sm">
-                        <div className="flex items-center text-green-300">
-                          <svg className="w-4 h-4 mr-2 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                          </svg>
-                          <span className="font-medium">#1 in delivery queue</span>
-                        </div>
-                        <div className="flex items-center text-green-300">
-                          <svg className="w-4 h-4 mr-2 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                          </svg>
-                          <span className="font-medium">Guaranteed delivery by Dec 1, 2025</span>
-                        </div>
-                        <div className="flex items-center text-green-300">
-                          <svg className="w-4 h-4 mr-2 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                          </svg>
-                          <span>Pay in full now and secure priority</span>
-                        </div>
-                      </div>
-                      <div className="mt-4 text-xs text-teal-200 italic">
-                        Limited priority spots available! Ships upon production completion.
-                      </div>
-                      <button
-                        className="mt-4 w-full px-6 py-3 rounded-full bg-teal-500 text-white font-medium text-center hover:bg-teal-600 transition-colors"
-                      >
-                        Order Now
-                      </button>
-                    </div>
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+            </motion.div>
+          </motion.div>
+        </motion.div>
       )}
     </AnimatePresence>
   );

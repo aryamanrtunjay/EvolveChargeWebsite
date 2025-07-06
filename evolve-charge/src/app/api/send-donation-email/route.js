@@ -32,7 +32,7 @@ function generatePDF({ firstName, lastName, amount, donationId, donationDate, de
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(24);
   doc.setFont('helvetica', 'bold');
-  doc.text('EVolve Charge', 105, 20, { align: 'center' });
+  doc.text('Ampereon', 105, 20, { align: 'center' });
   
   doc.setFontSize(12);
   doc.setFont('helvetica', 'normal');
@@ -88,7 +88,7 @@ function generatePDF({ firstName, lastName, amount, donationId, donationDate, de
   // Thank you message
   doc.setFontSize(12);
   doc.setFont('helvetica', 'normal');
-  const thankYouText = `Thank you for your generous donation to EVolve Charge. Your contribution of $${amount} supports our mission to advance smart EV charging technology and promote sustainable transportation globally.`;
+  const thankYouText = `Thank you for your generous donation to Ampereon. Your contribution of $${amount} supports our mission to advance smart EV charging technology and promote sustainable transportation globally.`;
   const splitThankYou = doc.splitTextToSize(thankYouText, 170);
   doc.text(splitThankYou, 20, yPosition);
   
@@ -97,7 +97,7 @@ function generatePDF({ firstName, lastName, amount, donationId, donationDate, de
   // Organization information
   doc.setFontSize(10);
   doc.setTextColor(...grayColor);
-  doc.text('EVolve Charge Inc.', 20, yPosition);
+  doc.text('Ampereon Inc.', 20, yPosition);
   yPosition += 5;
   doc.text('EIN: XX-XXXXXXX', 20, yPosition);
   yPosition += 5;
@@ -144,7 +144,7 @@ export async function POST(request) {
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Thank You for Your Donation to EVolve Charge</title>
+        <title>Thank You for Your Donation to Ampereon</title>
         <style>
           body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -245,13 +245,13 @@ export async function POST(request) {
       <body>
         <div class="email-container">
           <div class="email-header">
-            <h1>EVolve Charge</h1>
+            <h1>Ampereon</h1>
             <p>Advancing Smart EV Charging Technology</p>
           </div>
           <div class="email-body">
             <p class="greeting">Dear ${firstName} ${lastName},</p>
             <h2>Thank You for Your Generous Donation!</h2>
-            <p>We're incredibly grateful for your support of EVolve Charge. Your contribution makes a real difference in our mission to revolutionize electric vehicle charging.</p>
+            <p>We're incredibly grateful for your support of Ampereon. Your contribution makes a real difference in our mission to revolutionize electric vehicle charging.</p>
             
             <div class="donation-info">
               <p><strong>Donation Amount:</strong> $${amount}</p>
@@ -276,7 +276,7 @@ export async function POST(request) {
             <p>If you have any questions or need assistance, please don't hesitate to contact our support team at <a href="mailto:support@evolve-charge.com">support@evolve-charge.com</a>.</p>
             
             <p>With gratitude,</p>
-            <p><strong>The EVolve Charge Team</strong></p>
+            <p><strong>The Ampereon Team</strong></p>
             
             <div class="social-links">
               <a href="https://x.com/evolvecharge">X (Twitter)</a> |
@@ -286,13 +286,13 @@ export async function POST(request) {
             </div>
           </div>
           <div class="email-footer">
-            <p>© ${new Date().getFullYear()} EVolve Charge Inc. All rights reserved.</p>
+            <p>© ${new Date().getFullYear()} Ampereon Inc. All rights reserved.</p>
             <p>Sammamish, WA</p>
             <p>
               <a href="https://evolve-charge.com/#privacypolicy">Privacy Policy</a> | 
               <a href="https://evolve-charge.com/#tos">Terms of Service</a>
             </p>
-            <p>This email was sent to you because you made a donation to EVolve Charge.</p>
+            <p>This email was sent to you because you made a donation to Ampereon.</p>
           </div>
         </div>
       </body>
@@ -305,7 +305,7 @@ Dear ${firstName} ${lastName},
 
 Thank You for Your Generous Donation!
 
-We're incredibly grateful for your support of EVolve Charge. Your contribution makes a real difference in our mission to revolutionize electric vehicle charging.
+We're incredibly grateful for your support of Ampereon. Your contribution makes a real difference in our mission to revolutionize electric vehicle charging.
 
 Donation Details:
 - Amount: $${amount}
@@ -325,9 +325,9 @@ Your support helps us:
 If you have any questions or need assistance, please contact our support team at support@evolve-charge.com.
 
 With gratitude,
-The EVolve Charge Team
+The Ampereon Team
 
-© ${new Date().getFullYear()} EVolve Charge Inc. All rights reserved.
+© ${new Date().getFullYear()} Ampereon Inc. All rights reserved.
 Sammamish, WA
 
 Follow us on social media:
@@ -336,14 +336,14 @@ Facebook: https://facebook.com/evolvecharge
 Instagram: https://instagram.com/evolve.charge
 LinkedIn: https://linkedin.com/company/evolvecharge
 
-This email was sent to you because you made a donation to EVolve Charge.
+This email was sent to you because you made a donation to Ampereon.
     `;
 
     // Email options with PDF attachment
     const mailOptions = {
-      from: `"EVolve Charge" <${process.env.EMAIL_USER}>`,
+      from: `"Ampereon" <${process.env.EMAIL_USER}>`,
       to: email,
-      subject: `Thank You for Your Donation to EVolve Charge`,
+      subject: `Thank You for Your Donation to Ampereon`,
       text: textContent,
       html: htmlContent,
       attachments: [

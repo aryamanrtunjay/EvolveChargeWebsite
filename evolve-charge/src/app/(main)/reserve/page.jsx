@@ -1,42 +1,60 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { db } from '../../firebaseConfig.js';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import Head from 'next/head';
 import Script from 'next/script';
+import { Lock, Shield, Star, ChevronDown, Check, Users } from 'lucide-react';
 
 // Initialize Stripe
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
+// Subtle pattern overlay
+const SubtlePattern = ({ opacity = 0.03 }) => (
+  <div className="absolute inset-0 pointer-events-none" style={{ opacity }}>
+    <svg width="100%" height="100%" className="text-[#D4AF37]">
+      <defs>
+        <pattern id="subtleGrid" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+          <circle cx="30" cy="30" r="1" fill="currentColor" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#subtleGrid)" />
+    </svg>
+  </div>
+);
+
 // Animation variants
-const fadeIn = {
-  hidden: { opacity: 0, y: 15 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
+const fadeUpVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }
+  }
 };
 
 const staggerContainer = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
+  visible: { 
+    opacity: 1, 
+    transition: { staggerChildren: 0.1, delayChildren: 0.1 } 
+  }
 };
 
-const slideUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-};
-
-// Digital Wallet Buttons Component
+// Digital Wallet Buttons Component (updated for dark theme)
 function DigitalWalletButtons({ onPaymentSuccess, isProcessing, setIsProcessing }) {
   return (
-    <div className="space-y-3 mb-4">
+    <div className="space-y-3 mb-6">
       <button
         type="button"
         disabled={isProcessing}
-        className="w-full bg-black text-white py-3 px-4 rounded-xl font-medium text-base flex items-center justify-center space-x-2 hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full bg-[#2A2A2A] text-white py-3 px-6 rounded-xl font-medium flex items-center justify-center space-x-2 
+                 hover:bg-[#3A3A3A] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed 
+                 border border-[#D4AF37]/20 shadow-sm"
       >
         <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
           <path d="M19.88 5.63c-.4-.4-.93-.63-1.49-.63H5.61c-.56 0-1.09.23-1.49.63-.4.4-.63.93-.63 1.49v9.76c0 .56.23 1.09.63 1.49.4.4.93.63 1.49.63h12.78c.56 0 1.09-.23 1.49-.63.4-.4.63-.93.63-1.49V7.12c0-.56-.23-1.09-.63-1.49zm-1.49 1.49v9.76H5.61V7.12h12.78z"/>
@@ -48,7 +66,9 @@ function DigitalWalletButtons({ onPaymentSuccess, isProcessing, setIsProcessing 
       <button
         type="button"
         disabled={isProcessing}
-        className="w-full bg-white border-2 border-gray-200 text-gray-800 py-3 px-4 rounded-xl font-medium text-base flex items-center justify-center space-x-2 hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full bg-[#1A1A1A] border border-[#D4AF37]/30 text-white py-3 px-6 rounded-xl font-medium 
+                 flex items-center justify-center space-x-2 hover:bg-[#2A2A2A] hover:border-[#D4AF37]/50 
+                 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
       >
         <svg className="w-5 h-5" viewBox="0 0 24 24">
           <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -61,17 +81,17 @@ function DigitalWalletButtons({ onPaymentSuccess, isProcessing, setIsProcessing 
       
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-200"></div>
+          <div className="w-full border-t border-[#D4AF37]/20"></div>
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-white px-3 text-gray-500 font-medium">Or pay with card</span>
+          <span className="bg-[#2A2A2A] px-3 text-gray-400 font-medium">Or pay with card</span>
         </div>
       </div>
     </div>
   );
 }
 
-// Checkout Form Component
+// Checkout Form Component (updated for dark theme)
 function CheckoutForm({ onSuccess, isProcessing, setIsProcessing, setError, formData }) {
   const stripe = useStripe();
   const elements = useElements();
@@ -83,7 +103,6 @@ function CheckoutForm({ onSuccess, isProcessing, setIsProcessing, setError, form
       return false;
     }
 
-    // Validate form data before payment
     if (!formData.fullName.trim() || !formData.email.trim() || !formData.agreeTerms) {
       setErrorMessage('Please complete all required fields.');
       return false;
@@ -119,33 +138,37 @@ function CheckoutForm({ onSuccess, isProcessing, setIsProcessing, setError, form
   };
 
   return (
-    <div className="space-y-4">
+    <motion.div className="space-y-4" variants={fadeUpVariants}>
       <PaymentElement
         options={{
           style: {
             base: {
               fontSize: '16px',
-              color: '#1f2937',
+              color: '#FFFFFF',
               fontFamily: 'system-ui, -apple-system, sans-serif',
-              '::placeholder': { color: '#9ca3af' },
-              iconColor: '#059669',
+              backgroundColor: '#1A1A1A',
+              '::placeholder': { color: '#9CA3AF' },
+              iconColor: '#D4AF37',
             },
           },
         }}
       />
       
-      {errorMessage && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700 flex items-center space-x-2"
-        >
-          <svg className="w-4 h-4 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <span>{errorMessage}</span>
-        </motion.div>
-      )}
+      <AnimatePresence>
+        {errorMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="p-3 bg-red-900/20 border border-red-600/30 rounded-xl text-sm text-red-300 flex items-center space-x-2"
+          >
+            <svg className="w-4 h-4 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>{errorMessage}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
       
       <motion.button
         type="button"
@@ -153,7 +176,9 @@ function CheckoutForm({ onSuccess, isProcessing, setIsProcessing, setError, form
         disabled={!stripe || isProcessing}
         whileHover={{ scale: isProcessing ? 1 : 1.02 }}
         whileTap={{ scale: isProcessing ? 1 : 0.98 }}
-        className="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold text-lg shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center min-h-[56px]"
+        className="w-full py-4 px-8 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white font-semibold rounded-xl 
+                 hover:shadow-lg hover:shadow-[#D4AF37]/20 transition-all duration-300 
+                 disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
       >
         {isProcessing ? (
           <>
@@ -165,14 +190,12 @@ function CheckoutForm({ onSuccess, isProcessing, setIsProcessing, setError, form
           </>
         ) : (
           <>
-            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-            </svg>
+            <Lock className="w-5 h-5 mr-2" />
             <span>Reserve Now • $4.99</span>
           </>
         )}
       </motion.button>
-    </div>
+    </motion.div>
   );
 }
 
@@ -187,9 +210,10 @@ export default function ReservePage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState(null);
   const router = useRouter();
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true });
 
-  // Dynamic data for social proof and urgency
-  const fastChargingCost = 32; // Full session cost for anchoring
+  // Dynamic data for social proof
   const reservationsToday = 127;
   const localDrivers = 89;
   const cityName = "your area";
@@ -202,81 +226,48 @@ export default function ReservePage() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            amount: 499, // $4.99 in cents
+            amount: 499,
             metadata: { type: 'reservation' },
           }),
         });
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`API request failed: ${errorText}`);
-        }
+        if (!response.ok) throw new Error('API request failed');
         const { clientSecret } = await response.json();
-        if (!clientSecret) throw new Error('No clientSecret returned');
         setClientSecret(clientSecret);
       } catch (err) {
         setError('Unable to initialize secure payment. Please refresh and try again.');
-        console.error(err);
       }
     };
-
     createPaymentIntent();
   }, []);
 
   // Real-time validation
   const validateField = (name, value) => {
     const errors = { ...validationErrors };
-    
     switch (name) {
       case 'fullName':
-        if (!value.trim()) {
-          errors.fullName = 'Full name is required';
-        } else if (value.trim().split(' ').length < 2) {
-          errors.fullName = 'Please enter both first and last name';
-        } else {
-          delete errors.fullName;
-        }
+        errors.fullName = !value.trim() ? 'Full name is required' : value.trim().split(' ').length < 2 ? 'Please enter both first and last name' : null;
         break;
       case 'email':
-        if (!value.trim()) {
-          errors.email = 'Email address is required';
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-          errors.email = 'Please enter a valid email address';
-        } else {
-          delete errors.email;
-        }
+        errors.email = !value.trim() ? 'Email address is required' : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? 'Please enter a valid email address' : null;
         break;
       case 'agreeTerms':
-        if (!value) {
-          errors.agreeTerms = 'Please agree to continue';
-        } else {
-          delete errors.agreeTerms;
-        }
+        errors.agreeTerms = !value ? 'Please agree to continue' : null;
         break;
     }
-    
     setValidationErrors(errors);
   };
 
-  // Handle input changes with real-time validation
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     const newValue = type === 'checkbox' ? checked : value;
-    
-    setFormData({
-      ...formData,
-      [name]: newValue,
-    });
-    
-    // Real-time validation
+    setFormData({ ...formData, [name]: newValue });
     validateField(name, newValue);
   };
 
-  // Handle payment success
   const handlePaymentSuccess = async (paymentIntent) => {
     try {
       const [firstName, ...lastNameParts] = formData.fullName.trim().split(' ');
       const lastName = lastNameParts.join(' ') || '';
-      
       const reservationData = {
         firstName,
         lastName,
@@ -287,21 +278,14 @@ export default function ReservePage() {
         reservationDate: serverTimestamp(),
         amount: 4.99,
       };
-      
       const reservationRef = await addDoc(collection(db, 'reservations'), reservationData);
-
-      // Fire Twitter/X conversion tracking event
       if (typeof window !== 'undefined' && window.twq) {
         window.twq('event', 'tw-q1blv-q1bmb', {
-          value: 4.99, // Pass the total order value
-          conversion_id: reservationRef.id.slice(-6).toUpperCase(), // Use the Firebase order ID for deduplication
-          email_address: formData.email // Pass the user's email
+          value: 4.99,
+          conversion_id: reservationRef.id.slice(-6).toUpperCase(),
+          email_address: formData.email
         });
-      } else {
-        console.warn('Twitter Pixel (twq) not initialized');
       }
-      
-      // Send confirmation email
       await fetch('/api/send-reserve-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -312,23 +296,21 @@ export default function ReservePage() {
           fullName: formData.fullName,
         }),
       });
-      
       router.push(`/reserve/success?reservationId=${reservationRef.id}&name=${encodeURIComponent(firstName)}`);
     } catch (err) {
-      setError('Reservation confirmed but email notification failed. Please contact support with your payment confirmation.');
-      console.error(err);
+      setError('Reservation confirmed but email notification failed. Please contact support.');
     }
   };
 
   const options = {
     clientSecret,
     appearance: {
-      theme: 'stripe',
+      theme: 'night',
       variables: {
-        colorPrimary: '#059669',
-        colorBackground: '#ffffff',
-        colorText: '#1f2937',
-        colorDanger: '#dc2626',
+        colorPrimary: '#D4AF37',
+        colorBackground: '#1A1A1A',
+        colorText: '#FFFFFF',
+        colorDanger: '#ef4444',
         fontFamily: 'system-ui, -apple-system, sans-serif',
         spacingUnit: '4px',
         borderRadius: '12px',
@@ -337,7 +319,9 @@ export default function ReservePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-emerald-50">
+    <div className="bg-[#0A0A0A] text-white min-h-screen relative">
+      <SubtlePattern />
+      
       <Script
         strategy="afterInteractive"
         dangerouslySetInnerHTML={{
@@ -349,53 +333,54 @@ export default function ReservePage() {
           `,
         }}
       />
-      <div className="max-w-md mx-auto px-4 py-8">
-        
-        {/* Header Section with Anchoring and Social Proof */}
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={staggerContainer}
-          className="text-center mt-20 mb-8"
-        >
-          
-          <motion.h1
-            variants={fadeIn}
-            className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 leading-tight"
-          >
-            <span className="text-emerald-600">Reserve now</span>
-          </motion.h1>
-
-          <motion.div variants={fadeIn} className="flex items-center justify-center space-x-6 text-sm text-gray-600">
-            <div className="flex items-center space-x-1">
-              <span className="font-medium">Become an early adopter of the Next Generation</span>
+      
+      <motion.section
+        ref={ref}
+        className="py-16 px-6 relative z-10"
+        initial="hidden"
+        animate={inView ? "visible" : "hidden"}
+        variants={staggerContainer}
+      >
+        <div className="max-w-lg mx-auto">
+          {/* Header Section */}
+          <motion.div className="text-center mb-12" variants={fadeUpVariants}>
+            <div className="inline-flex items-center gap-2 text-sm font-medium text-[#D4AF37] 
+                         bg-[#D4AF37]/10 px-4 py-2 rounded-full mb-6 border border-[#D4AF37]/20 backdrop-blur-sm">
+              <Shield className="w-4 h-4" />
+              <span>Secure Reservation</span>
             </div>
-            {/* <div className="flex items-center space-x-1">
-              <svg className="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-              <span className="font-medium">{reservationsToday} reserved today</span>
-            </div>
-            <div className="flex items-center space-x-1">
-              <svg className="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-              </svg>
-              <span className="font-medium">{localDrivers} from {cityName}</span>
+            
+            <h1 className="text-4xl md:text-5xl font-light leading-tight mb-6">
+              Reserve Your <span className="font-semibold text-[#D4AF37]">Future</span>
+            </h1>
+            <p className="text-xl text-gray-300 max-w-lg mx-auto font-light leading-relaxed">
+              Secure early access to the next generation of EV charging technology for just $4.99.
+            </p>
+            
+            {/* Social proof indicators */}
+            {/* <div className="flex flex-col items-center gap-3 mt-8 text-sm text-gray-400">
+              <div className="flex items-center gap-6">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-[#D4AF37] rounded-full animate-pulse" />
+                  <span>{reservationsToday} reserved today</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Users className="w-4 h-4 text-[#D4AF37]" />
+                  <span>{localDrivers} from {cityName}</span>
+                </div>
+              </div>
             </div> */}
           </motion.div>
-        </motion.div>
 
-        {/* Main Form Card */}
-        <motion.div
-          variants={slideUp}
-          className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden"
-        >
-          <div className="p-6 sm:p-8">
-            
-            {/* Form Fields */}
-            <div className="space-y-5 mb-6">
+          {/* Form Card */}
+          <motion.div
+            className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-2xl shadow-2xl border border-[#D4AF37]/20 p-8"
+            variants={fadeUpVariants}
+          >
+            <div className="space-y-6">
+              {/* Form Fields */}
               <div>
-                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="fullName" className="block text-sm font-medium text-white mb-3">
                   Full Name
                 </label>
                 <input
@@ -406,27 +391,33 @@ export default function ReservePage() {
                   onChange={handleInputChange}
                   autoComplete="name"
                   required
-                  className={`w-full px-4 py-3 text-gray-900 border rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all text-base ${
-                    validationErrors.fullName ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-gray-50'
+                  className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] 
+                           transition-all duration-300 text-white placeholder-gray-400 ${
+                    validationErrors.fullName 
+                      ? 'border-red-500/50 bg-red-900/10' 
+                      : 'border-[#D4AF37]/30 bg-[#1A1A1A]/80 hover:border-[#D4AF37]/50'
                   }`}
-                  placeholder="Full Name Here"
+                  placeholder="Enter your full name"
                 />
-                {validationErrors.fullName && (
-                  <motion.p
-                    initial={{ opacity: 0, y: -5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-xs text-red-600 mt-1 flex items-center space-x-1"
-                  >
-                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                    </svg>
-                    <span>{validationErrors.fullName}</span>
-                  </motion.p>
-                )}
+                <AnimatePresence>
+                  {validationErrors.fullName && (
+                    <motion.p
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -5 }}
+                      className="text-sm text-red-400 mt-2 flex items-center gap-2"
+                    >
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                      <span>{validationErrors.fullName}</span>
+                    </motion.p>
+                  )}
+                </AnimatePresence>
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="email" className="block text-sm font-medium text-white mb-3">
                   Email Address
                 </label>
                 <input
@@ -437,157 +428,159 @@ export default function ReservePage() {
                   onChange={handleInputChange}
                   autoComplete="email"
                   required
-                  className={`w-full px-4 py-3 text-gray-900 border rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all text-base ${
-                    validationErrors.email ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-gray-50'
+                  className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] 
+                           transition-all duration-300 text-white placeholder-gray-400 ${
+                    validationErrors.email 
+                      ? 'border-red-500/50 bg-red-900/10' 
+                      : 'border-[#D4AF37]/30 bg-[#1A1A1A]/80 hover:border-[#D4AF37]/50'
                   }`}
                   placeholder="your@email.com"
                 />
-                {validationErrors.email && (
-                  <motion.p
-                    initial={{ opacity: 0, y: -5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-xs text-red-600 mt-1 flex items-center space-x-1"
-                  >
-                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                    </svg>
-                    <span>{validationErrors.email}</span>
-                  </motion.p>
+                <AnimatePresence>
+                  {validationErrors.email && (
+                    <motion.p
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -5 }}
+                      className="text-sm text-red-400 mt-2 flex items-center gap-2"
+                    >
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                      <span>{validationErrors.email}</span>
+                    </motion.p>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Payment Section */}
+              <div className="border-t border-[#D4AF37]/20 pt-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg font-semibold text-white">Secure Payment</h3>
+                  <div className="flex items-center gap-2">
+                    <Lock className="w-4 h-4 text-[#D4AF37]" />
+                    <span className="text-xs font-medium text-gray-400">256-bit encryption</span>
+                  </div>
+                </div>
+                
+                {clientSecret ? (
+                  <Elements options={options} stripe={stripePromise}>
+                    <CheckoutForm
+                      onSuccess={handlePaymentSuccess}
+                      isProcessing={isProcessing}
+                      setIsProcessing={setIsProcessing}
+                      setError={setError}
+                      formData={formData}
+                    />
+                  </Elements>
+                ) : (
+                  <div className="text-center py-8">
+                    <motion.div
+                      className="w-8 h-8 border-2 border-[#D4AF37] rounded-full border-t-transparent mx-auto"
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    />
+                    <p className="text-gray-400 text-sm mt-3">Initializing secure payment...</p>
+                  </div>
                 )}
               </div>
-            </div>
 
-            {/* Payment Section */}
-            <div className="border-t border-gray-100 pt-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Secure Payment</h3>
-                <div className="flex items-center space-x-2">
-                  <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                  </svg>
-                  <span className="text-xs text-gray-600 font-medium">256-bit SSL</span>
-                </div>
-              </div>
-              
-              {clientSecret ? (
-                <Elements options={options} stripe={stripePromise}>
-                  {/* <DigitalWalletButtons 
-                    onPaymentSuccess={handlePaymentSuccess}
-                    isProcessing={isProcessing}
-                    setIsProcessing={setIsProcessing}
-                  /> */}
-                  <CheckoutForm
-                    onSuccess={handlePaymentSuccess}
-                    isProcessing={isProcessing}
-                    setIsProcessing={setIsProcessing}
-                    setError={setError}
-                    formData={formData}
+              {/* Terms and Conditions */}
+              <div className="pt-4">
+                <div className="flex items-start gap-3">
+                  <input
+                    id="agreeTerms"
+                    name="agreeTerms"
+                    type="checkbox"
+                    checked={formData.agreeTerms}
+                    onChange={handleInputChange}
+                    required
+                    className={`h-4 w-4 text-[#D4AF37] bg-[#1A1A1A] border-[#D4AF37]/30 rounded 
+                             focus:ring-[#D4AF37] focus:ring-2 mt-0.5 ${
+                      validationErrors.agreeTerms ? 'border-red-500/50' : ''
+                    }`}
                   />
-                </Elements>
-              ) : (
-                <div className="text-center py-8">
-                  <div className="animate-spin h-6 w-6 border-2 border-emerald-500 rounded-full border-t-transparent mx-auto"></div>
-                  <p className="text-gray-600 text-sm mt-3">Initializing secure payment...</p>
+                  <label htmlFor="agreeTerms" className="text-sm text-gray-300 leading-relaxed">
+                    I agree to the{' '}
+                    <a href="/terms" className="text-[#D4AF37] hover:text-[#B8860B] underline transition-colors">
+                      Terms of Service
+                    </a>{' '}
+                    and{' '}
+                    <a href="/privacy" className="text-[#D4AF37] hover:text-[#B8860B] underline transition-colors">
+                      Privacy Policy
+                    </a>.
+                  </label>
                 </div>
-              )}
+                <AnimatePresence>
+                  {validationErrors.agreeTerms && (
+                    <motion.p
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="text-sm text-red-400 mt-2 ml-7"
+                    >
+                      {validationErrors.agreeTerms}
+                    </motion.p>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Error Display */}
+              <AnimatePresence>
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="p-4 bg-red-900/20 border border-red-600/30 rounded-xl text-sm text-red-300"
+                  >
+                    {error}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
-            {/* Terms and Conditions */}
-            <div className="mt-6 pt-4 border-t border-gray-100">
-              <div className="flex items-start space-x-3">
-                <input
-                  id="agreeTerms"
-                  name="agreeTerms"
-                  type="checkbox"
-                  checked={formData.agreeTerms}
-                  onChange={handleInputChange}
-                  required
-                  className={`h-4 w-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500 mt-0.5 ${
-                    validationErrors.agreeTerms ? 'border-red-300' : ''
-                  }`}
-                />
-                <label htmlFor="agreeTerms" className="text-xs text-gray-600 leading-relaxed">
-                  I agree to the{' '}
-                  <a href="/terms" className="text-emerald-600 hover:text-emerald-700 underline">Terms of Service</a>{' '}
-                  and{' '}
-                  <a href="/privacy" className="text-emerald-600 hover:text-emerald-700 underline">Privacy Policy</a>.
-                </label>
+            {/* Trust Indicators Footer */}
+            <div className="bg-[#1A1A1A]/80 backdrop-blur-sm px-6 py-4 mt-8 rounded-xl border border-[#D4AF37]/10">
+              <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-400">
+                <div className="flex items-center gap-2">
+                  <Shield className="w-4 h-4 text-[#D4AF37]" />
+                  <span>Priority access guaranteed</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Lock className="w-4 h-4 text-[#D4AF37]" />
+                  <span>100% refundable</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Star className="w-4 h-4 text-[#D4AF37]" />
+                  <span>Secured by Stripe</span>
+                </div>
               </div>
-              {validationErrors.agreeTerms && (
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="text-xs text-red-600 mt-1 ml-7"
-                >
-                  {validationErrors.agreeTerms}
-                </motion.p>
-              )}
-            </div>
-
-            {/* Error Display */}
-            {error && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700"
-              >
-                {error}
-              </motion.div>
-            )}
-          </div>
-
-          {/* Trust Indicators Footer */}
-          <div className="bg-gray-50 px-6 py-4 sm:px-8">
-            <div className="flex items-center justify-center space-x-6 text-xs text-gray-500">
-              <div className="flex items-center space-x-1">
-                <svg className="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span>Priority access guaranteed</span>
-              </div>
-              <div className="flex items-center space-x-1">
-                <svg className="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                </svg>
-                <span>100% refundable</span>
-              </div>
-            </div>
-            <div className="text-center mt-3">
-              <p className="text-xs text-gray-500">
-                Secured by <span className="font-semibold text-gray-700">Stripe</span> • 
-                PCI DSS Level 1 Certified • Bank-grade encryption
+              <p className="text-center text-xs text-gray-500 mt-3">
+                PCI DSS Level 1 Certified • Bank-grade encryption • SOC 2 Compliant
               </p>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
 
-        {/* Additional Trust Signals */}
-        <motion.div 
-          variants={fadeIn}
-          className="mt-6 text-center"
-        >
-          <div className="inline-flex items-center space-x-4 text-xs text-gray-500">
-            <div className="flex items-center space-x-1">
-              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-              <span>HTTPS Secured</span>
+          {/* Additional Trust Signals */}
+          <motion.div className="mt-8 text-center" variants={fadeUpVariants}>
+            <div className="inline-flex flex-wrap gap-6 text-sm text-gray-400">
+              <div className="flex items-center gap-2">
+                <Check className="w-4 h-4 text-[#D4AF37]" />
+                <span>30-day money back</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Check className="w-4 h-4 text-[#D4AF37]" />
+                <span>2-year warranty</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Check className="w-4 h-4 text-[#D4AF37]" />
+                <span>Expert support</span>
+              </div>
             </div>
-            <div className="flex items-center space-x-1">
-              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
-              </svg>
-              <span>SOC 2 Compliant</span>
-            </div>
-            <div className="flex items-center space-x-1">
-              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z" clipRule="evenodd" />
-              </svg>
-              <span>Privacy Protected</span>
-            </div>
-          </div>
-        </motion.div>
-      </div>
+          </motion.div>
+        </div>
+      </motion.section>
     </div>
   );
 }

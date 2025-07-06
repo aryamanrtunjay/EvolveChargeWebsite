@@ -33,7 +33,7 @@ export async function POST(request) {
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(24);
     doc.setFont('helvetica', 'bold');
-    doc.text('EVolve Charge', 105, 20, { align: 'center' });
+    doc.text('Ampereon', 105, 20, { align: 'center' });
     
     doc.setFontSize(12);
     doc.setFont('helvetica', 'normal');
@@ -93,7 +93,7 @@ export async function POST(request) {
     // Thank you message
     doc.setFontSize(12);
     doc.setFont('helvetica', 'normal');
-    const thankYouText = `Thank you for your generous donation to EVolve Charge. Your contribution of $${amount} supports our mission to advance smart EV charging technology and promote sustainable transportation globally.`;
+    const thankYouText = `Thank you for your generous donation to Ampereon. Your contribution of $${amount} supports our mission to advance smart EV charging technology and promote sustainable transportation globally.`;
     const splitThankYou = doc.splitTextToSize(thankYouText, 170);
     doc.text(splitThankYou, 20, yPosition);
     
@@ -102,7 +102,7 @@ export async function POST(request) {
     // Organization information
     doc.setFontSize(10);
     doc.setTextColor(...grayColor);
-    doc.text('EVolve Charge Inc.', 20, yPosition);
+    doc.text('Ampereon Inc.', 20, yPosition);
     yPosition += 5;
     doc.text('EIN: 33-3680311', 20, yPosition); // Replace with actual EIN
     yPosition += 5;

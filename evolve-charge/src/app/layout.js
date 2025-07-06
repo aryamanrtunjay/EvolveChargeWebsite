@@ -22,6 +22,8 @@ const chakraPetch = Chakra_Petch({
   display: "swap",
 })
 
+
+
 export const metadata = {
   title: "The Future of EV Charging",
   description: "Revolutionizing EV Charging",
@@ -33,7 +35,7 @@ export default function RootLayout({ children }) {
       {/* <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       > */}
-      <body className={chakraPetch.className}>
+      <body className={geistSans.className}>
         {children}
         <Analytics/>
       </body>
