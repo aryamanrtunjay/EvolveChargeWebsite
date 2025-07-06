@@ -8,34 +8,53 @@ import { loadStripe } from '@stripe/stripe-js';
 import { db } from '../../firebaseConfig.js';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import Script from 'next/script';
-import { Lock, Shield, Star, ChevronDown } from 'lucide-react';
+import { Lock, Shield, Star, ChevronDown, Check, Users } from 'lucide-react';
 
 // Initialize Stripe
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
+// Subtle pattern overlay
+const SubtlePattern = ({ opacity = 0.03 }) => (
+  <div className="absolute inset-0 pointer-events-none" style={{ opacity }}>
+    <svg width="100%" height="100%" className="text-[#D4AF37]">
+      <defs>
+        <pattern id="subtleGrid" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+          <circle cx="30" cy="30" r="1" fill="currentColor" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#subtleGrid)" />
+    </svg>
+  </div>
+);
+
 // Animation variants
 const fadeUpVariants = {
-  hidden: { opacity: 0, y: 40 },
+  hidden: { opacity: 0, y: 30 },
   visible: { 
     opacity: 1, 
     y: 0,
-    transition: { duration: 0.6, ease: 'easeOut' }
+    transition: { duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }
   }
 };
 
 const staggerContainer = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+  visible: { 
+    opacity: 1, 
+    transition: { staggerChildren: 0.1, delayChildren: 0.1 } 
+  }
 };
 
-// Digital Wallet Buttons Component
+// Digital Wallet Buttons Component (updated for dark theme)
 function DigitalWalletButtons({ onPaymentSuccess, isProcessing, setIsProcessing }) {
   return (
     <div className="space-y-3 mb-6">
       <button
         type="button"
         disabled={isProcessing}
-        className="w-full bg-[#111111] text-white py-3 px-6 rounded-full font-semibold flex items-center justify-center space-x-2 hover:brightness-110 transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+        className="w-full bg-[#2A2A2A] text-white py-3 px-6 rounded-xl font-medium flex items-center justify-center space-x-2 
+                 hover:bg-[#3A3A3A] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed 
+                 border border-[#D4AF37]/20 shadow-sm"
       >
         <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
           <path d="M19.88 5.63c-.4-.4-.93-.63-1.49-.63H5.61c-.56 0-1.09.23-1.49.63-.4.4-.63.93-.63 1.49v9.76c0 .56.23 1.09.63 1.49.4.4.93.63 1.49.63h12.78c.56 0 1.09-.23 1.49-.63.4-.4.63-.93.63-1.49V7.12c0-.56-.23-1.09-.63-1.49zm-1.49 1.49v9.76H5.61V7.12h12.78z"/>
@@ -47,7 +66,9 @@ function DigitalWalletButtons({ onPaymentSuccess, isProcessing, setIsProcessing 
       <button
         type="button"
         disabled={isProcessing}
-        className="w-full bg-white border border-[#111111]/15 text-[#111111] py-3 px-6 rounded-full font-semibold flex items-center justify-center space-x-2 hover:bg-[#F5F6F7] transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+        className="w-full bg-[#1A1A1A] border border-[#D4AF37]/30 text-white py-3 px-6 rounded-xl font-medium 
+                 flex items-center justify-center space-x-2 hover:bg-[#2A2A2A] hover:border-[#D4AF37]/50 
+                 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
       >
         <svg className="w-5 h-5" viewBox="0 0 24 24">
           <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -60,17 +81,17 @@ function DigitalWalletButtons({ onPaymentSuccess, isProcessing, setIsProcessing 
       
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-[#111111]/15"></div>
+          <div className="w-full border-t border-[#D4AF37]/20"></div>
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-white px-3 text-[#6F6F6F] font-semibold">Or pay with card</span>
+          <span className="bg-[#2A2A2A] px-3 text-gray-400 font-medium">Or pay with card</span>
         </div>
       </div>
     </div>
   );
 }
 
-// Checkout Form Component
+// Checkout Form Component (updated for dark theme)
 function CheckoutForm({ onSuccess, isProcessing, setIsProcessing, setError, formData }) {
   const stripe = useStripe();
   const elements = useElements();
@@ -123,10 +144,11 @@ function CheckoutForm({ onSuccess, isProcessing, setIsProcessing, setError, form
           style: {
             base: {
               fontSize: '16px',
-              color: '#111111',
+              color: '#FFFFFF',
               fontFamily: 'system-ui, -apple-system, sans-serif',
-              '::placeholder': { color: '#6F6F6F' },
-              iconColor: '#EFBF04',
+              backgroundColor: '#1A1A1A',
+              '::placeholder': { color: '#9CA3AF' },
+              iconColor: '#D4AF37',
             },
           },
         }}
@@ -138,9 +160,9 @@ function CheckoutForm({ onSuccess, isProcessing, setIsProcessing, setError, form
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700 flex items-center space-x-2"
+            className="p-3 bg-red-900/20 border border-red-600/30 rounded-xl text-sm text-red-300 flex items-center space-x-2"
           >
-            <svg className="w-4 h-4 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <span>{errorMessage}</span>
@@ -152,9 +174,11 @@ function CheckoutForm({ onSuccess, isProcessing, setIsProcessing, setError, form
         type="button"
         onClick={handlePayment}
         disabled={!stripe || isProcessing}
-        whileHover={{ scale: isProcessing ? 1 : 1.05 }}
-        whileTap={{ scale: isProcessing ? 1 : 0.95 }}
-        className="w-full py-4 px-8 bg-[#EFBF04] text-white font-semibold rounded-full hover:brightness-110 transition transform shadow-lg shadow-[#EFBF04]/30 disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
+        whileHover={{ scale: isProcessing ? 1 : 1.02 }}
+        whileTap={{ scale: isProcessing ? 1 : 0.98 }}
+        className="w-full py-4 px-8 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white font-semibold rounded-xl 
+                 hover:shadow-lg hover:shadow-[#D4AF37]/20 transition-all duration-300 
+                 disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
       >
         {isProcessing ? (
           <>
@@ -281,12 +305,12 @@ export default function ReservePage() {
   const options = {
     clientSecret,
     appearance: {
-      theme: 'stripe',
+      theme: 'night',
       variables: {
-        colorPrimary: '#EFBF04',
-        colorBackground: '#FFFFFF',
-        colorText: '#111111',
-        colorDanger: '#dc2626',
+        colorPrimary: '#D4AF37',
+        colorBackground: '#1A1A1A',
+        colorText: '#FFFFFF',
+        colorDanger: '#ef4444',
         fontFamily: 'system-ui, -apple-system, sans-serif',
         spacingUnit: '4px',
         borderRadius: '12px',
@@ -295,7 +319,9 @@ export default function ReservePage() {
   };
 
   return (
-    <div className="bg-[#F5F6F7] text-[#111111] min-h-screen">
+    <div className="bg-[#0A0A0A] text-white min-h-screen relative">
+      <SubtlePattern />
+      
       <Script
         strategy="afterInteractive"
         dangerouslySetInnerHTML={{
@@ -310,41 +336,51 @@ export default function ReservePage() {
       
       <motion.section
         ref={ref}
-        className="py-16 px-6"
+        className="py-16 px-6 relative z-10"
         initial="hidden"
         animate={inView ? "visible" : "hidden"}
         variants={staggerContainer}
       >
-        <div className="max-w-md mx-auto">
+        <div className="max-w-lg mx-auto">
           {/* Header Section */}
           <motion.div className="text-center mb-12" variants={fadeUpVariants}>
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-              Reserve Your <span className="text-[#EFBF04]">Spot</span>
-            </h1>
-            <p className="text-lg text-[#6F6F6F] max-w-md mx-auto">
-              Become an early adopter of the next generation of EV charging for just $4.99.
-            </p>
-            <div className="flex flex-col items-center gap-2 mt-4 text-sm text-[#6F6F6F]">
-              <div className="flex items-center gap-2">
-                <Star className="w-4 h-4 text-[#EFBF04]" />
-                <span>{reservationsToday} reserved today</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Shield className="w-4 h-4 text-[#EFBF04]" />
-                <span>{localDrivers} drivers from {cityName}</span>
-              </div>
+            <div className="inline-flex items-center gap-2 text-sm font-medium text-[#D4AF37] 
+                         bg-[#D4AF37]/10 px-4 py-2 rounded-full mb-6 border border-[#D4AF37]/20 backdrop-blur-sm">
+              <Shield className="w-4 h-4" />
+              <span>Secure Reservation</span>
             </div>
+            
+            <h1 className="text-4xl md:text-5xl font-light leading-tight mb-6">
+              Reserve Your <span className="font-semibold text-[#D4AF37]">Future</span>
+            </h1>
+            <p className="text-xl text-gray-300 max-w-lg mx-auto font-light leading-relaxed">
+              Secure early access to the next generation of EV charging technology for just $4.99.
+            </p>
+            
+            {/* Social proof indicators */}
+            {/* <div className="flex flex-col items-center gap-3 mt-8 text-sm text-gray-400">
+              <div className="flex items-center gap-6">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-[#D4AF37] rounded-full animate-pulse" />
+                  <span>{reservationsToday} reserved today</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Users className="w-4 h-4 text-[#D4AF37]" />
+                  <span>{localDrivers} from {cityName}</span>
+                </div>
+              </div>
+            </div> */}
           </motion.div>
 
           {/* Form Card */}
           <motion.div
-            className="bg-white backdrop-blur-sm rounded-2xl shadow-lg border border-[#111111]/8 p-6 sm:p-8"
+            className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-2xl shadow-2xl border border-[#D4AF37]/20 p-8"
             variants={fadeUpVariants}
           >
             <div className="space-y-6">
               {/* Form Fields */}
               <div>
-                <label htmlFor="fullName" className="block text-sm font-semibold text-[#111111] mb-2">
+                <label htmlFor="fullName" className="block text-sm font-medium text-white mb-3">
                   Full Name
                 </label>
                 <input
@@ -355,10 +391,13 @@ export default function ReservePage() {
                   onChange={handleInputChange}
                   autoComplete="name"
                   required
-                  className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#EFBF04] focus:border-[#EFBF04] transition-all text-[#111111] ${
-                    validationErrors.fullName ? 'border-red-300 bg-red-50' : 'border-[#111111]/15 bg-[#F5F6F7]'
+                  className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] 
+                           transition-all duration-300 text-white placeholder-gray-400 ${
+                    validationErrors.fullName 
+                      ? 'border-red-500/50 bg-red-900/10' 
+                      : 'border-[#D4AF37]/30 bg-[#1A1A1A]/80 hover:border-[#D4AF37]/50'
                   }`}
-                  placeholder="Full Name"
+                  placeholder="Enter your full name"
                 />
                 <AnimatePresence>
                   {validationErrors.fullName && (
@@ -366,9 +405,9 @@ export default function ReservePage() {
                       initial={{ opacity: 0, y: -5 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -5 }}
-                      className="text-xs text-red-600 mt-1 flex items-center gap-1"
+                      className="text-sm text-red-400 mt-2 flex items-center gap-2"
                     >
-                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                       </svg>
                       <span>{validationErrors.fullName}</span>
@@ -378,7 +417,7 @@ export default function ReservePage() {
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-semibold text-[#111111] mb-2">
+                <label htmlFor="email" className="block text-sm font-medium text-white mb-3">
                   Email Address
                 </label>
                 <input
@@ -389,8 +428,11 @@ export default function ReservePage() {
                   onChange={handleInputChange}
                   autoComplete="email"
                   required
-                  className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#EFBF04] focus:border-[#EFBF04] transition-all text-[#111111] ${
-                    validationErrors.email ? 'border-red-300 bg-red-50' : 'border-[#111111]/15 bg-[#F5F6F7]'
+                  className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] 
+                           transition-all duration-300 text-white placeholder-gray-400 ${
+                    validationErrors.email 
+                      ? 'border-red-500/50 bg-red-900/10' 
+                      : 'border-[#D4AF37]/30 bg-[#1A1A1A]/80 hover:border-[#D4AF37]/50'
                   }`}
                   placeholder="your@email.com"
                 />
@@ -400,9 +442,9 @@ export default function ReservePage() {
                       initial={{ opacity: 0, y: -5 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -5 }}
-                      className="text-xs text-red-600 mt-1 flex items-center gap-1"
+                      className="text-sm text-red-400 mt-2 flex items-center gap-2"
                     >
-                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                       </svg>
                       <span>{validationErrors.email}</span>
@@ -412,22 +454,17 @@ export default function ReservePage() {
               </div>
 
               {/* Payment Section */}
-              <div className="border-t border-[#111111]/15 pt-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-bold text-[#111111]">Secure Payment</h3>
+              <div className="border-t border-[#D4AF37]/20 pt-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg font-semibold text-white">Secure Payment</h3>
                   <div className="flex items-center gap-2">
-                    <Lock className="w-4 h-4 text-[#EFBF04]" />
-                    <span className="text-xs font-semibold text-[#6F6F6F]">256-bit SSL</span>
+                    <Lock className="w-4 h-4 text-[#D4AF37]" />
+                    <span className="text-xs font-medium text-gray-400">256-bit encryption</span>
                   </div>
                 </div>
                 
                 {clientSecret ? (
                   <Elements options={options} stripe={stripePromise}>
-                    {/* <DigitalWalletButtons 
-                      onPaymentSuccess={handlePaymentSuccess}
-                      isProcessing={isProcessing}
-                      setIsProcessing={setIsProcessing}
-                    /> */}
                     <CheckoutForm
                       onSuccess={handlePaymentSuccess}
                       isProcessing={isProcessing}
@@ -438,8 +475,12 @@ export default function ReservePage() {
                   </Elements>
                 ) : (
                   <div className="text-center py-8">
-                    <div className="animate-spin h-6 w-6 border-2 border-[#EFBF04] rounded-full border-t-transparent mx-auto"></div>
-                    <p className="text-[#6F6F6F] text-sm mt-3">Initializing secure payment...</p>
+                    <motion.div
+                      className="w-8 h-8 border-2 border-[#D4AF37] rounded-full border-t-transparent mx-auto"
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    />
+                    <p className="text-gray-400 text-sm mt-3">Initializing secure payment...</p>
                   </div>
                 )}
               </div>
@@ -454,15 +495,20 @@ export default function ReservePage() {
                     checked={formData.agreeTerms}
                     onChange={handleInputChange}
                     required
-                    className={`h-4 w-4 text-[#EFBF04] border-[#111111]/15 rounded focus:ring-[#EFBF04] mt-0.5 ${
-                      validationErrors.agreeTerms ? 'border-red-300' : ''
+                    className={`h-4 w-4 text-[#D4AF37] bg-[#1A1A1A] border-[#D4AF37]/30 rounded 
+                             focus:ring-[#D4AF37] focus:ring-2 mt-0.5 ${
+                      validationErrors.agreeTerms ? 'border-red-500/50' : ''
                     }`}
                   />
-                  <label htmlFor="agreeTerms" className="text-xs text-[#6F6F6F] leading-relaxed">
+                  <label htmlFor="agreeTerms" className="text-sm text-gray-300 leading-relaxed">
                     I agree to the{' '}
-                    <a href="/terms" className="text-[#EFBF04] hover:text-[#B48F55] underline">Terms of Service</a>{' '}
+                    <a href="/terms" className="text-[#D4AF37] hover:text-[#B8860B] underline transition-colors">
+                      Terms of Service
+                    </a>{' '}
                     and{' '}
-                    <a href="/privacy" className="text-[#EFBF04] hover:text-[#B48F55] underline">Privacy Policy</a>.
+                    <a href="/privacy" className="text-[#D4AF37] hover:text-[#B8860B] underline transition-colors">
+                      Privacy Policy
+                    </a>.
                   </label>
                 </div>
                 <AnimatePresence>
@@ -471,7 +517,7 @@ export default function ReservePage() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      className="text-xs text-red-600 mt-1 ml-7"
+                      className="text-sm text-red-400 mt-2 ml-7"
                     >
                       {validationErrors.agreeTerms}
                     </motion.p>
@@ -483,10 +529,10 @@ export default function ReservePage() {
               <AnimatePresence>
                 {error && (
                   <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700"
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="p-4 bg-red-900/20 border border-red-600/30 rounded-xl text-sm text-red-300"
                   >
                     {error}
                   </motion.div>
@@ -495,41 +541,41 @@ export default function ReservePage() {
             </div>
 
             {/* Trust Indicators Footer */}
-            <div className="bg-[#F5F6F7] px-6 py-4 mt-6 rounded-xl">
-              <div className="flex flex-wrap justify-center gap-4 text-xs text-[#6F6F6F]">
+            <div className="bg-[#1A1A1A]/80 backdrop-blur-sm px-6 py-4 mt-8 rounded-xl border border-[#D4AF37]/10">
+              <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-400">
                 <div className="flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-[#EFBF04]" />
+                  <Shield className="w-4 h-4 text-[#D4AF37]" />
                   <span>Priority access guaranteed</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Lock className="w-4 h-4 text-[#EFBF04]" />
+                  <Lock className="w-4 h-4 text-[#D4AF37]" />
                   <span>100% refundable</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Star className="w-4 h-4 text-[#EFBF04]" />
+                  <Star className="w-4 h-4 text-[#D4AF37]" />
                   <span>Secured by Stripe</span>
                 </div>
               </div>
-              <p className="text-center text-xs text-[#6F6F6F] mt-3">
-                PCI DSS Level 1 Certified • Bank-grade encryption
+              <p className="text-center text-xs text-gray-500 mt-3">
+                PCI DSS Level 1 Certified • Bank-grade encryption • SOC 2 Compliant
               </p>
             </div>
           </motion.div>
 
           {/* Additional Trust Signals */}
-          <motion.div className="mt-6 text-center" variants={fadeUpVariants}>
-            <div className="inline-flex flex-wrap gap-4 text-xs text-[#6F6F6F]">
+          <motion.div className="mt-8 text-center" variants={fadeUpVariants}>
+            <div className="inline-flex flex-wrap gap-6 text-sm text-gray-400">
               <div className="flex items-center gap-2">
-                <Lock className="w-3 h-3 text-[#EFBF04]" />
-                <span>HTTPS Secured</span>
+                <Check className="w-4 h-4 text-[#D4AF37]" />
+                <span>30-day money back</span>
               </div>
               <div className="flex items-center gap-2">
-                <Shield className="w-3 h-3 text-[#EFBF04]" />
-                <span>SOC 2 Compliant</span>
+                <Check className="w-4 h-4 text-[#D4AF37]" />
+                <span>2-year warranty</span>
               </div>
               <div className="flex items-center gap-2">
-                <Star className="w-3 h-3 text-[#EFBF04]" />
-                <span>Privacy Protected</span>
+                <Check className="w-4 h-4 text-[#D4AF37]" />
+                <span>Expert support</span>
               </div>
             </div>
           </motion.div>
