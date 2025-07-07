@@ -14,6 +14,7 @@ const AmpereonNavbar = () => {
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false); // New state for mobile detection
 
   /* ── scroll hide / shadow ── */
   useEffect(() => {
@@ -26,6 +27,16 @@ const AmpereonNavbar = () => {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, [lastScrollY]);
+
+  /* ── detect mobile view ── */
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768); // md breakpoint
+    };
+    handleResize(); // Initial check
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   /* ── lock body when mobile menu OR modal open ── */
   useEffect(() => {
@@ -40,23 +51,28 @@ const AmpereonNavbar = () => {
   };
   const navLinks = [
     { name: 'Product', href: '/product' },
-    { name: 'About',   href: '/about'  },
-    { name: 'FAQ',     href: '/faq'    },
-    { name: 'Support Us', href: '/support-us'}
+    { name: 'About', href: '/about' },
+    { name: 'FAQ', href: '/faq' },
+    { name: 'Support Us', href: '/support-us' },
   ];
 
+  // Filter out Product link on mobile
+  const filteredNavLinks = isMobile
+    ? navLinks.filter((link) => link.name !== 'Product')
+    : navLinks;
+
   /* ───────────────── framer variants ───────────────── */
-  const menuVariants = { 
-    closed: { opacity: 0, x: '100%' }, 
-    open: { opacity: 1, x: 0, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] } } 
+  const menuVariants = {
+    closed: { opacity: 0, x: '100%' },
+    open: { opacity: 1, x: 0, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] } },
   };
   const linkVariants = {
     closed: { opacity: 0, y: 20 },
-    open: (i) => ({ 
-      opacity: 1, 
-      y: 0, 
-      transition: { delay: i * 0.08 + 0.2, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] } 
-    })
+    open: (i) => ({
+      opacity: 1,
+      y: 0,
+      transition: { delay: i * 0.08 + 0.2, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] },
+    }),
   };
 
   /* ───────────────── layout ───────────────── */
@@ -68,33 +84,31 @@ const AmpereonNavbar = () => {
         animate={{ y: isVisible ? 0 : -100 }}
         transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
         className={`fixed top-0 z-50 w-full transition-all duration-300
-          ${isScrolled
-            ? 'bg-[#0A0A0A]/95 backdrop-blur-lg shadow-sm shadow-black/10 border-b border-[#D4AF37]/15'
-            : 'bg-[#1A1A1A]/90 backdrop-blur-md border-b border-[#D4AF37]/10'}`}
+          ${
+            isScrolled
+              ? 'bg-[#0A0A0A]/95 backdrop-blur-lg shadow-sm shadow-black/10 border-b border-[#D4AF37]/15'
+              : 'bg-[#1A1A1A]/90 backdrop-blur-md border-b border-[#D4AF37]/10'
+          }`}
       >
         <div className="mx-auto max-w-7xl px-6">
           <div className="flex h-16 items-center justify-between">
             {/* Logo - Using image */}
-            <motion.a 
-              href="/" 
-              whileHover={{ scale: 1.02 }} 
+            <motion.a
+              href="/"
+              whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.2 }}
               className="relative"
             >
-              <Image 
-                src={Logo}
-                alt="Ampereon Logo" 
-                className="h-8 w-auto"
-              />
+              <Image src={Logo} alt="Ampereon Logo" className="h-8 w-auto" />
             </motion.a>
 
             {/* Desktop links - Clean professional spacing */}
             <div className="hidden md:flex items-center gap-8">
-              {navLinks.map((link, index) => (
-                <motion.a 
-                  key={link.name} 
+              {filteredNavLinks.map((link, index) => (
+                <motion.a
+                  key={link.name}
                   href={link.href}
-                  whileHover={{ y: -1 }} 
+                  whileHover={{ y: -1 }}
                   transition={{ duration: 0.2 }}
                   className="relative font-medium text-gray-300 hover:text-white transition-colors duration-200"
                 >
@@ -110,7 +124,7 @@ const AmpereonNavbar = () => {
             <div className="hidden md:flex items-center gap-4">
               <motion.button
                 onClick={openModal}
-                whileHover={{ scale: 1.02 }} 
+                whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 transition={{ duration: 0.2 }}
                 className="rounded-lg bg-gradient-to-r from-[#D4AF37] to-[#B8860B] 
@@ -129,10 +143,11 @@ const AmpereonNavbar = () => {
               whileTap={{ scale: 0.95 }}
               className="md:hidden rounded-lg p-2 hover:bg-[#D4AF37]/10 transition-colors duration-200"
             >
-              {isMobileMenuOpen ? 
-                <X className="h-5 w-5 text-white"/> : 
-                <Menu className="h-5 w-5 text-white"/>
-              }
+              {isMobileMenuOpen ? (
+                <X className="h-5 w-5 text-white" />
+              ) : (
+                <Menu className="h-5 w-5 text-white" />
+              )}
             </motion.button>
           </div>
         </div>
@@ -144,56 +159,56 @@ const AmpereonNavbar = () => {
           <>
             {/* Backdrop */}
             <motion.div
-              initial={{ opacity: 0 }} 
-              animate={{ opacity: 1 }} 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
               className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm md:hidden"
               onClick={() => setIsMobileMenuOpen(false)}
             />
-            
+
             {/* Slide-out menu */}
             <motion.div
-              variants={menuVariants} 
-              initial="closed" 
-              animate="open" 
+              variants={menuVariants}
+              initial="closed"
+              animate="open"
               exit="closed"
               className="fixed top-0 right-0 z-50 h-full w-full sm:w-80 bg-[#1A1A1A]/95 backdrop-blur-lg 
                          shadow-xl border-l border-[#D4AF37]/20 md:hidden"
             >
               {/* Header */}
               <div className="flex items-center justify-between border-b border-[#D4AF37]/15 p-6">
-                <motion.a 
-                  href="/" 
-                  whileHover={{ scale: 1.02 }} 
+                <motion.a
+                  href="/"
+                  whileHover={{ scale: 1.02 }}
                   transition={{ duration: 0.2 }}
                   className="relative"
                 >
-                  <Image 
+                  <Image
                     src={Logo}
-                    alt="Ampereon Logo" 
+                    alt="Ampereon Logo"
                     className="h-8 w-auto"
                   />
                 </motion.a>
-                <motion.button 
-                  onClick={() => setIsMobileMenuOpen(false)} 
+                <motion.button
+                  onClick={() => setIsMobileMenuOpen(false)}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="rounded-lg p-2 hover:bg-[#D4AF37]/10 transition-colors duration-200"
                 >
-                  <X className="h-5 w-5 text-white"/>
+                  <X className="h-5 w-5 text-white" />
                 </motion.button>
               </div>
 
               {/* Navigation links */}
               <div className="flex-1 px-6 py-8">
-                {navLinks.map((link, i) => (
+                {filteredNavLinks.map((link, i) => (
                   <motion.a
-                    key={link.name} 
-                    href={link.href} 
+                    key={link.name}
+                    href={link.href}
                     custom={i}
-                    variants={linkVariants} 
-                    initial="closed" 
+                    variants={linkVariants}
+                    initial="closed"
                     animate="open"
                     onClick={() => setIsMobileMenuOpen(false)}
                     whileHover={{ x: 4 }}
@@ -217,7 +232,7 @@ const AmpereonNavbar = () => {
                 >
                   Reserve Now
                 </motion.button>
-                
+
                 <p className="mt-3 text-center text-sm text-gray-400">
                   $5 fully refundable deposit
                 </p>
@@ -227,7 +242,7 @@ const AmpereonNavbar = () => {
         )}
       </AnimatePresence>
 
-      <OrderChoiceModal isOpen={isModalOpen} onClose={()=>setIsModalOpen(false)} />
+      <OrderChoiceModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </>
   );
 };

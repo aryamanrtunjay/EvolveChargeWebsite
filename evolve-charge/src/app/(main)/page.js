@@ -31,8 +31,6 @@ const AmpereonLanding = () => {
   const [totalDonations, setTotalDonations] = useState(0);
   const [totalPreOrders, setTotalPreOrders] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { scrollY } = useScroll();
-  const heroParallax = useTransform(scrollY, [0, 500], [0, 15]);
   
   const heroRef = useRef(null);
 
@@ -317,7 +315,6 @@ const AmpereonLanding = () => {
         {/* Hero content */}
         <motion.div
           className="relative z-10 px-6 max-w-6xl mx-auto text-center"
-          style={{ y: heroParallax }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
@@ -601,7 +598,7 @@ const AmpereonLanding = () => {
       </motion.section>
 
       {/* Social Proof - Professional with gold accents */}
-      <motion.section 
+     <motion.section 
         className="py-20 px-6 bg-[#0A0A0A]"
         initial="hidden"
         whileInView="visible"
@@ -703,7 +700,7 @@ const AmpereonLanding = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: index * 0.05 }}
                     className="bg-[#1A1A1A]/80 rounded-lg p-4 border border-[#D4AF37]/10 
-                             hover:border-[#D4AF37]/30 transition-all duration-300"
+                            hover:border-[#D4AF37]/30 transition-all duration-300"
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 bg-gradient-to-br from-[#D4AF37]/30 to-[#B8860B]/30 
@@ -747,6 +744,20 @@ const AmpereonLanding = () => {
                 </p>
               </div>
             )}
+
+            {/* CTA Button to /support-us */}
+            <div className="text-center mt-8">
+              <a href="/support-us">
+                <motion.button
+                  className="px-8 py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white font-semibold rounded-lg 
+                            hover:shadow-lg hover:shadow-[#D4AF37]/30 transition-all duration-300"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Join Our Community
+                </motion.button>
+              </a>
+            </div>
           </motion.div>
         </div>
       </motion.section>

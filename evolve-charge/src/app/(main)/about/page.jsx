@@ -582,12 +582,12 @@ export default function AboutPage() {
           >
             <div className="flex items-center gap-2">
               <Shield className="w-4 h-4 text-[#D4AF37]" />
-              <span>30-day guarantee</span>
+              <span>30-day money-back guarantee</span>
             </div>
-            <div className="flex items-center gap-2">
+            {/* <div className="flex items-center gap-2">
               <Users className="w-4 h-4 text-[#D4AF37]" />
               <span>500+ customers</span>
-            </div>
+            </div> */}
           </motion.div>
         </div>
       </section>
