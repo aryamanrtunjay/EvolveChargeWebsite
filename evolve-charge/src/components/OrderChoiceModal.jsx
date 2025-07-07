@@ -57,7 +57,7 @@ export default function OrderChoiceModal({ isOpen, onClose }) {
           <Clock className="w-4 h-4 text-[#D4AF37] mt-0.5 flex-shrink-0" />
           <div className="text-xs text-gray-300 space-y-0.5">
             <p>• Secure spot with $5 deposit • Get shipping notification</p>
-            <p>• Pay remaining $121 before delivery • Full refund anytime</p>
+            <p>• Pay remaining $120 before delivery • Full refund anytime</p>
           </div>
         </div>
       </div>
@@ -86,12 +86,12 @@ export default function OrderChoiceModal({ isOpen, onClose }) {
         </div>
         <div className="text-right">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-sm text-gray-400 line-through">$124</span>
+            <span className="text-sm text-gray-400 line-through">$124.99</span>
             <div className="bg-[#D4AF37]/20 text-[#D4AF37] px-2 py-0.5 rounded text-xs font-medium">
               20% OFF
             </div>
           </div>
-          <span className="text-xl font-semibold text-white">$99</span>
+          <span className="text-xl font-semibold text-white">$99.99</span>
           <p className="text-xs text-gray-400">complete payment</p>
         </div>
       </div>
