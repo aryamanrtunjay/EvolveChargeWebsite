@@ -52,6 +52,7 @@ export default function OrderChoiceModal({ isOpen, onClose }) {
         </div>
       </div>
       
+<<<<<<< Updated upstream
       <div className="bg-white/5 rounded-lg p-4 border border-white/10">
         <div className="flex items-start gap-2 mb-3">
           <Clock className="w-4 h-4 text-[#D4AF37] mt-0.5" />
@@ -63,6 +64,14 @@ export default function OrderChoiceModal({ isOpen, onClose }) {
               <p>• Pay remaining $94 before delivery</p>
               <p>• Full refund available anytime</p>
             </div>
+=======
+      <div className="bg-white/5 rounded-lg p-3 border border-white/10">
+        <div className="flex items-start gap-2">
+          <Clock className="w-4 h-4 text-[#D4AF37] mt-0.5 flex-shrink-0" />
+          <div className="text-xs text-gray-300 space-y-0.5">
+            <p>• Secure spot with $5 deposit • Get shipping notification</p>
+            <p>• Pay remaining $121 before delivery • Full refund anytime</p>
+>>>>>>> Stashed changes
           </div>
         </div>
       </div>
@@ -101,6 +110,7 @@ export default function OrderChoiceModal({ isOpen, onClose }) {
         </div>
       </div>
       
+<<<<<<< Updated upstream
       <div className="bg-[#D4AF37]/10 rounded-lg p-4 border border-[#D4AF37]/20">
         <div className="flex items-start gap-2 mb-3">
           <Shield className="w-4 h-4 text-[#D4AF37] mt-0.5" />
@@ -112,6 +122,14 @@ export default function OrderChoiceModal({ isOpen, onClose }) {
               <p>• Beta features and priority support</p>
               <p>• 30-day money-back guarantee</p>
             </div>
+=======
+      <div className="bg-[#D4AF37]/10 rounded-lg p-3 border border-[#D4AF37]/20">
+        <div className="flex items-start gap-2">
+          <Shield className="w-4 h-4 text-[#D4AF37] mt-0.5 flex-shrink-0" />
+          <div className="text-xs text-gray-300 space-y-0.5">
+            <p>• First production batch (Q2 2026) • Skip reservation queue</p>
+            <p>• Beta features & priority support • 30-day money-back guarantee</p>
+>>>>>>> Stashed changes
           </div>
         </div>
       </div>
