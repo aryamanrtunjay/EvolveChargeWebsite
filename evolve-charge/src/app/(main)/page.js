@@ -618,11 +618,11 @@ const AmpereonLanding = () => {
               <span className="text-gray-300">raised by our community</span>
             </div>
             
-            {totalDonations > 0 && totalPreOrders > 0 && (
+            {/* {totalDonations > 0 && totalPreOrders > 0 && (
               <div className="text-sm text-gray-400 mb-8">
                 Donations: ${totalDonations.toLocaleString()} • Pre-orders: ${totalPreOrders.toLocaleString()}
               </div>
-            )}
+            )} */}
           </motion.div>
 
           {/* Filter buttons */}
