@@ -536,16 +536,17 @@ const AmpereonLanding = () => {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
             {metrics.map((metric, i) => {
               const { count, ref } = useCounter(metric.value, 2000);
               
               return (
                 <motion.div
-                  key={i}
+                  key={metric.label} // Use a unique identifier
                   ref={ref}
                   className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl p-8 text-center 
-                           border border-[#D4AF37]/20 hover:border-[#D4AF37]/40 transition-all duration-300"
+                          border border-[#D4AF37]/20 hover:border-[#D4AF37]/40 transition-all duration-300
+                          h-fit" // Added h-fit to make height fit content
                   variants={fadeUpVariants}
                   transition={{ delay: i * 0.1 }}
                 >
@@ -564,7 +565,7 @@ const AmpereonLanding = () => {
                   <motion.button
                     onClick={() => setActiveAccordion(activeAccordion === i ? null : i)}
                     className="flex items-center gap-2 text-[#D4AF37] hover:text-white transition-colors duration-200 
-                             mx-auto text-sm font-medium"
+                            mx-auto text-sm font-medium"
                     whileHover={{ scale: 1.02 }}
                   >
                     <span>Learn more</span>
@@ -613,7 +614,7 @@ const AmpereonLanding = () => {
             
             <div className="flex items-center justify-center gap-4 mb-8">
               <div className="text-2xl font-semibold text-[#D4AF37]">
-                ${totalAmount.toLocaleString()}
+                ${Math.floor(totalAmount).toLocaleString()}
               </div>
               <span className="text-gray-300">raised by our community</span>
             </div>

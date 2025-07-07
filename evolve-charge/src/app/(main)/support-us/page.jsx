@@ -588,8 +588,12 @@ export default function SupportUsPage() {
             </div>
           </motion.div>
 
-          {/* Stats Cards - Clean design */}
-          <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
+          <motion.div 
+            initial="hidden" 
+            animate="visible" 
+            variants={staggerContainer} 
+            className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16"
+          >
             {[
               { icon: DollarSign, value: `$${totalAmount.toFixed(0)}`, label: "Total Raised" },
               { icon: Target, value: "$10,000", label: "Goal" },
@@ -599,17 +603,40 @@ export default function SupportUsPage() {
               <motion.div 
                 key={label} 
                 variants={fadeIn} 
-                className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl p-6 
-                         border border-[#D4AF37]/20 hover:border-[#D4AF37]/40 transition-all duration-300"
+                className="group relative bg-gradient-to-br from-[#2A2A2A]/80 to-[#1A1A1A]/80 
+                          backdrop-blur-sm rounded-2xl p-8 
+                          border border-[#D4AF37]/15 hover:border-[#D4AF37]/30 
+                          transition-all duration-500 hover:shadow-xl hover:shadow-[#D4AF37]/5
+                          hover:scale-105 transform"
               >
-                <Icon className="w-8 h-8 text-[#D4AF37] mx-auto mb-3" />
-                <div className="text-2xl font-semibold text-white mb-1">{value}</div>
-                <div className="text-sm text-gray-300">{label}</div>
-                {label === "Total Raised" && (
-                  <div className="text-xs text-gray-400 mt-1">
-                    Donations: ${totalDonations.toFixed(0)} • Orders: ${totalPreOrders.toFixed(0)}
+                {/* Subtle background gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/5 to-transparent 
+                              opacity-0 group-hover:opacity-100 transition-opacity duration-500 
+                              rounded-2xl" />
+                
+                {/* Content */}
+                <div className="relative z-10 text-center">
+                  {/* Icon with enhanced styling */}
+                  <div className="inline-flex items-center justify-center w-16 h-16 
+                                bg-[#D4AF37]/10 rounded-full mb-4 group-hover:bg-[#D4AF37]/20 
+                                transition-all duration-300">
+                    <Icon className="w-8 h-8 text-[#D4AF37] group-hover:scale-110 transition-transform duration-300" />
                   </div>
-                )}
+                  
+                  {/* Value with better typography */}
+                  <div className="text-3xl font-bold text-white mb-2 
+                                bg-gradient-to-r from-white to-gray-100 bg-clip-text 
+                                group-hover:from-[#D4AF37] group-hover:to-[#F4D03F] 
+                                transition-all duration-300">
+                    {value}
+                  </div>
+                  
+                  {/* Label with refined styling */}
+                  <div className="text-sm font-medium text-gray-300 uppercase tracking-wide 
+                                group-hover:text-gray-200 transition-colors duration-300">
+                    {label}
+                  </div>
+                </div>
               </motion.div>
             ))}
           </motion.div>

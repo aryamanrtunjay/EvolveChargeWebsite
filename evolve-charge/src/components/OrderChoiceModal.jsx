@@ -65,7 +65,7 @@ export default function OrderChoiceModal({ isOpen, onClose }) {
       <Link href="/reserve">
         <motion.div
           className="inline-flex items-center gap-2 text-sm font-medium text-[#D4AF37] 
-                   hover:text-white transition-colors duration-200 mt-2"
+                   hover:text-white transition-colors duration-200 mt-2 border-2 border-[#D4AF37] py-2 px-4 rounded-lg"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
