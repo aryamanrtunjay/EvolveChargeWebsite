@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform, useInView, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Zap, Wifi, DollarSign, Battery, Clock, ChevronRight, ArrowRight, Star, Users, Heart, Globe, Shield, Check, Link, Leaf, Home, Settings, Award, TrendingUp } from 'lucide-react';
+import { ChevronDown, Zap, Wifi, DollarSign, Battery, Clock, ChevronRight, ArrowRight, Star, Users, Heart, Globe, Shield, Check, Link } from 'lucide-react';
 import { db } from "../firebaseConfig.js";
 import { collection, getDocs, query, orderBy, limit, where, getFirestore } from 'firebase/firestore';
 import OrderChoiceModal from '../../components/OrderChoiceModal';
@@ -73,116 +73,116 @@ const AmpereonLanding = () => {
   const features = [
     { 
       icon: <Zap className="w-6 h-6" />, 
-      title: "Automatic EV Charging Station", 
-      desc: "Your smart electric vehicle charger connects automatically at the best time to charge. No more daily plugging in - experience hands-free EV charging at your own home." 
+      title: "Automatic Connection", 
+      desc: "Your charger connects automatically when you park. No more plugging in every day." 
     },
     { 
       icon: <Wifi className="w-6 h-6" />, 
-      title: "Universal EV Charger Compatibility", 
-      desc: "Compatible with all existing residential EV charging stations and home electric car chargers. Ampereon upgrades your current Electric Vehicle charger with our smart technology." 
+      title: "Works with Your Charger", 
+      desc: "Compatible with all existing home EV chargers. Ampereon takes your normal charger and brings it into the future." 
     },
     { 
       icon: <DollarSign className="w-6 h-6" />, 
-      title: "Smart Charging Cost Savings", 
-      desc: "Intelligent off-peak charging reduces your electric vehicle charging costs by up to 40%. Our AI optimizes when to charge based on time-of-use electricity rates." 
+      title: "Lower Electricity Bills", 
+      desc: "Charges during off-peak hours when rates are lowest, saving you money every month." 
     },
     { 
       icon: <Battery className="w-6 h-6" />, 
-      title: "AI-Powered Battery Management", 
-      desc: "Advanced machine learning algorithms optimize EV battery health and extend battery life. Smart charging schedules prevent overcharging and reduce battery degradation." 
+      title: "AI Charging Optimization", 
+      desc: "Advanced AI that learns every day to make every charge smarter, improving battery life, cost, and aligning to your." 
     }
   ];
 
   const steps = [
     { 
       num: "01", 
-      title: "Quick EV Charger Installation", 
-      desc: "Mount Ampereon to your existing home charging station in 30 minutes", 
+      title: "Install in 30 Minutes", 
+      desc: "Mount using your existing charger", 
       icon: Zap,
-      detail: "Simple DIY installation with all mounting hardware included"
+      detail: "Simple installation with included hardware"
     },
     { 
       num: "02", 
-      title: "Smart Home Integration", 
-      desc: "Connect via WiFi and pair with your electric vehicle", 
+      title: "Connect via App", 
+      desc: "One-time setup", 
       icon: Wifi,
-      detail: "Seamless setup with guided mobile app configuration"
+      detail: "Quick pairing with guided setup"
     },
     { 
       num: "03", 
-      title: "Automated Electric Car Charging", 
-      desc: "AI-powered charging begins automatically when you arrive home", 
+      title: "Automatic Charging", 
+      desc: "Starts charging when you park", 
       icon: Battery,
-      detail: "Machine learning adapts to your driving schedule and energy needs"
+      detail: "Learns your schedule for optimal timing"
     },
     { 
       num: "04", 
-      title: "EV Charging Analytics", 
-      desc: "Monitor energy usage, costs, and environmental impact", 
+      title: "Track Savings", 
+      desc: "Monitor usage and costs", 
       icon: Clock,
-      detail: "Real-time insights and detailed monthly charging reports"
+      detail: "Real-time insights and monthly reports"
     }
   ];
 
   const stepContent = [
     {
-      title: "Professional EV Charger Installation",
+      title: "Quick Installation",
       icon: Zap,
-      description: "Install Ampereon smart charging system in about 30 minutes using your existing wall charger. All mounting hardware included for easy DIY setup.",
+      description: "Install Ampereon in about 30 minutes using your existing wall charger. All mounting hardware included.",
       stats: [
         { value: "30min", label: "Install time" },
         { value: "100%", label: "Compatibility" }
       ],
       features: [
         "No electrical work required",
-        "Works with existing Level 2 chargers",
+        "Uses existing charger",
         "All hardware included",
-        "Professional installation guide"
+        "Step-by-step guide"
       ]
     },
     {
-      title: "Smart EV Charging Setup",
+      title: "Smart Setup",
       icon: Wifi,
-      description: "Connect to your home WiFi network and pair with your electric vehicle using our intuitive mobile app for smart charging management.",
+      description: "Connect to your home WiFi and pair with your vehicle using our mobile app.",
       stats: [
         { value: "2min", label: "Setup time" },
         { value: "All", label: "EV models" }
       ],
       features: [
-        "Guided app setup process",
-        "Automatic vehicle detection",
-        "Secure encrypted connection",
-        "Works with all electric cars"
+        "Guided app setup",
+        "Auto vehicle detection",
+        "Secure connection",
+        "Works offline too"
       ]
     },
     {
-      title: "Intelligent Electric Vehicle Charging",
+      title: "Intelligent Charging",
       icon: Battery,
-      description: "Ampereon's AI learns your driving patterns and charges when electricity rates are lowest while ensuring your EV is always ready to drive.",
+      description: "Ampereon learns your routine and charges when electricity rates are lowest while ensuring your car is ready.",
       stats: [
         { value: "32%", label: "Average savings" },
         { value: "24/7", label: "Monitoring" }
       ],
       features: [
-        "Learns your daily schedule",
-        "Off-peak rate optimization",
-        "Weather-based adjustments",
-        "Custom charging schedules"
+        "Learns your schedule",
+        "Off-peak optimization",
+        "Weather adjustments",
+        "Custom schedules"
       ]
     },
     {
-      title: "Comprehensive Charging Analytics",
+      title: "Usage Insights",
       icon: Clock,
-      description: "Track energy consumption, cost savings, and environmental impact with detailed reports and real-time EV charging data.",
+      description: "Track energy usage, cost savings, and environmental impact with detailed reports.",
       stats: [
         { value: "$325", label: "Yearly savings" },
         { value: "Real-time", label: "Updates" }
       ],
       features: [
-        "Energy usage tracking",
-        "Cost analysis dashboard",
-        "Carbon footprint monitoring",
-        "Monthly summary reports"
+        "Energy tracking",
+        "Cost analysis",
+        "Environmental impact",
+        "Monthly summaries"
       ]
     }
   ];
@@ -197,63 +197,9 @@ const AmpereonLanding = () => {
   }, [steps.length]);
 
   const metrics = [
-    { value: 325, prefix: "$", suffix: "", label: "Annual EV Charging Savings", how: "Smart off-peak charging reduces electricity costs by about 32%, saving approximately $325 annually for typical electric vehicle owners.", icon: <DollarSign className="w-5 h-5" /> },
-    { value: 1100, prefix: "", suffix: " days", label: "Extended EV Battery Life", how: "Optimized charging algorithms reduce battery degradation by 40%, adding approximately 3 years to your electric vehicle battery's useful life.", icon: <Battery className="w-5 h-5" /> },
-    { value: 30, prefix: "", suffix: " hours", label: "Time Saved Per Year", how: "Automatic EV charging eliminates daily plugging and unplugging. Save 5 minutes per day, which adds up to 30 hours of time saved each year.", icon: <Clock className="w-5 h-5" /> }
-  ];
-
-  // Additional SEO-focused content sections
-  const evChargingBenefits = [
-    {
-      icon: <Leaf className="w-6 h-6" />,
-      title: "Eco-Friendly EV Charging",
-      description: "Reduce your carbon footprint with smart electric vehicle charging that maximizes renewable energy usage during optimal grid conditions."
-    },
-    {
-      icon: <Home className="w-6 h-6" />,
-      title: "Home EV Charging Station Upgrade", 
-      description: "Transform your existing residential charging setup into a smart EV charging station without replacing your current Level 2 charger."
-    },
-    {
-      icon: <Settings className="w-6 h-6" />,
-      title: "Customizable Charging Preferences",
-      description: "Set personalized electric car charging schedules, departure times, and energy usage limits through our intuitive mobile app interface."
-    },
-    {
-      icon: <TrendingUp className="w-6 h-6" />,
-      title: "Future-Proof EV Technology",
-      description: "Stay ahead with regular software updates that add new smart charging features and improve compatibility with emerging electric vehicle models."
-    }
-  ];
-
-  const evOwnershipAdvantages = [
-    {
-      category: "Cost Efficiency",
-      benefits: [
-        "Reduce electric vehicle charging costs with time-of-use optimization",
-        "Lower electricity bills through smart energy management",
-        "Maximize EV tax credits and rebates with eligible charging equipment",
-        "Increase home value with modern EV charging infrastructure"
-      ]
-    },
-    {
-      category: "Convenience & Automation", 
-      benefits: [
-        "Hands-free electric car charging with automatic connection",
-        "Remote monitoring and control via smartphone app",
-        "Scheduled charging that adapts to your daily routine",
-        "Smart notifications for charging status and completion"
-      ]
-    },
-    {
-      category: "Performance & Reliability",
-      benefits: [
-        "Optimized charging speeds for faster EV battery replenishment",
-        "Weather-resistant outdoor installation for year-round use",
-        "Professional-grade components with 2-year warranty coverage",
-        "24/7 customer support for EV charging troubleshooting"
-      ]
-    }
+    { value: 325, prefix: "$", suffix: "", label: "Average Yearly Savings", how: "Off-peak charging reduces electricity costs by about 32%, saving approximately $325 annually for typical EV owners.", icon: <DollarSign className="w-5 h-5" /> },
+    { value: 3, prefix: "", suffix: " years", label: "Extended Battery Life", how: "Optimized charging reduces battery degradation by 40%, adding approximately 3 years to your EV battery's useful life.", icon: <Battery className="w-5 h-5" /> },
+    { value: 30, prefix: "", suffix: " hours", label: "Time Saved Annually", how: "No more daily plugging and unplugging. Save 5 minutes per day, which adds up to 30 hours of time saved each year.", icon: <Clock className="w-5 h-5" /> }
   ];
 
   // Load data from Firebase
@@ -347,7 +293,7 @@ const AmpereonLanding = () => {
 
   return (
     <div className="bg-[#0A0A0A] text-white overflow-x-hidden">
-      {/* Hero Section */}
+      {/* Hero Section - Professional with gold accents */}
       <section
         className="relative min-h-screen flex items-center justify-center overflow-hidden"
         ref={heroRef}
@@ -378,7 +324,7 @@ const AmpereonLanding = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2, duration: 0.6 }}
             className="inline-flex items-center gap-2 text-sm font-medium text-[#D4AF37] 
-                        bg-[#D4AF37]/10 px-4 py-2 rounded-full mb-8 border border-[#D4AF37]/20 backdrop-blur-sm"
+                       bg-[#D4AF37]/10 px-4 py-2 rounded-full mb-8 border border-[#D4AF37]/20 backdrop-blur-sm"
           >
             <Shield className="w-4 h-4" />
             <span>Trusted by over 500 EV owners</span>
@@ -394,7 +340,7 @@ const AmpereonLanding = () => {
           </h1>
 
           <p className="text-xl text-gray-300 mb-10 max-w-4xl mx-auto leading-relaxed font-light">
-            Experience the future of home EV charging with Ampereon's intelligent electric vehicle charger that automatically connects, optimizes energy costs, and extends battery life. Compatible with all existing Level 2 charging stations.
+            A smart, fully automatic home Electric Vehicle charger that works on top of the charging unit you already use every day.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
@@ -405,7 +351,7 @@ const AmpereonLanding = () => {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              Reserve Your Smart EV Charger - $5
+              Reserve Yours - $5
             </motion.button>
 
             <a href="/product">
@@ -416,25 +362,25 @@ const AmpereonLanding = () => {
               >
                 <span className="flex items-center gap-2">
                   <ChevronRight className="w-4 h-4" />
-                  Learn About EV Charging Technology
+                  Learn More
                 </span>
               </motion.button>
             </a>
           </div>
 
-          {/* Trust indicators with SEO keywords */}
+          {/* Trust indicators */}
           <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-gray-400">
             <div className="flex items-center gap-2">
               <Check className="w-4 h-4 text-[#D4AF37]" />
-              <span>30-day money back guarantee</span>
+              <span>30-day money back</span>
             </div>
             <div className="flex items-center gap-2">
               <Check className="w-4 h-4 text-[#D4AF37]" />
-              <span>2-year EV charger warranty</span>
+              <span>2-year warranty</span>
             </div>
             <div className="flex items-center gap-2">
               <Check className="w-4 h-4 text-[#D4AF37]" />
-              <span>Professional installation support</span>
+              <span>Expert support</span>
             </div>
           </div>
         </motion.div>
@@ -450,7 +396,7 @@ const AmpereonLanding = () => {
         </motion.div>
       </section>
 
-      {/* Features Grid - Enhanced with SEO keywords */}
+      {/* Features Grid - Professional dark layout */}
       <motion.section 
         className="py-20 px-6 bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F] relative"
         initial="hidden"
@@ -467,7 +413,7 @@ const AmpereonLanding = () => {
             </h2>
             
             <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light">
-              Transform your electric vehicle charging experience with AI-powered automation and optimization, all while seamlessly integration with the charger you use everyday.
+              Practical benefits that make EV ownership more convenient and cost-effective
             </p>
           </motion.div>
 
@@ -503,7 +449,7 @@ const AmpereonLanding = () => {
         </div>
       </motion.section>
 
-      {/* New Section: EV Charging Benefits */}
+      {/* How It Works - Clean timeline */}
       <motion.section 
         className="py-20 px-6 bg-[#0A0A0A]"
         initial="hidden"
@@ -514,59 +460,15 @@ const AmpereonLanding = () => {
         <div className="max-w-7xl mx-auto">
           <motion.div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-light mb-6 text-white">
-              Advanced <span className="font-semibold text-[#D4AF37]">EV Charging Benefits</span>
+              How It <span className="font-semibold text-[#D4AF37]">Works</span>
             </h2>
             
             <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light">
-              Discover how smart electric vehicle charging technology enhances your EV ownership experience with sustainable, efficient, and user-friendly features.
+              Simple setup, automatic operation. Get started in four straightforward steps.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {evChargingBenefits.map((benefit, i) => (
-              <motion.div
-                key={i}
-                className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl p-6 border border-[#D4AF37]/20 
-                         hover:border-[#D4AF37]/40 transition-all duration-300"
-                variants={fadeUpVariants}
-                transition={{ delay: i * 0.1 }}
-              >
-                <div className="flex items-center justify-center w-12 h-12 mb-4
-                              bg-gradient-to-br from-[#D4AF37]/20 to-[#B8860B]/20 rounded-lg 
-                              border border-[#D4AF37]/30 text-[#D4AF37]">
-                  {benefit.icon}
-                </div>
-                
-                <h3 className="text-lg font-semibold mb-3 text-white">{benefit.title}</h3>
-                <p className="text-gray-300 text-sm leading-relaxed">{benefit.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </motion.section>
-
-      {/* How It Works - Enhanced with SEO keywords */}
-      <motion.section 
-        className="py-20 px-6 bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F] relative"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={fadeUpVariants}
-      >
-        <SubtlePattern />
-        
-        <div className="max-w-7xl mx-auto relative z-10">
-          <motion.div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-light mb-6 text-white">
-              How Smart EV Charging <span className="font-semibold text-[#D4AF37]">Installation Works</span>
-            </h2>
-            
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light">
-              Simple installation process transforms your existing home EV charger into an intelligent electric vehicle charging station. Get started with automated EV charging in four straightforward steps.
-            </p>
-          </motion.div>
-
-          {/* Simple step-by-step layout with enhanced SEO */}
+          {/* Simple step-by-step layout */}
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {steps.map((step, index) => {
               const IconComponent = step.icon;
@@ -601,6 +503,11 @@ const AmpereonLanding = () => {
                     {step.title}
                   </h3>
                   <p className="text-gray-300 text-sm leading-relaxed">{step.desc}</p>
+                  
+                  {/* Connection line (except for last item) */}
+                  {/* {index < steps.length - 1 && (
+                    <div className="hidden lg:block absolute top-8 left-full w-full h-px bg-[#D4AF37]/20 transform translate-x-4" />
+                  )} */}
                 </motion.div>
               );
             })}
@@ -608,51 +515,7 @@ const AmpereonLanding = () => {
         </div>
       </motion.section>
 
-      {/* New Section: EV Ownership Advantages */}
-      <motion.section 
-        className="py-20 px-6 bg-[#0A0A0A]"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={fadeUpVariants}
-      >
-        <div className="max-w-7xl mx-auto">
-          <motion.div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-light mb-6 text-white">
-              Complete <span className="font-semibold text-[#D4AF37]">Electric Vehicle Charging Solution</span>
-            </h2>
-            
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light">
-              Comprehensive benefits that make Ampereon the ideal choice for modern electric vehicle owners seeking reliable, cost-effective home charging solutions.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {evOwnershipAdvantages.map((category, i) => (
-              <motion.div
-                key={i}
-                className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl p-8 border border-[#D4AF37]/20 
-                         hover:border-[#D4AF37]/40 transition-all duration-300"
-                variants={fadeUpVariants}
-                transition={{ delay: i * 0.1 }}
-              >
-                <h3 className="text-xl font-semibold mb-6 text-[#D4AF37]">{category.category}</h3>
-                
-                <ul className="space-y-3">
-                  {category.benefits.map((benefit, j) => (
-                    <li key={j} className="flex items-start gap-3">
-                      <Check className="w-4 h-4 text-[#D4AF37] mt-1 flex-shrink-0" />
-                      <span className="text-gray-300 text-sm leading-relaxed">{benefit}</span>
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </motion.section>
-
-      {/* Benefits Section - Enhanced with SEO keywords */}
+      {/* Benefits Section - Data-driven with gold accents */}
       <motion.section 
         className="py-20 px-6 bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F] relative"
         initial="hidden"
@@ -665,11 +528,11 @@ const AmpereonLanding = () => {
         <div className="max-w-7xl mx-auto relative z-10">
           <motion.div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-light mb-6 text-white">
-              Proven <span className="font-semibold text-[#D4AF37]">EV Charging Savings</span>
+              Proven <span className="font-semibold text-[#D4AF37]">Benefits</span>
             </h2>
             
             <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light">
-              Real financial benefits and performance improvements based on actual smart EV charging data from electric vehicle owners using Ampereon technology.
+              Real savings and benefits based on actual usage data
             </p>
           </motion.div>
 
@@ -735,8 +598,8 @@ const AmpereonLanding = () => {
         </div>
       </motion.section>
 
-      {/* New Section: EV Charging Technology Comparison */}
-      <motion.section 
+      {/* Social Proof - Professional with gold accents */}
+     <motion.section 
         className="py-20 px-6 bg-[#0A0A0A]"
         initial="hidden"
         whileInView="visible"
@@ -746,206 +609,21 @@ const AmpereonLanding = () => {
         <div className="max-w-7xl mx-auto">
           <motion.div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-light mb-6 text-white">
-              Ampereon vs <span className="font-semibold text-[#D4AF37]">Traditional EV Chargers</span>
+              Our <span className="font-semibold text-[#D4AF37]">Community</span>
             </h2>
             
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light">
-              See how smart EV charging technology compares to standard electric vehicle charging stations and why upgrading makes financial sense.
-            </p>
-          </motion.div>
-
-          <div className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl border border-[#D4AF37]/20 overflow-hidden">
-            <div className="grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-[#D4AF37]/20">
-              
-              {/* Traditional Charger */}
-              <div className="p-8 text-center">
-                <div className="w-12 h-12 bg-gray-600/30 rounded-lg flex items-center justify-center mx-auto mb-4">
-                  <Zap className="w-6 h-6 text-gray-400" />
-                </div>
-                <h3 className="text-xl font-semibold mb-4 text-gray-300">Traditional EV Charger</h3>
-                <ul className="space-y-3 text-sm text-gray-400">
-                  <li>Manual plugging required daily</li>
-                  <li>Charges at peak electricity rates</li>
-                  <li>No battery optimization</li>
-                  <li>Basic charging with no intelligence</li>
-                  <li>Higher electricity costs</li>
-                  <li>No usage analytics</li>
-                </ul>
-              </div>
-
-              {/* Ampereon Smart Charger */}
-              <div className="p-8 text-center bg-[#D4AF37]/10 relative">
-                <div className="absolute top-4 right-4">
-                  <Award className="w-6 h-6 text-[#D4AF37]" />
-                </div>
-                <div className="w-12 h-12 bg-gradient-to-br from-[#D4AF37]/20 to-[#B8860B]/20 rounded-lg 
-                              flex items-center justify-center mx-auto mb-4 border border-[#D4AF37]/30">
-                  <Zap className="w-6 h-6 text-[#D4AF37]" />
-                </div>
-                <h3 className="text-xl font-semibold mb-4 text-[#D4AF37]">Ampereon Smart EV Charger</h3>
-                <ul className="space-y-3 text-sm text-white">
-                  <li className="flex items-center gap-2">
-                    <Check className="w-3 h-3 text-[#D4AF37]" />
-                    Automatic charging connection
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-3 h-3 text-[#D4AF37]" />
-                    Off-peak rate optimization
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-3 h-3 text-[#D4AF37]" />
-                    AI-powered battery management
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-3 h-3 text-[#D4AF37]" />
-                    Smart scheduling and automation
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-3 h-3 text-[#D4AF37]" />
-                    32% average cost savings
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-3 h-3 text-[#D4AF37]" />
-                    Comprehensive usage analytics
-                  </li>
-                </ul>
-              </div>
-
-              {/* Premium EV Chargers */}
-              <div className="p-8 text-center">
-                <div className="w-12 h-12 bg-blue-600/30 rounded-lg flex items-center justify-center mx-auto mb-4">
-                  <Zap className="w-6 h-6 text-blue-400" />
-                </div>
-                <h3 className="text-xl font-semibold mb-4 text-gray-300">Premium EV Chargers</h3>
-                <ul className="space-y-3 text-sm text-gray-400">
-                  <li>WiFi connectivity available</li>
-                  <li>Some smart features included</li>
-                  <li>Higher upfront cost ($800-2000)</li>
-                  <li>Requires electrical installation</li>
-                  <li>Limited automation capabilities</li>
-                  <li>Basic mobile app control</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </motion.section>
-
-      {/* New Section: EV Charging FAQs */}
-      {/* <motion.section 
-        className="py-20 px-6 bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F] relative"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={fadeUpVariants}
-      >
-        <SubtlePattern />
-        
-        <div className="max-w-4xl mx-auto relative z-10">
-          <motion.div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-light mb-6 text-white">
-              EV Charging <span className="font-semibold text-[#D4AF37]">Frequently Asked Questions</span>
-            </h2>
-            
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light">
-              Get answers to common questions about smart electric vehicle charging, installation requirements, and compatibility with existing EV chargers.
-            </p>
-          </motion.div>
-
-          <div className="space-y-4">
-            {[
-              {
-                question: "Is Ampereon compatible with my existing EV charger?",
-                answer: "Yes! Ampereon works with all standard Level 2 home EV charging stations, including popular brands like ChargePoint, ClipperCreek, JuiceBox, and Tesla Wall Connector. Our smart charging system mounts directly onto your existing charger without requiring electrical modifications."
-              },
-              {
-                question: "How much can I save on my electric vehicle charging costs?",
-                answer: "Most EV owners save 25-40% on their electricity costs with Ampereon's smart charging optimization. By automatically charging during off-peak hours when rates are lowest, the average household saves approximately $325 annually on their electric vehicle charging expenses."
-              },
-              {
-                question: "Does smart EV charging work with all electric vehicle models?",
-                answer: "Ampereon is compatible with all electric vehicles that use standard J1772 charging ports, including Tesla vehicles (with adapter), Nissan Leaf, Chevy Bolt, BMW i3, Audi e-tron, Ford Mustang Mach-E, and virtually every other EV model sold in North America."
-              },
-              {
-                question: "How long does EV charger installation take?",
-                answer: "Installation typically takes 30-45 minutes and requires no electrical work. Ampereon mounts directly to your existing charging station using the included hardware. Our step-by-step installation guide makes setup simple for any homeowner."
-              },
-              {
-                question: "Will smart charging affect my EV battery life?",
-                answer: "Smart charging actually extends EV battery life by optimizing charging patterns and preventing overcharging. Our AI algorithms reduce battery degradation by up to 40%, potentially adding 3+ years to your electric vehicle battery's useful lifespan."
-              },
-              {
-                question: "What happens if my internet connection goes down?",
-                answer: "Ampereon includes offline backup functionality. If WiFi connectivity is lost, the system continues charging your electric vehicle using the last programmed schedule, ensuring your EV is always ready when you need it."
-              }
-            ].map((faq, index) => {
-              const isActive = activeAccordion === `faq-${index}`;
-              
-              return (
-                <motion.div
-                  key={index}
-                  className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl border border-[#D4AF37]/20 
-                           hover:border-[#D4AF37]/40 transition-all duration-300"
-                  variants={fadeUpVariants}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <motion.button
-                    className="w-full p-6 text-left flex items-center justify-between"
-                    onClick={() => setActiveAccordion(isActive ? null : `faq-${index}`)}
-                    whileHover={{ scale: 1.01 }}
-                  >
-                    <h3 className="text-lg font-semibold text-white pr-4">{faq.question}</h3>
-                    <motion.div
-                      animate={{ rotate: isActive ? 180 : 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <ChevronDown className="w-5 h-5 text-[#D4AF37] flex-shrink-0" />
-                    </motion.div>
-                  </motion.button>
-                  
-                  <AnimatePresence>
-                    {isActive && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="overflow-hidden"
-                      >
-                        <div className="px-6 pb-6">
-                          <div className="h-px bg-[#D4AF37]/20 mb-4" />
-                          <p className="text-gray-300 leading-relaxed">{faq.answer}</p>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      </motion.section> */}
-
-      {/* Social Proof - Enhanced with SEO keywords */}
-     <motion.section 
-        className="py-20 px-6 bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F]"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={fadeUpVariants}
-      >
-        <div className="max-w-7xl mx-auto">
-          <motion.div className="text-center mb-8">
-            <h2 className="text-4xl md:text-5xl font-light mb-4 text-white">
-              Our <span className="font-semibold text-[#D4AF37]">EV Charging Community</span>
-            </h2>
-            
-            <div className="flex items-center justify-center gap-4 mb-2">
+            <div className="flex items-center justify-center gap-4 mb-8">
               <div className="text-2xl font-semibold text-[#D4AF37]">
                 ${Math.floor(totalAmount).toLocaleString()}
               </div>
-              <span className="text-gray-300">raised by electric vehicle owners supporting smart charging technology</span>
+              <span className="text-gray-300">raised by our community</span>
             </div>
+            
+            {/* {totalDonations > 0 && totalPreOrders > 0 && (
+              <div className="text-sm text-gray-400 mb-8">
+                Donations: ${totalDonations.toLocaleString()} • Pre-orders: ${totalPreOrders.toLocaleString()}
+              </div>
+            )} */}
           </motion.div>
 
           {/* Filter buttons */}
@@ -957,9 +635,9 @@ const AmpereonLanding = () => {
             <div className="bg-[#1A1A1A]/80 backdrop-blur-xl rounded-3xl p-3 border border-[#D4AF37]/20 shadow-xl">
               <div className="flex gap-3">
                 {[
-                  { label: 'Recent EV Supporters', value: 'recent' },
+                  { label: 'Recent', value: 'recent' },
                   { label: 'Top Month', value: 'top-month' },
-                  { label: 'All Time Leaders', value: 'top-all' },
+                  { label: 'All Time', value: 'top-all' },
                 ].map(({ label, value }) => (
                   <motion.button
                     key={value}
@@ -989,7 +667,7 @@ const AmpereonLanding = () => {
                             flex items-center justify-center border border-[#D4AF37]/30">
                 <Users className="w-5 h-5 text-[#D4AF37]" />
               </div>
-              <h3 className="text-xl font-semibold text-white">EV Owners Supporting Smart Charging Innovation</h3>
+              <h3 className="text-xl font-semibold text-white">Our Supporters</h3>
             </div>
 
             {isLoading ? (
@@ -999,7 +677,7 @@ const AmpereonLanding = () => {
                   animate={{ rotate: 360 }}
                   transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                 />
-                <p className="text-gray-400 text-lg">Loading our amazing EV community supporters...</p>
+                <p className="text-gray-400 text-lg">Loading our amazing supporters...</p>
               </div>
             ) : donorsWithAmounts.length === 0 ? (
               <div className="text-center py-12">
@@ -1009,9 +687,9 @@ const AmpereonLanding = () => {
                 >
                   <Heart className="w-16 h-16 text-[#D4AF37]/50 mx-auto mb-6" />
                 </motion.div>
-                <h4 className="text-xl font-medium text-white mb-3">Be the First EV Owner to Support Smart Charging</h4>
+                <h4 className="text-xl font-medium text-white mb-3">Be the First to Support</h4>
                 <p className="text-gray-400 text-lg max-w-md mx-auto">
-                  Join our mission to revolutionize electric vehicle charging technology. Be among the first supporters of this groundbreaking EV charging innovation.
+                  Join our mission to revolutionize EV charging. Be among the first supporters of this groundbreaking technology.
                 </p>
               </div>
             ) : (
@@ -1035,7 +713,7 @@ const AmpereonLanding = () => {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-white truncate text-sm">
-                          {donor.anonymous ? 'Anonymous EV Owner' : `${donor.firstName || ''} ${donor.lastName?.[0] || ''}.`}
+                          {donor.anonymous ? 'Anonymous Supporter' : `${donor.firstName || ''} ${donor.lastName?.[0] || ''}.`}
                         </p>
                         <p className="text-[#D4AF37] font-semibold text-sm">
                           ${donor.amount?.toFixed(2) || '0.00'}
@@ -1063,7 +741,7 @@ const AmpereonLanding = () => {
             {donorsWithAmounts.length > 8 && (
               <div className="text-center mt-8">
                 <p className="text-gray-400 font-light text-lg">
-                  And <span className="font-bold text-[#D4AF37]">{donorsWithAmounts.length - 8} more</span> electric vehicle owners supporting smart charging!
+                  And <span className="font-bold text-[#D4AF37]">{donorsWithAmounts.length - 8} more</span> amazing supporters!
                 </p>
               </div>
             )}
@@ -1077,7 +755,7 @@ const AmpereonLanding = () => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  Join Our EV Charging Community
+                  Join Our Community
                 </motion.button>
               </a>
             </div>
@@ -1085,9 +763,9 @@ const AmpereonLanding = () => {
         </div>
       </motion.section>
 
-      {/* CTA Section - Enhanced with SEO keywords */}
+      {/* CTA Section - Professional with gold branding */}
       <motion.section 
-        className="py-20 px-6 bg-[#0A0A0A] relative"
+        className="py-20 px-6 bg-gradient-to-br from-[#1A1A1A] to-[#2A2A2A] relative"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true }}
@@ -1104,7 +782,7 @@ const AmpereonLanding = () => {
             transition={{ delay: 0.2, duration: 0.6 }}
           >
             Ready to Upgrade Your{' '}
-            <span className="font-semibold text-[#D4AF37]">Electric Vehicle Charging Experience?</span>
+            <span className="font-semibold text-[#D4AF37]">Charging Experience?</span>
           </motion.h2>
           
           <motion.p 
@@ -1114,8 +792,8 @@ const AmpereonLanding = () => {
             viewport={{ once: true }}
             transition={{ delay: 0.3, duration: 0.6 }}
           >
-            Join hundreds of EV owners who've made the switch to intelligent, automated electric vehicle charging. 
-            Reserve your Ampereon smart EV charger system today and start saving on energy costs immediately.
+            Join hundreds of EV owners who've made the switch to effortless charging. 
+            Reserve your Ampereon system today.
           </motion.p>
           
           <motion.div 
@@ -1132,7 +810,7 @@ const AmpereonLanding = () => {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                Reserve Your Ampereon - $5
+                Reserve Now - $5
               </motion.button>
             </a>
             
@@ -1142,7 +820,7 @@ const AmpereonLanding = () => {
                         hover:bg-[#D4AF37]/10 hover:border-[#D4AF37]/50 transition-all duration-300 backdrop-blur-sm"
                 whileHover={{ scale: 1.02 }}
               >
-                Order Ampereon Now - $99
+                Full Purchase - $99
               </motion.button>
             </a>
           </motion.div>
@@ -1160,11 +838,7 @@ const AmpereonLanding = () => {
             </div>
             <div className="flex items-center gap-2">
               <Check className="w-4 h-4 text-[#D4AF37]" />
-              <span>Free shipping on all EV chargers</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Check className="w-4 h-4 text-[#D4AF37]" />
-              <span>Professional installation support</span>
+              <span>Free shipping</span>
             </div>
           </motion.div>
         </div>

@@ -38,6 +38,37 @@ export default function OrderChoiceModal({ isOpen, onClose }) {
   const [isReserveOpen, setIsReserveOpen] = useState(false);
   const [isOrderOpen, setIsOrderOpen] = useState(false);
 
+  useEffect(() => {
+    // Listen for page visibility changes (when user navigates away and back)
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        // Page became visible again, likely after navigation
+        // Add a small delay to ensure the page has fully loaded
+        setTimeout(() => {
+          onClose();
+        }, 100);
+      }
+    };
+
+    // Listen for beforeunload event (when user is navigating away)
+    const handleBeforeUnload = () => {
+      // Close modal after a delay to allow navigation to complete
+      setTimeout(() => {
+        onClose();
+      }, 500);
+    };
+
+    if (isOpen) {
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+      window.addEventListener('beforeunload', handleBeforeUnload);
+    }
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [isOpen, onClose]);
+
   // Reserve content - condensed
   const reserveContent = (
     <div className="space-y-3">
