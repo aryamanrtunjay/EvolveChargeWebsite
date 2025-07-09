@@ -24,8 +24,20 @@ const chakraPetch = Chakra_Petch({
 })
 
 export const metadata = {
-  title: "The Future of EV Charging",
-  description: "Revolutionizing EV Charging",
+  title: "Ampereon Hands-Free EV Charger | Smart Automatic Charging",
+  description:
+    "Ampereon turns any Level-2 outlet into an AI-powered, hands-free EV charger that auto-docks your cable, schedules off-peak charging, and cuts energy costs.",
+  keywords: [
+    "Ampereon",
+    "hands-free EV charging",
+    "automatic EV charger",
+    "smart charging accessory",
+    "Level-2 charger upgrade",
+    "AI-powered charging"
+  ],
+  alternates: {
+    canonical: "https://www.ampereonenergy.com",
+  },
 };
 
 export default function RootLayout({ children }) {
