@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Mail, MapPin, Phone, ChevronRight, Youtube, Instagram, Linkedin, ArrowUp } from 'lucide-react';
+import { X, Mail, MapPin, Phone, ChevronRight, Youtube, Instagram, Linkedin, Facebook, ArrowUp } from 'lucide-react';
 import Image from 'next/image';
 import Logo from '../images/Logo.png'
 
@@ -39,6 +39,7 @@ const AmpereonFooter = () => {
     { name: 'YouTube', icon: Youtube, url: 'https://youtube.com/@ampereonenergy' },
     { name: 'Instagram', icon: Instagram, url: 'https://instagram.com/ampereonenergy' },
     { name: 'LinkedIn', icon: Linkedin, url: 'https://linkedin.com/company/ampereonenergy' },
+    { name: 'Facebook', icon: Facebook, url: 'https://www.facebook.com/profile.php?id=61578090844879' }
   ];
 
   const quickLinks = [
