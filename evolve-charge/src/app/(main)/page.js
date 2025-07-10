@@ -738,7 +738,7 @@ const AmpereonLanding = () => {
                     </div>
                     
                     <div className="text-3xl font-semibold text-white mb-2">
-                      {metric.prefix}{count}{metric.suffix}
+                      {metric.prefix}{metric.value}{metric.suffix}
                     </div>
                     
                     <h3 className="text-lg font-medium mb-4 text-white">{metric.label}</h3>
