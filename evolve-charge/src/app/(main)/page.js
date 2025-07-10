@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
-import { motion, useInView, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { ChevronDown, Zap, Wifi, DollarSign, Battery, Clock, ChevronRight, Check, Leaf, Home, Settings, TrendingUp, Users, Heart, Award } from 'lucide-react';
+import { motion, useInView, AnimatePresence } from 'framer-motion'; // Removed unused imports: useScroll, useTransform
+import { ChevronDown, Zap, Wifi, DollarSign, Battery, Clock, ChevronRight, Check, Leaf, Home, Settings, TrendingUp, Users, Heart, Award } from 'lucide-react'; // Removed unused icons
 import { db } from "../firebaseConfig.js";
 import { collection, getDocs, query, orderBy, limit, where, getFirestore } from 'firebase/firestore';
 import OrderChoiceModal from '../../components/OrderChoiceModal';
@@ -30,13 +30,8 @@ const AmpereonLanding = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   
   const [activeStep, setActiveStep] = useState(0);
-  const [videoSrc, setVideoSrc] = useState('');
 
   const heroRef = useRef(null);
-  const socialRef = useRef(null);
-  const socialInView = useInView(socialRef, { once: false, margin: "-100px" });
-
-  const shouldReduceMotion = useReducedMotion();
 
   const useCounter = (end, duration = 2000) => {
     const [count, setCount] = useState(0);
@@ -44,7 +39,7 @@ const AmpereonLanding = () => {
     const inView = useInView(ref, { once: true });
     
     useEffect(() => {
-      if (inView && !shouldReduceMotion) {
+      if (inView) {
         let startTime;
         const animate = (timestamp) => {
           if (!startTime) startTime = timestamp;
@@ -53,10 +48,8 @@ const AmpereonLanding = () => {
           if (progress < 1) requestAnimationFrame(animate);
         };
         requestAnimationFrame(animate);
-      } else if (inView) {
-        setCount(end); // Skip animation on reduced motion
       }
-    }, [inView, end, duration, shouldReduceMotion]);
+    }, [inView, end, duration]);
     
     return { count, ref };
   };
@@ -65,7 +58,7 @@ const AmpereonLanding = () => {
     setIsModalOpen(true);
   };
 
-  const fadeUpVariants = shouldReduceMotion ? {} : {
+  const fadeUpVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { 
       opacity: 1, 
@@ -191,17 +184,14 @@ const AmpereonLanding = () => {
     }
   ];
 
-  // Auto-advance timer only if not reduced motion
+  // Auto-advance timer (slower for mature audience)
   useEffect(() => {
-    if (shouldReduceMotion) {
-      return;
-    }
     const timer = setInterval(() => {
       setActiveStep((prev) => (prev + 1) % steps.length);
     }, 8000);
     
     return () => clearInterval(timer);
-  }, [shouldReduceMotion]);
+  }, []);
 
   const metrics = [
     { value: 325, prefix: "$", suffix: "", label: "Annual Home EV Charging Savings", how: "Off-peak smart charging reduces costs by 32%, saving ~$325/year for average EV owners.", icon: <DollarSign className="w-5 h-5" /> },
@@ -263,17 +253,9 @@ const AmpereonLanding = () => {
     }
   ];
 
-  // Defer video loading only on desktop
-  useEffect(() => {
-    if (window.innerWidth >= 768) {
-      setVideoSrc("https://demo.ampereonenergy.com/productDemo.mp4#t=1");
-    }
-  }, []);
-
-  // Load data from Firebase only when social section is in view
+  // Load data from Firebase
   useEffect(() => {
     const loadData = async () => {
-      if (!socialInView || !isLoading) return;
       setIsLoading(true);
       try {
         const firestoreDb = getFirestore();
@@ -311,15 +293,15 @@ const AmpereonLanding = () => {
           case 'top-day':
             const dayAgo = new Date();
             dayAgo.setDate(dayAgo.getDate() - 1);
-            donorsQuery = query(donorsRef, where('createdAt', '>=', dayAgo), orderBy('createdAt', 'desc'), limit(100));
+            donorsQuery = query(donorsRef, where('createdAt', '>=', dayAgo), orderBy('createdAt', 'desc'));
             break;
           case 'top-month':
             const monthAgo = new Date();
             monthAgo.setMonth(monthAgo.getMonth() - 1);
-            donorsQuery = query(donorsRef, where('createdAt', '>=', monthAgo), orderBy('createdAt', 'desc'), limit(100));
+            donorsQuery = query(donorsRef, where('createdAt', '>=', monthAgo), orderBy('createdAt', 'desc'));
             break;
           case 'top-all':
-            donorsQuery = query(donorsRef, orderBy('createdAt', 'desc'), limit(100));
+            donorsQuery = query(donorsRef, orderBy('createdAt', 'desc'));
             break;
           default:
             donorsQuery = query(donorsRef, orderBy('createdAt', 'desc'), limit(50));
@@ -356,7 +338,7 @@ const AmpereonLanding = () => {
     };
 
     loadData();
-  }, [socialInView, donorFilter, isLoading]);
+  }, [donorFilter]);
 
   return (
     <div className="bg-[#0A0A0A] text-white overflow-x-hidden">
@@ -365,32 +347,27 @@ const AmpereonLanding = () => {
         className="relative min-h-screen flex items-center justify-center overflow-hidden"
         ref={heroRef}
       >
-        {/* Subtle background: video on desktop, image on mobile */}
-        <motion.div className="absolute inset-0 z-0 pointer-events-none opacity-30 hidden md:block">
+        {/* Subtle video background */}
+        <motion.div className="absolute inset-0 z-0 pointer-events-none opacity-30">
           <video
             autoPlay muted loop playsInline controls={false} preload="none"
             className="w-full h-full object-cover"
             title="Smart Home EV Charger Demonstration - Automatic Electric Vehicle Charging"
             poster="https://demo.ampereonenergy.com/poster.png"
             loading="lazy"
-            src={videoSrc}
           >
-            <source src={videoSrc} type="video/mp4" />
+            <source src="https://demo.ampereonenergy.com/productDemo.mp4#t=1" type="video/mp4" />
           </video>
         </motion.div>
-        <motion.div 
-          className="absolute inset-0 z-0 pointer-events-none opacity-30 md:hidden bg-cover bg-center"
-          style={{ backgroundImage: `url('https://demo.ampereonenergy.com/poster.png')` }}
-        />
 
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#1A1A1A]/20 to-[#1A1A1A]/40" />
 
         {/* Hero content */}
         <motion.div
           className="relative z-10 px-6 max-w-6xl mx-auto text-center"
-          initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: shouldReduceMotion ? 0 : 0.8 }}
+          transition={{ duration: 0.8 }}
         >
           <h1 className="font-light leading-tight mb-8 text-white"
               style={{ fontSize: 'clamp(2.5rem,5.5vw,4rem)' }}>
@@ -412,8 +389,8 @@ const AmpereonLanding = () => {
               className="px-8 py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white font-medium rounded-lg
                         hover:shadow-lg hover:shadow-[#D4AF37]/20 transition-all duration-300"
               onClick={openModal}
-              whileHover={shouldReduceMotion ? {} : { scale: 1.02 }}
-              whileTap={shouldReduceMotion ? {} : { scale: 0.98 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
               Reserve Now - $5 (Limited)
             </motion.button>
@@ -422,7 +399,7 @@ const AmpereonLanding = () => {
               <motion.button
                 className="px-8 py-4 border border-[#D4AF37]/30 text-white font-medium rounded-lg
                           hover:bg-[#D4AF37]/10 hover:border-[#D4AF37]/50 transition-all duration-300 backdrop-blur-sm"
-                whileHover={shouldReduceMotion ? {} : { scale: 1.02 }}
+                whileHover={{ scale: 1.02 }}
               >
                 <span className="flex items-center gap-2">
                   <ChevronRight className="w-4 h-4" />
@@ -449,17 +426,15 @@ const AmpereonLanding = () => {
           </div>
         </motion.div>
 
-        {/* Subtle scroll indicator - disable animation if reduced motion */}
-        {!shouldReduceMotion && (
-          <motion.div
-            className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center"
-            animate={{ y: [0, 6, 0] }}
-            transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
-          >
-            <div className="w-px h-8 bg-gradient-to-b from-transparent via-[#D4AF37]/50 to-transparent mb-2" />
-            <ChevronDown className="w-5 h-5 text-[#D4AF37]/70" />
-          </motion.div>
-        )}
+        {/* Subtle scroll indicator */}
+        <motion.div
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center"
+          animate={{ y: [0, 6, 0] }}
+          transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
+        >
+          <div className="w-px h-8 bg-gradient-to-b from-transparent via-[#D4AF37]/50 to-transparent mb-2" />
+          <ChevronDown className="w-5 h-5 text-[#D4AF37]/70" />
+        </motion.div>
       </section>
 
       {/* Features Grid - Enhanced with SEO keywords */}
@@ -468,13 +443,13 @@ const AmpereonLanding = () => {
           className="py-20 px-6 bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F] relative"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.1 }}
+          viewport={{ once: true }}
           variants={fadeUpVariants}
         >
           <Suspense fallback={null}><SubtlePattern /></Suspense>
           
           <div className="max-w-7xl mx-auto relative z-10">
-            <motion.div className="text-center mb-16" variants={fadeUpVariants}>
+            <motion.div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-light mb-6 text-white">
                 Why Choose Ampereon's <span className="font-semibold text-[#D4AF37]">Smart Home EV Charger</span>
               </h2>
@@ -490,7 +465,7 @@ const AmpereonLanding = () => {
                   key={i}
                   className="group"
                   variants={fadeUpVariants}
-                  transition={{ delay: shouldReduceMotion ? 0 : i * 0.1 }}
+                  transition={{ delay: i * 0.1 }}
                   whileInView="visible"
                   viewport={{ once: true }}
                 >
@@ -523,11 +498,11 @@ const AmpereonLanding = () => {
           className="py-20 px-6 bg-[#0A0A0A]"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.1 }}
+          viewport={{ once: true }}
           variants={fadeUpVariants}
         >
           <div className="max-w-7xl mx-auto">
-            <motion.div className="text-center mb-16" variants={fadeUpVariants}>
+            <motion.div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-light mb-6 text-white">
                 Benefits of <span className="font-semibold text-[#D4AF37]">Smart Home EV Charging</span>
               </h2>
@@ -544,7 +519,7 @@ const AmpereonLanding = () => {
                   className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl p-6 border border-[#D4AF37]/20 
                            hover:border-[#D4AF37]/40 transition-all duration-300"
                   variants={fadeUpVariants}
-                  transition={{ delay: shouldReduceMotion ? 0 : i * 0.1 }}
+                  transition={{ delay: i * 0.1 }}
                 >
                   <div className="flex items-center justify-center w-12 h-12 mb-4
                                 bg-gradient-to-br from-[#D4AF37]/20 to-[#B8860B]/20 rounded-lg 
@@ -567,13 +542,13 @@ const AmpereonLanding = () => {
           className="py-20 px-6 bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F] relative"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.1 }}
+          viewport={{ once: true }}
           variants={fadeUpVariants}
         >
           <Suspense fallback={null}><SubtlePattern /></Suspense>
           
           <div className="max-w-7xl mx-auto relative z-10">
-            <motion.div className="text-center mb-16" variants={fadeUpVariants}>
+            <motion.div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-light mb-6 text-white">
                 How to Install and Use Your <span className="font-semibold text-[#D4AF37]">Smart Home EV Charger</span>
               </h2>
@@ -601,9 +576,15 @@ const AmpereonLanding = () => {
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true }}
-                    variants={fadeUpVariants}
-                    transition={{ delay: shouldReduceMotion ? 0 : index * 0.15, duration: shouldReduceMotion ? 0 : 0.6 }}
-                    whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
+                    variants={{
+                      hidden: { opacity: 0, y: 20 },
+                      visible: { 
+                        opacity: 1, 
+                        y: 0,
+                        transition: { delay: index * 0.15, duration: 0.6 }
+                      }
+                    }}
+                    whileHover={{ scale: 1.05 }}
                   >
                     <div className="relative mb-6">
                       <div className={`w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg transition-colors duration-300 ${
@@ -627,76 +608,42 @@ const AmpereonLanding = () => {
 
             {/* Detailed step content */}
             <AnimatePresence mode="wait">
-              {!shouldReduceMotion ? (
-                <motion.div
-                  key={activeStep}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.4 }}
-                  className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl p-8 border border-[#D4AF37]/20"
-                >
-                  {/* ... step content ... */}
-                  <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-8">
-                    <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#D4AF37]/20 to-[#B8860B]/20 rounded-lg border border-[#D4AF37]/30 text-[#D4AF37] flex-shrink-0">
-                      {React.createElement(stepContent[activeStep].icon, { className: "w-8 h-8" })}
-                    </div>
-                    <div>
-                      <h3 className="text-2xl font-semibold text-white mb-2">{stepContent[activeStep].title}</h3>
-                      <p className="text-gray-300 leading-relaxed">{stepContent[activeStep].description}</p>
-                    </div>
+              <motion.div
+                key={activeStep}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4 }}
+                className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl p-8 border border-[#D4AF37]/20"
+              >
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-8">
+                  <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#D4AF37]/20 to-[#B8860B]/20 rounded-lg border border-[#D4AF37]/30 text-[#D4AF37] flex-shrink-0">
+                    {React.createElement(stepContent[activeStep].icon, { className: "w-8 h-8" })}
                   </div>
-
-                  <div className="grid grid-cols-2 gap-4 mb-8">
-                    {stepContent[activeStep].stats.map((stat, i) => (
-                      <div key={i} className="bg-[#D4AF37]/10 rounded-lg p-4 text-center border border-[#D4AF37]/20">
-                        <div className="text-2xl font-bold text-[#D4AF37]">{stat.value}</div>
-                        <div className="text-sm text-gray-300">{stat.label}</div>
-                      </div>
-                    ))}
+                  <div>
+                    <h3 className="text-2xl font-semibold text-white mb-2">{stepContent[activeStep].title}</h3>
+                    <p className="text-gray-300 leading-relaxed">{stepContent[activeStep].description}</p>
                   </div>
-
-                  <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {stepContent[activeStep].features.map((feature, i) => (
-                      <li key={i} className="flex items-center gap-3 text-gray-300">
-                        <Check className="w-5 h-5 text-[#D4AF37] flex-shrink-0" />
-                        <span className="text-sm">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </motion.div>
-              ) : (
-                <div className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl p-8 border border-[#D4AF37]/20">
-                  {/* Static step content without animation */}
-                  <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-8">
-                    <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#D4AF37]/20 to-[#B8860B]/20 rounded-lg border border-[#D4AF37]/30 text-[#D4AF37] flex-shrink-0">
-                      {React.createElement(stepContent[activeStep].icon, { className: "w-8 h-8" })}
-                    </div>
-                    <div>
-                      <h3 className="text-2xl font-semibold text-white mb-2">{stepContent[activeStep].title}</h3>
-                      <p className="text-gray-300 leading-relaxed">{stepContent[activeStep].description}</p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4 mb-8">
-                    {stepContent[activeStep].stats.map((stat, i) => (
-                      <div key={i} className="bg-[#D4AF37]/10 rounded-lg p-4 text-center border border-[#D4AF37]/20">
-                        <div className="text-2xl font-bold text-[#D4AF37]">{stat.value}</div>
-                        <div className="text-sm text-gray-300">{stat.label}</div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {stepContent[activeStep].features.map((feature, i) => (
-                      <li key={i} className="flex items-center gap-3 text-gray-300">
-                        <Check className="w-5 h-5 text-[#D4AF37] flex-shrink-0" />
-                        <span className="text-sm">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
                 </div>
-              )}
+
+                <div className="grid grid-cols-2 gap-4 mb-8">
+                  {stepContent[activeStep].stats.map((stat, i) => (
+                    <div key={i} className="bg-[#D4AF37]/10 rounded-lg p-4 text-center border border-[#D4AF37]/20">
+                      <div className="text-2xl font-bold text-[#D4AF37]">{stat.value}</div>
+                      <div className="text-sm text-gray-300">{stat.label}</div>
+                    </div>
+                  ))}
+                </div>
+
+                <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {stepContent[activeStep].features.map((feature, i) => (
+                    <li key={i} className="flex items-center gap-3 text-gray-300">
+                      <Check className="w-5 h-5 text-[#D4AF37] flex-shrink-0" />
+                      <span className="text-sm">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
             </AnimatePresence>
           </div>
         </motion.section>
@@ -708,11 +655,11 @@ const AmpereonLanding = () => {
           className="py-20 px-6 bg-[#0A0A0A]"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.1 }}
+          viewport={{ once: true }}
           variants={fadeUpVariants}
         >
           <div className="max-w-7xl mx-auto">
-            <motion.div className="text-center mb-16" variants={fadeUpVariants}>
+            <motion.div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-light mb-6 text-white">
                 Advantages of <span className="font-semibold text-[#D4AF37]">Smart Home Electric Vehicle Charging</span>
               </h2>
@@ -729,7 +676,7 @@ const AmpereonLanding = () => {
                   className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl p-8 border border-[#D4AF37]/20 
                            hover:border-[#D4AF37]/40 transition-all duration-300"
                   variants={fadeUpVariants}
-                  transition={{ delay: shouldReduceMotion ? 0 : i * 0.1 }}
+                  transition={{ delay: i * 0.1 }}
                 >
                   <h3 className="text-xl font-semibold mb-6 text-[#D4AF37]">{category.category}</h3>
                   
@@ -754,13 +701,13 @@ const AmpereonLanding = () => {
           className="py-20 px-6 bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F] relative"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.1 }}
+          viewport={{ once: true }}
           variants={fadeUpVariants}
         >
           <Suspense fallback={null}><SubtlePattern /></Suspense>
           
           <div className="max-w-7xl mx-auto relative z-10">
-            <motion.div className="text-center mb-16" variants={fadeUpVariants}>
+            <motion.div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-light mb-6 text-white">
                 Real Savings with <span className="font-semibold text-[#D4AF37]">Smart Home EV Chargers</span>
               </h2>
@@ -782,7 +729,7 @@ const AmpereonLanding = () => {
                             border border-[#D4AF37]/20 hover:border-[#D4AF37]/40 transition-all duration-300
                             h-fit"
                     variants={fadeUpVariants}
-                    transition={{ delay: shouldReduceMotion ? 0 : i * 0.1 }}
+                    transition={{ delay: i * 0.1 }}
                   >
                     <div className="flex items-center justify-center mb-4">
                       <div className="text-[#D4AF37]">
@@ -791,7 +738,7 @@ const AmpereonLanding = () => {
                     </div>
                     
                     <div className="text-3xl font-semibold text-white mb-2">
-                      {metric.prefix}{count}{metric.suffix}
+                      {metric.prefix}{metric.value}{metric.suffix}
                     </div>
                     
                     <h3 className="text-lg font-medium mb-4 text-white">{metric.label}</h3>
@@ -800,12 +747,12 @@ const AmpereonLanding = () => {
                       onClick={() => setActiveAccordion(activeAccordion === i ? null : i)}
                       className="flex items-center gap-2 text-[#D4AF37] hover:text-white transition-colors duration-200 
                               mx-auto text-sm font-medium"
-                      whileHover={shouldReduceMotion ? {} : { scale: 1.02 }}
+                      whileHover={{ scale: 1.02 }}
                     >
                       <span>Learn more</span>
                       <motion.div
                         animate={{ rotate: activeAccordion === i ? 180 : 0 }}
-                        transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
+                        transition={{ duration: 0.2 }}
                       >
                         <ChevronDown className="w-4 h-4" />
                       </motion.div>
@@ -817,7 +764,7 @@ const AmpereonLanding = () => {
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: 'auto', opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: shouldReduceMotion ? 0 : 0.3 }}
+                          transition={{ duration: 0.3 }}
                           className="overflow-hidden"
                         >
                           <div className="h-px bg-[#D4AF37]/20 my-4" />
@@ -839,11 +786,11 @@ const AmpereonLanding = () => {
           className="py-20 px-6 bg-[#0A0A0A]"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.1 }}
+          viewport={{ once: true }}
           variants={fadeUpVariants}
         >
           <div className="max-w-7xl mx-auto">
-            <motion.div className="text-center mb-16" variants={fadeUpVariants}>
+            <motion.div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-light mb-6 text-white">
                 Ampereon Smart Home EV Charger vs <span className="font-semibold text-[#D4AF37]">Traditional Chargers</span>
               </h2>
@@ -937,12 +884,11 @@ const AmpereonLanding = () => {
           className="py-20 px-6 bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F]"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.1 }}
+          viewport={{ once: true }}
           variants={fadeUpVariants}
-          ref={socialRef}
         >
           <div className="max-w-7xl mx-auto">
-            <motion.div className="text-center mb-8" variants={fadeUpVariants}>
+            <motion.div className="text-center mb-8">
               <h2 className="text-4xl md:text-5xl font-light mb-4 text-white">
                 Our <span className="font-semibold text-[#D4AF37]">Smart EV Charging Community</span>
               </h2>
@@ -959,10 +905,10 @@ const AmpereonLanding = () => {
             <motion.div 
               className="flex justify-center mb-12"
               variants={fadeUpVariants}
-              transition={{ delay: shouldReduceMotion ? 0 : 0.2 }}
+              transition={{ delay: 0.2 }}
             >
               <div className="bg-[#1A1A1A]/80 backdrop-blur-xl rounded-3xl p-3 border border-[#D4AF37]/20 shadow-xl">
-                <div className="flex gap-3 flex-wrap justify-center">
+                <div className="flex gap-3">
                   {[
                     { label: 'Recent Supporters', value: 'recent' },
                     { label: 'Top Month', value: 'top-month' },
@@ -976,8 +922,8 @@ const AmpereonLanding = () => {
                           ? 'bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white shadow-lg shadow-[#D4AF37]/25'
                           : 'text-gray-400 hover:bg-[#D4AF37]/10 hover:text-[#D4AF37]'
                       }`}
-                      whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
-                      whileTap={shouldReduceMotion ? {} : { scale: 0.95 }}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                     >
                       {label}
                     </motion.button>
@@ -1003,16 +949,16 @@ const AmpereonLanding = () => {
                 <div className="flex items-center justify-center py-12">
                   <motion.div
                     className="w-8 h-8 border-2 border-[#D4AF37] rounded-full border-t-transparent mr-4"
-                    animate={shouldReduceMotion ? {} : { rotate: 360 }}
-                    transition={{ duration: shouldReduceMotion ? 0 : 1, repeat: Infinity, ease: "linear" }}
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                   />
                   <p className="text-gray-400 text-lg">Loading community supporters...</p>
                 </div>
               ) : donorsWithAmounts.length === 0 ? (
                 <div className="text-center py-12">
                   <motion.div
-                    animate={shouldReduceMotion ? {} : { scale: [1, 1.1, 1] }}
-                    transition={{ duration: shouldReduceMotion ? 0 : 2, repeat: Infinity }}
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}
                   >
                     <Heart className="w-16 h-16 text-[#D4AF37]/50 mx-auto mb-6" />
                   </motion.div>
@@ -1026,9 +972,9 @@ const AmpereonLanding = () => {
                   {donorsWithAmounts.slice(0, 8).map((donor, index) => (
                     <motion.div
                       key={donor.id}
-                      initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+                      initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: shouldReduceMotion ? 0 : 0.3, delay: shouldReduceMotion ? 0 : index * 0.05 }}
+                      transition={{ duration: 0.3, delay: index * 0.05 }}
                       className="bg-[#1A1A1A]/80 rounded-lg p-4 border border-[#D4AF37]/10 
                               hover:border-[#D4AF37]/30 transition-all duration-300"
                     >
@@ -1081,8 +1027,8 @@ const AmpereonLanding = () => {
                   <motion.button
                     className="px-8 py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white font-semibold rounded-lg 
                               hover:shadow-lg hover:shadow-[#D4AF37]/30 transition-all duration-300"
-                    whileHover={shouldReduceMotion ? {} : { scale: 1.02 }}
-                    whileTap={shouldReduceMotion ? {} : { scale: 0.98 }}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                   >
                     Support Smart EV Charging Innovation
                   </motion.button>
@@ -1099,7 +1045,7 @@ const AmpereonLanding = () => {
           className="py-20 px-6 bg-[#0A0A0A] relative"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.1 }}
+          viewport={{ once: true }}
           variants={fadeUpVariants}
         >
           <Suspense fallback={null}><SubtlePattern /></Suspense>
@@ -1107,37 +1053,37 @@ const AmpereonLanding = () => {
           <div className="max-w-4xl mx-auto text-center relative z-10">
             <motion.h2 
               className="text-4xl md:text-5xl font-light mb-6 leading-tight text-white"
-              initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: shouldReduceMotion ? 0 : 0.2, duration: shouldReduceMotion ? 0 : 0.6 }}
+              transition={{ delay: 0.2, duration: 0.6 }}
             >
               Upgrade to the Best <span className="font-semibold text-[#D4AF37]">Smart Home EV Charger Today</span>
             </motion.h2>
             
             <motion.p 
               className="text-xl mb-10 text-gray-300 max-w-3xl mx-auto font-light"
-              initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: shouldReduceMotion ? 0 : 0.3, duration: shouldReduceMotion ? 0 : 0.6 }}
+              transition={{ delay: 0.3, duration: 0.6 }}
             >
               Join EV owners transforming their home charging with Ampereon's automatic smart EV charger. Secure yours now and save on energy costs.
             </motion.p>
             
             <motion.div 
               className="flex flex-col sm:flex-row gap-6 justify-center items-center"
-              initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: shouldReduceMotion ? 0 : 0.4, duration: shouldReduceMotion ? 0 : 0.6 }}
+              transition={{ delay: 0.4, duration: 0.6 }}
             >
               <a href="/reserve">
                 <motion.button 
                   className="px-8 py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white font-semibold rounded-lg 
                           hover:shadow-lg hover:shadow-[#D4AF37]/30 transition-all duration-300"
-                  whileHover={shouldReduceMotion ? {} : { scale: 1.02 }}
-                  whileTap={shouldReduceMotion ? {} : { scale: 0.98 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
                   Reserve Now - $5 Deposit (Limited Spots)
                 </motion.button>
@@ -1147,7 +1093,7 @@ const AmpereonLanding = () => {
                 <motion.button 
                   className="px-8 py-4 bg-white/5 border border-[#D4AF37]/30 text-white font-semibold rounded-lg 
                           hover:bg-[#D4AF37]/10 hover:border-[#D4AF37]/50 transition-all duration-300 backdrop-blur-sm"
-                  whileHover={shouldReduceMotion ? {} : { scale: 1.02 }}
+                  whileHover={{ scale: 1.02 }}
                 >
                   Order Smart EV Charger - $99
                 </motion.button>
@@ -1156,10 +1102,10 @@ const AmpereonLanding = () => {
             
             <motion.div 
               className="mt-10 flex flex-wrap items-center justify-center gap-6 text-sm text-gray-400"
-              initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0 }}
+              initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
-              transition={{ delay: shouldReduceMotion ? 0 : 0.6, duration: shouldReduceMotion ? 0 : 0.6 }}
+              transition={{ delay: 0.6, duration: 0.6 }}
             >
               <div className="flex items-center gap-2">
                 <Check className="w-4 h-4 text-[#D4AF37]" />
