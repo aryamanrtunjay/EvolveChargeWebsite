@@ -1,15 +1,14 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, useScroll, useTransform, useInView, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Zap, Wifi, DollarSign, Battery, Clock, ChevronRight, ArrowRight, Star, Users, Heart, Globe, Shield, Check, Link, Leaf, Home, Settings, Award, TrendingUp } from 'lucide-react';
+import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
+import { motion, useInView, AnimatePresence } from 'framer-motion'; // Removed unused imports: useScroll, useTransform
+import { ChevronDown, Zap, Wifi, DollarSign, Battery, Clock, ChevronRight, Check, Leaf, Home, Settings, TrendingUp, Users, Heart, Award } from 'lucide-react'; // Removed unused icons
 import { db } from "../firebaseConfig.js";
 import { collection, getDocs, query, orderBy, limit, where, getFirestore } from 'firebase/firestore';
 import OrderChoiceModal from '../../components/OrderChoiceModal';
 
-
-// Simplified pattern overlay
-const SubtlePattern = ({ opacity = 0.03 }) => (
+// Lazy load non-critical components
+const SubtlePattern = lazy(() => Promise.resolve({ default: ({ opacity = 0.03 }) => (
   <div className="absolute inset-0 pointer-events-none" style={{ opacity }}>
     <svg width="100%" height="100%" className="text-[#D4AF37]">
       <defs>
@@ -20,7 +19,7 @@ const SubtlePattern = ({ opacity = 0.03 }) => (
       <rect width="100%" height="100%" fill="url(#subtleGrid)" />
     </svg>
   </div>
-);
+) }));
 
 const AmpereonLanding = () => {
   const [activeAccordion, setActiveAccordion] = useState(null);
@@ -28,13 +27,11 @@ const AmpereonLanding = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [donorFilter, setDonorFilter] = useState('recent');
   const [totalAmount, setTotalAmount] = useState(0);
-  const [totalDonations, setTotalDonations] = useState(0);
-  const [totalPreOrders, setTotalPreOrders] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   
-  const heroRef = useRef(null);
-
   const [activeStep, setActiveStep] = useState(0);
+
+  const heroRef = useRef(null);
 
   const useCounter = (end, duration = 2000) => {
     const [count, setCount] = useState(0);
@@ -73,116 +70,116 @@ const AmpereonLanding = () => {
   const features = [
     { 
       icon: <Zap className="w-6 h-6" />, 
-      title: "Automatic EV Charging Station", 
-      desc: "Your smart electric vehicle charger connects automatically at the best time to charge. No more daily plugging in - experience hands-free EV charging at your own home." 
+      title: "Automatic Home EV Charger", 
+      desc: "Your smart home EV charger connects automatically at optimal times. Eliminate daily plugging with hands-free electric vehicle charging at home." 
     },
     { 
       icon: <Wifi className="w-6 h-6" />, 
-      title: "Universal EV Charger Compatibility", 
-      desc: "Compatible with all existing residential EV charging stations and home electric car chargers. Ampereon upgrades your current Electric Vehicle charger with our smart technology." 
+      title: "Universal Home EV Charging Station Compatibility", 
+      desc: "Works with all residential EV chargers and home electric car chargers. Upgrade your existing Level 2 EV charger with Ampereon's smart technology." 
     },
     { 
       icon: <DollarSign className="w-6 h-6" />, 
-      title: "Smart Charging Cost Savings", 
-      desc: "Intelligent off-peak charging reduces your electric vehicle charging costs by up to 40%. Our AI optimizes when to charge based on time-of-use electricity rates." 
+      title: "Smart Home EV Charging Cost Savings", 
+      desc: "AI-driven off-peak charging cuts home EV charging costs by up to 40%. Optimize based on time-of-use rates for maximum savings." 
     },
     { 
       icon: <Battery className="w-6 h-6" />, 
-      title: "AI-Powered Battery Management", 
-      desc: "Advanced machine learning algorithms optimize EV battery health and extend battery life. Smart charging schedules prevent overcharging and reduce battery degradation." 
+      title: "AI-Optimized EV Battery Management", 
+      desc: "Machine learning extends EV battery life while preventing overcharging. Smart schedules maintain optimal battery health for your electric vehicle." 
     }
   ];
 
   const steps = [
     { 
       num: "01", 
-      title: "Quick EV Charger Installation", 
-      desc: "Mount Ampereon to your existing home charging station in 30 minutes", 
+      title: "Easy Home EV Charger Installation", 
+      desc: "Attach Ampereon to your existing Level 2 home charging station in 30 minutes", 
       icon: Zap,
-      detail: "Simple DIY installation with all mounting hardware included"
+      detail: "DIY installation with included hardware - no electrician needed"
     },
     { 
       num: "02", 
-      title: "Smart Home Integration", 
-      desc: "Connect via WiFi and pair with your electric vehicle", 
+      title: "Smart Home EV Integration", 
+      desc: "Connect via WiFi and sync with your electric vehicle", 
       icon: Wifi,
-      detail: "Seamless setup with guided mobile app configuration"
+      detail: "Simple app-guided setup for seamless operation"
     },
     { 
       num: "03", 
-      title: "Automated Electric Car Charging", 
-      desc: "AI-powered charging begins automatically when you arrive home", 
+      title: "Automated Home Electric Car Charging", 
+      desc: "AI starts charging automatically upon arrival home", 
       icon: Battery,
-      detail: "Machine learning adapts to your driving schedule and energy needs"
+      detail: "Adapts to your schedule and energy requirements"
     },
     { 
       num: "04", 
-      title: "EV Charging Analytics", 
-      desc: "Monitor energy usage, costs, and environmental impact", 
+      title: "Home EV Charging Insights", 
+      desc: "Track usage, savings, and eco-impact", 
       icon: Clock,
-      detail: "Real-time insights and detailed monthly charging reports"
+      detail: "Live data and monthly reports on your smart EV charging"
     }
   ];
 
   const stepContent = [
     {
-      title: "Professional EV Charger Installation",
+      title: "Professional Home EV Charger Installation",
       icon: Zap,
-      description: "Install Ampereon smart charging system in about 30 minutes using your existing wall charger. All mounting hardware included for easy DIY setup.",
+      description: "Install Ampereon smart home EV charger in 30 minutes using your existing wall unit. Includes all hardware for simple DIY setup.",
       stats: [
         { value: "30min", label: "Install time" },
         { value: "100%", label: "Compatibility" }
       ],
       features: [
-        "No electrical work required",
-        "Works with existing Level 2 chargers",
-        "All hardware included",
-        "Professional installation guide"
+        "No wiring changes needed",
+        "Fits all Level 2 home EV chargers",
+        "Hardware provided",
+        "Step-by-step guide"
       ]
     },
     {
-      title: "Smart EV Charging Setup",
+      title: "Smart Home EV Charging Setup",
       icon: Wifi,
-      description: "Connect to your home WiFi network and pair with your electric vehicle using our intuitive mobile app for smart charging management.",
+      description: "Link to home WiFi and pair with your EV via our user-friendly app for intelligent charging control.",
       stats: [
         { value: "2min", label: "Setup time" },
         { value: "All", label: "EV models" }
       ],
       features: [
-        "Guided app setup process",
-        "Automatic vehicle detection",
-        "Secure encrypted connection",
-        "Works with all electric cars"
+        "App-guided process",
+        "Auto EV detection",
+        "Secure connection",
+        "Universal EV compatibility"
       ]
     },
     {
-      title: "Intelligent Electric Vehicle Charging",
+      title: "Intelligent Home Electric Vehicle Charging",
       icon: Battery,
-      description: "Ampereon's AI learns your driving patterns and charges when electricity rates are lowest while ensuring your EV is always ready to drive.",
+      description: "AI learns patterns to charge at lowest rates while keeping your EV ready.",
       stats: [
-        { value: "32%", label: "Average savings" },
+        { value: "32%", label: "Avg savings" },
         { value: "24/7", label: "Monitoring" }
       ],
       features: [
-        "Learns your daily schedule",
-        "Off-peak rate optimization",
-        "Weather-based adjustments",
-        "Custom charging schedules"
+        "Schedule learning",
+        "Rate optimization",
+        "Weather adjustments",
+        "Custom profiles"
       ]
     },
     {
-      title: "Comprehensive Charging Analytics",
+      title: "Advanced Home EV Charging Analytics",
       icon: Clock,
-      description: "Track energy consumption, cost savings, and environmental impact with detailed reports and real-time EV charging data.",
+      description: "Monitor consumption, savings, and carbon reduction with detailed EV charging reports.",
       stats: [
         { value: "$325", label: "Yearly savings" },
         { value: "Real-time", label: "Updates" }
       ],
       features: [
-        "Energy usage tracking",
-        "Cost analysis dashboard",
-        "Carbon footprint monitoring",
-        "Monthly summary reports"
+        "Energy tracking",
+        "Cost dashboard",
+        "Eco monitoring",
+        "Monthly reports"
       ]
     }
   ];
@@ -194,35 +191,35 @@ const AmpereonLanding = () => {
     }, 8000);
     
     return () => clearInterval(timer);
-  }, [steps.length]);
+  }, []);
 
   const metrics = [
-    { value: 325, prefix: "$", suffix: "", label: "Annual EV Charging Savings", how: "Smart off-peak charging reduces electricity costs by about 32%, saving approximately $325 annually for typical electric vehicle owners.", icon: <DollarSign className="w-5 h-5" /> },
-    { value: 1100, prefix: "", suffix: " days", label: "Extended EV Battery Life", how: "Optimized charging algorithms reduce battery degradation by 40%, adding approximately 3 years to your electric vehicle battery's useful life.", icon: <Battery className="w-5 h-5" /> },
-    { value: 30, prefix: "", suffix: " hours", label: "Time Saved Per Year", how: "Automatic EV charging eliminates daily plugging and unplugging. Save 5 minutes per day, which adds up to 30 hours of time saved each year.", icon: <Clock className="w-5 h-5" /> }
+    { value: 325, prefix: "$", suffix: "", label: "Annual Home EV Charging Savings", how: "Off-peak smart charging reduces costs by 32%, saving ~$325/year for average EV owners.", icon: <DollarSign className="w-5 h-5" /> },
+    { value: 1100, prefix: "", suffix: " days", label: "Extended EV Battery Life", how: "AI charging reduces degradation by 40%, adding ~3 years to battery life.", icon: <Battery className="w-5 h-5" /> },
+    { value: 30, prefix: "", suffix: " hours", label: "Yearly Time Saved", how: "Auto charging saves 5 min/day, equaling 30 hours/year.", icon: <Clock className="w-5 h-5" /> }
   ];
 
   // Additional SEO-focused content sections
   const evChargingBenefits = [
     {
       icon: <Leaf className="w-6 h-6" />,
-      title: "Eco-Friendly EV Charging",
-      description: "Reduce your carbon footprint with smart electric vehicle charging that maximizes renewable energy usage during optimal grid conditions."
+      title: "Sustainable Home EV Charging",
+      description: "Maximize renewable energy use with smart timing for lower carbon footprint in electric vehicle charging."
     },
     {
       icon: <Home className="w-6 h-6" />,
-      title: "Home EV Charging Station Upgrade", 
-      description: "Transform your existing residential charging setup into a smart EV charging station without replacing your current Level 2 charger."
+      title: "Upgrade Your Home EV Charging Station", 
+      description: "Convert existing setup to smart home EV charger without replacement."
     },
     {
       icon: <Settings className="w-6 h-6" />,
-      title: "Customizable Charging Preferences",
-      description: "Set personalized electric car charging schedules, departure times, and energy usage limits through our intuitive mobile app interface."
+      title: "Custom Smart EV Charging Options",
+      description: "Personalize schedules and limits via app for your home electric car charger."
     },
     {
       icon: <TrendingUp className="w-6 h-6" />,
-      title: "Future-Proof EV Technology",
-      description: "Stay ahead with regular software updates that add new smart charging features and improve compatibility with emerging electric vehicle models."
+      title: "Future-Ready Home EV Charger Technology",
+      description: "OTA updates keep your smart EV charger compatible with new electric vehicles."
     }
   ];
 
@@ -230,28 +227,28 @@ const AmpereonLanding = () => {
     {
       category: "Cost Efficiency",
       benefits: [
-        "Reduce electric vehicle charging costs with time-of-use optimization",
-        "Lower electricity bills through smart energy management",
-        "Maximize EV tax credits and rebates with eligible charging equipment",
-        "Increase home value with modern EV charging infrastructure"
+        "Lower home EV charging costs with smart optimization",
+        "Reduce electricity bills through intelligent management",
+        "Qualify for EV charger tax credits",
+        "Boost property value with smart EV infrastructure"
       ]
     },
     {
       category: "Convenience & Automation", 
       benefits: [
-        "Hands-free electric car charging with automatic connection",
-        "Remote monitoring and control via smartphone app",
-        "Scheduled charging that adapts to your daily routine",
-        "Smart notifications for charging status and completion"
+        "Hands-free home electric car charging",
+        "App-based remote control",
+        "Adaptive scheduling to your routine",
+        "Charging status alerts"
       ]
     },
     {
       category: "Performance & Reliability",
       benefits: [
-        "Optimized charging speeds for faster EV battery replenishment",
-        "Weather-resistant outdoor installation for year-round use",
-        "Professional-grade components with 2-year warranty coverage",
-        "24/7 customer support for EV charging troubleshooting"
+        "Optimized Level 2 EV charger speeds",
+        "Durable for outdoor use",
+        "2-year smart EV charger warranty",
+        "24/7 support for home EV charging"
       ]
     }
   ];
@@ -261,11 +258,11 @@ const AmpereonLanding = () => {
     const loadData = async () => {
       setIsLoading(true);
       try {
-        const db = getFirestore();
+        const firestoreDb = getFirestore();
         
         const [ordersSnapshot, donationsSnapshot] = await Promise.all([
-          getDocs(collection(db, "orders")),
-          getDocs(collection(db, "donations"))
+          getDocs(collection(firestoreDb, "orders")),
+          getDocs(collection(firestoreDb, "donations"))
         ]);
 
         let preOrderSum = 0;
@@ -284,11 +281,9 @@ const AmpereonLanding = () => {
           }
         });
 
-        setTotalPreOrders(preOrderSum);
-        setTotalDonations(donationSum);
         setTotalAmount(preOrderSum + donationSum);
 
-        const donorsRef = collection(db, 'donors');
+        const donorsRef = collection(firestoreDb, 'donors');
         let donorsQuery;
 
         switch (donorFilter) {
@@ -355,10 +350,11 @@ const AmpereonLanding = () => {
         {/* Subtle video background */}
         <motion.div className="absolute inset-0 z-0 pointer-events-none opacity-30">
           <video
-            autoPlay muted loop playsInline controls={false} preload="auto"
+            autoPlay muted loop playsInline controls={false} preload="none"
             className="w-full h-full object-cover"
-            title="How Ampereon Works"
+            title="Smart Home EV Charger Demonstration - Automatic Electric Vehicle Charging"
             poster="https://demo.ampereonenergy.com/poster.png"
+            loading="lazy"
           >
             <source src="https://demo.ampereonenergy.com/productDemo.mp4#t=1" type="video/mp4" />
           </video>
@@ -373,28 +369,19 @@ const AmpereonLanding = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          {/* <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="inline-flex items-center gap-2 text-sm font-medium text-[#D4AF37] 
-                        bg-[#D4AF37]/10 px-4 py-2 rounded-full mb-8 border border-[#D4AF37]/20 backdrop-blur-sm"
-          >
-            <Shield className="w-4 h-4" />
-            <span>Trusted by over 500 EV owners</span>
-          </motion.div> */}
-
           <h1 className="font-light leading-tight mb-8 text-white"
               style={{ fontSize: 'clamp(2.5rem,5.5vw,4rem)' }}>
-            The EV Charger of
-            <br />
+            Automatic Smart Home<br />
             <span className="font-bold text-[#D4AF37]">
-              Tomorrow
+              EV Charger
             </span>
           </h1>
 
+          <p className="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed font-light">
+            Automate connections, cut costs 40%, protect battery life. Works with any Level 2 charger. 
+          </p>
           <p className="text-xl text-gray-300 mb-10 max-w-4xl mx-auto leading-relaxed font-light">
-            Experience the future of home EV charging with Ampereon's intelligent electric vehicle charger that automatically connects, optimizes energy costs, and extends battery life. Compatible with all existing Level 2 charging stations.
+            The charge of tomorrow is here, today.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
@@ -405,7 +392,7 @@ const AmpereonLanding = () => {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              Reserve Your Smart EV Charger - $5
+              Reserve Now - $5 (Limited)
             </motion.button>
 
             <a href="/product">
@@ -416,7 +403,7 @@ const AmpereonLanding = () => {
               >
                 <span className="flex items-center gap-2">
                   <ChevronRight className="w-4 h-4" />
-                  Learn About EV Charging Technology
+                  Learn More
                 </span>
               </motion.button>
             </a>
@@ -426,15 +413,15 @@ const AmpereonLanding = () => {
           <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-gray-400">
             <div className="flex items-center gap-2">
               <Check className="w-4 h-4 text-[#D4AF37]" />
-              <span>30-day money back guarantee</span>
+              <span>30-Day Money-Back</span>
             </div>
             <div className="flex items-center gap-2">
               <Check className="w-4 h-4 text-[#D4AF37]" />
-              <span>2-year EV charger warranty</span>
+              <span>2-Year Warranty</span>
             </div>
             <div className="flex items-center gap-2">
               <Check className="w-4 h-4 text-[#D4AF37]" />
-              <span>Professional installation support</span>
+              <span>Free Shipping & Support</span>
             </div>
           </div>
         </motion.div>
@@ -451,724 +438,691 @@ const AmpereonLanding = () => {
       </section>
 
       {/* Features Grid - Enhanced with SEO keywords */}
-      <motion.section 
-        className="py-20 px-6 bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F] relative"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={fadeUpVariants}
-      >
-        <SubtlePattern />
-        
-        <div className="max-w-7xl mx-auto relative z-10">
-          <motion.div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-light mb-6 text-white">
-              Why Choose <span className="font-semibold text-[#D4AF37]">Ampereon</span>
-            </h2>
-            
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light">
-              Transform your electric vehicle charging experience with AI-powered automation and optimization, all while seamlessly integration with the charger you use everyday.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
-            {features.map((feature, i) => (
-              <motion.div
-                key={i}
-                className="group"
-                variants={fadeUpVariants}
-                transition={{ delay: i * 0.1 }}
-                whileInView="visible"
-                viewport={{ once: true }}
-              >
-                <div className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl p-8 h-full border border-[#D4AF37]/20 
-                             hover:border-[#D4AF37]/40 hover:bg-[#2A2A2A]/80 transition-all duration-300">
-                  
-                  <div className="flex items-start gap-6">
-                    <div className="flex items-center justify-center w-12 h-12 mb-4
-                                  bg-gradient-to-br from-[#D4AF37]/20 to-[#B8860B]/20 rounded-lg 
-                                  border border-[#D4AF37]/30 text-[#D4AF37] flex-shrink-0">
-                      {feature.icon}
-                    </div>
-                    
-                    <div>
-                      <h3 className="text-xl font-semibold mb-3 text-white">{feature.title}</h3>
-                      <p className="text-gray-300 leading-relaxed">{feature.desc}</p>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </motion.section>
-
-      {/* New Section: EV Charging Benefits */}
-      <motion.section 
-        className="py-20 px-6 bg-[#0A0A0A]"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={fadeUpVariants}
-      >
-        <div className="max-w-7xl mx-auto">
-          <motion.div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-light mb-6 text-white">
-              Advanced <span className="font-semibold text-[#D4AF37]">EV Charging Benefits</span>
-            </h2>
-            
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light">
-              Discover how smart electric vehicle charging technology enhances your EV ownership experience with sustainable, efficient, and user-friendly features.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {evChargingBenefits.map((benefit, i) => (
-              <motion.div
-                key={i}
-                className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl p-6 border border-[#D4AF37]/20 
-                         hover:border-[#D4AF37]/40 transition-all duration-300"
-                variants={fadeUpVariants}
-                transition={{ delay: i * 0.1 }}
-              >
-                <div className="flex items-center justify-center w-12 h-12 mb-4
-                              bg-gradient-to-br from-[#D4AF37]/20 to-[#B8860B]/20 rounded-lg 
-                              border border-[#D4AF37]/30 text-[#D4AF37]">
-                  {benefit.icon}
-                </div>
-                
-                <h3 className="text-lg font-semibold mb-3 text-white">{benefit.title}</h3>
-                <p className="text-gray-300 text-sm leading-relaxed">{benefit.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </motion.section>
-
-      {/* How It Works - Enhanced with SEO keywords */}
-      <motion.section 
-        className="py-20 px-6 bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F] relative"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={fadeUpVariants}
-      >
-        <SubtlePattern />
-        
-        <div className="max-w-7xl mx-auto relative z-10">
-          <motion.div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-light mb-6 text-white">
-              How Smart EV Charging <span className="font-semibold text-[#D4AF37]">Installation Works</span>
-            </h2>
-            
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light">
-              Simple installation process transforms your existing home EV charger into an intelligent electric vehicle charging station. Get started with automated EV charging in four straightforward steps.
-            </p>
-          </motion.div>
-
-          {/* Simple step-by-step layout with enhanced SEO */}
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            {steps.map((step, index) => {
-              const IconComponent = step.icon;
+      <Suspense fallback={null}>
+        <motion.section 
+          className="py-20 px-6 bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F] relative"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeUpVariants}
+        >
+          <Suspense fallback={null}><SubtlePattern /></Suspense>
+          
+          <div className="max-w-7xl mx-auto relative z-10">
+            <motion.div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-light mb-6 text-white">
+                Why Choose Ampereon's <span className="font-semibold text-[#D4AF37]">Smart Home EV Charger</span>
+              </h2>
               
-              return (
-                <motion.div 
-                  key={index}
-                  className="text-center relative"
-                  initial="hidden"
+              <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light">
+                Revolutionize your home electric vehicle charging with AI automation, cost optimization, and seamless integration for all EV models.
+              </p>
+            </motion.div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+              {features.map((feature, i) => (
+                <motion.div
+                  key={i}
+                  className="group"
+                  variants={fadeUpVariants}
+                  transition={{ delay: i * 0.1 }}
                   whileInView="visible"
                   viewport={{ once: true }}
-                  variants={{
-                    hidden: { opacity: 0, y: 20 },
-                    visible: { 
-                      opacity: 1, 
-                      y: 0,
-                      transition: { delay: index * 0.15, duration: 0.6 }
-                    }
-                  }}
                 >
-                  <div className="relative mb-6">
-                    <div className="w-16 h-16 bg-gradient-to-br from-[#D4AF37] to-[#B8860B] rounded-xl 
-                                  flex items-center justify-center mx-auto mb-4 shadow-lg shadow-[#D4AF37]/20">
-                      <IconComponent className="w-8 h-8 text-white" />
-                    </div>
-                    <div className="text-sm font-medium text-[#D4AF37] mb-2">
-                      STEP {step.num}
+                  <div className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl p-8 h-full border border-[#D4AF37]/20 
+                               hover:border-[#D4AF37]/40 hover:bg-[#2A2A2A]/80 transition-all duration-300">
+                    
+                    <div className="flex items-start gap-6">
+                      <div className="flex items-center justify-center w-12 h-12 mb-4
+                                    bg-gradient-to-br from-[#D4AF37]/20 to-[#B8860B]/20 rounded-lg 
+                                    border border-[#D4AF37]/30 text-[#D4AF37] flex-shrink-0">
+                        {feature.icon}
+                      </div>
+                      
+                      <div>
+                        <h3 className="text-xl font-semibold mb-3 text-white">{feature.title}</h3>
+                        <p className="text-gray-300 leading-relaxed">{feature.desc}</p>
+                      </div>
                     </div>
                   </div>
-                  
-                  <h3 className="text-lg font-semibold mb-2 text-white">
-                    {step.title}
-                  </h3>
-                  <p className="text-gray-300 text-sm leading-relaxed">{step.desc}</p>
                 </motion.div>
-              );
-            })}
+              ))}
+            </div>
           </div>
-        </div>
-      </motion.section>
+        </motion.section>
+      </Suspense>
 
-      {/* New Section: EV Ownership Advantages */}
-      <motion.section 
-        className="py-20 px-6 bg-[#0A0A0A]"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={fadeUpVariants}
-      >
-        <div className="max-w-7xl mx-auto">
-          <motion.div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-light mb-6 text-white">
-              Complete <span className="font-semibold text-[#D4AF37]">Electric Vehicle Charging Solution</span>
-            </h2>
-            
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light">
-              Comprehensive benefits that make Ampereon the ideal choice for modern electric vehicle owners seeking reliable, cost-effective home charging solutions.
-            </p>
-          </motion.div>
+      {/* New Section: EV Charging Benefits */}
+      <Suspense fallback={null}>
+        <motion.section 
+          className="py-20 px-6 bg-[#0A0A0A]"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeUpVariants}
+        >
+          <div className="max-w-7xl mx-auto">
+            <motion.div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-light mb-6 text-white">
+                Benefits of <span className="font-semibold text-[#D4AF37]">Smart Home EV Charging</span>
+              </h2>
+              
+              <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light">
+                Explore how Ampereon's intelligent home EV charger enhances sustainability, efficiency, and convenience for electric vehicle owners.
+              </p>
+            </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {evOwnershipAdvantages.map((category, i) => (
-              <motion.div
-                key={i}
-                className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl p-8 border border-[#D4AF37]/20 
-                         hover:border-[#D4AF37]/40 transition-all duration-300"
-                variants={fadeUpVariants}
-                transition={{ delay: i * 0.1 }}
-              >
-                <h3 className="text-xl font-semibold mb-6 text-[#D4AF37]">{category.category}</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {evChargingBenefits.map((benefit, i) => (
+                <motion.div
+                  key={i}
+                  className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl p-6 border border-[#D4AF37]/20 
+                           hover:border-[#D4AF37]/40 transition-all duration-300"
+                  variants={fadeUpVariants}
+                  transition={{ delay: i * 0.1 }}
+                >
+                  <div className="flex items-center justify-center w-12 h-12 mb-4
+                                bg-gradient-to-br from-[#D4AF37]/20 to-[#B8860B]/20 rounded-lg 
+                                border border-[#D4AF37]/30 text-[#D4AF37]">
+                    {benefit.icon}
+                  </div>
+                  
+                  <h3 className="text-lg font-semibold mb-3 text-white">{benefit.title}</h3>
+                  <p className="text-gray-300 text-sm leading-relaxed">{benefit.description}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </motion.section>
+      </Suspense>
+
+      {/* How It Works - Enhanced with SEO keywords */}
+      <Suspense fallback={null}>
+        <motion.section 
+          className="py-20 px-6 bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F] relative"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeUpVariants}
+        >
+          <Suspense fallback={null}><SubtlePattern /></Suspense>
+          
+          <div className="max-w-7xl mx-auto relative z-10">
+            <motion.div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-light mb-6 text-white">
+                How to Install and Use Your <span className="font-semibold text-[#D4AF37]">Smart Home EV Charger</span>
+              </h2>
+              
+              <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light">
+                Transform your home EV charging station into a smart system with easy installation. Start automated electric vehicle charging in four simple steps.
+              </p>
+            </motion.div>
+
+            {/* Step selector grid */}
+            <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+              {/* Connecting line */}
+              <div className="hidden lg:block absolute top-[40px] left-[calc(50%-2px)] w-[calc(100%-4rem)] h-0.5 bg-[#D4AF37]/20 transform -translate-x-1/2" style={{top: '40px'}} />
+
+              {steps.map((step, index) => {
+                const IconComponent = step.icon;
                 
-                <ul className="space-y-3">
-                  {category.benefits.map((benefit, j) => (
-                    <li key={j} className="flex items-start gap-3">
-                      <Check className="w-4 h-4 text-[#D4AF37] mt-1 flex-shrink-0" />
-                      <span className="text-gray-300 text-sm leading-relaxed">{benefit}</span>
+                return (
+                  <motion.div 
+                    key={index}
+                    className={`cursor-pointer relative z-10 text-center bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl p-6 border ${
+                      activeStep === index ? 'border-[#D4AF37]/40 shadow-lg shadow-[#D4AF37]/20' : 'border-[#D4AF37]/20'
+                    } hover:border-[#D4AF37]/40 hover:shadow-md transition-all duration-300`}
+                    onClick={() => setActiveStep(index)}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    variants={{
+                      hidden: { opacity: 0, y: 20 },
+                      visible: { 
+                        opacity: 1, 
+                        y: 0,
+                        transition: { delay: index * 0.15, duration: 0.6 }
+                      }
+                    }}
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    <div className="relative mb-6">
+                      <div className={`w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg transition-colors duration-300 ${
+                        activeStep === index ? 'bg-gradient-to-br from-[#D4AF37] to-[#B8860B]' : 'bg-[#2A2A2A]'
+                      }`}>
+                        <IconComponent className="w-8 h-8 text-white" />
+                      </div>
+                      <div className="text-sm font-medium text-[#D4AF37] mb-2">
+                        STEP {step.num}
+                      </div>
+                    </div>
+                    
+                    <h3 className="text-lg font-semibold mb-2 text-white">
+                      {step.title}
+                    </h3>
+                    <p className="text-gray-300 text-sm leading-relaxed">{step.desc}</p>
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            {/* Detailed step content */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeStep}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4 }}
+                className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl p-8 border border-[#D4AF37]/20"
+              >
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-8">
+                  <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#D4AF37]/20 to-[#B8860B]/20 rounded-lg border border-[#D4AF37]/30 text-[#D4AF37] flex-shrink-0">
+                    {React.createElement(stepContent[activeStep].icon, { className: "w-8 h-8" })}
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-semibold text-white mb-2">{stepContent[activeStep].title}</h3>
+                    <p className="text-gray-300 leading-relaxed">{stepContent[activeStep].description}</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 mb-8">
+                  {stepContent[activeStep].stats.map((stat, i) => (
+                    <div key={i} className="bg-[#D4AF37]/10 rounded-lg p-4 text-center border border-[#D4AF37]/20">
+                      <div className="text-2xl font-bold text-[#D4AF37]">{stat.value}</div>
+                      <div className="text-sm text-gray-300">{stat.label}</div>
+                    </div>
+                  ))}
+                </div>
+
+                <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {stepContent[activeStep].features.map((feature, i) => (
+                    <li key={i} className="flex items-center gap-3 text-gray-300">
+                      <Check className="w-5 h-5 text-[#D4AF37] flex-shrink-0" />
+                      <span className="text-sm">{feature}</span>
                     </li>
                   ))}
                 </ul>
               </motion.div>
-            ))}
+            </AnimatePresence>
           </div>
-        </div>
-      </motion.section>
+        </motion.section>
+      </Suspense>
 
-      {/* Benefits Section - Enhanced with SEO keywords */}
-      <motion.section 
-        className="py-20 px-6 bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F] relative"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={fadeUpVariants}
-      >
-        <SubtlePattern />
-        
-        <div className="max-w-7xl mx-auto relative z-10">
-          <motion.div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-light mb-6 text-white">
-              Proven <span className="font-semibold text-[#D4AF37]">EV Charging Savings</span>
-            </h2>
-            
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light">
-              Real financial benefits and performance improvements based on actual smart EV charging data from electric vehicle owners using Ampereon technology.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
-            {metrics.map((metric, i) => {
-              const { count, ref } = useCounter(metric.value, 2000);
+      {/* New Section: EV Ownership Advantages */}
+      <Suspense fallback={null}>
+        <motion.section 
+          className="py-20 px-6 bg-[#0A0A0A]"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeUpVariants}
+        >
+          <div className="max-w-7xl mx-auto">
+            <motion.div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-light mb-6 text-white">
+                Advantages of <span className="font-semibold text-[#D4AF37]">Smart Home Electric Vehicle Charging</span>
+              </h2>
               
-              return (
+              <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light">
+                Ampereon delivers comprehensive benefits for EV owners seeking efficient, affordable home charging solutions.
+              </p>
+            </motion.div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {evOwnershipAdvantages.map((category, i) => (
                 <motion.div
-                  key={metric.label} // Use a unique identifier
-                  ref={ref}
-                  className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl p-8 text-center 
-                          border border-[#D4AF37]/20 hover:border-[#D4AF37]/40 transition-all duration-300
-                          h-fit" // Added h-fit to make height fit content
+                  key={i}
+                  className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl p-8 border border-[#D4AF37]/20 
+                           hover:border-[#D4AF37]/40 transition-all duration-300"
                   variants={fadeUpVariants}
                   transition={{ delay: i * 0.1 }}
                 >
-                  <div className="flex items-center justify-center mb-4">
-                    <div className="text-[#D4AF37]">
-                      {metric.icon}
-                    </div>
-                  </div>
+                  <h3 className="text-xl font-semibold mb-6 text-[#D4AF37]">{category.category}</h3>
                   
-                  <div className="text-3xl font-semibold text-white mb-2">
-                    {metric.prefix}{count}{metric.suffix}
-                  </div>
-                  
-                  <h3 className="text-lg font-medium mb-4 text-white">{metric.label}</h3>
-                  
-                  <motion.button
-                    onClick={() => setActiveAccordion(activeAccordion === i ? null : i)}
-                    className="flex items-center gap-2 text-[#D4AF37] hover:text-white transition-colors duration-200 
-                            mx-auto text-sm font-medium"
-                    whileHover={{ scale: 1.02 }}
-                  >
-                    <span>Learn more</span>
-                    <motion.div
-                      animate={{ rotate: activeAccordion === i ? 180 : 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <ChevronDown className="w-4 h-4" />
-                    </motion.div>
-                  </motion.button>
-                  
-                  <AnimatePresence>
-                    {activeAccordion === i && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="overflow-hidden"
-                      >
-                        <div className="h-px bg-[#D4AF37]/20 my-4" />
-                        <p className="text-gray-300 text-sm leading-relaxed">{metric.how}</p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                  <ul className="space-y-3">
+                    {category.benefits.map((benefit, j) => (
+                      <li key={j} className="flex items-start gap-3">
+                        <Check className="w-4 h-4 text-[#D4AF37] mt-1 flex-shrink-0" />
+                        <span className="text-gray-300 text-sm leading-relaxed">{benefit}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </motion.div>
-              );
-            })}
+              ))}
+            </div>
           </div>
-        </div>
-      </motion.section>
+        </motion.section>
+      </Suspense>
+
+      {/* Benefits Section - Enhanced with SEO keywords */}
+      <Suspense fallback={null}>
+        <motion.section 
+          className="py-20 px-6 bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F] relative"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeUpVariants}
+        >
+          <Suspense fallback={null}><SubtlePattern /></Suspense>
+          
+          <div className="max-w-7xl mx-auto relative z-10">
+            <motion.div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-light mb-6 text-white">
+                Real Savings with <span className="font-semibold text-[#D4AF37]">Smart Home EV Chargers</span>
+              </h2>
+              
+              <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light">
+                Verified benefits from Ampereon users: lower costs, longer battery life, and time savings for home electric vehicle charging.
+              </p>
+            </motion.div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+              {metrics.map((metric, i) => {
+                const { count, ref } = useCounter(metric.value, 2000);
+                
+                return (
+                  <motion.div
+                    key={metric.label}
+                    ref={ref}
+                    className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl p-8 text-center 
+                            border border-[#D4AF37]/20 hover:border-[#D4AF37]/40 transition-all duration-300
+                            h-fit"
+                    variants={fadeUpVariants}
+                    transition={{ delay: i * 0.1 }}
+                  >
+                    <div className="flex items-center justify-center mb-4">
+                      <div className="text-[#D4AF37]">
+                        {metric.icon}
+                      </div>
+                    </div>
+                    
+                    <div className="text-3xl font-semibold text-white mb-2">
+                      {metric.prefix}{count}{metric.suffix}
+                    </div>
+                    
+                    <h3 className="text-lg font-medium mb-4 text-white">{metric.label}</h3>
+                    
+                    <motion.button
+                      onClick={() => setActiveAccordion(activeAccordion === i ? null : i)}
+                      className="flex items-center gap-2 text-[#D4AF37] hover:text-white transition-colors duration-200 
+                              mx-auto text-sm font-medium"
+                      whileHover={{ scale: 1.02 }}
+                    >
+                      <span>Learn more</span>
+                      <motion.div
+                        animate={{ rotate: activeAccordion === i ? 180 : 0 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <ChevronDown className="w-4 h-4" />
+                      </motion.div>
+                    </motion.button>
+                    
+                    <AnimatePresence>
+                      {activeAccordion === i && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="overflow-hidden"
+                        >
+                          <div className="h-px bg-[#D4AF37]/20 my-4" />
+                          <p className="text-gray-300 text-sm leading-relaxed">{metric.how}</p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+        </motion.section>
+      </Suspense>
 
       {/* New Section: EV Charging Technology Comparison */}
-      <motion.section 
-        className="py-20 px-6 bg-[#0A0A0A]"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={fadeUpVariants}
-      >
-        <div className="max-w-7xl mx-auto">
-          <motion.div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-light mb-6 text-white">
-              Ampereon vs <span className="font-semibold text-[#D4AF37]">Traditional EV Chargers</span>
-            </h2>
-            
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light">
-              See how smart EV charging technology compares to standard electric vehicle charging stations and why upgrading makes financial sense.
-            </p>
-          </motion.div>
-
-          <div className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl border border-[#D4AF37]/20 overflow-hidden">
-            <div className="grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-[#D4AF37]/20">
+      <Suspense fallback={null}>
+        <motion.section 
+          className="py-20 px-6 bg-[#0A0A0A]"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeUpVariants}
+        >
+          <div className="max-w-7xl mx-auto">
+            <motion.div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-light mb-6 text-white">
+                Ampereon Smart Home EV Charger vs <span className="font-semibold text-[#D4AF37]">Traditional Chargers</span>
+              </h2>
               
-              {/* Traditional Charger */}
-              <div className="p-8 text-center">
-                <div className="w-12 h-12 bg-gray-600/30 rounded-lg flex items-center justify-center mx-auto mb-4">
-                  <Zap className="w-6 h-6 text-gray-400" />
-                </div>
-                <h3 className="text-xl font-semibold mb-4 text-gray-300">Traditional EV Charger</h3>
-                <ul className="space-y-3 text-sm text-gray-400">
-                  <li>Manual plugging required daily</li>
-                  <li>Charges at peak electricity rates</li>
-                  <li>No battery optimization</li>
-                  <li>Basic charging with no intelligence</li>
-                  <li>Higher electricity costs</li>
-                  <li>No usage analytics</li>
-                </ul>
-              </div>
+              <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light">
+                Compare smart home EV chargers to standard electric vehicle charging stations and see the value in upgrading.
+              </p>
+            </motion.div>
 
-              {/* Ampereon Smart Charger */}
-              <div className="p-8 text-center bg-[#D4AF37]/10 relative">
-                <div className="absolute top-4 right-4">
-                  <Award className="w-6 h-6 text-[#D4AF37]" />
+            <div className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl border border-[#D4AF37]/20 overflow-hidden">
+              <div className="grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-[#D4AF37]/20">
+                
+                {/* Traditional Charger */}
+                <div className="p-8 text-center">
+                  <div className="w-12 h-12 bg-gray-600/30 rounded-lg flex items-center justify-center mx-auto mb-4">
+                    <Zap className="w-6 h-6 text-gray-400" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-4 text-gray-300">Traditional Home EV Charger</h3>
+                  <ul className="space-y-3 text-sm text-gray-400">
+                    <li>Requires manual plugging daily</li>
+                    <li>Charges during peak rates</li>
+                    <li>No battery optimization</li>
+                    <li>Basic functionality only</li>
+                    <li>Higher ongoing costs</li>
+                    <li>No analytics</li>
+                  </ul>
                 </div>
-                <div className="w-12 h-12 bg-gradient-to-br from-[#D4AF37]/20 to-[#B8860B]/20 rounded-lg 
-                              flex items-center justify-center mx-auto mb-4 border border-[#D4AF37]/30">
-                  <Zap className="w-6 h-6 text-[#D4AF37]" />
-                </div>
-                <h3 className="text-xl font-semibold mb-4 text-[#D4AF37]">Ampereon Smart EV Charger</h3>
-                <ul className="space-y-3 text-sm text-white">
-                  <li className="flex items-center gap-2">
-                    <Check className="w-3 h-3 text-[#D4AF37]" />
-                    Automatic charging connection
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-3 h-3 text-[#D4AF37]" />
-                    Off-peak rate optimization
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-3 h-3 text-[#D4AF37]" />
-                    AI-powered battery management
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-3 h-3 text-[#D4AF37]" />
-                    Smart scheduling and automation
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-3 h-3 text-[#D4AF37]" />
-                    32% average cost savings
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-3 h-3 text-[#D4AF37]" />
-                    Comprehensive usage analytics
-                  </li>
-                </ul>
-              </div>
 
-              {/* Premium EV Chargers */}
-              <div className="p-8 text-center">
-                <div className="w-12 h-12 bg-blue-600/30 rounded-lg flex items-center justify-center mx-auto mb-4">
-                  <Zap className="w-6 h-6 text-blue-400" />
+                {/* Ampereon Smart Charger */}
+                <div className="p-8 text-center bg-[#D4AF37]/10 relative">
+                  <div className="absolute top-4 right-4">
+                    <Award className="w-6 h-6 text-[#D4AF37]" />
+                  </div>
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#D4AF37]/20 to-[#B8860B]/20 rounded-lg 
+                                flex items-center justify-center mx-auto mb-4 border border-[#D4AF37]/30">
+                    <Zap className="w-6 h-6 text-[#D4AF37]" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-4 text-[#D4AF37]">Ampereon Smart Home EV Charger</h3>
+                  <ul className="space-y-3 text-sm text-white">
+                    <li className="flex items-center gap-2">
+                      <Check className="w-3 h-3 text-[#D4AF37]" />
+                      Automatic connection
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-3 h-3 text-[#D4AF37]" />
+                      Off-peak optimization
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-3 h-3 text-[#D4AF37]" />
+                      AI battery protection
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-3 h-3 text-[#D4AF37]" />
+                      Intelligent scheduling
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-3 h-3 text-[#D4AF37]" />
+                      32% cost reduction
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-3 h-3 text-[#D4AF37]" />
+                      Full analytics dashboard
+                    </li>
+                  </ul>
                 </div>
-                <h3 className="text-xl font-semibold mb-4 text-gray-300">Premium EV Chargers</h3>
-                <ul className="space-y-3 text-sm text-gray-400">
-                  <li>WiFi connectivity available</li>
-                  <li>Some smart features included</li>
-                  <li>Higher upfront cost ($800-2000)</li>
-                  <li>Requires electrical installation</li>
-                  <li>Limited automation capabilities</li>
-                  <li>Basic mobile app control</li>
-                </ul>
+
+                {/* Premium EV Chargers */}
+                <div className="p-8 text-center">
+                  <div className="w-12 h-12 bg-blue-600/30 rounded-lg flex items-center justify-center mx-auto mb-4">
+                    <Zap className="w-6 h-6 text-blue-400" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-4 text-gray-300">Premium Home EV Chargers</h3>
+                  <ul className="space-y-3 text-sm text-gray-400">
+                    <li>Basic WiFi connectivity</li>
+                    <li>Limited smart features</li>
+                    <li>High cost ($800-2000)</li>
+                    <li>Needs pro installation</li>
+                    <li>Partial automation</li>
+                    <li>Basic app controls</li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </motion.section>
-
-      {/* New Section: EV Charging FAQs */}
-      {/* <motion.section 
-        className="py-20 px-6 bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F] relative"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={fadeUpVariants}
-      >
-        <SubtlePattern />
-        
-        <div className="max-w-4xl mx-auto relative z-10">
-          <motion.div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-light mb-6 text-white">
-              EV Charging <span className="font-semibold text-[#D4AF37]">Frequently Asked Questions</span>
-            </h2>
-            
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light">
-              Get answers to common questions about smart electric vehicle charging, installation requirements, and compatibility with existing EV chargers.
-            </p>
-          </motion.div>
-
-          <div className="space-y-4">
-            {[
-              {
-                question: "Is Ampereon compatible with my existing EV charger?",
-                answer: "Yes! Ampereon works with all standard Level 2 home EV charging stations, including popular brands like ChargePoint, ClipperCreek, JuiceBox, and Tesla Wall Connector. Our smart charging system mounts directly onto your existing charger without requiring electrical modifications."
-              },
-              {
-                question: "How much can I save on my electric vehicle charging costs?",
-                answer: "Most EV owners save 25-40% on their electricity costs with Ampereon's smart charging optimization. By automatically charging during off-peak hours when rates are lowest, the average household saves approximately $325 annually on their electric vehicle charging expenses."
-              },
-              {
-                question: "Does smart EV charging work with all electric vehicle models?",
-                answer: "Ampereon is compatible with all electric vehicles that use standard J1772 charging ports, including Tesla vehicles (with adapter), Nissan Leaf, Chevy Bolt, BMW i3, Audi e-tron, Ford Mustang Mach-E, and virtually every other EV model sold in North America."
-              },
-              {
-                question: "How long does EV charger installation take?",
-                answer: "Installation typically takes 30-45 minutes and requires no electrical work. Ampereon mounts directly to your existing charging station using the included hardware. Our step-by-step installation guide makes setup simple for any homeowner."
-              },
-              {
-                question: "Will smart charging affect my EV battery life?",
-                answer: "Smart charging actually extends EV battery life by optimizing charging patterns and preventing overcharging. Our AI algorithms reduce battery degradation by up to 40%, potentially adding 3+ years to your electric vehicle battery's useful lifespan."
-              },
-              {
-                question: "What happens if my internet connection goes down?",
-                answer: "Ampereon includes offline backup functionality. If WiFi connectivity is lost, the system continues charging your electric vehicle using the last programmed schedule, ensuring your EV is always ready when you need it."
-              }
-            ].map((faq, index) => {
-              const isActive = activeAccordion === `faq-${index}`;
-              
-              return (
-                <motion.div
-                  key={index}
-                  className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl border border-[#D4AF37]/20 
-                           hover:border-[#D4AF37]/40 transition-all duration-300"
-                  variants={fadeUpVariants}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <motion.button
-                    className="w-full p-6 text-left flex items-center justify-between"
-                    onClick={() => setActiveAccordion(isActive ? null : `faq-${index}`)}
-                    whileHover={{ scale: 1.01 }}
-                  >
-                    <h3 className="text-lg font-semibold text-white pr-4">{faq.question}</h3>
-                    <motion.div
-                      animate={{ rotate: isActive ? 180 : 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <ChevronDown className="w-5 h-5 text-[#D4AF37] flex-shrink-0" />
-                    </motion.div>
-                  </motion.button>
-                  
-                  <AnimatePresence>
-                    {isActive && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="overflow-hidden"
-                      >
-                        <div className="px-6 pb-6">
-                          <div className="h-px bg-[#D4AF37]/20 mb-4" />
-                          <p className="text-gray-300 leading-relaxed">{faq.answer}</p>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      </motion.section> */}
+        </motion.section>
+      </Suspense>
 
       {/* Social Proof - Enhanced with SEO keywords */}
-     <motion.section 
-        className="py-20 px-6 bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F]"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={fadeUpVariants}
-      >
-        <div className="max-w-7xl mx-auto">
-          <motion.div className="text-center mb-8">
-            <h2 className="text-4xl md:text-5xl font-light mb-4 text-white">
-              Our <span className="font-semibold text-[#D4AF37]">EV Charging Community</span>
-            </h2>
-            
-            <div className="flex items-center justify-center gap-4 mb-2">
-              <div className="text-2xl font-semibold text-[#D4AF37]">
-                ${Math.floor(totalAmount).toLocaleString()}
+      <Suspense fallback={null}>
+       <motion.section 
+          className="py-20 px-6 bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F]"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeUpVariants}
+        >
+          <div className="max-w-7xl mx-auto">
+            <motion.div className="text-center mb-8">
+              <h2 className="text-4xl md:text-5xl font-light mb-4 text-white">
+                Our <span className="font-semibold text-[#D4AF37]">Smart EV Charging Community</span>
+              </h2>
+              
+              <div className="flex items-center justify-center gap-4 mb-2">
+                <div className="text-2xl font-semibold text-[#D4AF37]">
+                  ${Math.floor(totalAmount).toLocaleString()}
+                </div>
+                <span className="text-gray-300">raised by EV owners for smart home charging innovation</span>
               </div>
-              <span className="text-gray-300">raised by electric vehicle owners supporting smart charging technology</span>
-            </div>
-          </motion.div>
+            </motion.div>
 
-          {/* Filter buttons */}
-          <motion.div 
-            className="flex justify-center mb-12"
-            variants={fadeUpVariants}
-            transition={{ delay: 0.2 }}
-          >
-            <div className="bg-[#1A1A1A]/80 backdrop-blur-xl rounded-3xl p-3 border border-[#D4AF37]/20 shadow-xl">
-              <div className="flex gap-3">
-                {[
-                  { label: 'Recent EV Supporters', value: 'recent' },
-                  { label: 'Top Month', value: 'top-month' },
-                  { label: 'All Time Leaders', value: 'top-all' },
-                ].map(({ label, value }) => (
-                  <motion.button
-                    key={value}
-                    onClick={() => setDonorFilter(value)}
-                    className={`px-8 py-4 rounded-2xl text-sm font-semibold transition-all duration-300 ${
-                      donorFilter === value
-                        ? 'bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white shadow-lg shadow-[#D4AF37]/25'
-                        : 'text-gray-400 hover:bg-[#D4AF37]/10 hover:text-[#D4AF37]'
-                    }`}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {label}
-                  </motion.button>
-                ))}
+            {/* Filter buttons */}
+            <motion.div 
+              className="flex justify-center mb-12"
+              variants={fadeUpVariants}
+              transition={{ delay: 0.2 }}
+            >
+              <div className="bg-[#1A1A1A]/80 backdrop-blur-xl rounded-3xl p-3 border border-[#D4AF37]/20 shadow-xl">
+                <div className="flex gap-3">
+                  {[
+                    { label: 'Recent Supporters', value: 'recent' },
+                    { label: 'Top Month', value: 'top-month' },
+                    { label: 'All Time', value: 'top-all' },
+                  ].map(({ label, value }) => (
+                    <motion.button
+                      key={value}
+                      onClick={() => setDonorFilter(value)}
+                      className={`px-8 py-4 rounded-2xl text-sm font-semibold transition-all duration-300 ${
+                        donorFilter === value
+                          ? 'bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white shadow-lg shadow-[#D4AF37]/25'
+                          : 'text-gray-400 hover:bg-[#D4AF37]/10 hover:text-[#D4AF37]'
+                      }`}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      {label}
+                    </motion.button>
+                  ))}
+                </div>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
 
-          {/* Supporter list - clean and professional */}
-          <motion.div 
-            className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl p-8 border border-[#D4AF37]/20"
-            variants={fadeUpVariants}
-          >
-            <div className="flex items-center gap-4 mb-8">
-              <div className="w-10 h-10 bg-gradient-to-br from-[#D4AF37]/20 to-[#B8860B]/20 rounded-lg 
-                            flex items-center justify-center border border-[#D4AF37]/30">
-                <Users className="w-5 h-5 text-[#D4AF37]" />
+            {/* Supporter list - clean and professional */}
+            <motion.div 
+              className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl p-8 border border-[#D4AF37]/20"
+              variants={fadeUpVariants}
+            >
+              <div className="flex items-center gap-4 mb-8">
+                <div className="w-10 h-10 bg-gradient-to-br from-[#D4AF37]/20 to-[#B8860B]/20 rounded-lg 
+                              flex items-center justify-center border border-[#D4AF37]/30">
+                  <Users className="w-5 h-5 text-[#D4AF37]" />
+                </div>
+                <h3 className="text-xl font-semibold text-white">EV Owners Backing Smart Home Charging</h3>
               </div>
-              <h3 className="text-xl font-semibold text-white">EV Owners Supporting Smart Charging Innovation</h3>
-            </div>
 
-            {isLoading ? (
-              <div className="flex items-center justify-center py-12">
-                <motion.div
-                  className="w-8 h-8 border-2 border-[#D4AF37] rounded-full border-t-transparent mr-4"
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                />
-                <p className="text-gray-400 text-lg">Loading our amazing EV community supporters...</p>
-              </div>
-            ) : donorsWithAmounts.length === 0 ? (
-              <div className="text-center py-12">
-                <motion.div
-                  animate={{ scale: [1, 1.1, 1] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  <Heart className="w-16 h-16 text-[#D4AF37]/50 mx-auto mb-6" />
-                </motion.div>
-                <h4 className="text-xl font-medium text-white mb-3">Be the First EV Owner to Support Smart Charging</h4>
-                <p className="text-gray-400 text-lg max-w-md mx-auto">
-                  Join our mission to revolutionize electric vehicle charging technology. Be among the first supporters of this groundbreaking EV charging innovation.
-                </p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {donorsWithAmounts.slice(0, 8).map((donor, index) => (
+              {isLoading ? (
+                <div className="flex items-center justify-center py-12">
                   <motion.div
-                    key={donor.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.05 }}
-                    className="bg-[#1A1A1A]/80 rounded-lg p-4 border border-[#D4AF37]/10 
-                            hover:border-[#D4AF37]/30 transition-all duration-300"
+                    className="w-8 h-8 border-2 border-[#D4AF37] rounded-full border-t-transparent mr-4"
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  />
+                  <p className="text-gray-400 text-lg">Loading community supporters...</p>
+                </div>
+              ) : donorsWithAmounts.length === 0 ? (
+                <div className="text-center py-12">
+                  <motion.div
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-gradient-to-br from-[#D4AF37]/30 to-[#B8860B]/30 
-                                    rounded-full flex items-center justify-center flex-shrink-0 
-                                    border border-[#D4AF37]/20">
-                        <span className="text-[#D4AF37] font-medium text-sm">
-                          {donor.anonymous ? '?' : (donor.firstName?.[0] || '?')}
-                        </span>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-white truncate text-sm">
-                          {donor.anonymous ? 'Anonymous EV Owner' : `${donor.firstName || ''} ${donor.lastName?.[0] || ''}.`}
-                        </p>
-                        <p className="text-[#D4AF37] font-semibold text-sm">
-                          ${donor.amount?.toFixed(2) || '0.00'}
-                        </p>
-                        {donor.dedicateTo && (
-                          <p className="text-gray-400 italic text-xs truncate mt-1">
-                            In honor of: {donor.dedicateTo}
-                          </p>
-                        )}
-                        <p className="text-gray-500 text-xs mt-1">
-                          {donor.createdAt?.toDate?.()?.toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric',
-                          }) || 'Recently'}
-                        </p>
-                      </div>
-                    </div>
+                    <Heart className="w-16 h-16 text-[#D4AF37]/50 mx-auto mb-6" />
                   </motion.div>
-                ))}
-              </div>
-            )}
+                  <h4 className="text-xl font-medium text-white mb-3">Be First to Support Smart EV Charging</h4>
+                  <p className="text-gray-400 text-lg max-w-md mx-auto">
+                    Join the revolution in home EV charging technology as an early supporter.
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {donorsWithAmounts.slice(0, 8).map((donor, index) => (
+                    <motion.div
+                      key={donor.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: index * 0.05 }}
+                      className="bg-[#1A1A1A]/80 rounded-lg p-4 border border-[#D4AF37]/10 
+                              hover:border-[#D4AF37]/30 transition-all duration-300"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-gradient-to-br from-[#D4AF37]/30 to-[#B8860B]/30 
+                                      rounded-full flex items-center justify-center flex-shrink-0 
+                                      border border-[#D4AF37]/20">
+                          <span className="text-[#D4AF37] font-medium text-sm">
+                            {donor.anonymous ? '?' : (donor.firstName?.[0] || '?')}
+                          </span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-white truncate text-sm">
+                            {donor.anonymous ? 'Anonymous Supporter' : `${donor.firstName || ''} ${donor.lastName?.[0] || ''}.`}
+                          </p>
+                          <p className="text-[#D4AF37] font-semibold text-sm">
+                            ${donor.amount?.toFixed(2) || '0.00'}
+                          </p>
+                          {donor.dedicateTo && (
+                            <p className="text-gray-400 italic text-xs truncate mt-1">
+                              Dedicated to: {donor.dedicateTo}
+                            </p>
+                          )}
+                          <p className="text-gray-500 text-xs mt-1">
+                            {donor.createdAt?.toDate?.()?.toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric',
+                            }) || 'Recent'}
+                          </p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
 
-            {/* Show more supporters indicator */}
-            {donorsWithAmounts.length > 8 && (
+              {/* Show more supporters indicator */}
+              {donorsWithAmounts.length > 8 && (
+                <div className="text-center mt-8">
+                  <p className="text-gray-400 font-light text-lg">
+                    Plus <span className="font-bold text-[#D4AF37]">{donorsWithAmounts.length - 8} more</span> supporters of smart home EV charging!
+                  </p>
+                </div>
+              )}
+
+              {/* CTA Button to /support-us */}
               <div className="text-center mt-8">
-                <p className="text-gray-400 font-light text-lg">
-                  And <span className="font-bold text-[#D4AF37]">{donorsWithAmounts.length - 8} more</span> electric vehicle owners supporting smart charging!
-                </p>
+                <a href="/support-us">
+                  <motion.button
+                    className="px-8 py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white font-semibold rounded-lg 
+                              hover:shadow-lg hover:shadow-[#D4AF37]/30 transition-all duration-300"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    Support Smart EV Charging Innovation
+                  </motion.button>
+                </a>
               </div>
-            )}
+            </motion.div>
+          </div>
+        </motion.section>
+      </Suspense>
 
-            {/* CTA Button to /support-us */}
-            <div className="text-center mt-8">
-              <a href="/support-us">
-                <motion.button
+      {/* CTA Section - Enhanced with SEO keywords */}
+      <Suspense fallback={null}>
+        <motion.section 
+          className="py-20 px-6 bg-[#0A0A0A] relative"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeUpVariants}
+        >
+          <Suspense fallback={null}><SubtlePattern /></Suspense>
+          
+          <div className="max-w-4xl mx-auto text-center relative z-10">
+            <motion.h2 
+              className="text-4xl md:text-5xl font-light mb-6 leading-tight text-white"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2, duration: 0.6 }}
+            >
+              Upgrade to the Best <span className="font-semibold text-[#D4AF37]">Smart Home EV Charger Today</span>
+            </motion.h2>
+            
+            <motion.p 
+              className="text-xl mb-10 text-gray-300 max-w-3xl mx-auto font-light"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3, duration: 0.6 }}
+            >
+              Join EV owners transforming their home charging with Ampereon's automatic smart EV charger. Secure yours now and save on energy costs.
+            </motion.p>
+            
+            <motion.div 
+              className="flex flex-col sm:flex-row gap-6 justify-center items-center"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+            >
+              <a href="/reserve">
+                <motion.button 
                   className="px-8 py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white font-semibold rounded-lg 
-                            hover:shadow-lg hover:shadow-[#D4AF37]/30 transition-all duration-300"
+                          hover:shadow-lg hover:shadow-[#D4AF37]/30 transition-all duration-300"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  Join Our EV Charging Community
+                  Reserve Now - $5 Deposit (Limited Spots)
                 </motion.button>
               </a>
-            </div>
-          </motion.div>
-        </div>
-      </motion.section>
-
-      {/* CTA Section - Enhanced with SEO keywords */}
-      <motion.section 
-        className="py-20 px-6 bg-[#0A0A0A] relative"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={fadeUpVariants}
-      >
-        <SubtlePattern />
-        
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <motion.h2 
-            className="text-4xl md:text-5xl font-light mb-6 leading-tight text-white"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-          >
-            Ready to Upgrade Your{' '}
-            <span className="font-semibold text-[#D4AF37]">Electric Vehicle Charging Experience?</span>
-          </motion.h2>
-          
-          <motion.p 
-            className="text-xl mb-10 text-gray-300 max-w-3xl mx-auto font-light"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-          >
-            Join hundreds of EV owners who've made the switch to intelligent, automated electric vehicle charging. 
-            Reserve your Ampereon smart EV charger system today and start saving on energy costs immediately.
-          </motion.p>
-          
-          <motion.div 
-            className="flex flex-col sm:flex-row gap-6 justify-center items-center"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-          >
-            <a href="/reserve">
-              <motion.button 
-                className="px-8 py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white font-semibold rounded-lg 
-                        hover:shadow-lg hover:shadow-[#D4AF37]/30 transition-all duration-300"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                Reserve Your Ampereon - $5
-              </motion.button>
-            </a>
+              
+              <a href="/order">
+                <motion.button 
+                  className="px-8 py-4 bg-white/5 border border-[#D4AF37]/30 text-white font-semibold rounded-lg 
+                          hover:bg-[#D4AF37]/10 hover:border-[#D4AF37]/50 transition-all duration-300 backdrop-blur-sm"
+                  whileHover={{ scale: 1.02 }}
+                >
+                  Order Smart EV Charger - $99
+                </motion.button>
+              </a>
+            </motion.div>
             
-            <a href="/order">
-              <motion.button 
-                className="px-8 py-4 bg-white/5 border border-[#D4AF37]/30 text-white font-semibold rounded-lg 
-                        hover:bg-[#D4AF37]/10 hover:border-[#D4AF37]/50 transition-all duration-300 backdrop-blur-sm"
-                whileHover={{ scale: 1.02 }}
-              >
-                Order Ampereon Now - $99
-              </motion.button>
-            </a>
-          </motion.div>
-          
-          <motion.div 
-            className="mt-10 flex flex-wrap items-center justify-center gap-6 text-sm text-gray-400"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.6, duration: 0.6 }}
-          >
-            <div className="flex items-center gap-2">
-              <Check className="w-4 h-4 text-[#D4AF37]" />
-              <span>30-day money back guarantee</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Check className="w-4 h-4 text-[#D4AF37]" />
-              <span>Free shipping on all EV chargers</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Check className="w-4 h-4 text-[#D4AF37]" />
-              <span>Professional installation support</span>
-            </div>
-          </motion.div>
-        </div>
-      </motion.section>
+            <motion.div 
+              className="mt-10 flex flex-wrap items-center justify-center gap-6 text-sm text-gray-400"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.6, duration: 0.6 }}
+            >
+              <div className="flex items-center gap-2">
+                <Check className="w-4 h-4 text-[#D4AF37]" />
+                <span>30-day refund guarantee</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Check className="w-4 h-4 text-[#D4AF37]" />
+                <span>Free US shipping</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Check className="w-4 h-4 text-[#D4AF37]" />
+                <span>Expert installation help</span>
+              </div>
+            </motion.div>
+          </div>
+        </motion.section>
+      </Suspense>
       <OrderChoiceModal isOpen={isModalOpen} onClose={()=>setIsModalOpen(false)} />
     </div>
   );

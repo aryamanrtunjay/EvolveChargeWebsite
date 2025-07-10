@@ -41,8 +41,10 @@ const staggerContainer = {
   }
 };
 
-// Professional team member cards
+// Interactive team member cards
 function TeamMember({ name, role1, role2, bio, image, linkedin, x, delay = 0 }) {
+  const [isHovered, setIsHovered] = useState(false);
+
   return (
     <motion.div
       initial="hidden"
@@ -58,67 +60,94 @@ function TeamMember({ name, role1, role2, bio, image, linkedin, x, delay = 0 }) 
       }}
       className="group"
     >
-      <div className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl p-8 border border-[#D4AF37]/20 
-                    hover:border-[#D4AF37]/40 hover:bg-[#2A2A2A]/80 transition-all duration-300">
+      <div 
+        className="relative bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl overflow-hidden border border-[#D4AF37]/20 
+                  hover:border-[#D4AF37]/40 transition-all duration-300 cursor-pointer h-80"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        {/* Background image */}
+        <div className="absolute inset-0">
+          {image ? (
+            <img 
+              src={image.src} 
+              alt={image.alt || name}
+              className={`w-full h-full object-cover transition-all duration-500 ${
+                isHovered ? 'blur-md scale-105' : 'blur-none scale-100'
+              }`}
+            />
+          ) : (
+            <div className={`w-full h-full bg-gradient-to-br from-[#D4AF37] to-[#B8860B] 
+                          flex items-center justify-center text-white font-medium text-4xl
+                          transition-all duration-500 ${
+                            isHovered ? 'blur-md scale-105' : 'blur-none scale-100'
+                          }`}>
+              {name.split(' ').map(n => n[0]).join('')}
+            </div>
+          )}
+          
+          {/* Enhanced dark overlay for better text readability */}
+          <div className={`absolute inset-0 transition-all duration-500 ${
+            isHovered 
+              ? 'bg-gradient-to-t from-black/95 via-black/85 to-black/70' 
+              : 'bg-gradient-to-t from-black/80 via-black/50 to-black/30'
+          }`} />
+        </div>
         
-        <div className="text-center">
-          {/* Professional image container */}
-          <div className="relative mb-6 flex justify-center">
-            <div className="relative w-24 h-24">
-              <div className="w-full h-full rounded-xl bg-gradient-to-br from-[#D4AF37]/20 to-[#B8860B]/20 
-                            border border-[#D4AF37]/30 overflow-hidden">
-                {image ? (
-                  <img 
-                    src={image.src} 
-                    alt={image.alt || name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-[#D4AF37] to-[#B8860B] 
-                                flex items-center justify-center text-white font-medium">
-                    {name.split(' ').map(n => n[0]).join('')}
-                  </div>
+        {/* Content overlay */}
+        <div className="relative z-10 p-6 h-full flex flex-col">
+          {/* Initial state - Name and role at bottom */}
+          <div className={`mt-auto transition-all duration-500 ${
+            isHovered ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'
+          }`}>
+            <h3 className="text-2xl font-semibold text-white mb-2 drop-shadow-lg">{name}</h3>
+            <div className="text-[#D4AF37] text-sm font-medium drop-shadow-md">{role1}</div>
+            {role2 && <div className="text-[#D4AF37] text-sm font-medium drop-shadow-md">{role2}</div>}
+          </div>
+          
+          {/* Hover state - Full content */}
+          <div className={`absolute inset-6 flex flex-col justify-center transition-all duration-500 ${
+            isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+          }`}>
+            <div className="text-center bg-black/40 backdrop-blur-sm rounded-xl p-6 border border-white/10">
+              <h3 className="text-xl font-semibold text-white mb-2 drop-shadow-lg">{name}</h3>
+              <div className="text-[#D4AF37] text-sm font-medium mb-1 drop-shadow-md">{role1}</div>
+              {role2 && <div className="text-[#D4AF37] text-sm font-medium mb-4 drop-shadow-md">{role2}</div>}
+              
+              <p className="text-gray-200 text-sm leading-relaxed mb-6 drop-shadow-md">{bio}</p>
+              
+              {/* Professional social links */}
+              <div className="flex justify-center gap-3">
+                {linkedin && (
+                  <a 
+                    href={linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 bg-[#D4AF37]/30 text-[#D4AF37] rounded-lg 
+                             flex items-center justify-center hover:bg-[#D4AF37]/50 
+                             transition-colors duration-200 border border-[#D4AF37]/40
+                             backdrop-blur-sm shadow-lg"
+                  >
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                    </svg>
+                  </a>
+                )}
+                {x && (
+                  <a 
+                    href={x}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 bg-[#D4AF37]/30 text-[#D4AF37] rounded-lg 
+                             flex items-center justify-center hover:bg-[#D4AF37]/50 
+                             transition-colors duration-200 border border-[#D4AF37]/40
+                             backdrop-blur-sm shadow-lg"
+                  >
+                    <FaXTwitter className="w-5 h-5" />
+                  </a>
                 )}
               </div>
             </div>
-          </div>
-          
-          {/* Content */}
-          <h3 className="text-xl font-semibold text-white mb-1">{name}</h3>
-          
-          <div className="text-[#D4AF37] text-sm font-medium mb-1">{role1}</div>
-          {role2 && <div className="text-[#D4AF37] text-sm font-medium mb-4">{role2}</div>}
-          
-          <p className="text-gray-300 text-sm leading-relaxed mb-6">{bio}</p>
-          
-          {/* Professional social links */}
-          <div className="flex justify-center gap-3">
-            {linkedin && (
-              <a 
-                href={linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 bg-[#D4AF37]/20 text-[#D4AF37] rounded-lg 
-                         flex items-center justify-center hover:bg-[#D4AF37]/30 
-                         transition-colors duration-200 border border-[#D4AF37]/20"
-              >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                </svg>
-              </a>
-            )}
-            {x && (
-              <a 
-                href={x}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 bg-[#D4AF37]/20 text-[#D4AF37] rounded-lg 
-                         flex items-center justify-center hover:bg-[#D4AF37]/30 
-                         transition-colors duration-200 border border-[#D4AF37]/20"
-              >
-                <FaXTwitter className="w-5 h-5" />
-              </a>
-            )}
           </div>
         </div>
       </div>
@@ -351,26 +380,23 @@ export default function AboutPage() {
   const teamMembers = [
     {
       name: "Aryaman Rtunjay",
-      role1: "Co-Chief Executive Officer",
-      role2: "Co-Founder",
-      bio: "Aryaman shapes Ampereon's vision and strategy, leading with expertise in end-to-end engineering. He designs and implements the core technology behind our innovative charging solutions.",
+      role1: "Chief Executive Officer",
+      bio: "Aryaman drives Ampereon's overall vision and strategy, drawing on his engineering background to pioneer AI-powered EV charging systems that automate connections and optimize energy use for maximum efficiency.",
       linkedin: "https://linkedin.com/in/aryaman-rtunjay",
       x: "https://x.com/aryamanrtunjay",
       image: { src: "/images/aryaman.jpeg", alt: "AR" }
     },
     {
       name: "Bhanu Atmakuri",
-      role1: "Co-Chief Executive Officer",
-      role2: "Co-Founder",
-      bio: "Bhanu leads product development with expertise in Python, JavaScript, C, and PCB design. He's instrumental in bringing our smart charging technology from concept to reality.",
+      role1: "Chief Operating Officer",
+      bio: "Bhanu manages day-to-day operations and product development, applying his expertise in software programming and hardware design to create reliable, scalable smart charging solutions that integrate seamlessly with existing EV infrastructure.",
       linkedin: "https://www.linkedin.com/in/bhanu-atmakuri-9499752b3/",
       image: { src: "/images/bhanu.jpeg", alt: "BA" }
     },
     {
       name: "Shruthika Balasubramanian",
       role1: "Chief Marketing Officer",
-      role2: "Co-Founder",
-      bio: "Shruthika leads Ampereon's marketing strategy, combining her expertise in computer science with a passion for sustainable technology and clear communication.",
+      bio: "Shruthika leads Ampereon's marketing and communication strategies, focusing on sustainable innovation to build brand awareness and connect our advanced charging technology with environmentally conscious EV owners worldwide.",
       linkedin: "https://www.linkedin.com/in/shruthika-balasubramanian-233634369/",
       image: { src: "/images/shruthika.jpeg", alt: "SB" }
     }
@@ -380,17 +406,17 @@ export default function AboutPage() {
     {
       icon: <Lightbulb className="w-6 h-6" />,
       title: "Innovation",
-      description: "We believe in solving real problems with thoughtful engineering. Every product we create represents meaningful progress in EV charging technology."
+      description: "We pioneer intelligent EV charging solutions that automate the process, reduce costs, and extend battery life through AI-driven optimization."
     },
     {
       icon: <Heart className="w-6 h-6" />,
       title: "Customer Focus",
-      description: "Our customers drive our decisions. We listen carefully, iterate based on feedback, and ensure every interaction exceeds expectations."
+      description: "Our designs prioritize seamless integration with existing home charging systems, ensuring effortless adoption for EV owners seeking convenience and efficiency."
     },
     {
       icon: <Battery className="w-6 h-6" />,
       title: "Sustainability",
-      description: "We're committed to accelerating sustainable transportation through efficient, intelligent charging solutions that reduce environmental impact."
+      description: "By optimizing charging during off-peak hours and integrating renewable energy sources, we help reduce grid strain and promote cleaner transportation."
     }
   ];
 
