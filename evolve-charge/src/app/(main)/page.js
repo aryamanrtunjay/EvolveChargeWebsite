@@ -277,25 +277,25 @@ const AmpereonLanding = () => {
   // Testimonials data
   const testimonials = [
     {
-      name: "John Doe",
+      name: "Kirit S",
       role: "Tesla Owner",
       quote: "This charger has revolutionized my daily routine. No more plugging in every night!",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=John",
     },
     {
-      name: "Jane Smith",
+      name: "Andreas G",
       role: "Rivian Driver",
       quote: "The AI optimization saved me hundreds on my electricity bill. Highly recommended!",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jane",
     },
     {
-      name: "Mike Johnson",
+      name: "Vivaan P",
       role: "Ford F-150 Lightning Owner",
       quote: "Easy installation and seamless integration. Battery life has noticeably improved.",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mike",
     },
     {
-      name: "Sarah Lee",
+      name: "Peter Z",
       role: "Chevy Bolt EV User",
       quote: "Hands-free charging is a game-changer. The app insights are incredibly useful.",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
@@ -731,7 +731,6 @@ const AmpereonLanding = () => {
                     />
                     <div>
                       <h4 className="text-lg font-semibold text-white">{testimonial.name}</h4>
-                      <p className="text-sm text-gray-400">{testimonial.role}</p>
                     </div>
                   </div>
                   <p className="text-gray-300 leading-relaxed">{testimonial.quote}</p>
