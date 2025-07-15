@@ -10,14 +10,7 @@ import OrderChoiceModal from '../../components/OrderChoiceModal';
 // Lazy load non-critical components
 const SubtlePattern = lazy(() => Promise.resolve({ default: ({ opacity = 0.03 }) => (
   <div className="absolute inset-0 pointer-events-none" style={{ opacity }}>
-    <svg width="100%" height="100%" className="text-[#D4AF37]">
-      <defs>
-        <pattern id="subtleGrid" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
-          <circle cx="30" cy="30" r="1" fill="currentColor" />
-        </pattern>
-      </defs>
-      <rect width="100%" height="100%" fill="url(#subtleGrid)" />
-    </svg>
+    <div className="w-full h-full bg-[radial-gradient(circle,#D4AF37_1px,transparent_1px)] bg-[size:60px_60px]" />
   </div>
 ) }));
 
@@ -406,13 +399,14 @@ const AmpereonLanding = () => {
         ref={heroRef}
       >
         {/* Background video */}
-        <motion.div className="absolute inset-0 z-0 pointer-events-none opacity-30">
+        <motion.div className="absolute inset-0 z-0 pointer-events-none opacity-30" style={{ transform: 'translateZ(0)' }}>
           <video
             autoPlay muted loop playsInline controls={false} preload="none"
             className="w-full h-full object-cover"
             title="Smart Home EV Charger Demo - Automatic Electric Vehicle Charging"
             poster="https://demo.ampereonenergy.com/poster.png"
             loading="lazy"
+            style={{ transform: 'translateZ(0)' }}
           >
             <source src="https://demo.ampereonenergy.com/productDemo.mp4#t=1" type="video/mp4" />
           </video>
@@ -498,7 +492,7 @@ const AmpereonLanding = () => {
           className="py-20 px-6 bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F] relative"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-100px" }}
           variants={fadeUpVariants}
         >
           <Suspense fallback={null}><SubtlePattern /></Suspense>
@@ -560,7 +554,7 @@ const AmpereonLanding = () => {
           className="py-20 px-6 bg-[#0A0A0A]"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-100px" }}
           variants={fadeUpVariants}
         >
           <div className="max-w-7xl mx-auto">
@@ -613,40 +607,31 @@ const AmpereonLanding = () => {
               })}
             </div>
 
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeComponent}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4 }}
-                className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl p-8 border border-[#D4AF37]/20"
-              >
-                <div className="flex flex-col md:flex-row gap-8 items-center">
-                  <div className="md:w-1/2">
-                    <h3 className="text-3xl font-light mb-4 text-white">{aceContent[activeComponent].title}</h3>
-                    <p className="text-gray-300 leading-relaxed mb-6">{aceContent[activeComponent].description}</p>
-                    
-                    <ul className="space-y-3">
-                      {aceContent[activeComponent].features.map((feature, i) => (
-                        <li key={i} className="flex items-center gap-3 text-gray-300">
-                          <Check className="w-5 h-5 text-[#D4AF37] flex-shrink-0" />
-                          <span className="text-base">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div className="md:w-1/2">
-                    <img 
-                      src={aceContent[activeComponent].image} 
-                      alt={aceContent[activeComponent].title}
-                      className="w-full h-auto object-contain rounded-lg"
-                      loading="lazy"
-                    />
-                  </div>
+            <div key={activeComponent} className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl p-8 border border-[#D4AF37]/20">
+              <div className="flex flex-col md:flex-row gap-8 items-center">
+                <div className="md:w-1/2">
+                  <h3 className="text-3xl font-light mb-4 text-white">{aceContent[activeComponent].title}</h3>
+                  <p className="text-gray-300 leading-relaxed mb-6">{aceContent[activeComponent].description}</p>
+                  
+                  <ul className="space-y-3">
+                    {aceContent[activeComponent].features.map((feature, i) => (
+                      <li key={i} className="flex items-center gap-3 text-gray-300">
+                        <Check className="w-5 h-5 text-[#D4AF37] flex-shrink-0" />
+                        <span className="text-base">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              </motion.div>
-            </AnimatePresence>
+                <div className="md:w-1/2">
+                  <img 
+                    src={aceContent[activeComponent].image} 
+                    alt={aceContent[activeComponent].title}
+                    className="w-full h-auto object-contain rounded-lg"
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </motion.section>
       </Suspense>
@@ -657,7 +642,7 @@ const AmpereonLanding = () => {
           className="py-20 px-6 bg-[#0A0A0A]"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-100px" }}
           variants={fadeUpVariants}
         >
           <div className="max-w-7xl mx-auto">
@@ -713,46 +698,37 @@ const AmpereonLanding = () => {
               })}
             </div>
 
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeStep}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4 }}
-                className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl p-8 border border-[#D4AF37]/20"
-              >
-                <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-8">
-                  <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#D4AF37]/20 to-[#B8860B]/20 rounded-lg border border-[#D4AF37]/30 text-[#D4AF37] flex-shrink-0">
-                    {React.createElement(stepContent[activeStep].icon, { className: "w-8 h-8" })}
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-semibold text-white mb-2">{stepContent[activeStep].title}</h3>
-                    <p className="text-gray-300 leading-relaxed">{stepContent[activeStep].description}</p>
-                  </div>
+            <div key={activeStep} className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl p-8 border border-[#D4AF37]/20">
+              <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-8">
+                <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#D4AF37]/20 to-[#B8860B]/20 rounded-lg border border-[#D4AF37]/30 text-[#D4AF37] flex-shrink-0">
+                  {React.createElement(stepContent[activeStep].icon, { className: "w-8 h-8" })}
                 </div>
-
-                <div className="grid grid-cols-2 gap-4 mb-8">
-                  {stepContent[activeStep].stats.map((stat, i) => (
-                    <div key={i} className="bg-[#D4AF37]/10 rounded-lg p-4 text-center border border-[#D4AF37]/20">
-                      <div className="text-2xl font-bold text-[#D4AF37]">{stat.value}</div>
-                      <div className="text-sm text-gray-300">{stat.label}</div>
-                    </div>
-                  ))}
+                <div>
+                  <h3 className="text-2xl font-semibold text-white mb-2">{stepContent[activeStep].title}</h3>
+                  <p className="text-gray-300 leading-relaxed">{stepContent[activeStep].description}</p>
                 </div>
+              </div>
 
-                <p className="text-gray-600 text-xs text-center mb-8">*Stats are based on user data</p>
+              <div className="grid grid-cols-2 gap-4 mb-8">
+                {stepContent[activeStep].stats.map((stat, i) => (
+                  <div key={i} className="bg-[#D4AF37]/10 rounded-lg p-4 text-center border border-[#D4AF37]/20">
+                    <div className="text-2xl font-bold text-[#D4AF37]">{stat.value}</div>
+                    <div className="text-sm text-gray-300">{stat.label}</div>
+                  </div>
+                ))}
+              </div>
 
-                <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {stepContent[activeStep].features.map((feature, i) => (
-                    <li key={i} className="flex items-center gap-3 text-gray-300">
-                      <Check className="w-5 h-5 text-[#D4AF37] flex-shrink-0" />
-                      <span className="text-sm">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            </AnimatePresence>
+              <p className="text-gray-600 text-xs text-center mb-8">*Stats are based on user data</p>
+
+              <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {stepContent[activeStep].features.map((feature, i) => (
+                  <li key={i} className="flex items-center gap-3 text-gray-300">
+                    <Check className="w-5 h-5 text-[#D4AF37] flex-shrink-0" />
+                    <span className="text-sm">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </motion.section>
       </Suspense>
@@ -763,7 +739,7 @@ const AmpereonLanding = () => {
           className="py-20 px-6 bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F] relative"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-100px" }}
           variants={fadeUpVariants}
         >
           <Suspense fallback={null}><SubtlePattern /></Suspense>
@@ -827,7 +803,7 @@ const AmpereonLanding = () => {
           className="py-20 px-6 bg-[#0A0A0A]"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-100px" }}
           variants={fadeUpVariants}
         >
           <div className="max-w-7xl mx-auto">
@@ -984,7 +960,7 @@ const AmpereonLanding = () => {
           className="py-20 px-6 bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F] relative"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-100px" }}
           variants={fadeUpVariants}
         >
           <Suspense fallback={null}><SubtlePattern /></Suspense>
