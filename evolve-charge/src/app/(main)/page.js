@@ -550,91 +550,108 @@ const AmpereonLanding = () => {
 
       {/* Meet Ampereon's Charger Ace */}
       <Suspense fallback={null}>
-        <motion.section 
-          className="py-20 px-6 bg-[#0A0A0A]"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          variants={fadeUpVariants}
-        >
-          <div className="max-w-7xl mx-auto">
-            <motion.div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-light mb-6 text-white">
-                Meet Ampereon's Charger: <span className="font-semibold text-[#D4AF37]">Ace</span>
-              </h2>
-              
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light">
-                Discover the key components that make Ace the smartest EV charger upgrade. Click or auto-scroll through each part.
-              </p>
-            </motion.div>
+  <motion.section 
+    className="py-20 px-6 bg-[#0A0A0A]"
+    initial="hidden"
+    whileInView="visible"
+    viewport={{ once: true, margin: "-100px" }}
+    variants={fadeUpVariants}
+  >
+    <div className="max-w-7xl mx-auto">
+      <motion.div className="text-center mb-16">
+        <h2 className="text-4xl md:text-5xl font-light mb-6 text-white">
+          Meet Ampereon's Charger: <span className="font-semibold text-[#D4AF37]">Ace</span>
+        </h2>
+        
+        <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light">
+          Discover the key components that make Ace the smartest EV charger upgrade. Click or auto-scroll through each part.
+        </p>
+      </motion.div>
 
-            {/* Component selector */}
-            <div className="relative grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-              {aceComponents.map((component, index) => {
-                const IconComponent = component.icon;
-                
-                return (
-                  <motion.div 
-                    key={index}
-                    className={`cursor-pointer relative z-10 text-center bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl p-6 border ${
-                      activeComponent === index ? 'border-[#D4AF37]/40 shadow-lg shadow-[#D4AF37]/20' : 'border-[#D4AF37]/20'
-                    } hover:border-[#D4AF37]/40 transition-all duration-300`}
-                    onClick={() => setActiveComponent(index)}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    variants={fadeUpVariants}
-                    transition={{ delay: index * 0.15 }}
-                    whileHover={{ scale: 1.05 }}
-                  >
-                    <div className="relative mb-6">
-                      <div className={`w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg transition-colors duration-300 ${
-                        activeComponent === index ? 'bg-gradient-to-br from-[#D4AF37] to-[#B8860B]' : 'bg-[#2A2A2A]'
-                      }`}>
-                        <IconComponent className="w-8 h-8 text-white" />
-                      </div>
-                      <div className="text-sm font-medium text-[#D4AF37] mb-2">
-                        COMPONENT {component.num}
-                      </div>
-                    </div>
-                    
-                    <h3 className="text-lg font-semibold mb-2 text-white">
-                      {component.title}
-                    </h3>
-                    <p className="text-gray-300 text-sm leading-relaxed">{component.shortDesc}</p>
-                  </motion.div>
-                );
-              })}
-            </div>
-
-            <div key={activeComponent} className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl p-8 border border-[#D4AF37]/20">
-              <div className="flex flex-col md:flex-row gap-8 items-center">
-                <div className="md:w-1/2">
-                  <h3 className="text-3xl font-light mb-4 text-white">{aceContent[activeComponent].title}</h3>
-                  <p className="text-gray-300 leading-relaxed mb-6">{aceContent[activeComponent].description}</p>
-                  
-                  <ul className="space-y-3">
-                    {aceContent[activeComponent].features.map((feature, i) => (
-                      <li key={i} className="flex items-center gap-3 text-gray-300">
-                        <Check className="w-5 h-5 text-[#D4AF37] flex-shrink-0" />
-                        <span className="text-base">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
+      {/* Desktop Component selector */}
+      <div className="hidden md:block relative grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+        {aceComponents.map((component, index) => {
+          const IconComponent = component.icon;
+          
+          return (
+            <motion.div 
+              key={index}
+              className={`cursor-pointer relative z-10 text-center bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl p-6 border ${
+                activeComponent === index ? 'border-[#D4AF37]/40 shadow-lg shadow-[#D4AF37]/20' : 'border-[#D4AF37]/20'
+              } hover:border-[#D4AF37]/40 transition-all duration-300`}
+              onClick={() => setActiveComponent(index)}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={fadeUpVariants}
+              transition={{ delay: index * 0.15 }}
+              whileHover={{ scale: 1.05 }}
+            >
+              <div className="relative mb-6">
+                <div className={`w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg transition-colors duration-300 ${
+                  activeComponent === index ? 'bg-gradient-to-br from-[#D4AF37] to-[#B8860B]' : 'bg-[#2A2A2A]'
+                }`}>
+                  <IconComponent className="w-8 h-8 text-white" />
                 </div>
-                <div className="md:w-1/2">
-                  <img 
-                    src={aceContent[activeComponent].image} 
-                    alt={aceContent[activeComponent].title}
-                    className="w-full h-auto object-contain rounded-lg"
-                    loading="lazy"
-                  />
+                <div className="text-sm font-medium text-[#D4AF37] mb-2">
+                  COMPONENT {component.num}
                 </div>
               </div>
-            </div>
+              
+              <h3 className="text-lg font-semibold mb-2 text-white">
+                {component.title}
+              </h3>
+              <p className="text-gray-300 text-sm leading-relaxed">{component.shortDesc}</p>
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {/* Content section (same for both mobile and desktop) */}
+      <div key={activeComponent} className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl p-8 border border-[#D4AF37]/20">
+        <div className="flex flex-col md:flex-row gap-8 items-center">
+          <div className="md:w-1/2">
+            <h3 className="text-3xl font-light mb-4 text-white">{aceContent[activeComponent].title}</h3>
+            <p className="text-gray-300 leading-relaxed mb-6">{aceContent[activeComponent].description}</p>
+            
+            <ul className="space-y-3">
+              {aceContent[activeComponent].features.map((feature, i) => (
+                <li key={i} className="flex items-center gap-3 text-gray-300">
+                  <Check className="w-5 h-5 text-[#D4AF37] flex-shrink-0" />
+                  <span className="text-base">{feature}</span>
+                </li>
+              ))}
+            </ul>
           </div>
-        </motion.section>
-      </Suspense>
+          <div className="md:w-1/2">
+            <img 
+              src={aceContent[activeComponent].image} 
+              alt={aceContent[activeComponent].title}
+              className="w-full h-auto object-contain rounded-lg"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Carousel Dots */}
+      <div className="flex justify-center mt-6 gap-2">
+        {aceComponents.map((_, index) => (
+          <button
+            key={index}
+            className={`w-3 h-3 rounded-full transition-all duration-300 ${
+              activeComponent === index 
+                ? 'bg-[#D4AF37] scale-110' 
+                : 'bg-gray-600 hover:bg-gray-500'
+            }`}
+            onClick={() => setActiveComponent(index)}
+            aria-label={`Go to component ${index + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  </motion.section>
+</Suspense>
 
       {/* How It Works - Added details and features for value */}
       <Suspense fallback={null}>
@@ -1028,7 +1045,7 @@ const AmpereonLanding = () => {
               </div>
               <div className="flex items-center gap-2">
                 <Check className="w-4 h-4 text-[#D4AF37]" />
-                <span>Free shipping in Washington</span>
+                <span>Free shipping </span>
               </div>
               <div className="flex items-center gap-2">
                 <Check className="w-4 h-4 text-[#D4AF37]" />
