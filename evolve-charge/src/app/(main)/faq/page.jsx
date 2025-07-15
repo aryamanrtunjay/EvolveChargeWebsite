@@ -472,73 +472,76 @@ export default function FAQPage() {
         </div>
       </section>
 
-      {/* Search and Filter Section */}
-      <section className="py-16 bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <SearchBar 
-            searchTerm={searchTerm} 
-            onSearchChange={setSearchTerm} 
-          />
-          
-          <CategoryFilter 
-            categories={categories}
-            activeCategory={activeCategory}
-            onCategoryChange={setActiveCategory}
-          />
-        </div>
-      </section>
+      <div className="bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F]">
+        {/* Search and Filter Section */}
+        <section className="py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <SearchBar 
+              searchTerm={searchTerm} 
+              onSearchChange={setSearchTerm} 
+            />
+            
+            <CategoryFilter 
+              categories={categories}
+              activeCategory={activeCategory}
+              onCategoryChange={setActiveCategory}
+            />
+          </div>
+        </section>
+      
 
-      {/* FAQ Section */}
-      <section className="pb-20 bg-[#0A0A0A]">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          {filteredFAQs.length === 0 ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center py-16"
-            >
-              <div className="bg-[#2A2A2A]/60 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </div>
-              <h3 className="text-2xl font-semibold text-white mb-4">No questions found</h3>
-              <p className="text-gray-400 mb-6 leading-relaxed">
-                We couldn't find any questions matching your search. Try adjusting your search terms or browse different categories.
-              </p>
-              <motion.button
-                onClick={() => {
-                  setSearchTerm('');
-                  setActiveCategory('all');
-                }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="px-6 py-3 rounded-lg bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white font-medium shadow-lg hover:shadow-xl transition-all"
+        {/* FAQ Section */}
+        <section className="pb-20">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            {filteredFAQs.length === 0 ? (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-center py-16"
               >
-                View All Questions
-              </motion.button>
-            </motion.div>
-          ) : (
-            <motion.div
-              initial="hidden"
-              animate="visible"
-              variants={staggerContainer}
-              className="space-y-2"
-            >
-              {filteredFAQs.map((faq, index) => (
-                <FAQItem
-                  key={index}
-                  question={faq.question}
-                  answer={faq.answer}
-                  isActive={activeFAQ === index}
-                  onClick={() => toggleFAQ(index)}
-                  index={index}
-                />
-              ))}
-            </motion.div>
-          )}
-        </div>
-      </section>
+                <div className="bg-[#2A2A2A]/60 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-2xl font-semibold text-white mb-4">No questions found</h3>
+                <p className="text-gray-400 mb-6 leading-relaxed">
+                  We couldn't find any questions matching your search. Try adjusting your search terms or browse different categories.
+                </p>
+                <motion.button
+                  onClick={() => {
+                    setSearchTerm('');
+                    setActiveCategory('all');
+                  }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="px-6 py-3 rounded-lg bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white font-medium shadow-lg hover:shadow-xl transition-all"
+                >
+                  View All Questions
+                </motion.button>
+              </motion.div>
+            ) : (
+              <motion.div
+                initial="hidden"
+                animate="visible"
+                variants={staggerContainer}
+                className="space-y-2"
+              >
+                {filteredFAQs.map((faq, index) => (
+                  <FAQItem
+                    key={index}
+                    question={faq.question}
+                    answer={faq.answer}
+                    isActive={activeFAQ === index}
+                    onClick={() => toggleFAQ(index)}
+                    index={index}
+                  />
+                ))}
+              </motion.div>
+            )}
+          </div>
+        </section>
+      </div>
 
       {/* Contact CTA Section */}
       {/* <section className="py-20 bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F]">
