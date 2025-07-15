@@ -470,7 +470,7 @@ const AmpereonLanding = () => {
             </div>
             <div className="flex items-center gap-2">
               <Check className="w-4 h-4 text-[#D4AF37]" />
-              <span>Free Shipping & 24/7 EV Help</span>
+              <span>Free Shipping in Washington</span>
             </div>
           </div>
         </motion.div>
@@ -1028,7 +1028,7 @@ const AmpereonLanding = () => {
               </div>
               <div className="flex items-center gap-2">
                 <Check className="w-4 h-4 text-[#D4AF37]" />
-                <span>Free shipping + updates</span>
+                <span>Free shipping in Washington</span>
               </div>
               <div className="flex items-center gap-2">
                 <Check className="w-4 h-4 text-[#D4AF37]" />
