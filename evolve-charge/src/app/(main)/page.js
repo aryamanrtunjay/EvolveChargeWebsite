@@ -1,25 +1,19 @@
 'use client';
-
-import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
-import { motion, useInView, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Zap, Wifi, DollarSign, Battery, Clock, ChevronRight, Check, Leaf, Home, Settings, TrendingUp, Users, Heart, Award } from 'lucide-react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
+import { motion, useInView } from 'framer-motion';
+import { ChevronDown, Zap, Wifi, DollarSign, Battery, Clock, ChevronRight, Check, Home, Settings, Users, Heart } from 'lucide-react';
 import { db } from "../firebaseConfig.js";
-import { collection, getDocs, query, orderBy, limit, where, getFirestore } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy, limit, where } from 'firebase/firestore';
 import OrderChoiceModal from '../../components/OrderChoiceModal';
 
 // Lazy load non-critical components
-const SubtlePattern = lazy(() => Promise.resolve({ default: ({ opacity = 0.03 }) => (
+const SubtlePattern = React.lazy(() => Promise.resolve({ default: ({ opacity = 0.03 }) => (
   <div className="absolute inset-0 pointer-events-none" style={{ opacity }}>
     <div className="w-full h-full bg-[radial-gradient(circle,#D4AF37_1px,transparent_1px)] bg-[size:60px_60px]" />
   </div>
 ) }));
 
 const AmpereonLanding = () => {
-  const [activeAccordion, setActiveAccordion] = useState(null);
-  const [donorsWithAmounts, setDonorsWithAmounts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [donorFilter, setDonorFilter] = useState('recent');
-  const [totalAmount, setTotalAmount] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   
   const [activeStep, setActiveStep] = useState(0);
@@ -183,15 +177,6 @@ const AmpereonLanding = () => {
     }
   ];
 
-  // Auto-advance timer for steps
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setActiveStep((prev) => (prev + 1) % steps.length);
-    }, 8000);
-    
-    return () => clearInterval(timer);
-  }, []);
-
   // Components for Ace Charger
   const aceComponents = [
     { 
@@ -267,15 +252,6 @@ const AmpereonLanding = () => {
     }
   ];
 
-  // Auto-advance timer for Ace components
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setActiveComponent((prev) => (prev + 1) % aceComponents.length);
-    }, 8000);
-    
-    return () => clearInterval(timer);
-  }, []);
-
   // Merged metrics with ownership advantages and comparison for deeper value
   const savingsMetrics = [
     { 
@@ -298,98 +274,33 @@ const AmpereonLanding = () => {
     }
   ];
 
-  // Load data from Firebase
-  useEffect(() => {
-    const loadData = async () => {
-      setIsLoading(true);
-      try {
-        const firestoreDb = getFirestore();
-        
-        const ordersQuery = query(collection(firestoreDb, "orders"), where("paymentStatus", "==", "Completed"));
-        const ordersSnapshot = await getDocs(ordersQuery);
-        let preOrderSum = 0;
-        ordersSnapshot.forEach((doc) => {
-          preOrderSum += doc.data().total || 0;
-        });
-
-        const donationsQuery = query(collection(firestoreDb, "donations"), where("status", "==", "Completed"));
-        const donationsSnapshot = await getDocs(donationsQuery);
-        let donationSum = 0;
-        donationsSnapshot.forEach((doc) => {
-          donationSum += doc.data().amount || 0;
-        });
-
-        setTotalAmount(preOrderSum + donationSum);
-
-        const donorsRef = collection(firestoreDb, 'donors');
-        let donorsQuery;
-
-        switch (donorFilter) {
-          case 'recent':
-            donorsQuery = query(donorsRef, orderBy('createdAt', 'desc'), limit(50));
-            break;
-          case 'top-month':
-            const monthAgo = new Date();
-            monthAgo.setMonth(monthAgo.getMonth() - 1);
-            donorsQuery = query(donorsRef, where('createdAt', '>=', monthAgo), orderBy('createdAt', 'desc'), limit(50));
-            break;
-          case 'top-all':
-            donorsQuery = query(donorsRef, orderBy('createdAt', 'desc'), limit(50));
-            break;
-          default:
-            donorsQuery = query(donorsRef, orderBy('createdAt', 'desc'), limit(50));
-        }
-
-        const donorsSnapshot = await getDocs(donorsQuery);
-        const donors = donorsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-        if (donors.length === 0) {
-          setDonorsWithAmounts([]);
-          setIsLoading(false);
-          return;
-        }
-
-        const donorIds = donors.map(donor => donor.id);
-        const idChunks = [];
-        for (let i = 0; i < donorIds.length; i += 30) {
-          idChunks.push(donorIds.slice(i, i + 30));
-        }
-
-        const donationQueries = idChunks.map(chunk => query(collection(firestoreDb, "donations"), where("donorId", "in", chunk)));
-        const donationSnapshots = await Promise.all(donationQueries.map(getDocs));
-
-        const donations = [];
-        donationSnapshots.forEach(snap => {
-          donations.push(...snap.docs.map(doc => doc.data()));
-        });
-
-        const donorAmounts = new Map();
-        donations.forEach(donation => {
-          if (donation.status === "Completed") {
-            const donorId = donation.donorId;
-            const amount = donation.amount || 0;
-            donorAmounts.set(donorId, (donorAmounts.get(donorId) || 0) + amount);
-          }
-        });
-
-        let donorsWithAmountsArray = donors
-          .map(donor => ({ ...donor, amount: donorAmounts.get(donor.id) || 0 }))
-          .filter(donor => donor.amount > 0);
-
-        if (donorFilter.startsWith('top-')) {
-          donorsWithAmountsArray.sort((a, b) => b.amount - a.amount);
-        }
-
-        setDonorsWithAmounts(donorsWithAmountsArray);
-      } catch (error) {
-        console.error('Error loading data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadData();
-  }, [donorFilter]);
+  // Testimonials data
+  const testimonials = [
+    {
+      name: "John Doe",
+      role: "Tesla Owner",
+      quote: "This charger has revolutionized my daily routine. No more plugging in every night!",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=John",
+    },
+    {
+      name: "Jane Smith",
+      role: "Rivian Driver",
+      quote: "The AI optimization saved me hundreds on my electricity bill. Highly recommended!",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jane",
+    },
+    {
+      name: "Mike Johnson",
+      role: "Ford F-150 Lightning Owner",
+      quote: "Easy installation and seamless integration. Battery life has noticeably improved.",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mike",
+    },
+    {
+      name: "Sarah Lee",
+      role: "Chevy Bolt EV User",
+      quote: "Hands-free charging is a game-changer. The app insights are incredibly useful.",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
+    },
+  ];
 
   return (
     <div className="bg-[#0A0A0A] text-white overflow-x-hidden">
@@ -398,18 +309,14 @@ const AmpereonLanding = () => {
         className="relative min-h-screen flex items-center justify-center overflow-visible"
         ref={heroRef}
       >
-        {/* Background video */}
-        <motion.div className="absolute inset-0 z-0 pointer-events-none opacity-30" style={{ transform: 'translateZ(0)' }}>
-          <video
-            autoPlay muted loop playsInline controls={false} preload="none"
+        {/* Background GIF instead of video */}
+        <motion.div className="absolute inset-0 z-0 pointer-events-none opacity-30">
+          <img
+            src="https://demo.ampereonenergy.com/productDemo.gif"
+            alt="Smart Home EV Charger Demo - Automatic Electric Vehicle Charging"
             className="w-full h-full object-cover"
-            title="Smart Home EV Charger Demo - Automatic Electric Vehicle Charging"
-            poster="https://demo.ampereonenergy.com/poster.png"
             loading="lazy"
-            style={{ transform: 'translateZ(0)' }}
-          >
-            <source src="https://demo.ampereonenergy.com/productDemo.mp4#t=1" type="video/mp4" />
-          </video>
+          />
         </motion.div>
 
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#1A1A1A]/20 to-[#1A1A1A]/40" />
@@ -434,27 +341,24 @@ const AmpereonLanding = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mt-6 mb-12">
-            <motion.button
+            <button
               className="px-8 py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white font-medium rounded-lg
                         hover:shadow-lg hover:shadow-[#D4AF37]/20 transition-all duration-300"
               onClick={openModal}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
             >
               Reserve Now for $5
-            </motion.button>
+            </button>
 
             <a href="/product" className="hidden sm:block">
-              <motion.button
+              <button
                 className="px-8 py-4 border border-[#D4AF37]/30 text-white font-medium rounded-lg
                           hover:bg-[#D4AF37]/10 hover:border-[#D4AF37]/50 transition-all duration-300 backdrop-blur-sm"
-                whileHover={{ scale: 1.02 }}
               >
                 <span className="flex items-center gap-2">
                   <ChevronRight className="w-4 h-4" />
                   Learn More
                 </span>
-              </motion.button>
+              </button>
             </a>
           </div>
 
@@ -475,15 +379,11 @@ const AmpereonLanding = () => {
           </div>
         </motion.div>
 
-        {/* Scroll indicator - Fixed to bottom of viewport */}
-        <motion.div
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center"
-          animate={{ y: [0, 6, 0] }}
-          transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
-        >
+        {/* Static scroll indicator */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center">
           <div className="w-px h-8 bg-gradient-to-b from-transparent via-[#D4AF37]/50 to-transparent mb-2" />
           <ChevronDown className="w-5 h-5 text-[#D4AF37]/70" />
-        </motion.div>
+        </div>
       </section>
 
       {/* Merged Features & Benefits - Added stats per feature for value */}
@@ -564,7 +464,7 @@ const AmpereonLanding = () => {
               </h2>
               
               <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light">
-                Discover the key components that make Ace the smartest EV charger upgrade. Click or auto-scroll through each part.
+                Discover the key components that make Ace the smartest EV charger upgrade. Click through each part.
               </p>
             </motion.div>
 
@@ -584,11 +484,10 @@ const AmpereonLanding = () => {
                     whileInView="visible"
                     viewport={{ once: true }}
                     variants={fadeUpVariants}
-                    transition={{ delay: index * 0.15 }}
-                    whileHover={{ scale: 1.05 }}
+                    transition={{ delay: 0.2 }}
                   >
                     <div className="relative mb-6">
-                      <div className={`w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg transition-colors duration-300 ${
+                      <div className={`w-16 h-16 rounded-xl flex items-center justify-center mx-auto shadow-lg mb-4 transition-colors duration-300 ${
                         activeComponent === index ? 'bg-gradient-to-br from-[#D4AF37] to-[#B8860B]' : 'bg-[#2A2A2A]'
                       }`}>
                         <IconComponent className="w-8 h-8 text-white" />
@@ -675,7 +574,6 @@ const AmpereonLanding = () => {
                     viewport={{ once: true }}
                     variants={fadeUpVariants}
                     transition={{ delay: index * 0.15 }}
-                    whileHover={{ scale: 1.05 }}
                   >
                     <div className="relative mb-6">
                       <div className={`w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg transition-colors duration-300 ${
@@ -797,7 +695,7 @@ const AmpereonLanding = () => {
         </motion.section>
       </Suspense>
 
-      {/* Social Proof - Enhanced with more community focus */}
+      {/* Testimonials Section */}
       <Suspense fallback={null}>
         <motion.section 
           className="py-20 px-6 bg-[#0A0A0A]"
@@ -807,149 +705,52 @@ const AmpereonLanding = () => {
           variants={fadeUpVariants}
         >
           <div className="max-w-7xl mx-auto">
-            <motion.div className="text-center mb-8">
-              <h2 className="text-4xl md:text-5xl font-light mb-4 text-white">
-                Join Our <span className="font-semibold text-[#D4AF37]">EV Charging Community</span>
+            <motion.div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-light mb-6 text-white">
+                What Our <span className="font-semibold text-[#D4AF37]">Customers Say</span>
               </h2>
               
-              <div className="flex items-center justify-center gap-4 mb-2">
-                <div className="text-2xl font-semibold text-[#D4AF37]">
-                  ${Math.floor(totalAmount).toLocaleString()}
-                </div>
-                <span className="text-gray-300">raised by owners advancing smart home charging</span>
-              </div>
-              <p className="text-gray-400">Backers get early access, exclusive updates, and community perks.</p>
+              <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light">
+                Hear from EV owners who have transformed their charging experience with Ampereon.
+              </p>
             </motion.div>
 
-            {/* Filter buttons */}
-            <motion.div 
-              className="flex justify-center mb-12"
-              variants={fadeUpVariants}
-              transition={{ delay: 0.2 }}
-            >
-              <div className="bg-[#1A1A1A]/80 backdrop-blur-xl rounded-3xl p-3 border border-[#D4AF37]/20 shadow-xl">
-                <div className="flex gap-3">
-                  {[
-                    { label: 'Recent', value: 'recent' },
-                    { label: 'Top Month', value: 'top-month' },
-                    { label: 'All Time', value: 'top-all' },
-                  ].map(({ label, value }) => (
-                    <motion.button
-                      key={value}
-                      onClick={() => setDonorFilter(value)}
-                      className={`px-8 py-4 rounded-2xl text-sm font-semibold transition-all duration-300 ${
-                        donorFilter === value
-                          ? 'bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white shadow-lg shadow-[#D4AF37]/25'
-                          : 'text-gray-400 hover:bg-[#D4AF37]/10 hover:text-[#D4AF37]'
-                      }`}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      {label}
-                    </motion.button>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {testimonials.map((testimonial, index) => (
+                <motion.div
+                  key={index}
+                  className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl p-6 border border-[#D4AF37]/20 hover:border-[#D4AF37]/40 transition-all duration-300"
+                  variants={fadeUpVariants}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <div className="flex items-center gap-4 mb-4">
+                    <img
+                      src={testimonial.avatar}
+                      alt={testimonial.name}
+                      className="w-12 h-12 rounded-full"
+                    />
+                    <div>
+                      <h4 className="text-lg font-semibold text-white">{testimonial.name}</h4>
+                      <p className="text-sm text-gray-400">{testimonial.role}</p>
+                    </div>
+                  </div>
+                  <p className="text-gray-300 leading-relaxed">{testimonial.quote}</p>
+                </motion.div>
+              ))}
+            </div>
 
-            {/* Supporter list */}
-            <motion.div 
-              className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl p-8 border border-[#D4AF37]/20"
-              variants={fadeUpVariants}
-            >
-              <div className="flex items-center gap-4 mb-8">
-                <div className="w-10 h-10 bg-gradient-to-br from-[#D4AF37]/20 to-[#B8860B]/20 rounded-lg 
-                              flex items-center justify-center border border-[#D4AF37]/30">
-                  <Users className="w-5 h-5 text-[#D4AF37]" />
-                </div>
-                <h3 className="text-xl font-semibold text-white">Active Supporters</h3>
-              </div>
-
-              {isLoading ? (
-                <div className="flex items-center justify-center py-12">
-                  <motion.div
-                    className="w-8 h-8 border-2 border-[#D4AF37] border-t-transparent rounded-full mr-4"
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                  />
-                  <p className="text-gray-400 text-lg">Loading supporters...</p>
-                </div>
-              ) : donorsWithAmounts.length === 0 ? (
-                <div className="text-center py-12">
-                  <motion.div
-                    animate={{ scale: [1, 1.1, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  >
-                    <Heart className="w-16 h-16 text-[#D4AF37]/50 mx-auto mb-6" />
-                  </motion.div>
-                  <h4 className="text-xl font-medium text-white mb-3">Be the First Supporter</h4>
-                  <p className="text-gray-400 text-lg max-w-md mx-auto">
-                    Get early bird perks by joining now.
-                  </p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {donorsWithAmounts.slice(0, 8).map((donor, index) => (
-                    <motion.div
-                      key={donor.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, delay: index * 0.05 }}
-                      className="bg-[#1A1A1A]/80 rounded-lg p-4 border border-[#D4AF37]/10 hover:border-[#D4AF37]/30 transition-all duration-300"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-gradient-to-br from-[#D4AF37]/30 to-[#B8860B]/30 rounded-full flex items-center justify-center flex-shrink-0 border border-[#D4AF37]/20">
-                          <span className="text-[#D4AF37] font-medium text-sm">
-                            {donor.anonymous ? '?' : (donor.firstName?.[0] || '?')}
-                          </span>
-                        </div>
-                        <div className="flex-1">
-                          <p className="font-medium text-white truncate text-sm">
-                            {donor.anonymous ? 'Anonymous' : `${donor.firstName || ''} ${donor.lastName?.[0] || ''}.`}
-                          </p>
-                          <p className="text-[#D4AF37] font-semibold text-sm">
-                            ${donor.amount?.toFixed(2) || '0.00'}
-                          </p>
-                          {donor.dedicateTo && (
-                            <p className="text-gray-400 italic text-xs truncate mt-1">
-                              Dedicated to: {donor.dedicateTo}
-                            </p>
-                          )}
-                          <p className="text-gray-500 text-xs mt-1">
-                            {donor.createdAt?.toDate?.().toLocaleDateString('en-US', {
-                              month: 'short',
-                              day: 'numeric',
-                              year: 'numeric',
-                            }) || 'Recent'}
-                          </p>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              )}
-
-              {donorsWithAmounts.length > 8 && (
-                <div className="text-center mt-8">
-                  <p className="text-gray-400 font-light text-lg">
-                    + {donorsWithAmounts.length - 8} more backing smart charging.
-                  </p>
-                </div>
-              )}
-
-              <div className="text-center mt-8">
-                <a href="/support-us">
-                  <motion.button
-                    className="px-8 py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white font-semibold rounded-lg 
-                              hover:shadow-lg hover:shadow-[#D4AF37]/30 transition-all duration-300"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    Become a Supporter
-                  </motion.button>
-                </a>
-              </div>
-            </motion.div>
+            <div className="text-center mt-12">
+              <a href="/support-us">
+                <motion.button
+                  className="px-8 py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white font-semibold rounded-lg 
+                            hover:shadow-lg hover:shadow-[#D4AF37]/30 transition-all duration-300"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Support The Mission
+                </motion.button>
+              </a>
+            </div>
           </div>
         </motion.section>
       </Suspense>
@@ -994,24 +795,21 @@ const AmpereonLanding = () => {
               transition={{ delay: 0.4, duration: 0.6 }}
             >
               <a href="/reserve">
-                <motion.button 
+                <button 
                   className="px-8 py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white font-semibold rounded-lg 
                           hover:shadow-lg hover:shadow-[#D4AF37]/30 transition-all duration-300"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
                 >
                   Reserve - $5 (Limited)
-                </motion.button>
+                </button>
               </a>
               
               <a href="/order">
-                <motion.button 
+                <button 
                   className="px-8 py-4 bg-white/5 border border-[#D4AF37]/30 text-white font-semibold rounded-lg 
                           hover:bg-[#D4AF37]/10 hover:border-[#D4AF37]/50 transition-all duration-300 backdrop-blur-sm"
-                  whileHover={{ scale: 1.02 }}
                 >
                   Order - $99
-                </motion.button>
+                </button>
               </a>
             </motion.div>
             
@@ -1038,7 +836,7 @@ const AmpereonLanding = () => {
           </div>
         </motion.section>
       </Suspense>
-      <OrderChoiceModal isOpen={isModalOpen} onClose={()=>setIsModalOpen(false)} />
+      <OrderChoiceModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 };
