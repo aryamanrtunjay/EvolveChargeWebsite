@@ -446,17 +446,46 @@ export default function AboutPage() {
           
           <h1 className="font-light leading-tight mb-8 text-white"
               style={{ fontSize: 'clamp(2.5rem,5.5vw,4rem)' }}>
-            Engineering the Future of
+            Pioneering Intelligent
             <br />
             <span className="font-semibold text-[#D4AF37]">
-              EV Charging
+              EV Charging Solutions
             </span>
           </h1>
 
           <p className="text-xl text-gray-300 mb-10 max-w-4xl mx-auto leading-relaxed font-light">
-            We're building intelligent automation that makes electric vehicle ownership 
-            effortless, accessible, and truly sustainable for everyone.
+            At Ampereon, we're revolutionizing EV ownership with AI-powered automation that makes charging effortless, cost-effective, and sustainable – eliminating manual plugging while optimizing energy use and battery health.
           </p>
+
+          <motion.div
+            className="flex flex-col sm:flex-row gap-4 justify-center mt-6 mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+          >
+            <motion.button
+              className="px-8 py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-white font-medium rounded-lg
+                        hover:shadow-lg hover:shadow-[#D4AF37]/20 transition-all duration-300"
+              onClick={() => setIsModalOpen(true)}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              Reserve Now
+            </motion.button>
+
+            <a href="/product" className="hidden md:block">
+              <motion.button
+                className="px-8 py-4 border border-[#D4AF37]/30 text-[#D4AF37] font-medium rounded-lg
+                          hover:bg-[#D4AF37]/10 hover:border-[#D4AF37]/50 transition-all duration-300 backdrop-blur-sm"
+                whileHover={{ scale: 1.02 }}
+              >
+                <span className="flex items-center gap-2">
+                  <ChevronRight className="w-4 h-4" />
+                  Learn More
+                </span>
+              </motion.button>
+            </a>
+          </motion.div>
         </motion.div>
         <motion.div
           className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center"
@@ -488,7 +517,7 @@ export default function AboutPage() {
             </h2>
             
             <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light">
-              The principles that guide our work and define our approach to innovation
+              Guiding principles that drive our mission to transform EV charging into an intelligent, automated experience
             </p>
           </motion.div>
 
@@ -523,8 +552,7 @@ export default function AboutPage() {
             </h2>
             
             <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light">
-              Engineers, designers, and innovators working together to solve real problems 
-              in electric vehicle charging
+              A dedicated group of innovators committed to making EV charging smarter, simpler, and more sustainable
             </p>
           </motion.div>
 
@@ -558,8 +586,8 @@ export default function AboutPage() {
             viewport={{ once: true }}
             transition={{ delay: 0.2, duration: 0.6 }}
           >
-            Ready to Experience{' '}
-            <span className="font-semibold text-[#D4AF37]">Effortless Charging?</span>
+            Join Us in Shaping the 
+            <span className="font-semibold text-[#D4AF37]"> Future of EV Charging</span>
           </motion.h2>
           
           <motion.p 
@@ -569,8 +597,8 @@ export default function AboutPage() {
             viewport={{ once: true }}
             transition={{ delay: 0.3, duration: 0.6 }}
           >
-            Join the EV owners who've already made the switch to automatic charging. 
-            Reserve your Ampereon system today.
+            Discover how our automated systems are making electric vehicles more convenient and sustainable. 
+            Reserve your spot in the charging revolution today.
           </motion.p>
           
           <motion.div 
@@ -592,7 +620,7 @@ export default function AboutPage() {
             
             <a 
               href="/product"
-              className="px-8 py-4 border border-[#D4AF37]/30 text-[#D4AF37] rounded-lg font-semibold
+              className="hidden md:inline-block px-8 py-4 border border-[#D4AF37]/30 text-[#D4AF37] rounded-lg font-semibold
                        hover:bg-[#D4AF37]/10 hover:border-[#D4AF37]/50 transition-all duration-300"
             >
               Learn More

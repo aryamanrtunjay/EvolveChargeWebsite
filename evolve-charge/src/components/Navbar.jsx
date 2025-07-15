@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import OrderChoiceModal from './OrderChoiceModal';
 import Logo from '../images/Logo.png';
 import Image from 'next/image';
@@ -14,7 +14,7 @@ const AmpereonNavbar = () => {
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false); // New state for mobile detection
+  const [isMobile, setIsMobile] = useState(false);
 
   /* ── scroll hide / shadow ── */
   useEffect(() => {
@@ -31,9 +31,9 @@ const AmpereonNavbar = () => {
   /* ── detect mobile view ── */
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768); // md breakpoint
+      setIsMobile(window.innerWidth < 768);
     };
-    handleResize(); // Initial check
+    handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -47,8 +47,9 @@ const AmpereonNavbar = () => {
   /* ───────────────── helpers ───────────────── */
   const openModal = () => {
     setIsModalOpen(true);
-    setIsMobileMenuOpen(false); // close slide-out if it's open
+    setIsMobileMenuOpen(false);
   };
+
   const navLinks = [
     { name: 'Product', href: '/product' },
     { name: 'About', href: '/about' },
@@ -56,7 +57,6 @@ const AmpereonNavbar = () => {
     { name: 'Support Us', href: '/support-us' },
   ];
 
-  // Filter out Product link on mobile
   const filteredNavLinks = isMobile
     ? navLinks.filter((link) => link.name !== 'Product')
     : navLinks;
@@ -64,117 +64,157 @@ const AmpereonNavbar = () => {
   /* ───────────────── framer variants ───────────────── */
   const menuVariants = {
     closed: { opacity: 0, x: '100%' },
-    open: { opacity: 1, x: 0, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] } },
+    open: { 
+      opacity: 1, 
+      x: 0, 
+      transition: { 
+        duration: 0.4, 
+        ease: [0.23, 1, 0.32, 1],
+        staggerChildren: 0.1
+      } 
+    },
   };
+
   const linkVariants = {
     closed: { opacity: 0, y: 20 },
     open: (i) => ({
       opacity: 1,
       y: 0,
-      transition: { delay: i * 0.08 + 0.2, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] },
+      transition: { 
+        delay: i * 0.08 + 0.3, 
+        duration: 0.5, 
+        ease: [0.23, 1, 0.32, 1] 
+      },
     }),
+  };
+
+  const dropdownVariants = {
+    closed: { 
+      opacity: 0, 
+      y: -10, 
+      scale: 0.95,
+      transition: { duration: 0.2 }
+    },
+    open: { 
+      opacity: 1, 
+      y: 0, 
+      scale: 1,
+      transition: { duration: 0.3, ease: [0.23, 1, 0.32, 1] }
+    },
   };
 
   /* ───────────────── layout ───────────────── */
   return (
     <>
-      {/* NAVBAR - Professional Dark Theme */}
+      {/* NAVBAR - Premium Luxury Design */}
       <motion.nav
         initial={{ y: -100 }}
         animate={{ y: isVisible ? 0 : -100 }}
-        transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-        className={`fixed top-0 z-50 w-full transition-all duration-300
+        transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+        className={`fixed top-0 z-50 w-full transition-all duration-500
           ${
             isScrolled
-              ? 'bg-[#0A0A0A]/95 backdrop-blur-lg shadow-sm shadow-black/10 border-b border-[#D4AF37]/15'
-              : 'bg-[#1A1A1A]/90 backdrop-blur-md border-b border-[#D4AF37]/10'
+              ? 'bg-[#0A0A0A]/97 backdrop-blur-xl shadow-2xl shadow-black/20 border-b border-[#D4AF37]/25'
+              : 'bg-[#1A1A1A]/95 backdrop-blur-lg border-b border-[#D4AF37]/15'
           }`}
       >
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="flex h-16 items-center justify-between">
-            {/* Logo - Using image */}
+        {/* Subtle top accent line */}
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/60 to-transparent" />
+        
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="flex h-20 items-center justify-between">
+            {/* Logo - Enhanced with subtle glow */}
             <motion.a
               href="/"
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.2 }}
-              className="relative"
+              whileHover={{ scale: 1.03 }}
+              transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
+              className="relative group"
             >
-              <Image src={Logo} alt="Ampereon Logo" className="h-8 w-auto" />
+              <div className="absolute inset-0 rounded-lg bg-[#D4AF37]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-lg" />
+              <Image 
+                src={Logo} 
+                alt="Ampereon Logo" 
+                className="h-10 w-auto relative z-10 transition-all duration-300 group-hover:brightness-110" 
+              />
             </motion.a>
 
-            {/* Desktop links - Clean professional spacing */}
-            <div className="hidden md:flex items-center gap-8">
+            {/* Desktop Navigation - Premium spacing and typography */}
+            <div className="hidden md:flex items-center gap-10">
               {filteredNavLinks.map((link, index) => (
                 <motion.a
                   key={link.name}
                   href={link.href}
                   whileHover={{ y: -1 }}
-                  transition={{ duration: 0.2 }}
-                  className="relative font-medium text-gray-300 hover:text-white transition-colors duration-200"
+                  transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
+                  className="relative font-medium text-gray-200 hover:text-white 
+                           transition-all duration-300 tracking-wide text-[15px] py-2 group"
                 >
-                  <span className="tracking-wide text-sm">{link.name}</span>
-                  {/* Simple underline */}
-                  <span className="absolute left-0 -bottom-1 h-px w-0 bg-[#D4AF37] 
-                                 transition-all duration-200 group-hover:w-full"/>
+                  <span className="relative">
+                    {link.name}
+                    {/* Premium underline animation */}
+                    <span className="absolute left-0 -bottom-1 h-0.5 w-0 bg-gradient-to-r from-[#D4AF37] to-[#FFD700] 
+                                   transition-all duration-300 group-hover:w-full rounded-full"/>
+                  </span>
                 </motion.a>
               ))}
             </div>
 
-            {/* Desktop CTA - Professional button design */}
+            {/* Desktop CTA - Subtle luxury button */}
             <div className="hidden md:flex items-center gap-4">
               <motion.button
                 onClick={openModal}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                transition={{ duration: 0.2 }}
-                className="rounded-lg bg-gradient-to-r from-[#D4AF37] to-[#B8860B] 
-                           px-6 py-2.5 text-sm font-medium text-white
-                           hover:shadow-md hover:shadow-[#D4AF37]/20 transition-all duration-200
-                           focus:ring-2 focus:ring-[#D4AF37]/40 focus:ring-offset-2 focus:ring-offset-[#1A1A1A]"
+                transition={{ duration: 0.3 }}
+                className="rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#B8860B] 
+                         px-6 py-3 text-[15px] font-medium text-white
+                         hover:shadow-lg hover:shadow-[#D4AF37]/20 transition-all duration-300
+                         focus:ring-2 focus:ring-[#D4AF37]/40 focus:ring-offset-2 focus:ring-offset-[#1A1A1A]"
               >
                 Order Now
               </motion.button>
             </div>
 
-            {/* Mobile burger - Clean design */}
+            {/* Mobile Menu Button - Clean design */}
             <motion.button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="md:hidden rounded-lg p-2 hover:bg-[#D4AF37]/10 transition-colors duration-200"
+              className="md:hidden p-3 rounded-xl bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 
+                       transition-all duration-300"
             >
               {isMobileMenuOpen ? (
-                <X className="h-5 w-5 text-white" />
+                <X className="h-5 w-5 text-[#D4AF37]" />
               ) : (
-                <Menu className="h-5 w-5 text-white" />
+                <Menu className="h-5 w-5 text-[#D4AF37]" />
               )}
             </motion.button>
           </div>
         </div>
       </motion.nav>
 
-      {/* MOBILE MENU - Professional slide-out */}
+      {/* MOBILE MENU - Premium slide-out with enhanced design */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <>
-            {/* Backdrop */}
+            {/* Enhanced Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm md:hidden"
+              transition={{ duration: 0.4 }}
+              className="fixed inset-0 z-40 bg-black/60 backdrop-blur-md md:hidden"
               onClick={() => setIsMobileMenuOpen(false)}
             />
 
-            {/* Slide-out menu */}
+            {/* Premium Slide-out Menu */}
             <motion.div
               variants={menuVariants}
               initial="closed"
               animate="open"
               exit="closed"
               className="fixed top-0 right-0 z-50 h-full w-full sm:w-80 bg-[#1A1A1A]/95 backdrop-blur-lg 
-                         shadow-xl border-l border-[#D4AF37]/20 md:hidden"
+                       shadow-xl border-l border-[#D4AF37]/20 md:hidden"
             >
               {/* Header */}
               <div className="flex items-center justify-between border-b border-[#D4AF37]/15 p-6">
@@ -200,7 +240,7 @@ const AmpereonNavbar = () => {
                 </motion.button>
               </div>
 
-              {/* Navigation links */}
+              {/* Navigation Links with clean styling */}
               <div className="flex-1 px-6 py-8">
                 {filteredNavLinks.map((link, i) => (
                   <motion.a
@@ -230,7 +270,7 @@ const AmpereonNavbar = () => {
                            px-6 py-4 font-medium text-white
                            transition-all duration-200"
                 >
-                  Reserve Now
+                  Order Now
                 </motion.button>
 
                 <p className="mt-3 text-center text-sm text-gray-400">
