@@ -309,10 +309,9 @@ const AmpereonLanding = () => {
         className="relative min-h-screen flex items-center justify-center overflow-visible"
         ref={heroRef}
       >
-        {/* Background GIF instead of video */}
         <motion.div className="absolute inset-0 z-0 pointer-events-none opacity-30">
           <img
-            src="https://demo.ampereonenergy.com/productDemo.gif"
+            src="https://demo.ampereonenergy.com/productDemo.mp4"
             alt="Smart Home EV Charger Demo - Automatic Electric Vehicle Charging"
             className="w-full h-full object-cover"
             loading="lazy"
@@ -724,11 +723,6 @@ const AmpereonLanding = () => {
                   transition={{ delay: index * 0.1 }}
                 >
                   <div className="flex items-center gap-4 mb-4">
-                    <img
-                      src={testimonial.avatar}
-                      alt={testimonial.name}
-                      className="w-12 h-12 rounded-full"
-                    />
                     <div>
                       <h4 className="text-lg font-semibold text-white">{testimonial.name}</h4>
                     </div>
