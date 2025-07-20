@@ -9,7 +9,7 @@ export async function GET(request) {
   const state = searchParams.get('state'); // userId from state
 
   if (!code || !state) {
-    return NextResponse.redirect('/signup?error=Authorization failed');
+    return NextResponse.redirect('/signup');
   }
 
   try {
@@ -18,10 +18,10 @@ export async function GET(request) {
       'https://fleet-auth.prd.vn.cloud.tesla.com/oauth2/v3/token',
       {
         grant_type: 'authorization_code',
-        client_id: process.env.NEXT_PUBLIC_TESLA_CLIENT_ID,
+        client_id: process.env.TESLA_CLIENT_ID,
         client_secret: process.env.TESLA_CLIENT_SECRET,
         code,
-        redirect_uri: 'http://localhost:3000/api/tesla-callback', // Update for prod
+        redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/api/tesla-callback`, // Dynamic for dev/prod
         audience: 'https://fleet-api.prd.na.vn.cloud.tesla.com',
       }
     );
@@ -35,21 +35,20 @@ export async function GET(request) {
     );
 
     const vehicles = vehiclesResponse.data.response;
-    const vin = vehicles[0]?.vin; // Assume first vehicle
 
-    // Update user in Firebase
+    // Update user in Firebase with tokens and vehicles
     const userRef = doc(db, 'users', state);
     await updateDoc(userRef, {
       tesla_access_token: access_token,
       tesla_refresh_token: refresh_token,
       tesla_token_expires: Date.now() + expires_in * 1000,
-      tesla_vehicle_vin: vin,
+      tesla_vehicles: vehicles,
     });
 
-    // Redirect back with success (show modal in UI if needed)
-    return NextResponse.redirect('/signup?success=true');
+    // Redirect to success page
+    return NextResponse.redirect('/signup/success');
   } catch (error) {
     console.error(error);
-    return NextResponse.redirect('/signup?error=Pairing failed');
+    return NextResponse.redirect('/signup');
   }
 }
