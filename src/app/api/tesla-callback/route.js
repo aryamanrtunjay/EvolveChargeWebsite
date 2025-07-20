@@ -1,3 +1,4 @@
+// app/api/tesla-callback/route.js
 import { NextResponse } from 'next/server';
 import axios from 'axios';
 import { db } from '../../firebaseConfig.js';
@@ -45,8 +46,8 @@ export async function GET(request) {
       tesla_vehicles: vehicles,
     });
 
-    // Redirect to success page
-    return NextResponse.redirect('/signup/success');
+    // Redirect to success page with userId
+    return NextResponse.redirect(`/signup/success?userId=${state}`);
   } catch (error) {
     console.error(error);
     return NextResponse.redirect('/signup');
