@@ -311,7 +311,7 @@ const AmpereonLanding = () => {
       >
         <motion.div className="absolute inset-0 z-0 pointer-events-none opacity-30">
           <img
-            src="https://demo.ampereonenergy.com/productDemo.mp4"
+            src="https://demo.ampereonenergy.com/productDemo.gif"
             alt="Smart Home EV Charger Demo - Automatic Electric Vehicle Charging"
             className="w-full h-full object-cover"
             loading="lazy"
