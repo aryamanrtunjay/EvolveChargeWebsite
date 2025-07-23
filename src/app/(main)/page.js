@@ -15,10 +15,8 @@ const SubtlePattern = React.lazy(() => Promise.resolve({ default: ({ opacity = 0
 
 const AmpereonLanding = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
   const [activeStep, setActiveStep] = useState(0);
   const [activeComponent, setActiveComponent] = useState(0);
-
   const heroRef = useRef(null);
 
   const useCounter = (end, duration = 2000) => {
@@ -310,12 +308,30 @@ const AmpereonLanding = () => {
         ref={heroRef}
       >
         <motion.div className="absolute inset-0 z-0 pointer-events-none opacity-30">
-          <img
-            src="https://demo.ampereonenergy.com/productDemo.gif"
-            alt="Smart Home EV Charger Demo - Automatic Electric Vehicle Charging"
-            className="w-full h-full object-cover"
+          {/* Desktop Video (≥768px) */}
+          <video
+            poster="https://images.ampereonenergy.com/productDemoPoster.jpg"
+            className="w-full h-full object-cover hidden md:block"
+            autoPlay
+            muted
+            loop
+            playsInline
             loading="lazy"
-          />
+          >
+            <source src="https://demo.ampereonenergy.com/productDemo.mp4" type="video/mp4" />
+          </video>
+          {/* Mobile Video (<768px) */}
+          <video
+            poster="https://images.ampereonenergy.com/productDemoPoster.jpg"
+            className="w-full h-full object-cover block md:hidden"
+            autoPlay
+            muted
+            loop
+            playsInline
+            loading="lazy"
+          >
+            <source src="https://demo.ampereonenergy.com/productDemoMobile.mp4" type="video/mp4" />
+          </video>
         </motion.div>
 
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#1A1A1A]/20 to-[#1A1A1A]/40" />
@@ -644,7 +660,7 @@ const AmpereonLanding = () => {
           <div className="max-w-7xl mx-auto relative z-10">
             <motion.div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-light mb-6 text-white">
-                Proven Savings vs <span className="font-semibold text-[#D4AF37]">Traditional Chargers</span>
+                Savings vs <span className="font-semibold text-[#D4AF37]">Traditional Chargers</span>
               </h2>
               
               <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light">
@@ -664,12 +680,6 @@ const AmpereonLanding = () => {
                     variants={fadeUpVariants}
                     transition={{ delay: i * 0.1 }}
                   >
-                    <div className="flex items-center justify-center mb-4">
-                      <div className="text-[#D4AF37]">
-                        {metric.icon}
-                      </div>
-                    </div>
-                    
                     <div className="text-3xl font-semibold text-white mb-2">
                       {metric.prefix}{metric.value}{metric.suffix}
                     </div>
@@ -706,28 +716,60 @@ const AmpereonLanding = () => {
           <div className="max-w-7xl mx-auto">
             <motion.div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-light mb-6 text-white">
-                What Our <span className="font-semibold text-[#D4AF37]">Customers Say</span>
+                What Our <span className="font-semibold text-[#D4AF37]">Early Users Say</span>
               </h2>
               
               <p className="text-xl text-gray-300 max-w-3xl mx-auto font-light">
-                Hear from EV owners who have transformed their charging experience with Ampereon.
+                Discover how Ampereon’s smart charging solution has elevated the EV experience for our early adopters.
               </p>
             </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {testimonials.map((testimonial, index) => (
+              {[
+                {
+                  name: "Kirit S.",
+                  quote: "This charger has transformed my daily routine. The automation saves me time every day, and I’ve noticed significant savings on my energy bills.",
+                  rating: 5,
+                },
+                {
+                  name: "Andreas G.",
+                  quote: "The AI-driven scheduling is a game-changer. It optimizes charging for the lowest rates, saving me hundreds annually with zero effort.",
+                  rating: 5,
+                },
+                {
+                  name: "Vivaan P.",
+                  quote: "Setup was incredibly simple, and the analytics provide clear insights into my charging habits. My battery health has never been better.",
+                  rating: 5,
+                },
+                {
+                  name: "Peter Z.",
+                  quote: "Hands-free charging is seamless, and the app’s real-time insights make it easy to track savings and efficiency. Highly recommend!",
+                  rating: 5,
+                },
+              ].map((testimonial, index) => (
                 <motion.div
                   key={index}
-                  className="bg-[#2A2A2A]/60 backdrop-blur-sm rounded-xl p-6 border border-[#D4AF37]/20 hover:border-[#D4AF37]/40 transition-all duration-300"
+                  className="bg-gradient-to-br from-[#2A2A2A]/60 to-[#1A1A1A]/60 backdrop-blur-sm rounded-xl p-6 border border-[#D4AF37]/20 hover:border-[#D4AF37]/40 hover:shadow-lg hover:shadow-[#D4AF37]/10 transition-all duration-300"
                   variants={fadeUpVariants}
                   transition={{ delay: index * 0.1 }}
+                  whileHover={{ scale: 1.02 }}
                 >
-                  <div className="flex items-center gap-4 mb-4">
-                    <div>
-                      <h4 className="text-lg font-semibold text-white">{testimonial.name}</h4>
+                  <div className="flex flex-col items-center gap-4 mb-4">
+                    <h4 className="text-xl font-semibold text-white">{testimonial.name}</h4>
+                    <div className="flex items-center gap-1">
+                      {[...Array(5)].map((_, i) => (
+                        <svg
+                          key={i}
+                          className={`w-4 h-4 ${i < Math.floor(testimonial.rating) ? 'text-[#D4AF37]' : 'text-gray-600'}`}
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                        </svg>
+                      ))}
                     </div>
                   </div>
-                  <p className="text-gray-300 leading-relaxed">{testimonial.quote}</p>
+                  <p className="text-gray-300 text-base leading-relaxed text-center">{testimonial.quote}</p>
                 </motion.div>
               ))}
             </div>
@@ -777,7 +819,7 @@ const AmpereonLanding = () => {
               viewport={{ once: true }}
               transition={{ delay: 0.3, duration: 0.6 }}
             >
-              Limited production run: automate charging, save $325/year, join 1,000+ satisfied EV owners. Includes free setup consultation.
+              Limited production run: automate charging, save $325/year, become a part of the future of EV charging.
             </motion.p>
             
             <motion.div 
