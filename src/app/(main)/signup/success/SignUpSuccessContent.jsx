@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { db } from '../../../firebaseConfig.js';
-import { doc, getDoc } from 'firebase/firestore';
+import { collection, getDocs, query } from 'firebase/firestore';
 import { CheckCircle, ArrowRight, Car } from 'lucide-react';
 
 // Animation variants
@@ -36,15 +36,16 @@ export default function SignUpSuccessContent() {
       }
 
       try {
-        const userDoc = await getDoc(doc(db, 'users', userId));
-        if (userDoc.exists()) {
-          const data = userDoc.data();
-          setVehicles(data.tesla_vehicles || []);
+        const vehiclesQuery = query(collection(db, 'users', userId, 'vehicles'));
+        const vehiclesSnapshot = await getDocs(vehiclesQuery);
+        const vehiclesList = vehiclesSnapshot.docs.map(doc => doc.data());
+        if (vehiclesList.length > 0) {
+          setVehicles(vehiclesList);
         } else {
-          setError('User data not found.');
+          setError('No vehicles found in your account.');
         }
       } catch (err) {
-        console.error(err);
+        console.error('Error fetching vehicles:', err);
         setError('Failed to load vehicle data.');
       } finally {
         setLoading(false);
