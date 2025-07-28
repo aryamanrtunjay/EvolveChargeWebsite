@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { getDatabase, ref, set } from 'firebase/database';
 import { app } from '../../../firebaseConfig';
+import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const fadeIn = {
   hidden: { opacity: 0, y: 10 },
@@ -15,6 +17,8 @@ export default function AmpereonPrototypeControl() {
   const [action, setAction] = useState('forward');
   const [duration, setDuration] = useState('');
   const [steps, setSteps] = useState([]);
+const [firmwareFile, setFirmwareFile] = useState(null);
+  const [firmwareVersion, setFirmwareVersion] = useState('');
 
   const addStep = () => {
     const dur = parseFloat(duration);
@@ -38,6 +42,33 @@ export default function AmpereonPrototypeControl() {
       setSteps([]);
     } catch (err) {
       alert('Error updating instructions: ' + err.message);
+    }
+  };
+
+
+  const uploadFirmware = async () => {
+    if (!firmwareFile || !firmwareVersion) {
+      alert('Please select a file and enter a version.');
+      return;
+    }
+    try {
+      const storage = getStorage(app);
+      const fileRef = storageRef(storage, `code_files/${firmwareVersion}_${firmwareFile.name}`);
+      await uploadBytes(fileRef, firmwareFile);
+      const url = await getDownloadURL(fileRef);
+      
+      const db = getFirestore(app);
+      await addDoc(collection(db, 'code_files'), {
+        version: firmwareVersion,
+        date: serverTimestamp(),
+        url: url
+      });
+      
+      alert('Firmware uploaded successfully!');
+      setFirmwareFile(null);
+      setFirmwareVersion('');
+    } catch (err) {
+      alert('Error uploading firmware: ' + err.message);
     }
   };
 
@@ -107,6 +138,35 @@ export default function AmpereonPrototypeControl() {
         >
           Submit Instructions
         </button>
+
+        <h4 className="text-lg font-medium text-gray-900 mt-6 mb-3">Upload Firmware</h4>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Firmware Version</label>
+            <input
+              type="text"
+              value={firmwareVersion}
+              onChange={(e) => setFirmwareVersion(e.target.value)}
+              placeholder="e.g., 1.0.0"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-gray-900"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Firmware File</label>
+            <input
+              type="file"
+              onChange={(e) => setFirmwareFile(e.target.files[0])}
+              className="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-md cursor-pointer focus:outline-none focus:border-teal-500"
+            />
+          </div>
+          <button
+            onClick={uploadFirmware}
+            className="w-full px-4 py-2 bg-teal-500 text-white rounded-md hover:bg-teal-600 font-medium transition-colors"
+          >
+            Upload Firmware
+          </button>
+        </div>
+
       </motion.div>
     </div>
   );
