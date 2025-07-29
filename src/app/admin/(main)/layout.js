@@ -155,6 +155,15 @@ export default function AdminLayout({ children }) {
         </svg>
       ),
     },
+    {
+      name: 'Applications',
+      href: '/admin/applications',
+      icon: (
+        <svg className="mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+        </svg>
+      ),
+    },
   ];
 
   return (
@@ -214,7 +223,7 @@ export default function AdminLayout({ children }) {
                     <button
                       onClick={() => { toggleToolsDropdown(); setIsMenuOpen(true); }}
                       className={`flex items-center w-full px-4 py-3 text-sm font-medium rounded-md text-teal-100 hover:bg-teal-600 hover:text-white ${
-                        pathname.startsWith('/admin/marketing') || pathname.startsWith('/admin/engineering')
+                        pathname.startsWith('/admin/marketing') || pathname.startsWith('/admin/engineering') || pathname.startsWith('/admin/applications')
                           ? 'bg-teal-800 text-white'
                           : ''
                       }`}
