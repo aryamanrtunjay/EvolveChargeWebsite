@@ -57,7 +57,7 @@ export default function InternshipApplicationsDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-teal-500 border-t-transparent"></div>
           <p className="mt-4 text-gray-700">Loading applications...</p>
@@ -112,7 +112,7 @@ export default function InternshipApplicationsDashboard() {
                         }`}
                       >
                         <h3 className="text-md font-medium text-gray-900">
-                          {app.basics?.school || 'Unknown Applicant'}
+                          {app.personal?.firstName || 'Unknown Applicant'} {app.personal?.lastName || ''}
                         </h3>
                         <p className="text-sm text-gray-500">
                           Location: {app.basics?.location || 'N/A'}
@@ -139,75 +139,163 @@ export default function InternshipApplicationsDashboard() {
                   <h2 className="text-lg font-medium text-gray-900 mb-4">Application Details</h2>
                   {selectedApplication ? (
                     <div className="space-y-6 max-h-[calc(100vh-200px)] overflow-y-auto">
+                      {/* Personal Info */}
+                      <div>
+                        <h3 className="text-md font-medium text-gray-900 mb-2">Personal Info</h3>
+                        <table className="min-w-full bg-gray-50 rounded-lg overflow-hidden">
+                          <tbody>
+                            <tr className="border-b">
+                              <td className="py-2 px-4 font-medium text-gray-600">Full Name</td>
+                              <td className="py-2 px-4 text-gray-700">{selectedApplication.personal?.firstName || 'N/A'} {selectedApplication.personal?.lastName || 'N/A'}</td>
+                            </tr>
+                            <tr className="border-b">
+                              <td className="py-2 px-4 font-medium text-gray-600">Age</td>
+                              <td className="py-2 px-4 text-gray-700">{selectedApplication.personal?.age || 'N/A'}</td>
+                            </tr>
+                            <tr className="border-b">
+                              <td className="py-2 px-4 font-medium text-gray-600">Email</td>
+                              <td className="py-2 px-4 text-gray-700">{selectedApplication.personal?.email || 'N/A'}</td>
+                            </tr>
+                            <tr>
+                              <td className="py-2 px-4 font-medium text-gray-600">Phone</td>
+                              <td className="py-2 px-4 text-gray-700">{selectedApplication.personal?.phone || 'N/A'}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+
                       {/* Basics */}
                       <div>
                         <h3 className="text-md font-medium text-gray-900 mb-2">Basics</h3>
-                        <div className="bg-gray-50 rounded-lg p-3 space-y-1">
-                          <p className="font-medium text-gray-600"><span className="font-medium text-gray-400">Location & Timezone:</span> {selectedApplication.basics?.location}</p>
-                          <p className="font-medium text-gray-600"><span className="font-medium text-gray-400">School/Major & Grad Year:</span> {selectedApplication.basics?.school}</p>
-                          <p className="font-medium text-gray-600"><span className="font-medium text-gray-400">Weekly Availability & Start Date:</span> {selectedApplication.basics?.availability}</p>
-                          <p className="font-medium text-gray-600"><span className="font-medium text-gray-400">Internship Length:</span> {selectedApplication.basics?.length}</p>
-                          <p className="font-medium text-gray-600"><span className="font-medium text-gray-400">Looking For:</span> {selectedApplication.basics?.lookingFor}</p>
-                        </div>
+                        <table className="min-w-full bg-gray-50 rounded-lg overflow-hidden">
+                          <tbody>
+                            <tr className="border-b">
+                              <td className="py-2 px-4 font-medium text-gray-600">Current Location</td>
+                              <td className="py-2 px-4 text-gray-700">{selectedApplication.basics?.location || 'N/A'}</td>
+                            </tr>
+                            <tr className="border-b">
+                              <td className="py-2 px-4 font-medium text-gray-600">School/Major & Grad Year</td>
+                              <td className="py-2 px-4 text-gray-700">{selectedApplication.basics?.school || 'N/A'}</td>
+                            </tr>
+                            <tr className="border-b">
+                              <td className="py-2 px-4 font-medium text-gray-600">Weekly Availability & Start Date</td>
+                              <td className="py-2 px-4 text-gray-700">{selectedApplication.basics?.availability || 'N/A'}</td>
+                            </tr>
+                            <tr>
+                              <td className="py-2 px-4 font-medium text-gray-600">Internship Length</td>
+                              <td className="py-2 px-4 text-gray-700">{selectedApplication.basics?.length || 'N/A'}</td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
 
                       {/* Skills Snapshot */}
                       <div>
                         <h3 className="text-md font-medium text-gray-900 mb-2">Skills Snapshot</h3>
-                        <div className="bg-gray-50 rounded-lg p-3 space-y-1">
-                          {Object.entries(selectedApplication.skills || {}).map(([key, value]) => (
-                            <p  className="font-medium text-gray-600" key={key}>
-                              <span className="font-medium text-gray-400 capitalize">{key}:</span> {value.rating}/5, Tools: {value.tools}
-                            </p>
-                          ))}
-                        </div>
+                        <table className="min-w-full bg-gray-50 rounded-lg overflow-hidden">
+                          <thead>
+                            <tr>
+                              <th className="py-2 px-4 text-left font-medium text-gray-600">Area</th>
+                              <th className="py-2 px-4 text-left font-medium text-gray-600">Rating</th>
+                              <th className="py-2 px-4 text-left font-medium text-gray-600">Tools</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {Object.entries(selectedApplication.skills || {}).map(([key, value]) => (
+                              <tr key={key} className="border-t">
+                                <td className="py-2 px-4 capitalize text-gray-700">{key}</td>
+                                <td className="py-2 px-4 text-gray-700">{value.rating || 'N/A'}/5</td>
+                                <td className="py-2 px-4 text-gray-700">{value.tools || 'N/A'}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
                       </div>
 
                       {/* What Excites You */}
                       <div>
                         <h3 className="text-md font-medium text-gray-900 mb-2">What Excites You</h3>
                         <div className="bg-gray-50 rounded-lg p-3">
-                          <ul className="list-disc pl-5 space-y-1">
+                          <ul className="list-disc pl-5 space-y-1 text-gray-700">
                             {selectedApplication.excites?.map((item, index) => (
-                              <li className="font-medium text-gray-600" key={index}>{item}</li>
+                              <li key={index}>{item}</li>
                             ))}
                           </ul>
-                          {selectedApplication.excites?.length === 0 && <p>None selected.</p>}
+                          {selectedApplication.excites?.length === 0 && <p className="text-gray-500">None selected.</p>}
                         </div>
                       </div>
 
                       {/* Show and Tell */}
                       <div>
                         <h3 className="text-md font-medium text-gray-900 mb-2">Show and Tell</h3>
-                        <div className="bg-gray-50 rounded-lg p-3 space-y-2">
-                          <p className="font-medium text-gray-600"><span className="font-medium text-gray-400">Project 1:</span> {selectedApplication.showAndTell?.project1}</p>
-                          <p className="font-medium text-gray-600"><span className="font-medium text-gray-400">Project 2:</span> {selectedApplication.showAndTell?.project2}</p>
-                          <p className="font-medium text-gray-600"><span className="font-medium text-gray-400">Project 3:</span> {selectedApplication.showAndTell?.project3}</p>
-                          <p className="font-medium text-gray-600"><span className="font-medium text-gray-400">Tools/Space:</span> {selectedApplication.showAndTell?.tools}</p>
+                        <table className="min-w-full bg-gray-50 rounded-lg overflow-hidden">
+                          <thead>
+                            <tr>
+                              <th className="py-2 px-4 text-left font-medium text-gray-600">Project</th>
+                              <th className="py-2 px-4 text-left font-medium text-gray-600">Date</th>
+                              <th className="py-2 px-4 text-left font-medium text-gray-600">Description</th>
+                              <th className="py-2 px-4 text-left font-medium text-gray-600">Tools</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {['project1', 'project2', 'project3'].map((projectKey, index) => (
+                              <tr key={projectKey} className="border-t">
+                                <td className="py-2 px-4 text-gray-700">Project {index + 1}</td>
+                                <td className="py-2 px-4 text-gray-700">{selectedApplication.showAndTell?.[projectKey]?.date || 'N/A'}</td>
+                                <td className="py-2 px-4 text-gray-700">{selectedApplication.showAndTell?.[projectKey]?.description || 'N/A'}</td>
+                                <td className="py-2 px-4 text-gray-700">{selectedApplication.showAndTell?.[projectKey]?.tools || 'N/A'}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                        <div className="mt-4 bg-gray-50 rounded-lg p-3">
+                          <p><span className="font-medium text-gray-600">Personal Tools/Space:</span> {selectedApplication.showAndTell?.personalTools || 'N/A'}</p>
                         </div>
                       </div>
 
                       {/* Logistics */}
                       <div>
                         <h3 className="text-md font-medium text-gray-900 mb-2">Logistics</h3>
-                        <div className="bg-gray-50 rounded-lg p-3 space-y-1">
-                          <p className="font-medium text-gray-600"><span className="font-medium text-gray-400">Time Constraints:</span> {selectedApplication.logistics?.constraints}</p>
-                          <p className="font-medium text-gray-600"><span className="font-medium text-gray-400">NDA Comfort:</span> {selectedApplication.logistics?.nda}</p>
-                          <p className="font-medium text-gray-600"><span className="font-medium text-gray-400">Hardware Limitations:</span> {selectedApplication.logistics?.limitations}</p>
-                          <p className="font-medium text-gray-600"><span className="font-medium text-gray-400">Reference:</span> {selectedApplication.logistics?.reference}</p>
-                        </div>
+                        <table className="min-w-full bg-gray-50 rounded-lg overflow-hidden">
+                          <tbody>
+                            <tr className="border-b">
+                              <td className="py-2 px-4 font-medium text-gray-600">Time Constraints</td>
+                              <td className="py-2 px-4 text-gray-700">{selectedApplication.logistics?.constraints || 'N/A'}</td>
+                            </tr>
+                            <tr className="border-b">
+                              <td className="py-2 px-4 font-medium text-gray-600">NDA Comfort</td>
+                              <td className="py-2 px-4 text-gray-700">{selectedApplication.logistics?.nda || 'N/A'}</td>
+                            </tr>
+                            <tr className="border-b">
+                              <td className="py-2 px-4 font-medium text-gray-600">Hardware Limitations</td>
+                              <td className="py-2 px-4 text-gray-700">{selectedApplication.logistics?.limitations || 'N/A'}</td>
+                            </tr>
+                            <tr>
+                              <td className="py-2 px-4 font-medium text-gray-600">Reference</td>
+                              <td className="py-2 px-4 text-gray-700">{selectedApplication.logistics?.reference || 'N/A'}</td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
 
                       {/* Your Why */}
                       <div>
                         <h3 className="text-md font-medium text-gray-900 mb-2">Your Why</h3>
                         <div className="bg-gray-50 rounded-lg p-3">
-                          <p className="font-medium text-gray-600">{selectedApplication.why}</p>
+                          <p className="text-gray-700">{selectedApplication.why || 'N/A'}</p>
+                        </div>
+                      </div>
+
+                      {/* Resume */}
+                      <div>
+                        <h3 className="text-md font-medium text-gray-900 mb-2">Resume</h3>
+                        <div className="bg-gray-50 rounded-lg p-3">
+                          <p><span className="font-medium text-gray-600">Resume URL:</span> {selectedApplication.resumeUrl ? <a href={selectedApplication.resumeUrl} target="_blank" rel="noopener noreferrer" className="text-teal-500 underline">View Resume</a> : 'N/A'}</p>
                         </div>
                       </div>
                     </div>
                   ) : (
-                    <p className="text-gray-500">Select an application from the list to view details.</p>
+                    <p className="text-gray-500 text-center py-6">Select an application from the list to view details.</p>
                   )}
                 </div>
               </div>
