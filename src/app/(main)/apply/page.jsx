@@ -37,6 +37,8 @@ export default function InternshipApplication() {
       school: '',
       availability: '',
       length: '',
+      role: '',
+      sponsorship: '',
     },
     skills: {
       mechanical: { rating: '', tools: '' },
@@ -117,6 +119,8 @@ export default function InternshipApplication() {
       if (!formData.basics.school.trim()) errors.school = 'School/major is required';
       if (!formData.basics.availability.trim()) errors.availability = 'Availability is required';
       if (!formData.basics.length.trim()) errors.length = 'Internship length is required';
+      if (!formData.basics.role) errors.role = 'Role selection is required';
+      if (!formData.basics.sponsorship) errors.sponsorship = 'Sponsorship status is required';
       if (!formData.resumeFile) errors.resume = 'Resume PDF is required';
     } else if (currentStep === 3) {
       skillAreas.forEach(area => {
@@ -349,6 +353,42 @@ export default function InternshipApplication() {
 
             {step === 2 && (
               <motion.div variants={staggerContainer} className="space-y-4">
+                <div>
+                  <label htmlFor="role" className="block text-sm font-medium text-gray-300 mb-2">
+                    What role are you applying for?
+                  </label>
+                  <select
+                    id="role"
+                    value={formData.basics.role}
+                    onChange={(e) => handleInputChange('basics', 'role', e.target.value)}
+                    className={`w-full py-2 bg-[#0A0A0A] border rounded text-white focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37] ${
+                      validationErrors.role ? 'border-red-500' : 'border-gray-600'
+                    }`}
+                  >
+                    <option value="">Select a role</option>
+                    <option value="Film Intern">Film Intern</option>
+                    <option value="Social Media Intern">Social Media Intern</option>
+                  </select>
+                  {validationErrors.role && <p className="text-sm text-red-400 mt-1">{validationErrors.role}</p>}
+                </div>
+                <div>
+                  <label htmlFor="sponsorship" className="block text-sm font-medium text-gray-300 mb-2">
+                    Will you now or in the future require sponsorship for employment (e.g., H1B visa)?
+                  </label>
+                  <select
+                    id="sponsorship"
+                    value={formData.basics.sponsorship}
+                    onChange={(e) => handleInputChange('basics', 'sponsorship', e.target.value)}
+                    className={`w-full py-2 bg-[#0A0A0A] border rounded text-white focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37] ${
+                      validationErrors.sponsorship ? 'border-red-500' : 'border-gray-600'
+                    }`}
+                  >
+                    <option value="">Select an option</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                  </select>
+                  {validationErrors.sponsorship && <p className="text-sm text-red-400 mt-1">{validationErrors.sponsorship}</p>}
+                </div>
                 {[
                   { id: 'location', label: 'Current Location', icon: User, placeholder: 'e.g., New York' },
                   { id: 'school', label: 'School/major & grad year (if any)', icon: Mail, placeholder: 'e.g., MIT / EE / 2026' },
