@@ -175,7 +175,7 @@ const AmpereonLanding = () => {
       icon: Clock,
       description: "Track energy usage, cost savings, and environmental impact with detailed reports.",
       stats: [
-        { value: "$325", label: "Yearly savings" },
+        { value: "$450", label: "Yearly savings" },
         { value: "Real-time", label: "Updates" }
       ],
       features: [
@@ -197,7 +197,7 @@ const AmpereonLanding = () => {
   }, [steps.length]);
 
   const metrics = [
-    { value: 325, prefix: "$", suffix: "", label: "Average Yearly Savings", how: "Off-peak charging reduces electricity costs by about 32%, saving approximately $325 annually for typical EV owners.", icon: <DollarSign className="w-5 h-5" /> },
+    { value: 450, prefix: "$", suffix: "", label: "Average Yearly Savings", how: "Off-peak charging reduces electricity costs by about 32%, saving approximately $450 annually for typical EV owners.", icon: <DollarSign className="w-5 h-5" /> },
     { value: 3, prefix: "", suffix: " years", label: "Extended Battery Life", how: "Optimized charging reduces battery degradation by 40%, adding approximately 3 years to your EV battery's useful life.", icon: <Battery className="w-5 h-5" /> },
     { value: 30, prefix: "", suffix: " hours", label: "Time Saved Annually", how: "No more daily plugging and unplugging. Save 5 minutes per day, which adds up to 30 hours of time saved each year.", icon: <Clock className="w-5 h-5" /> }
   ];

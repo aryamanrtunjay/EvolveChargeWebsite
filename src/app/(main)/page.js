@@ -70,7 +70,7 @@ const AmpereonLanding = () => {
     { 
       icon: <DollarSign className="w-6 h-6" />, 
       title: "Cost Savings & Efficiency", 
-      desc: "AI shifts charging to off-peak hours, cutting costs by up to 40% ($325/year average). Includes tax credit eligibility and real-time cost tracking.", 
+      desc: "AI shifts charging to off-peak hours, cutting costs by up to 40% ($450/year average). Includes tax credit eligibility and real-time cost tracking.", 
       stats: [{ value: "40%", label: "Cost reduction" }]
     },
     { 
@@ -163,7 +163,7 @@ const AmpereonLanding = () => {
       icon: Clock,
       description: "Comprehensive dashboard with cost breakdowns, CO2 savings, and predictive analytics for future usage.",
       stats: [
-        { value: "$325", label: "Yearly savings" },
+        { value: "$450", label: "Yearly savings" },
         { value: "Real-time", label: "Updates" }
       ],
       features: [
@@ -253,7 +253,7 @@ const AmpereonLanding = () => {
   // Merged metrics with ownership advantages and comparison for deeper value
   const savingsMetrics = [
     { 
-      value: 325, prefix: "$", suffix: "", label: "Annual Savings", 
+      value: 450, prefix: "$", suffix: "", label: "Annual Savings", 
       how: "32% reduction via off-peak optimization; vs traditional chargers ($0 savings) or premium ($200 avg). Eligible for $500+ tax credits.", 
       icon: <DollarSign className="w-5 h-5" />,
       advantages: ["Lower bills than manual charging", "No replacement costs", "Qualifies for incentives"]
@@ -819,7 +819,7 @@ const AmpereonLanding = () => {
               viewport={{ once: true }}
               transition={{ delay: 0.3, duration: 0.6 }}
             >
-              Limited production run: automate charging, save $325/year, become a part of the future of EV charging.
+              Limited production run: automate charging, save $450/year, become a part of the future of EV charging.
             </motion.p>
             
             <motion.div 
