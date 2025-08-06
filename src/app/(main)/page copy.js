@@ -820,7 +820,7 @@ const AmpereonLanding = () => {
                         hover:bg-[#D4AF37]/10 hover:border-[#D4AF37]/50 transition-all duration-300 backdrop-blur-sm"
                 whileHover={{ scale: 1.02 }}
               >
-                Full Purchase - $99
+                Full Purchase - $224
               </motion.button>
             </a>
           </motion.div>

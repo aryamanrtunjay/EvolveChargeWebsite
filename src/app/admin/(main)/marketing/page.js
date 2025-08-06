@@ -183,7 +183,7 @@ export default function MarketingDashboard() {
   const totalPreOrders = orders.length;
   const cac = totalPreOrders ? totalExpenses / totalPreOrders : 0;
   const campaignROI = campaigns.reduce((sum, campaign) => {
-    const revenue = campaign.conversions * 124.99; // Charger price
+    const revenue = campaign.conversions * 224; // Charger price
     return sum + ((revenue - campaign.budget) / campaign.budget) * 100;
   }, 0) / (campaigns.length || 1);
 

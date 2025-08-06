@@ -1,741 +1,274 @@
-"use client";
+'use client';
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import pricingData from '../../data/pricingData.json'; // Import the JSON file
+import React, { useState, useEffect } from 'react';
+import { Check, Star, Zap, Shield, Truck, HeartHandshake } from 'lucide-react';
 
-// Animation variants
-const fadeIn = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { 
-    opacity: 1, 
-    y: 0,
-    transition: { duration: 0.6 }
-  }
-};
+const PricingPage = () => {
+  const [hoveredCard, setHoveredCard] = useState(null);
+  const [scrollY, setScrollY] = useState(0);
 
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.2
-    }
-  }
-};
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-export default function Pricing() {
-  const [billingCycle, setBillingCycle] = useState('monthly');
-  const [activeFAQ, setActiveFAQ] = useState(null);
-  
-  // Toggle FAQ accordion
-  const toggleFAQ = (index) => {
-    setActiveFAQ(activeFAQ === index ? null : index);
+  const fadeInUp = {
+    initial: { opacity: 0, y: 60 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.8, ease: [0.6, -0.05, 0.01, 0.99] }
   };
 
-  // Use the imported pricing plans
-  const pricingPlans = pricingData.plans;
-
-  // FAQ data (unchanged)
-  const faqItems = [
-    {
-      question: "How does the pricing structure work?",
-      answer: "We have three pricing options. First, a one time charge which covers purchase of equipment and installation if requested. For our software services, such as smart home intergrations, battery monitoring and optimization, and charging at off-peak hours, we charge a small monthly or per kWh fee."
-    },
-    {
-      question: "What does the per kWh rate mean?",
-      answer: "The per kWh rate is an alternative to our monthly plan. We ask for a 0.1 to 0.3 cents per kWh you charge your car in lieu of a monthly charge, so if you charge less often you pay for how much you charge, while still benefitting from a start charging experience."
-    },
-    {
-      question: "What does installation include?",
-      answer: "Installation includes mounting your Ampereon unit, connecting it to your electrical system, configuring the network connection, and testing the system to ensure proper functionality."
-    },
-    {
-      question: "Can I upgrade my plan later?",
-      answer: "Yes, you can upgrade your plan at any time. Upgrading may involve a one-time fee to cover hardware differences between models, plus the new monthly/annual service fee or kWh rate. Downgrades are possible after your initial 12-month commitment period."
-    },
-    {
-      question: "Is there a contract or commitment period?",
-      answer: "We require a 12-month initial commitment for the service fee portion, which helps us provide consistent service and updates. After the initial period, you can continue on a month-to-month basis. The one-time hardware purchase is yours to keep regardless. However, you may return the product and receive a full refund if you are not satisfied with your experience anytime before 30 days."
-    },
-    {
-      question: "What happens if Ampereon needs repair?",
-      answer: "If your Ampereon needs repair, our support team will first attempt remote diagnostics. If the issue can't be resolved remotely, we'll send a technician to repair or replace your unit at no additional cost, provided the issue is covered under warranty and not caused by misuse or damage."
-    }
-  ];
-
   return (
-    <div className="min-h-screen bg-white">
+    <div className="bg-gradient-to-br from-slate-900 via-black to-slate-900 text-white min-h-screen overflow-hidden">
+      {/* Animated Background */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div 
+          className="absolute inset-0 opacity-20"
+          style={{
+            backgroundImage: `radial-gradient(circle at 20% 80%, rgba(212, 175, 55, 0.15) 0%, transparent 50%),
+                             radial-gradient(circle at 80% 20%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
+                             radial-gradient(circle at 40% 40%, rgba(212, 175, 55, 0.05) 0%, transparent 50%)`,
+            transform: `translateY(${scrollY * 0.3}px)`
+          }}
+        />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_0%,rgba(212,175,55,0.03)_50%,transparent_100%)] animate-pulse" />
+      </div>
+
       {/* Hero Section */}
-      <section className="relative pt-32 pb-16 md:pt-40 md:pb-24 overflow-hidden bg-gradient-to-r from-teal-500 to-cyan-600 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={staggerContainer}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <motion.h1 
-              variants={fadeIn}
-              className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6"
-            >
-              Simple, Transparent Pricing
-            </motion.h1>
-            
-            <motion.p 
-              variants={fadeIn}
-              className="text-lg md:text-xl mb-10 opacity-90"
-            >
-              Invest in smart charging technology with a pricing model that works for you.
-            </motion.p>
-          </motion.div>
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 h-16 bg-white rounded-t-[50%] scale-x-125"></div>
-      </section>
-
-      {/* How Our Pricing Works
-      <section className="py-12 md:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={staggerContainer}
-            className="text-center mb-16"
-          >
-            <motion.h2
-              variants={fadeIn}
-              className="text-3xl md:text-4xl font-bold mb-4 text-gray-900"
-            >
-              How Our Pricing Works
-            </motion.h2>
-            <motion.p
-              variants={fadeIn}
-              className="text-lg text-gray-700 max-w-2xl mx-auto"
-            >
-              A transparent pricing model designed for long-term value and performance.
-            </motion.p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            {[
-              {
-                icon: (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                ),
-                title: "One-Time Purchase",
-                description: "Pay once for our premium hardware. Our chargers are built to last with high-quality components and durable construction."
-              },
-              {
-                icon: (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                ),
-                title: "Monthly/Annual Fee",
-                description: "A subscription fee covering access to the charger, software updates, and cloud connectivity, to keep your charging experience optimal."
-              },
-              {
-                icon: (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                ),
-                title: "Per kWh Cost",
-                description: "An alternative to our monthly/annual fee if you charge less often, but still want access to the software side of the next generation of charging."
-              }
-            ].map((item, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.5 }}
-                transition={{ delay: index * 0.1, duration: 0.5 }}
-                className="bg-white rounded-xl p-8 shadow-md text-center"
-              >
-                <div className="flex justify-center mb-4">
-                  {item.icon}
-                </div>
-                <h3 className="text-xl font-bold mb-4 text-gray-900">{item.title}</h3>
-                <p className="text-gray-700">{item.description}</p>
-              </motion.div>
-            ))}
+      <section className="relative py-32 px-6">
+        <div className="max-w-6xl mx-auto text-center relative z-10">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-xl rounded-full border border-white/10 mb-8">
+            <Zap className="w-4 h-4 text-[#D4AF37]" />
+            <span className="text-sm font-medium text-[#D4AF37]">Premium EV Charging</span>
           </div>
+          
+          <h1 className="text-6xl md:text-7xl font-extralight mb-8 leading-[0.9] tracking-tight">
+            Effortless
+            <span className="block font-light bg-gradient-to-r from-[#D4AF37] via-[#D4AF37] to-[#D4AF37] bg-clip-text text-transparent">
+              Intelligence
+            </span>
+          </h1>
+          
+          <p className="text-xl text-slate-300 max-w-2xl mx-auto font-light leading-relaxed">
+            Experience the future of EV charging with Ampereon's Ace—where luxury meets sustainability
+          </p>
         </div>
-      </section> */}
-
-      {/* Billing Toggle
-      <section className="py-4">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="flex flex-col items-center justify-center"
-          >
-            <div className="flex items-center justify-center space-x-4 mb-4">
-              <span className={`text-sm font-medium ${billingCycle === 'monthly' ? 'text-gray-900' : 'text-gray-500'}`}>
-                Monthly Service Fee
-              </span>
-              <label className="relative inline-block w-14 h-7 cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="sr-only peer"
-                  checked={billingCycle === 'yearly'}
-                  onChange={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
-                />
-                <div className="w-14 h-7 bg-gray-200 rounded-full transition-colors peer-checked:bg-teal-500">
-                  <div className={`absolute w-5 h-5 bg-white rounded-full transition-all top-1 ${
-                    billingCycle === 'yearly' ? 'left-8' : 'left-1'
-                  }`} />
-                </div>
-              </label>
-              <span className={`text-sm font-medium flex items-center ${billingCycle === 'yearly' ? 'text-gray-900' : 'text-gray-500'}`}>
-                Annual Service Fee
-                <span className="ml-2 px-2 py-1 text-xs font-medium leading-none bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-full">
-                  Save 20%
-                </span>
-              </span>
-            </div>
-          </motion.div>
-        </div>
-      </section> */}
+      </section>
 
       {/* Pricing Cards */}
-      <section className="py-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-32">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {pricingPlans.map((plan, index) => (
-              <motion.div
-                key={plan.name}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1, duration: 0.5 }}
-                className={`bg-white rounded-xl overflow-hidden shadow-lg border ${
-                  plan.mostPopular ? 'border-teal-500 shadow-teal-100' : 'border-gray-200'
-                }`}
-              >
-                {plan.mostPopular && (
-                  <div className="bg-gradient-to-r from-teal-500 to-cyan-500 text-white px-4 py-1 text-center text-sm font-medium">
-                    Most Popular
+      <section className="relative py-20 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+            
+            {/* Order Option */}
+            <div
+              className="group relative"
+              onMouseEnter={() => setHoveredCard('order')}
+              onMouseLeave={() => setHoveredCard(null)}
+            >
+              <div className="absolute -inset-1 bg-gradient-to-r from-[#D4AF37] to-[#D4AF37] rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200" />
+              
+              <div className="relative bg-slate-900/90 backdrop-blur-xl rounded-2xl p-10 border border-white/10 group-hover:border-[#D4AF37]/50 transition-all duration-700">
+                  <div className="absolute top-0 right-6 -translate-y-1/2">
+                  <div className="flex items-center gap-2 bg-gradient-to-r from-[#D4AF37] to-[#D4AF37] px-4 py-2 rounded-full shadow-xl">
+                    <Star className="w-4 h-4 fill-current" />
+                    <span className="text-sm font-semibold text-black">Recommended</span>
                   </div>
-                )}
-                <div className="p-8">
-                  <div className="flex justify-center mb-4">
-                    <div dangerouslySetInnerHTML={{ __html: plan.icon }} />
-                  </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2 text-center">{plan.name}</h3>
-                  <p className="text-gray-700 mb-6 text-center">{plan.description}</p>
-
-                  <div className="mb-6 border-t border-b border-gray-100 py-6">
-                    <div className="flex flex-col items-center">
-                      <div className="flex items-end">
-                        <span className="text-4xl font-extrabold text-gray-900">
-                          ${plan.oneTimePrice}
-                        </span>
-                      </div>
-                      <span className="text-sm text-gray-700 mt-1">Deposit</span>
-                    </div>
-
-                    {(plan.monthlyPrice || plan.yearlyPrice || plan.kwhRate) && (
-                      <div className="flex justify-between items-center mt-6">
-                        {plan.monthlyPrice && plan.yearlyPrice && (
-                          <div className="flex flex-col items-start">
-                            <div className="flex items-baseline">
-                              <span className="text-xl font-bold text-gray-900">
-                                ${billingCycle === 'monthly' ? plan.monthlyPrice.toFixed(2) : plan.yearlyPrice.toFixed(2)}
-                              </span>
-                              <span className="ml-1 text-sm text-gray-700">
-                                {billingCycle === 'monthly' ? '/mo' : '/yr'}
-                              </span>
-                            </div>
-                            <span className="text-xs text-gray-700">Service fee (after delivery)</span>
-                          </div>
-                        )}
-                        {plan.kwhRate && (
-                          <>
-                            {(plan.monthlyPrice || plan.yearlyPrice) && (
-                              <div className="w-px h-10 bg-gray-200 mx-2"></div>
-                            )}
-                            <div className="flex flex-col items-end">
-                              <div className="text-xl font-bold text-gray-900">
-                                {plan.kwhRate}
-                              </div>
-                              <span className="text-xs text-gray-700">Energy rate (after delivery)</span>
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    )}
-                  </div>
-
-                  <p className="text-gray-700 mb-8">{plan.details}</p>
-
-                  <a href="reserve">
-                    <button
-                      className={`w-full py-3 px-6 rounded-full font-medium text-center transition-all transform hover:scale-105 focus:outline-none ${
-                        plan.mostPopular
-                          ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white shadow-md'
-                          : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-                      }`}
-                    >
-                      Reserve Now
-                    </button>
-                  </a>
                 </div>
-              </motion.div>
-            ))}
+
+                <div className="mb-8">
+                  <h3 className="text-3xl font-light mb-4">Complete Experience</h3>
+                  <p className="text-slate-400 text-lg leading-relaxed">
+                    Get the full Ace system with AI optimization included. Most customers keep AmplifyAI for the enhanced experience.
+                  </p>
+                </div>
+
+                <div className="mb-8">
+                  <div className="flex items-baseline gap-2 mb-2">
+                    <span className="text-5xl font-extralight text-[#D4AF37]">$224</span>
+                    <span className="text-xl text-slate-400 line-through">$249</span>
+                  </div>
+                  <div className="text-slate-400 mb-1">One-time payment</div>
+                  <div className="text-[#D4AF37] text-sm font-medium">+ $3.49/month for AmplifyAI (cancel anytime)</div>
+                </div>
+
+                <div className="space-y-4 mb-10">
+                  {[
+                    'Complete Ace charging system',
+                    'AI-optimized charging schedules',
+                    'Real-time analytics & monitoring',
+                    'Premium mobile app experience',
+                    'Priority customer support',
+                    '2-year comprehensive warranty'
+                  ].map((feature, index) => (
+                    <div key={index} className="flex items-center gap-3">
+                      <div className="w-5 h-5 rounded-full bg-[#D4AF37]/20 flex items-center justify-center">
+                        <Check className="w-3 h-3 text-[#D4AF37]" />
+                      </div>
+                      <span className="text-slate-300">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <button className="w-full py-4 bg-gradient-to-r from-[#D4AF37] to-[#D4AF37] text-black font-semibold rounded-xl hover:shadow-2xl hover:shadow-[#D4AF37]/25 transition-all duration-300 transform hover:-translate-y-1">
+                  Order Complete System
+                </button>
+                
+                <p className="text-xs text-slate-500 text-center mt-4">
+                  Subscription can be cancelled after purchase
+                </p>
+              </div>
+            </div>
+
+            {/* Reserve Option */}
+            <div
+              className="group relative"
+              onMouseEnter={() => setHoveredCard('reserve')}
+              onMouseLeave={() => setHoveredCard(null)}
+            >
+              <div className="relative bg-slate-900/50 backdrop-blur-xl rounded-2xl p-10 border border-white/10 group-hover:border-white/30 transition-all duration-700">
+                <div className="mb-8">
+                  <h3 className="text-3xl font-light mb-4">Secure Your Spot</h3>
+                  <p className="text-slate-400 text-lg leading-relaxed">
+                    Reserve your place in our limited production run with a minimal deposit. Perfect for early adopters.
+                  </p>
+                </div>
+
+                <div className="mb-8">
+                  <div className="flex items-baseline gap-2 mb-2">
+                    <span className="text-5xl font-extralight text-white">$5</span>
+                  </div>
+                  <div className="text-slate-400 mb-1">Refundable deposit</div>
+                  <div className="text-slate-500 text-sm">Pay remaining balance when ready</div>
+                </div>
+
+                <div className="space-y-4 mb-10">
+                  {[
+                    'Priority production queue',
+                    'Exclusive early access',
+                    'Flexible payment schedule',
+                    'Full refund available',
+                    'Add AmplifyAI later',
+                    'Same warranty coverage'
+                  ].map((feature, index) => (
+                    <div key={index} className="flex items-center gap-3">
+                      <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center">
+                        <Check className="w-3 h-3 text-white" />
+                      </div>
+                      <span className="text-slate-300">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <button className="w-full py-4 bg-white/10 border border-white/20 text-white font-semibold rounded-xl hover:bg-white/20 hover:border-white/40 transition-all duration-300 backdrop-blur-sm">
+                  Reserve Your Ace
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* AmplifyAI Add-on */}
+          <div className="max-w-4xl mx-auto">
+            <div className="relative bg-gradient-to-r from-slate-900/80 to-slate-800/80 backdrop-blur-xl rounded-2xl p-10 border border-[#D4AF37]/30">
+              <div className="absolute inset-0 bg-gradient-to-r from-[#D4AF37]/5 to-[#D4AF37]/5 rounded-2xl" />
+              
+              <div className="relative z-10">
+                <div className="text-center mb-8">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#D4AF37]/20 rounded-full mb-4">
+                    <Zap className="w-4 h-4 text-[#D4AF37]" />
+                    <span className="text-sm font-medium text-[#D4AF37]">AI Enhancement</span>
+                  </div>
+                  <h3 className="text-3xl font-light mb-4">AmplifyAI Subscription</h3>
+                  <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+                    Unlock the full potential of your Ace with AI-driven optimization and advanced analytics
+                  </p>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-12 items-center">
+                  <div>
+                    <div className="flex items-baseline gap-2 mb-6">
+                      <span className="text-4xl font-extralight text-[#D4AF37]">$3.49</span>
+                      <span className="text-slate-400">/month</span>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      {[
+                        'Predictive charging optimization',
+                        'Energy cost minimization',
+                        'Battery health insights',
+                        'Usage pattern analysis'
+                      ].map((feature, index) => (
+                        <div key={index} className="flex items-center gap-3">
+                          <Check className="w-4 h-4 text-[#D4AF37]" />
+                          <span className="text-slate-300">{feature}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <button className="w-full py-4 bg-gradient-to-r from-[#D4AF37]/20 to-[#D4AF37]/20 border border-[#D4AF37]/40 text-[#D4AF37] font-semibold rounded-xl hover:bg-gradient-to-r hover:from-[#D4AF37]/30 hover:to-[#D4AF37]/30 transition-all duration-300">
+                      Add AI Enhancement
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Energy Cost Visualization
-      <section className="py-16 md:py-24 bg-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={staggerContainer}
-            className="text-center mb-16"
-          >
-            <motion.h2
-              variants={fadeIn}
-              className="text-3xl md:text-4xl font-bold mb-4 text-gray-900"
-            >
-              Understand Your Energy Costs
-            </motion.h2>
-            <motion.p
-              variants={fadeIn}
-              className="text-lg text-gray-700 max-w-2xl mx-auto"
-            >
-              See how our per kWh pricing compares to standard rates and the value it provides.
-            </motion.p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.8 }}
-            className="bg-white rounded-xl shadow-md p-8"
-          >
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-              <div>
-                <h3 className="text-2xl font-bold mb-6 text-gray-900">How Our kWh Premium Works</h3>
-                <p className="text-gray-700 mb-6">
-                  Our per kWh cost is added to your standard electricity rate when charging through your Ampereon system. This model allows us to:
+      {/* Trust Indicators */}
+      <section className="relative py-20 px-6 border-t border-white/10">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {[
+              { icon: Shield, text: '30-day guarantee' },
+              { icon: Truck, text: 'Free WA shipping' },
+              { icon: HeartHandshake, text: 'Expert support' },
+              { icon: Zap, text: '2-year warranty' }
+            ].map((item, index) => (
+              <div key={index} className="text-center group">
+                <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-[#D4AF37]/20 transition-all duration-300">
+                  <item.icon className="w-6 h-6 text-slate-400 group-hover:text-[#D4AF37]" />
+                </div>
+                <p className="text-sm text-slate-400 group-hover:text-slate-300 transition-colors duration-300">
+                  {item.text}
                 </p>
-                <ul className="space-y-4 mb-8">
-                  {[
-                    "Offer lower upfront hardware costs",
-                    "Provide long-term savings by charging at the cheapest times",
-                    "Provide ongoing optimization to maximize your car battery's lifespan",
-                    "Deliver continuous software improvements and new features",
-                    "Maintain network infrastructure for reliable service",
-                    "Cover warranty service and technical support",
-                  ].map((item, index) => (
-                    <li key={index} className="flex items-start">
-                      <svg
-                        className="h-5 w-5 text-teal-500 mr-2 mt-0.5 flex-shrink-0"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      <span className="text-gray-700">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-                <div className="p-4 bg-teal-50 rounded-lg border border-teal-100">
-                  <p className="text-gray-700 italic">
-                    While increasing costs for the month, the smart charging features can save around $240 last year by shifting your charging to off-peak hours. You also gain access to our suite of smart charging features.
-                  </p>
-                </div>
               </div>
-              
-              <div className="flex items-center justify-center">
-                <div className="w-full max-w-md">
-                  <h4 className="text-lg font-bold mb-4 text-gray-900 text-center">Monthly Charging Cost Comparison</h4>
-                  <p className="text-sm text-gray-700 mb-6 text-center">Based on 300 kWh/month for EV charging</p>
-                  
-                  <div className="space-y-6">
-                    {[
-                      { 
-                        label: "Tesla Supercharger", 
-                        baseCost: 75, 
-                        premiumCost: 0, 
-                        totalCost: 75,
-                        color: "bg-gray-200",
-                        tooltip: "12¢/kWh average utility rate"
-                      },
-                      { 
-                        label: "Non-Intelligent Home Charging", 
-                        baseCost: 36, 
-                        premiumCost: 0, 
-                        totalCost: 36,
-                        color: "bg-gray-200",
-                        tooltip: "12¢/kWh average utility rate"
-                      },
-                      { 
-                        label: "EVolve Essential Plan", 
-                        baseCost: 36, 
-                        premiumCost: 3, 
-                        totalCost: 39,
-                        color: "bg-teal-500",
-                        tooltip: "12¢/kWh + 3¢/kWh premium"
-                      },
-                      { 
-                        label: "EVolve Pro Plan", 
-                        baseCost: 36, 
-                        premiumCost: 6, 
-                        totalCost: 42,
-                        color: "bg-teal-500",
-                        tooltip: "12¢/kWh + 2¢/kWh premium"
-                      },
-                      { 
-                        label: "EVolve Ultimate Plan", 
-                        baseCost: 36, 
-                        premiumCost: 9, 
-                        totalCost: 45,
-                        color: "bg-teal-500",
-                        tooltip: "12¢/kWh + 1¢/kWh premium"
-                      }
-                    ].map((item, index) => (
-                      <div key={index} className="relative">
-                        <div className="mb-1 flex justify-between items-center">
-                          <span className="text-sm font-medium text-gray-900">{item.label}</span>
-                          <span className="text-sm font-bold text-gray-900">${item.totalCost}/mo</span>
-                        </div>
-                        <div className="w-full h-8 bg-gray-100 rounded-full overflow-hidden">
-                          <div className="h-full flex">
-                            <div 
-                              className="h-full bg-gray-300" 
-                              style={{ width: `${(item.baseCost / 80) * 100}%` }}
-                            ></div>
-                            <div 
-                              className={`h-full ${item.color}`}
-                              style={{ width: `${(item.premiumCost / 80) * 100}%` }}
-                            ></div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  
-                  <div className="flex items-center justify-between mt-6 text-sm">
-                    <div className="flex items-center">
-                      <div className="w-3 h-3 bg-gray-300 mr-2 rounded"></div>
-                      <span className="text-gray-700">Base Utility Cost</span>
-                    </div>
-                    <div className="flex items-center">
-                      <div className="w-3 h-3 bg-teal-500 mr-2 rounded"></div>
-                      <span className="text-gray-700">EVolve Premium</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section> */}
-
-      {/* Compare Plans Detailed Table
-      <section className="py-16 md:py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={staggerContainer}
-            className="text-center mb-16"
-          >
-            <motion.h2
-              variants={fadeIn}
-              className="text-3xl md:text-4xl font-bold mb-4 text-gray-900"
-            >
-              Compare Plan Features
-            </motion.h2>
-            <motion.p
-              variants={fadeIn}
-              className="text-lg text-gray-700 max-w-2xl mx-auto"
-            >
-              See exactly what's included in each plan to find the perfect fit for your needs.
-            </motion.p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.8 }}
-            className="overflow-x-auto bg-white rounded-xl shadow-md"
-          >
-            <table className="min-w-full">
-              <thead>
-                <tr className="bg-gray-50">
-                  <th className="py-4 px-6 text-left text-lg font-semibold text-gray-900 border-b border-gray-200">Feature</th>
-                  {pricingPlans.map((plan) => (
-                    <th key={plan.name} className="py-4 px-6 text-center text-lg font-semibold text-gray-900 border-b border-gray-200">
-                      {plan.name}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {[
-                  {
-                    feature: "Hardware Cost",
-                    essential: "$1,499",
-                    pro: "$1,899",
-                    ultimate: "$2,499"
-                  },
-                  {
-                    feature: "Monthly Service Fee",
-                    essential: "$9.99",
-                    pro: "$14.99",
-                    ultimate: "$19.99"
-                  },
-                  {
-                    feature: "Annual Service Fee",
-                    essential: "$99.99",
-                    pro: "$149.99",
-                    ultimate: "$199.99"
-                  },
-                  {
-                    feature: "kWh Cost",
-                    essential: "$0.03/kWh",
-                    pro: "$0.02/kWh",
-                    ultimate: "$0.01/kWh"
-                  },
-                  {
-                    feature: "Charging Connection",
-                    essential: "Automatic",
-                    pro: "Automatic",
-                    ultimate: "Automatic"
-                  },
-                  {
-                    feature: "Charging Scheduling",
-                    essential: "Basic",
-                    pro: "Advanced",
-                    ultimate: "Advanced"
-                  },
-                  {
-                    feature: "Smart Home Integration",
-                    essential: "—",
-                    pro: "—",
-                    ultimate: "✓"
-                  },
-                  {
-                    feature: "Battery Health Monitoring",
-                    essential: "—",
-                    pro: "✓",
-                    ultimate: "✓"
-                  },
-                  {
-                    feature: "Battery Health Optimization",
-                    essential: "—",
-                    pro: "—",
-                    ultimate: "✓"
-                  },
-                  {
-                    feature: "Energy Optimization",
-                    essential: "Basic",
-                    pro: "Advanced",
-                    ultimate: "Advanced"
-                  },
-                  {
-                    feature: "Usage Analytics",
-                    essential: "Basic",
-                    pro: "Advanced",
-                    ultimate: "Advanced"
-                  },
-                  {
-                    feature: "Solar Integration",
-                    essential: "—",
-                    pro: "—",
-                    ultimate: "✓"
-                  },
-                  {
-                    feature: "Power Outage Protection",
-                    essential: "—",
-                    pro: "—",
-                    ultimate: "✓"
-                  },
-                  {
-                    feature: "Hardware Warranty",
-                    essential: "3 Years",
-                    pro: "5 Years",
-                    ultimate: "Lifetime"
-                  },
-                  {
-                    feature: "Customer Support",
-                    essential: "24/7",
-                    pro: "24/7 Priority",
-                    ultimate: "24/7 Priority"
-                  }
-                ].map((row, index) => (
-                  <tr key={row.feature} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-                    <td className="py-4 px-6 border-b border-gray-200 text-gray-900 font-medium">{row.feature}</td>
-                    <td className="py-4 px-6 text-center border-b border-gray-200 text-gray-700">{row.essential}</td>
-                    <td className="py-4 px-6 text-center border-b border-gray-200 text-gray-700">{row.pro}</td>
-                    <td className="py-4 px-6 text-center border-b border-gray-200 text-gray-700">{row.ultimate}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </motion.div>
-        </div>
-      </section> */}
-
-      {/* FAQ Section
-      <section className="py-16 md:py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={staggerContainer}
-            className="text-center mb-16"
-          >
-            <motion.h2
-              variants={fadeIn}
-              className="text-3xl md:text-4xl font-bold mb-4 text-gray-900"
-            >
-              Frequently Asked Questions
-            </motion.h2>
-            <motion.p
-              variants={fadeIn}
-              className="text-lg text-gray-700 max-w-2xl mx-auto"
-            >
-              Get answers to common questions about our pricing and plans.
-            </motion.p>
-          </motion.div>
-
-          <div className="max-w-3xl mx-auto">
-            {faqItems.map((faq, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.8 }}
-                transition={{ delay: index * 0.1, duration: 0.4 }}
-                className="mb-4 border-b border-gray-200 pb-4 last:border-b-0"
-              >
-                <button
-                  onClick={() => toggleFAQ(index)}
-                  className="flex justify-between items-center w-full text-left px-4 py-3 focus:outline-none"
-                >
-                  <h3 className="text-lg font-semibold text-gray-900">{faq.question}</h3>
-                  <svg
-                    className={`h-5 w-5 text-gray-500 transform transition-transform ${
-                      activeFAQ === index ? 'rotate-180' : ''
-                    }`}
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-                <motion.div
-                  initial={false}
-                  animate={{
-                    height: activeFAQ === index ? 'auto' : 0,
-                    opacity: activeFAQ === index ? 1 : 0,
-                    marginTop: activeFAQ === index ? 8 : 0
-                  }}
-                  transition={{ duration: 0.3 }}
-                  className="overflow-hidden px-4"
-                >
-                  <p className="text-gray-700">{faq.answer}</p>
-                </motion.div>
-              </motion.div>
             ))}
           </div>
-        </div>
-      </section> */}
-
-      {/* Money Back Guarantee */}
-      <section className="py-12 md:py-16 bg-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.6 }}
-            className="bg-white rounded-2xl shadow-xl overflow-hidden"
-          >
-            <div className="p-8 md:p-12 flex items-center text-center">
-              <div>
-                <div className="inline-block p-3 rounded-full bg-teal-100 text-teal-500 mb-6">
-                  <svg
-                    className="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                    />
-                  </svg>
-                </div>
-                <h3 className="text-2xl font-bold mb-4 text-gray-900">100% Satisfaction Guarantee</h3>
-                <p className="text-gray-700 mb-6">
-                  Your deposit is 100% refundable, no questions asked. Upon receiving, try Ampereon risk-free for 30 days. If you're not completely satisfied with your charging experience, we'll remove the system, refund your hardware purchase, and ask for nothing from you other than a short survey to know how we can improve the future of charging.
-                </p>
-                <a href="reserve">
-                  <button className="px-6 py-3 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium shadow-md hover:shadow-lg transition-all transform hover:scale-105">
-                    Get Started Today
-                  </button>
-                </a>
-              </div>
-            </div>
-          </motion.div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 md:py-24 bg-gradient-to-r from-teal-500 to-cyan-600 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.8 }}
-            className="text-center"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Transform Your EV Charging Experience?</h2>
-            <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto opacity-90">
-              Join thousands of satisfied EV owners who have made the switch to smarter, automated charging.
-            </p>
-            <a href="reserve">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-8 py-3 rounded-full bg-white text-teal-500 font-medium shadow-md hover:shadow-lg transition-all"
-              >
-                Choose Your Plan
-              </motion.button>
-            </a>
-            <p className="mt-4 text-sm opacity-80">Professional installation throughout the US and Canada.</p>
-          </motion.div>
+      <section className="relative py-24 px-6">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-5xl font-extralight mb-6 leading-tight">
+            Ready to
+            <span className="block font-light bg-gradient-to-r from-[#D4AF37] to-[#D4AF37] bg-clip-text text-transparent">
+              Transform
+            </span>
+            Your Drive?
+          </h2>
+          
+          <p className="text-xl text-slate-400 mb-12 max-w-2xl mx-auto leading-relaxed">
+            Join thousands of forward-thinking drivers who've already made the switch to intelligent charging
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+            <button className="px-8 py-4 bg-gradient-to-r from-[#D4AF37] to-[#D4AF37] text-black font-semibold rounded-xl hover:shadow-2xl hover:shadow-[#D4AF37]/25 transition-all duration-300 transform hover:-translate-y-1 min-w-[280px]">
+              Order Complete System
+            </button>
+            <button className="px-8 py-4 bg-white/5 border border-white/20 text-white font-semibold rounded-xl hover:bg-white/10 hover:border-white/40 transition-all duration-300 backdrop-blur-sm min-w-[200px]">
+              Reserve for $5
+            </button>
+          </div>
         </div>
       </section>
     </div>
   );
-}
+};
+
+export default PricingPage;

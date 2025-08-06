@@ -366,6 +366,7 @@ export default function InternshipApplication() {
                     }`}
                   >
                     <option value="">Select a role</option>
+                    <option value="Film Intern">Intern (Select if applying for internship not listed below)</option>
                     <option value="Film Intern">Film Intern</option>
                     <option value="Social Media Intern">Social Media Intern</option>
                   </select>
@@ -630,23 +631,6 @@ export default function InternshipApplication() {
             <p className="text-gray-400">Thanks for applying. We'll be in touch soon.</p>
           </motion.div>
         )}
-
-        <motion.div variants={fadeUpVariants} className="mt-16">
-          <h2 className="text-2xl font-light mb-4">About Ampereon</h2>
-          <p className="text-gray-300 mb-4">
-            Ampereon is building an automatic, hands-free home EV charging add-on that clips onto the Level-2 charger people already own. A magnetic rail-arm docks the cable for them; our software schedules charging at the cheapest, battery-friendly hours.
-          </p>
-          <h3 className="text-xl font-light mb-2">Traction (July 2025)</h3>
-          <ul className="list-disc list-inside text-gray-300 space-y-2">
-            <li>Functional prototype; final tuning + firmware polish in progress.</li>
-            <li>5 paid pre-orders secured; lining up a 100-unit pilot then a 1,000-unit run.</li>
-            <li>Early price $99.99 → $124.99 → $149 (+$2/mo optimization sub after the first 1k units).</li>
-            <li>Roadmap: pilot reliability, app v1, UL/File certs, utility-rate integrations, and a crowdfunding push.</li>
-          </ul>
-          <p className="text-gray-300 mt-4">
-            We’re equal parts hardware nerds, code junkies, and growth hackers. If that mix sounds fun, we look forward to your application!
-          </p>
-        </motion.div>
       </motion.div>
     </div>
   );
