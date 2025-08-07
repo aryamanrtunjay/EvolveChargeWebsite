@@ -367,6 +367,8 @@ export default function InternshipApplication() {
                   >
                     <option value="">Select a role</option>
                     <option value="Film Intern">Intern (Select if applying for internship not listed below)</option>
+                    <option value="Film Intern">Software Engineering Intern</option>
+                    <option value="Film Intern">Hardware Engineering Intern</option>
                     <option value="Film Intern">Film Intern</option>
                     <option value="Social Media Intern">Social Media Intern</option>
                   </select>
